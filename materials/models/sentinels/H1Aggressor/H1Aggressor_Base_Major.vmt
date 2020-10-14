@@ -1,0 +1,8 @@
+patch
+{
+	include materials\models\sentinels\H1Aggressor\H1Aggressor_Base.vmt
+	insert {"$phongtint"	"[0.5 0.2 0]"}
+}
+
+
+

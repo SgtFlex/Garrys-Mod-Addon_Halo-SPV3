@@ -1,0 +1,6 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/hce/spv3/weapon/unsc/frag_grenade/frag_grenade_decal"
+	"$alphatest" "1"
+
+}

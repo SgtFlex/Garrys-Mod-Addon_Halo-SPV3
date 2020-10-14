@@ -1,0 +1,5 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/hce/spv3/weapon/cov/energy_sword/energy_sword_beam_diff"
+	"$additive" 1
+}

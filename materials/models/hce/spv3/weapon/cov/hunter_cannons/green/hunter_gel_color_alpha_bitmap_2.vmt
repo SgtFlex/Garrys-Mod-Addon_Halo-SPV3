@@ -1,0 +1,23 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/hce/spv3/weapon/cov/hunter_cannons/green/hunter_gel_color_alpha_bitmap_2"
+
+	"$detail" "models/hce/spv3/weapon/cov/hunter_cannons/hunter_gel_noise"
+	$detailscale 1
+	$detailblendmode 5
+	$detailblendfactor 1
+
+"Proxies"
+	{
+	"TextureScroll"
+		{
+		"textureScrollVar"	"$detailtexturetransform"
+		"textureScrollRate"		"1"
+		"textureScrollAngle"		"-110"
+		}
+	}
+
+
+	"$blendtintbybasealpha" "1"
+	"$blendtintcoloroverbase" "0"
+}

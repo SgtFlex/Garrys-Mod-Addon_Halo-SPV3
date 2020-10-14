@@ -1,0 +1,15 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/hce/spv3/weapon/cov/particle_carbine/carbine_icon"
+	"$bumpmap" "models/hce/spv3/weapon/cov/particle_carbine/carbine_icon_nrml"
+
+	"$color2"		"[0.87 0.87 0.87]"
+	
+	"$phong" "1"
+	"$phongexponent"				"10"
+	"$phongboost"					"5"
+	"$phongfresnelranges"			"[0.3 0.7 1.5]"
+	
+	"$blendtintbybasealpha" "1"
+	"$blendtintcoloroverbase" "0"
+}

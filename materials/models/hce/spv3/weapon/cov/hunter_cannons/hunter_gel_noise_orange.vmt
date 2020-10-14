@@ -1,0 +1,24 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/hce/spv3/weapon/cov/hunter_cannons/black_box"
+	"$additive" 1
+
+	"$detail" "models/hce/spv3/weapon/cov/hunter_cannons/hunter_gel_noise_orange"
+	$detailscale 1
+	$detailblendmode 5
+	$detailblendfactor 1
+
+
+"Proxies"
+	{
+	"TextureScroll"
+		{
+		"textureScrollVar"	"$detailtexturetransform"
+		"textureScrollRate"		"1"
+		"textureScrollAngle"		"-110"
+		}
+	}
+
+	"$blendtintbybasealpha" "1"
+	"$blendtintcoloroverbase" "0"
+}

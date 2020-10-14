@@ -1,0 +1,9 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/hce/spv3/weapon/cov/focus_rifle/focusrifle_diffuse"
+	"$bumpmap" "models/hce/spv3/weapon/cov/focus_rifle/focusrifle_normal"
+	"$phong" "1"
+	"$phongexponent"		"10"
+	"$phongboost"		"5"
+	"$phongfresnelranges"	"[0.3 0.7 1.5]"
+}

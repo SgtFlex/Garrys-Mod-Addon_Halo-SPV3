@@ -1,0 +1,8 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/hce/spv3/weapon/cov/plasma_rifle/plasma_rifle_stream_mask"
+	"$additive" 1
+	"$color2"		"[0 1 1]"
+	"$blendtintbybasealpha" "1"
+	"$blendtintcoloroverbase" "0"
+}

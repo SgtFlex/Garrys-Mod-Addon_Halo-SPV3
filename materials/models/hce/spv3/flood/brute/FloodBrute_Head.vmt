@@ -1,0 +1,12 @@
+"VertexLitGeneric"
+{
+  	"$basetexture" 			"\models\hce\spv3\flood\brute\FloodBrute_Head_Diffuse2"
+    	"$bumpmap" 			"\models\hce\spv3\flood\brute\FloodBrute_Head_Normal"
+	"$phong" "0"
+	"$phongboost" "0.5"
+	"$PhongExponent" "0"
+	"$phongalbedotint" "1"
+	"$phongfresnelranges" "[3 5 7]"
+	"$blendtintbybasealpha" "1"
+}
+

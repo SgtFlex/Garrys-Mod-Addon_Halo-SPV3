@@ -1,0 +1,23 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/hce/spv3/weapon/cov/plasma_pistol/plasma_pistol_body_diff"
+	"$bumpmap" "models/hce/spv3/weapon/cov/plasma_pistol/plasma_pistol_body_nrml"
+
+	"$color2"		"[1 1 1]"
+	
+	"$phong" "1"
+	"$phongexponent"				"10"
+	"$phongboost"					"5"
+	"$phongfresnelranges"			"[0.3 0.7 1.5]"
+	
+	"$phongalbedotint" 1
+	"$phongexponenttexture" "models\Dark_Souls\shared\souls_green"
+
+	"$detail" "models/hce/spv3/weapon/cov/plasma_pistol/plasma_pistol_body_multi"
+	$detailscale 1
+	$detailblendmode 2
+	$detailblendfactor 0.4
+
+	"$blendtintbybasealpha" "1"
+	"$blendtintcoloroverbase" "0"
+}

@@ -1,0 +1,18 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models\sentinels\sentinel_gun\H3SentinelBeam_Diffuse"
+	"$bumpmap" "models\sentinels\sentinel_gun\H3SentinelBeam_Normal"
+	"$selfillum" "1"
+	$selfillumtint "[1 300 300]"
+	"$normalmapalphaenvmapmask"	"1"
+	"$phong"				"1"
+	"$phongboost"			"100"
+	"$phongtint"			"[0.1 0.1 0.1]"
+	"$phongfresnelranges"		"[0.1 0.05 0.2]"
+	"$phongalbedotint" 			"1"
+	"$phongwarptexture" 		"models\sentinels\phongwarp_metal2"
+
+}
+
+
+

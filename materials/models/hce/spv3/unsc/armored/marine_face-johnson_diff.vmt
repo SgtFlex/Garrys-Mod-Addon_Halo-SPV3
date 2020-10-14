@@ -1,0 +1,6 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/hce/spv3/unsc/armored/marine_face-johnson_diff"
+	"$blendtintbybasealpha" "1"
+	"$blendtintcoloroverbase" "0"
+}

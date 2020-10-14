@@ -1,0 +1,16 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/hce/spv3/cov/brute/brute_body_head_diff"
+	"$bumpmap" "models/hce/spv3/cov/brute/brute_body_head_nrml"
+
+	"$phong" "0"
+	"$phongexponent"		"10"
+	"$phongboost"		"5"
+	"$phongfresnelranges"	"[0.3 0.7 1.5]"
+	"$blendtintbybasealpha" "1"
+
+}
+
+
+
+

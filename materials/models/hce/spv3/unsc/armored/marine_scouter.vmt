@@ -1,0 +1,10 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/hce/spv3/unsc/armored/marine_scouter"
+	"$alphatest" 1
+	
+	"$detail" "models/hce/spv3/unsc/armored/marine_scouter"
+	$detailscale 1
+	$detailblendmode 5
+	$detailblendfactor 1
+}

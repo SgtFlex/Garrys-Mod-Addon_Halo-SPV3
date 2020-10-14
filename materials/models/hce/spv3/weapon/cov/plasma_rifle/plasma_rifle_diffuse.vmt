@@ -1,0 +1,18 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/hce/spv3/weapon/cov/plasma_rifle/plasma_rifle_diffuse"
+	"$bumpmap" "models/hce/spv3/weapon/cov/plasma_rifle/plasma_rifle_normal"
+
+	"$color2"		"[0.3 0.35 0.75]"
+	
+	"$phong" "1"
+	"$phongexponent"				"10"
+	"$phongboost"					"5"
+	"$phongfresnelranges"			"[0.3 0.7 1.5]"
+	
+	"$phongalbedotint" 1
+	"$phongexponenttexture" "models\Dark_Souls\shared\souls_green"
+
+	"$blendtintbybasealpha" "1"
+	"$blendtintcoloroverbase" "0"
+}

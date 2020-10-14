@@ -1,0 +1,29 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/hce/spv3/cov/elite/elite_newarmor_diff"
+	"$bumpmap" "models/hce/spv3/cov/elite/elite_newarmor_nrml"
+	"$surfaceprop" metal
+
+	"$color2"		"[0.87 0.87 0.87]"
+	
+	"$normalmapalphaenvmapmask"    "1"
+	"$phong" "1"
+	"$phongexponent"				"5"
+	"$phongboost"					"50"
+	"$phongfresnelranges"			"[3 5 7]"
+	"$phongalbedotint" 1
+	"$phongexponenttexture" "models\Dark_Souls\shared\souls_green"
+	"$phongwarptexture" "models\Dark_Souls\shared\testwarp2"
+
+	"$envmap" "models\Dark_Souls\shared\painted_silver_ldr"
+	"$envmaptint""[0.000125 0.000124 0.000115]"
+	"$envmapfresnel""1"
+
+	"$detail" "models/hce/spv3/cov/elite/elite_newarmor_glow"
+	$detailscale 1
+	$detailblendmode 5
+	$detailblendfactor 1
+
+	"$blendtintbybasealpha" "1"
+	"$blendtintcoloroverbase" "0"
+}

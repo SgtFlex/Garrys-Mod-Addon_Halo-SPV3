@@ -1,0 +1,18 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/hce/spv3/forerunner/aggressor/sentinel_metal_diff"
+	"$bumpmap" "models/hce/spv3/forerunner/aggressor/sentinel_metal_nrml"
+
+	"$surfaceprop" metal
+
+	"$color2"		"[0.4 0.4 0.4]"
+	"$selfillum" 			"1"
+	"$selfillumtint" 			"[0 10 10]"
+	"$normalmapalphaenvmapmask"    "1"
+	"$phong" "1"
+	"$phongexponent"				"10"
+	"$phongboost"					"5.996837"
+	"$phongfresnelranges"			"[0.67 0.83 1]"
+
+
+}

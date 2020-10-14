@@ -1,0 +1,5 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/hce/spv3/weapon/unsc/assault_rifle/assault_rifle_display"
+	"$additive" 1
+}

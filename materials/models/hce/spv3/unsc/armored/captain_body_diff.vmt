@@ -1,0 +1,5 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/hce/spv3/unsc/armored/captain_body_diff"
+	"$bumpmap" "models/hce/spv3/unsc/armored/captain_body_nrml"
+}

@@ -1,0 +1,8 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/hce/spv3/weapon/unsc/frag_grenade/frag_grenade_diff"
+	"$phong" "1"
+	"$phongexponent"		"10"
+	"$phongboost"		"5"
+	"$phongfresnelranges"	"[0.3 0.7 1.5]"
+}

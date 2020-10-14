@@ -1,0 +1,18 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/hce/spv3/weapon/unsc/magnum/pistol_body_diff"
+	"$bumpmap" "models/hce/spv3/weapon/unsc/magnum/pistol_body_nrml"
+
+	"$color2"		"[0.87 0.87 0.87]"
+	
+	"$phong" "1"
+	"$phongexponent"				"10"
+	"$phongboost"					"5"
+	"$phongfresnelranges"			"[0.3 0.7 1.5]"
+	
+	"$phongalbedotint" 1
+	"$phongexponenttexture" "models\Dark_Souls\shared\souls_green"
+
+	"$blendtintbybasealpha" "1"
+	"$blendtintcoloroverbase" "0"
+}

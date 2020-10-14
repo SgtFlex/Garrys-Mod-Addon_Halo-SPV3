@@ -1,0 +1,24 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/hce/spv3/weapon/cov/hunter_cannons/hunter_weapon_base_diff"
+	"$bumpmap" "models/hce/spv3/weapon/cov/hunter_cannons/hunter_weapon_base_nrml"
+
+	"$color2"		"[0.87 0.87 0.87]"
+	
+	"$normalmapalphaenvmapmask"    "1"
+	"$phong" "1"
+	"$phongexponent"				"10"
+	"$phongboost"					"50.996837"
+	"$phongfresnelranges"			"[0.67 0.83 1]"
+
+	"$phongalbedotint" 1
+	"$phongexponenttexture" "models\Dark_Souls\shared\souls_green"
+	"$phongwarptexture" "models\Dark_Souls\shared\testwarp2"
+
+	"$envmap" "models\Dark_Souls\shared\painted_silver_ldr"
+	"$envmaptint""[0.000125 0.000124 0.000115]"
+	"$envmapfresnel""1"
+
+	"$blendtintbybasealpha" "1"
+	"$blendtintcoloroverbase" "0"
+}

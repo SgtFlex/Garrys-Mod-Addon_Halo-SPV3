@@ -1,0 +1,7 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/hce/spv3/weapon/cov/plasma_rifle/plasma_rifle_lights_glow"
+	"$color2"		"[0 1 1]"
+	"$blendtintbybasealpha" "1"
+	"$blendtintcoloroverbase" "0"
+}

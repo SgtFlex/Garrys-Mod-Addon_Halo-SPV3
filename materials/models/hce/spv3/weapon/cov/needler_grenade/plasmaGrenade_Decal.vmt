@@ -1,0 +1,12 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/hce/spv3/weapon/cov/plasma_grenade/plasmaGrenade_diff"
+	"$bumpmap" "models/hce/spv3/weapon/cov/plasma_grenade/plasmaGrenade_nrml"
+	"$alphatest" "1"
+	"$nocull" "1"
+	"$phong" "1"
+	"$phongexponent"		"10"
+	"$phongboost"		"5"
+	"$phongfresnelranges"	"[0.3 0.7 1.5]"
+}
+

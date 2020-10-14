@@ -1,0 +1,8 @@
+patch
+{
+	include materials\models\sentinels\sentinel_aggressorce\sentinel_metal.vmt
+}
+
+
+
+
