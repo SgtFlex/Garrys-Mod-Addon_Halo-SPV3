@@ -82,14 +82,38 @@ function ENT:CustomOnTakeDamage(dmginfo)
 	end
 end
 ---------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
 ENT.DaddyNade = true
 ENT.FirstCollide = false
+
+
+
+
+
+
+
+
+
+
+
 function ENT:CustomOnPhysicsCollide(data,phys)
+
+
+
 	if (self.FirstCollide==true) then return end
 	self.FirstCollide=true
 	getvelocity = phys:GetVelocity()
 	velocityspeed = getvelocity:Length()
-	//print(velocityspeed)
 	if velocityspeed > 500 then -- Or else it will go flying!
 		phys:SetVelocity(getvelocity * 0.9)
 	end
