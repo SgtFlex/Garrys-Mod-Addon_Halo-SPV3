@@ -90,30 +90,32 @@ function ENT:CustomOnInitialize()
 end
 ---------------------------------------------------------------------------------------------------------------------------------------------
 ENT.infFormCount = 10
+ENT.infForm = nil
 local spreadRadius = 275
 function ENT:CustomDeathAnimationCode(dmginfo,hitgroup)
 	self.infFormCount = math.Round(self.infFormCount*(GetConVarNumber("vj_spv3_infModifier")))
 	timer.Simple(1.64,function() if self:IsValid() then
-	local BlastInfo = DamageInfo()
-	BlastInfo:SetDamageType(DMG_BLAST)
-	BlastInfo:SetDamage(20 * GetConVarNumber("vj_spv3_damageModifier"))
-	BlastInfo:SetDamagePosition(self:GetPos())
-	BlastInfo:SetInflictor(self)
-	BlastInfo:SetReportedPosition(self:GetPos())
-	util.BlastDamageInfo(BlastInfo, self:GetPos(), 250)
-	util.ScreenShake(self:GetPos(),16,100,1,800)
-	ParticleEffect("hcea_flood_carrier_death", self:LocalToWorld(Vector(0,0,20)), self:GetAngles(), nil)
-	//ParticleEffectAttach("hcea_flood_inf_death",PATTACH_POINT_FOLLOW,self,0)
-	for k=1, self.infFormCount do
-		self.infForm = ents.Create("npc_vj_halo_flood_spv3_infection")
-		self.infForm:SetPos(self:GetPos())
-		self.infForm:SetOwner(self)
-		self.infForm:Spawn()
-		local velocity = Vector(math.random(-spreadRadius, spreadRadius),math.random(-spreadRadius, spreadRadius),math.random(200, 500))
-		self.infForm:SetVelocity(velocity)
-		self.infForm:SetAngles(Angle(self.infForm:GetAngles().x, velocity:Angle().y, self.infForm:GetAngles().z))
-		self.infForm:VJ_ACT_PLAYACTIVITY("Melee_1",true,1.3,false)		
-	end
+		for k=1, self.infFormCount do
+			self.infForm = nil
+			self.infForm = ents.Create("npc_vj_halo_flood_spv3_infection")
+			self.infForm:SetPos(self:GetPos())
+			self.infForm:Spawn()
+			local velocity = Vector(math.random(-spreadRadius, spreadRadius),math.random(-spreadRadius, spreadRadius),math.random(200, 500))
+			self.infForm:SetVelocity(velocity)
+			self.infForm:SetAngles(Angle(self.infForm:GetAngles().x, velocity:Angle().y, self.infForm:GetAngles().z))
+			self.infForm:VJ_ACT_PLAYACTIVITY("Melee_1",true,1.3,false)		
+		end
+		local BlastInfo = DamageInfo()
+		BlastInfo:SetDamageType(DMG_BLAST)
+		BlastInfo:SetDamage(20 * GetConVarNumber("vj_spv3_damageModifier"))
+		BlastInfo:SetDamagePosition(self:GetPos())
+		BlastInfo:SetInflictor(self)
+		BlastInfo:SetReportedPosition(self:GetPos())
+		util.BlastDamageInfo(BlastInfo, self:GetPos(), 250)
+		util.ScreenShake(self:GetPos(),16,100,1,800)
+		ParticleEffect("hcea_flood_carrier_death", self:LocalToWorld(Vector(0,0,20)), self:GetAngles(), nil)
+		//ParticleEffectAttach("hcea_flood_inf_death",PATTACH_POINT_FOLLOW,self,0)
+	
 	-- local posone = self:LocalToWorld(Vector(math.random(-20, 20),math.random(-20,20),0))
 	-- local infector1 = ents.Create("npc_vj_halo_flood_spv3_infection")
 	-- infector1:SetPos(posone)

@@ -222,7 +222,6 @@ function ENT:CustomOnDoKilledEnemy(argent,attacker,inflictor)
 			self:SetParent(self.imposter)
 			self.imposter:ResetSequenceInfo()
 			self.imposter:SetSequence("Transform")
-			PrintMessage(3, tostring(self.enemySeqDur))
 			timer.Create("Transform"..self:GetCreationID(), self.enemySeqDur, 1, function()
 				if (IsValid(self.imposter)) then self.imposter:Remove() end
 				if (IsValid(self)) then
@@ -261,14 +260,14 @@ end
 
 //Possibly unnecessary, but I found carrier forms blowing up large amounts of infection forms too frequently without this
 function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
+	if ((IsValid(dmginfo:GetInflictor())) and (dmginfo:GetInflictor():GetClass()=="npc_vj_halo_flood_spv3_carrier" or dmginfo:GetInflictor():GetClass()=="npc_vj_halo_flood_spv3_elite_runner" or dmginfo:GetInflictor():GetClass()=="npc_vj_halo_flood_spv3_odst" or dmginfo:GetInflictor():GetClass()=="npc_vj_halo_flood_spv3_jackal" or dmginfo:GetInflictor():GetClass()=="npc_vj_halo_flood_spv3_wolf")) then
+		dmginfo:SetDamage(0)
+	end
 	if (dmginfo:GetDamageType()==DMG_BLAST) then
 		dmginfo:ScaleDamage(3.5)
 	end
 	if (dmginfo:GetAttacker():IsNPC()) then
 		dmginfo:ScaleDamage(GetConVarNumber("vj_spv3_NPCTakeDamageModifier"))
-	end
-	if ((IsValid(dmginfo:GetInflictor())) and (dmginfo:GetInflictor():GetClass()=="npc_vj_halo_flood_spv3_carrier" or dmginfo:GetInflictor():GetClass()=="npc_vj_halo_flood_spv3_elite_runner" or dmginfo:GetInflictor():GetClass()=="npc_vj_halo_flood_spv3_odst" or dmginfo:GetInflictor():GetClass()=="npc_vj_halo_flood_spv3_jackal" or dmginfo:GetInflictor():GetClass()=="npc_vj_halo_flood_spv3_wolf")) then
-		dmginfo:SetDamage(0)
 	end
 end
 
