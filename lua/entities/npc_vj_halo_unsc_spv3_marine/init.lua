@@ -101,7 +101,7 @@ function ENT:CustomOnInitialize()
 			self:GetActiveWeapon():Remove()
 			self:Give(VJ_PICKRANDOMTABLE(self.CovWeps))
 		end
-		if (self:GetActiveWeapon().HoldType!="pistol") then
+		if (self:GetActiveWeapon().HoldType!="pistol" or string.find(tostring(self:GetActiveWeapon()), "cov")) then
 			self.AnimTbl_WeaponAttack = {ACT_IDLE_RIFLE} -- Animation played when the SNPC does weapon attack
 			self.AnimTbl_ShootWhileMovingRun = {ACT_RUN_RIFLE} -- Animations it will play when shooting while running | NOTE: Weapon may translate the animation that they see fit!
 			self.AnimTbl_ShootWhileMovingWalk = {ACT_RUN_RIFLE} -- Animations it will play when shooting while walking | NOTE: Weapon may translate the animation that they see fit!
