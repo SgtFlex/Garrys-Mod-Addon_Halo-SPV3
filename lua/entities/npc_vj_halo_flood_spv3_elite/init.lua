@@ -38,7 +38,7 @@ ENT.TimeUntilMeleeAttackDamage = 0.5
 ENT.NextAnyAttackTime_Melee = 1.2
 ENT.MeleeAttackReps = 1 -- How many times does it run the melee attack code?
 ENT.StopMeleeAttackAfterFirstHit = true -- Should it stop the melee attack from running rest of timers when it hits an enemy?
-ENT.MeleeAttackDamageType = DMG_SLASH	
+ENT.MeleeAttackDamageType = DMG_CLUB
 ENT.MeleeAttackAngleRadius = 70 -- What is the attack angle radius? | 100 = In front of the SNPC | 180 = All around the SNPC
 ENT.MeleeAttackDamageAngleRadius = 70 -- What is the damage angle radius? | 100 = In front of the SNPC | 180 = All around the SNPC
 ENT.MeleeAttackDamageDistance = 90

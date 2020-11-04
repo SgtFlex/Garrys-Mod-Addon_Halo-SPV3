@@ -49,12 +49,12 @@ ENT.TimeUntilGrenadeIsReleased = 0.97 -- Time until the grenade is released
 ENT.GrenadeAttackThrowDistance = 5000 -- How far it can throw grenades
 
 ENT.HasDeathAnimation = true -- Does it play an animation when it dies?
-ENT.AnimTbl_Death = {"Die_1", "Die_2", "Die_3"} -- Death Animations
+ENT.AnimTbl_Death = {"Die_1", "Die_2", "Die_3", "Kill_F_Gut"} -- Death Animations
 	-- Melee Attack ---------------------------------------------------------------------------------------------------------------------------------------------
 ENT.HasMeleeAttack = true -- Should the SNPC have a melee attack?
 ENT.MeleeAttackDamage = 70
 ENT.DisableMeleeAttackAnimation = false -- if true, it will disable the animation code
-ENT.AnimTbl_MeleeAttack = {"Melee_1"} -- Melee Attack Animations
+ENT.AnimTbl_MeleeAttack = {ACT_MELEE_ATTACK1} -- Melee Attack Animations
 ENT.MeleeAttackAnimationFaceEnemy = true -- Should it face the enemy while playing the melee attack animation?
 ENT.MeleeAttackDistance = 80 -- How close does it have to be until it attacks?
 ENT.MeleeAttackAngleRadius = 70 -- What is the attack angle radius? | 100 = In front of the SNPC | 180 = All around the SNPC
@@ -66,12 +66,13 @@ ENT.StopMeleeAttackAfterFirstHit = true -- Should it stop the melee attack from 
 
 ENT.DisableFootStepSoundTimer = true -- If set to true, it will disable the time system for the footstep sound code, allowing you to use other ways like model events
 ENT.ExtraShotCount = 0
+ENT.HasSword = false
 	-- Death ---------------------------------------------------------------------------------------------------------------------------------------------
 ENT.DropWeaponOnDeath = true -- Should it drop its weapon on death?
 ENT.HasItemDropsOnDeath = true -- Should it drop items on death?
 ENT.ItemDropsOnDeathChance = 3 -- If set to 1, it will always drop it
 ENT.ThingsToDrop = {}
-ENT.CanFlinch = 1 -- 0 = Don't flinch | 1 = Flinch at any damage | 2 = Flinch only from certain damages
+ENT.CanFlinch = 0 -- 0 = Don't flinch | 1 = Flinch at any damage | 2 = Flinch only from certain damages
 ENT.FlinchChance = 5
 ENT.NextFlinchTime = 1.35 -- How much time until it can flinch again?
 ENT.HasHitGroupFlinching = true
@@ -124,7 +125,8 @@ self.SoundTbl_AllyDeath = {
 	"elite/elite0"..self.voicePermutation.."/ally_death/ally_death (5).wav",
 }
 self.SoundTbl_Berserk = {
-"elite/elite0"..self.voicePermutation.."/seefoe/seefoe1.wav"
+	"elite/shared/berserk/berserk (1).ogg",
+	"elite/shared/berserk/berserk (2).ogg",
 }
 self.SoundTbl_CallForHelp = {
 	"elite/elite0"..self.voicePermutation.."/call_help (1).wav",
@@ -251,6 +253,11 @@ self.SoundTbl_WeaponReload = {
 end
 
 function ENT:CustomOnInitialize()
+	-- local matEnt = ents.Create("material_modify_control")
+	-- matEnt:Spawn()
+	-- matEnt:SetKeyValue("MaterialName", "models/hce/spv3/cov/elite/elite_main_diff_blue")
+	-- matEnt:SetKeyValue("MaterialVar", "$color2")
+	-- matEnt:SetKeyValue("MaterialVarValue", "[5 1 1]")
 	self:SetSkin(self.Skin)
 	timer.Simple(0.1, function()
 	if (self:GetActiveWeapon().HoldType=="ar2") then
@@ -258,6 +265,16 @@ function ENT:CustomOnInitialize()
 		self.AnimTbl_ShootWhileMovingRun = {ACT_RUN_RIFLE} -- Animations it will play when shooting while running | NOTE: Weapon may translate the animation that they see fit!
 		self.AnimTbl_ShootWhileMovingWalk = {ACT_RUN_RIFLE} -- Animations it will play when shooting while walking | NOTE: Weapon may translate the animation that they see fit!
 		self.AnimTbl_Run = {ACT_RUN_RIFLE}
+		self.AnimTbl_TakingCover = {ACT_COVER_MED}
+		self.AnimTbl_WeaponAttackCrouch = {ACT_COVER_MED}
+	elseif (self:GetActiveWeapon().HoldType == "melee") then
+		self.MeleeAttackDamage = 300 * GetConVarNumber("vj_spv3_damageModifier")
+		self.AnimTbl_ShootWhileMovingRun = {ACT_MP_RUN_MELEE} -- Animations it will play when shooting while running | NOTE: Weapon may translate the animation that they see fit!
+		self.AnimTbl_ShootWhileMovingWalk = {ACT_MP_RUN_MELEE} -- Animations it will play when shooting while walking | NOTE: Weapon may translate the animation that they see fit!
+		self.AnimTbl_Run = {ACT_MP_RUN_MELEE}
+		self.AnimTbl_IdleStand = {ACT_IDLE_MELEE}
+		self.AnimTbl_WeaponAttack = {ACT_MELEE_ATTACK2} -- Animation played when the SNPC does weapon attack
+		self.Berserked = true
 	end
 end)
 	self.GrenadeAttackEntity = VJ_PICKRANDOMTABLE(self.GrenadeTypes)
@@ -283,81 +300,99 @@ end)
 
 end
 ---------------------------------------------------------------------------------------------------------------------------------------------
-function ENT:CustomOnThink_AIEnabled()
-	-- Shields --
-	if self.ShieldActivated == true then
-		self.Bleeds = false
-	else
-		self.Bleeds = true
-	end
+-- function ENT:CustomOnThink_AIEnabled()
+-- 	-- Shields --
+-- 	if self.ShieldActivated == true then
+-- 		self.Bleeds = false
+-- 	else
+-- 		self.Bleeds = true
+-- 	end
 	
-	-- Dodging --
-	if self:GetEnemy() != nil then
-		local attackthev = ents.FindInSphere(self:GetPos(),500)
-		for _,v in pairs(attackthev) do
-			local EnemyDistance = self:GetPos():Distance(v:GetPos())
-			if EnemyDistance < 500 && math.random(1,10) == 1 && CurTime() > self.NextMoveTime && self:CanDodge("normal") then -- Random movement
-				local Evade = self:VJ_CheckAllFourSides(500)
-				self:StopAttacks(true)
-				if Evade.Right == false then
-					self:VJ_ACT_PLAYACTIVITY(ACT_SIGNAL2,true,1,false) -- Left dodge anim
-					timer.Simple(0.3,function() if self:IsValid() then self.ConstantlyFaceEnemy = true end end)
-					timer.Simple(1,function() if self:IsValid() then self.ConstantlyFaceEnemy = false end end)
+-- 	-- Dodging --
+-- 	if self:GetEnemy() != nil then
+-- 		local attackthev = ents.FindInSphere(self:GetPos(),500)
+-- 		for _,v in pairs(attackthev) do
+-- 			local EnemyDistance = self:GetPos():Distance(v:GetPos())
+-- 			if EnemyDistance < 500 && math.random(1,10) == 1 && CurTime() > self.NextMoveTime && self:CanDodge("normal") then -- Random movement
+-- 				local Evade = self:VJ_CheckAllFourSides(500)
+-- 				self:StopAttacks(true)
+-- 				if Evade.Right == false then
+-- 					self:VJ_ACT_PLAYACTIVITY(ACT_SIGNAL2,true,1,false) -- Left dodge anim
+-- 					timer.Simple(0.3,function() if self:IsValid() then self.ConstantlyFaceEnemy = true end end)
+-- 					timer.Simple(1,function() if self:IsValid() then self.ConstantlyFaceEnemy = false end end)
 				
-				elseif Evade.Left == false then
-					self:VJ_ACT_PLAYACTIVITY(ACT_SIGNAL1,true,1,false) -- Right dodge anim	
-					timer.Simple(0.3,function() if self:IsValid() then self.ConstantlyFaceEnemy = true end end)
-					timer.Simple(1,function() if self:IsValid() then self.ConstantlyFaceEnemy = false end end)
+-- 				elseif Evade.Left == false then
+-- 					self:VJ_ACT_PLAYACTIVITY(ACT_SIGNAL1,true,1,false) -- Right dodge anim	
+-- 					timer.Simple(0.3,function() if self:IsValid() then self.ConstantlyFaceEnemy = true end end)
+-- 					timer.Simple(1,function() if self:IsValid() then self.ConstantlyFaceEnemy = false end end)
 					
-				elseif Evade.Forward == false then
-					local rnd_dodge = math.random(1,2)
-					if rnd_dodge == 1 then
-						self:VJ_ACT_PLAYACTIVITY(ACT_SIGNAL2,true,1,false) -- Left dodge anim
-						timer.Simple(0.3,function() if self:IsValid() then self.ConstantlyFaceEnemy = true end end)
-						timer.Simple(1,function() if self:IsValid() then self.ConstantlyFaceEnemy = false end end)	
-					elseif rnd_dodge == 2 then
-						self:VJ_ACT_PLAYACTIVITY(ACT_SIGNAL1,true,1,false) -- Left dodge anim
-						timer.Simple(0.3,function() if self:IsValid() then self.ConstantlyFaceEnemy = true end end)
-						timer.Simple(1,function() if self:IsValid() then self.ConstantlyFaceEnemy = false end end)						
-					end
+-- 				elseif Evade.Forward == false then
+-- 					local rnd_dodge = math.random(1,2)
+-- 					if rnd_dodge == 1 then
+-- 						self:VJ_ACT_PLAYACTIVITY(ACT_SIGNAL2,true,1,false) -- Left dodge anim
+-- 						timer.Simple(0.3,function() if self:IsValid() then self.ConstantlyFaceEnemy = true end end)
+-- 						timer.Simple(1,function() if self:IsValid() then self.ConstantlyFaceEnemy = false end end)	
+-- 					elseif rnd_dodge == 2 then
+-- 						self:VJ_ACT_PLAYACTIVITY(ACT_SIGNAL1,true,1,false) -- Left dodge anim
+-- 						timer.Simple(0.3,function() if self:IsValid() then self.ConstantlyFaceEnemy = true end end)
+-- 						timer.Simple(1,function() if self:IsValid() then self.ConstantlyFaceEnemy = false end end)						
+-- 					end
 				
-				elseif Evade.Backward == false then
-				end
-				self.NextMoveTime = CurTime() +math.random(4,7)
-			elseif EnemyDistance < 500 && math.random(1,30) == 1 && CurTime() > self.NextDodgeTime && self:CanDodge("player") then -- Dodge attack
-				local Evade = self:VJ_CheckAllFourSides(500)
-				self:StopAttacks(true)
-				if Evade.Right == false then
-					self:VJ_ACT_PLAYACTIVITY(ACT_SIGNAL2,true,1,false) -- Left dodge anim
-					timer.Simple(0.3,function() if self:IsValid() then self.ConstantlyFaceEnemy = true end end)
-					timer.Simple(1,function() if self:IsValid() then self.ConstantlyFaceEnemy = false end end)
+-- 				elseif Evade.Backward == false then
+-- 				end
+-- 				self.NextMoveTime = CurTime() +math.random(4,7)
+-- 			elseif EnemyDistance < 500 && math.random(1,30) == 1 && CurTime() > self.NextDodgeTime && self:CanDodge("player") then -- Dodge attack
+-- 				local Evade = self:VJ_CheckAllFourSides(500)
+-- 				self:StopAttacks(true)
+-- 				if Evade.Right == false then
+-- 					self:VJ_ACT_PLAYACTIVITY(ACT_SIGNAL2,true,1,false) -- Left dodge anim
+-- 					timer.Simple(0.3,function() if self:IsValid() then self.ConstantlyFaceEnemy = true end end)
+-- 					timer.Simple(1,function() if self:IsValid() then self.ConstantlyFaceEnemy = false end end)
 					
-				elseif Evade.Left == false then
-					self:VJ_ACT_PLAYACTIVITY(ACT_SIGNAL1,true,1,false) -- Right dodge anim	
-					timer.Simple(0.3,function() if self:IsValid() then self.ConstantlyFaceEnemy = true end end)
-					timer.Simple(1,function() if self:IsValid() then self.ConstantlyFaceEnemy = false end end)
+-- 				elseif Evade.Left == false then
+-- 					self:VJ_ACT_PLAYACTIVITY(ACT_SIGNAL1,true,1,false) -- Right dodge anim	
+-- 					timer.Simple(0.3,function() if self:IsValid() then self.ConstantlyFaceEnemy = true end end)
+-- 					timer.Simple(1,function() if self:IsValid() then self.ConstantlyFaceEnemy = false end end)
 					
-				elseif Evade.Forward == false then
-				local rnd_dodge = math.random(1,2)
-					if rnd_dodge == 1 then
-						self:VJ_ACT_PLAYACTIVITY(ACT_SIGNAL2,true,1,false) -- Left dodge anim
-						timer.Simple(0.3,function() if self:IsValid() then self.ConstantlyFaceEnemy = true end end)
-						timer.Simple(1,function() if self:IsValid() then self.ConstantlyFaceEnemy = false end end)	
-					elseif rnd_dodge == 2 then
-						self:VJ_ACT_PLAYACTIVITY(ACT_SIGNAL1,true,1,false) -- Left dodge anim
-						timer.Simple(0.3,function() if self:IsValid() then self.ConstantlyFaceEnemy = true end end)
-						timer.Simple(1,function() if self:IsValid() then self.ConstantlyFaceEnemy = false end end)						
-					end
-				end
-				self.NextDodgeTime = CurTime() +math.random(2,4.5)
-			end
-		end
-	end
-end
+-- 				elseif Evade.Forward == false then
+-- 				local rnd_dodge = math.random(1,2)
+-- 					if rnd_dodge == 1 then
+-- 						self:VJ_ACT_PLAYACTIVITY(ACT_SIGNAL2,true,1,false) -- Left dodge anim
+-- 						timer.Simple(0.3,function() if self:IsValid() then self.ConstantlyFaceEnemy = true end end)
+-- 						timer.Simple(1,function() if self:IsValid() then self.ConstantlyFaceEnemy = false end end)	
+-- 					elseif rnd_dodge == 2 then
+-- 						self:VJ_ACT_PLAYACTIVITY(ACT_SIGNAL1,true,1,false) -- Left dodge anim
+-- 						timer.Simple(0.3,function() if self:IsValid() then self.ConstantlyFaceEnemy = true end end)
+-- 						timer.Simple(1,function() if self:IsValid() then self.ConstantlyFaceEnemy = false end end)						
+-- 					end
+-- 				end
+-- 				self.NextDodgeTime = CurTime() +math.random(2,4.5)
+-- 			end
+-- 		end
+-- 	end
+-- end
 ---------------------------------------------------------------------------------------------------------------------------------------------
 ENT.HasStuck=false
 function ENT:Berserk()
 	self.BerserkSound = CreateSound(self, VJ_PICKRANDOMTABLE(self.SoundTbl_Berserk))
+	if (self.HasSword == true) then
+		self.MeleeAttackDamage = 300 * GetConVarNumber("vj_spv3_damageModifier")
+		self.AnimTbl_ShootWhileMovingRun = {ACT_MP_RUN_MELEE} -- Animations it will play when shooting while running | NOTE: Weapon may translate the animation that they see fit!
+		self.AnimTbl_ShootWhileMovingWalk = {ACT_MP_RUN_MELEE} -- Animations it will play when shooting while walking | NOTE: Weapon may translate the animation that they see fit!
+		self.AnimTbl_Run = {ACT_MP_RUN_MELEE}
+		self.AnimTbl_IdleStand = {ACT_IDLE_MELEE}
+		self.AnimTbl_WeaponAttack = {ACT_MELEE_ATTACK2} -- Animation played when the SNPC does weapon attack
+		timer.Simple(0.5, function() 
+			if (IsValid(self) and IsValid(self:GetActiveWeapon())) then
+				local wep = ents.Create(self:GetActiveWeapon():GetClass())
+				wep:SetPos(self:GetAttachment(self:LookupAttachment("Cannon"))["Pos"])
+				wep:SetAngles(self:GetActiveWeapon():GetAngles())
+				wep:Spawn()
+				self:GetActiveWeapon():Remove()
+				self:Give("weapon_vj_cov_spv3_energysword")
+			end
+		end)
+	end
 	if (self.Berserked==true or self.HasStuck==true) then return end
 	self.BerserkSound:Play()
 	self.Berserked=true
@@ -366,33 +401,24 @@ function ENT:Berserk()
 	self.WaitForEnemyToComeOut = false
 	self.NoWeapon_UseScaredBehavior = false
 	self:VJ_ACT_PLAYACTIVITY("Berserk", true, 2, false)
-	timer.Simple(2, function() 
-		if (IsValid(self)) then
-		timer.Create("Berserk"..self:GetCreationID(), 0.5, 0, function ()
-			if (IsValid(self) and (IsValid(self:GetEnemy()))) then
-				self:SetTarget(self:GetEnemy())
-				self:VJ_TASK_GOTO_TARGET(movetype, function(x)
-					x.CanShootWhenMoving = true
-					x.ConstantlyFaceEnemyVisible = (IsValid(self:GetActiveWeapon()) and true) or false
-				end)
-			end
-		end)
-		timer.Create("Scream"..self:GetCreationID(), 4.5, 0, function()
-			if (self.HasStuck==false and (IsValid(self:GetEnemy()))) then
-				self.BerserkSound:Stop()
-				self.BerserkSound = CreateSound(self, VJ_PICKRANDOMTABLE(self.SoundTbl_Berserk))
-				self.BerserkSound:Play()
-			end
-		end)
-	end
-	end)
 end
 
 
 ENT.ShieldDelay = 6
+ENT.EvadeCooldown = 0
 function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 	if (dmginfo:GetDamageType()==DMG_BLAST) then
 		dmginfo:ScaleDamage(3.5)
+	end
+	if (math.random(0,2) == 2) then
+		if (self.EvadeCooldown <= CurTime()) then
+			if (math.random(0,1)==1) then
+				self:VJ_ACT_PLAYACTIVITY(ACT_SIGNAL1,true,1,false)
+			else
+				self:VJ_ACT_PLAYACTIVITY(ACT_SIGNAL2,true,1,false)
+			end
+			self.EvadeCooldown = CurTime() + 4
+		end
 	end
 	if (dmginfo:GetAttacker():IsNPC()) then
 		dmginfo:ScaleDamage(GetConVarNumber("vj_spv3_NPCTakeDamageModifier"))
@@ -404,8 +430,29 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 	else
 		self.CurrentHealth = self.CurrentHealth - dmginfo:GetDamage()
 	end
-	
+	if (dmginfo:GetDamage() >= self:Health()) then
+		if (dmginfo:GetDamageType()==DMG_BLAST or dmginfo:GetDamageType()==DMG_CLUB) then
+			self:FlyingDeath(dmginfo)
+		end
+	end
 end
+
+function ENT:FlyingDeath(dmginfo)
+	self.HasDeathRagdoll = false
+	self.HasDeathAnimation = false
+	self.imposter = ents.Create("obj_vj_imposter")
+	self.imposter:SetOwner(self)
+	self.imposter.Sequence = "Die_Airborne"
+	local velocity = dmginfo:GetDamageForce():GetNormalized() * 1500
+	if (dmginfo:GetDamageType()==DMG_CLUB) then
+		velocity = velocity * 0.3
+	end
+	self.imposter.Velocity = Vector(velocity.x, velocity.y, velocity.z + 500)
+	self.imposter.Angle = Angle(0,dmginfo:GetDamageForce():Angle().y,0)
+	self.imposter:Spawn()
+end
+
+
 ENT.Berserked=false
 function ENT:CustomOnTakeDamage_AfterDamage(dmginfo,hitgroup)
 	self:SetHealth((self.ShieldCurrentHealth + self.CurrentHealth))
@@ -413,6 +460,7 @@ function ENT:CustomOnTakeDamage_AfterDamage(dmginfo,hitgroup)
 		self:CustomOnTakeDamage_ShieldsDestroyed(dmginfo)
 		self.ShieldActivated=false
 		self.Bleeds=true
+		self.CanFlinch = 1
 	end
 	if (timer.Exists("ShieldDelay"..self:GetCreationID())) then
 		timer.Adjust("ShieldDelay"..self:GetCreationID(), self.ShieldDelay, 1)
@@ -423,6 +471,7 @@ function ENT:CustomOnTakeDamage_AfterDamage(dmginfo,hitgroup)
 				self:EmitSound(Sound("ambient/energy/whiteflash.wav"),80,115)
 				ParticleEffectAttach("hcea_shield_recharged",PATTACH_POINT_FOLLOW,self,self:LookupAttachment("origin"))
 				self.ShieldActivated = true
+				self.CanFlinch = 0
 				self.ShieldCurrentHealth = self.ShieldHealth
 				self:SetHealth(self.CurrentHealth + self.ShieldCurrentHealth)
 				self.Bleeds=false
@@ -435,7 +484,7 @@ function ENT:CustomOnTakeDamage_ShieldsDestroyed(dmginfo)
 	if self.ShieldActivated == false then return end
 	if (math.random(0,1)==0) and (self.Berserked==false) then
 		self:Berserk()
-	else
+	elseif (self.Berserked==false) then
 		self:VJ_TASK_COVER_FROM_ENEMY("TASK_RUN_PATH")
 	end
 	self:EmitSound(Sound("ambient/energy/weld" .. math.random(1,2) .. ".wav"),80,100)
@@ -447,21 +496,21 @@ end
 ---------------------------------------------------------------------------------------------------------------------------------------------
 ENT.AcceptableWeaponsTbl = {"gmod_camera","gmod_tool","weapon_physgun","weapon_physcannon"}
 ---------------------------------------------------------------------------------------------------------------------------------------------
-function ENT:CanDodge(dodgetype)
-	if dodgetype == "normal" then
-		if self.UsingMagic == false && self.MeleeAttacking == false && self.onfire == false && self.Flinching == false && self:GetEnemy():IsNPC() && ((self:GetEnemy().MeleeAttacking && self:GetEnemy().MeleeAttacking == true) or (self:GetEnemy().cpt_atkAttacking && self:GetEnemy().cpt_atkAttacking == true)) then
-			return true
-		else
-			return false
-		end
-	elseif dodgetype == "player" then
-		if self.UsingMagic == false && self.MeleeAttacking == false && self:GetEnemy():IsPlayer() && self:GetEnemy():GetEyeTrace().Entity == self && self.onfire == false && self.Flinching == false && self:GetEnemy():IsPlayer() && self:GetEnemy():GetActiveWeapon() != nil && !table.HasValue(self.AcceptableWeaponsTbl,self:GetEnemy():GetActiveWeapon():GetClass()) && (self:GetEnemy():KeyPressed(IN_ATTACK) or self:GetEnemy():KeyPressed(IN_ATTACK2) or self:GetEnemy():KeyReleased(IN_ATTACK) or self:GetEnemy():KeyReleased(IN_ATTACK2) or self:GetEnemy():KeyDown(IN_ATTACK) or self:GetEnemy():KeyDown(IN_ATTACK2)) then
-			return true
-		else
-			return false
-		end
-	end
-end
+-- function ENT:CanDodge(dodgetype)
+-- 	if dodgetype == "normal" then
+-- 		if self.UsingMagic == false && self.MeleeAttacking == false && self.onfire == false && self.Flinching == false && self:GetEnemy():IsNPC() && ((self:GetEnemy().MeleeAttacking && self:GetEnemy().MeleeAttacking == true) or (self:GetEnemy().cpt_atkAttacking && self:GetEnemy().cpt_atkAttacking == true)) then
+-- 			return true
+-- 		else
+-- 			return false
+-- 		end
+-- 	elseif dodgetype == "player" then
+-- 		if self.UsingMagic == false && self.MeleeAttacking == false && self:GetEnemy():IsPlayer() && self:GetEnemy():GetEyeTrace().Entity == self && self.onfire == false && self.Flinching == false && self:GetEnemy():IsPlayer() && self:GetEnemy():GetActiveWeapon() != nil && !table.HasValue(self.AcceptableWeaponsTbl,self:GetEnemy():GetActiveWeapon():GetClass()) && (self:GetEnemy():KeyPressed(IN_ATTACK) or self:GetEnemy():KeyPressed(IN_ATTACK2) or self:GetEnemy():KeyReleased(IN_ATTACK) or self:GetEnemy():KeyReleased(IN_ATTACK2) or self:GetEnemy():KeyDown(IN_ATTACK) or self:GetEnemy():KeyDown(IN_ATTACK2)) then
+-- 			return true
+-- 		else
+-- 			return false
+-- 		end
+-- 	end
+-- end
 ---------------------------------------------------------------------------------------------------------------------------------------------
 function ENT:FindSeq(seq)
 	return self:GetSequenceActivity(self:LookupSequence(seq))

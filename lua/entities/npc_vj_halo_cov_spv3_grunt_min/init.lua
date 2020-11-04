@@ -78,7 +78,6 @@ ENT.GrenadeWeps = {
 	"weapon_vj_cov_spv3_cluster_nade",
 }
 ENT.EntitiesToRunFrom = {obj_spore=true,obj_vj_grenade=true,obj_grenade=true,obj_handgrenade=true,npc_grenade_frag=true,doom3_grenade=true,fas2_thrown_m67=true,cw_grenade_thrown=true,obj_cpt_grenade=true,cw_flash_thrown=true,ent_hl1_grenade=true, obj_vj_unsc_spv3_frag_nade=true,obj_vj_cov_spv3_plasma_nade=true,obj_vj_cov_spv3_gravity_nade=true,obj_vj_cov_spv3_cluster_nade=true,obj_vj_cov_spv3_needler_nade=true}
-
 ENT.HasDeathAnimation = true -- Does it play an animation when it dies?
 ENT.AnimTbl_Death = {"Die_1", "Die_2", "Die_3"} -- Death Animations
 ---------------------------------------------------------------------------------------------------------------------------------------------
@@ -118,6 +117,10 @@ self.SoundTbl_Death = {
 	"grunt/grunt0"..self.voicePermutation.."/death/death (3).wav",
 	"grunt/grunt0"..self.voicePermutation.."/death/death (4).wav",
 	"grunt/grunt0"..self.voicePermutation.."/death/death (5).wav",
+}
+self.SoundTbl_Fall = {
+	"grunt/grunt01/fall/fall (1).ogg",
+	"grunt/grunt01/fall/fall (2).ogg",
 }
 self.SoundTbl_GrenadeAttack = {
 	"grunt/grunt0"..self.voicePermutation.."/throwGrenade/throwGrenade (1).wav",
@@ -215,6 +218,17 @@ end
 
 
 function ENT:CustomOnInitialize()
+	timer.Simple(0.1, function()
+	if (self:GetActiveWeapon().HoldType!="pistol") then
+		self.AnimTbl_WeaponAttack = {ACT_IDLE_RIFLE} -- Animation played when the SNPC does weapon attack
+		self.AnimTbl_ShootWhileMovingRun = {ACT_RUN_RIFLE} -- Animations it will play when shooting while running | NOTE: Weapon may translate the animation that they see fit!
+		self.AnimTbl_ShootWhileMovingWalk = {ACT_RUN_RIFLE} -- Animations it will play when shooting while walking | NOTE: Weapon may translate the animation that they see fit!
+		self.AnimTbl_Run = {ACT_RUN_RIFLE}
+		self.AnimTbl_TakingCover = {}
+		self.AnimTbl_WeaponAttackCrouch = {} -- Animation played when the SNPC does weapon attack while crouching | For VJ Weapons
+
+	end
+	end)
 	self.GrenadeAttackEntity = VJ_PICKRANDOMTABLE(self.GrenadeTypes)
 	timer.Simple(0.01, function() 
 		if (GetConVarNumber("vj_spv3_covUNSCWeps")==1 and math.random(0,1)==1) then
@@ -249,14 +263,46 @@ function ENT:CustomOnAcceptInput(key,activator,caller,data)
 	end
 end
 
+ENT.EvadeCooldown = 0
 function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 	if (dmginfo:GetDamageType()==DMG_BLAST) then
 		dmginfo:ScaleDamage(3.5)
 	end
+	if (math.random(0,2) == 2) then
+		if (self.EvadeCooldown <= CurTime()) then
+			if (math.random(0,1)==1) then
+				self:VJ_ACT_PLAYACTIVITY(ACT_SIGNAL1,true,1,false)
+			else
+				self:VJ_ACT_PLAYACTIVITY(ACT_SIGNAL2,true,1,false)
+			end
+			self.EvadeCooldown = CurTime() + 4
+		end
+	end
 	if (dmginfo:GetAttacker():IsNPC()) then
 		dmginfo:ScaleDamage(GetConVarNumber("vj_spv3_NPCTakeDamageModifier"))
 	end
+	if (dmginfo:GetDamage() >= self:Health()) then
+		if (dmginfo:GetDamageType()==DMG_BLAST or dmginfo:GetDamageType()==DMG_CLUB) then
+			self:FlyingDeath(dmginfo)
+		end
+	end
 end
+
+function ENT:FlyingDeath(dmginfo)
+	self.HasDeathRagdoll = false
+	self.HasDeathAnimation = false
+	self.imposter = ents.Create("obj_vj_imposter")
+	self.imposter:SetOwner(self)
+	self.imposter.Sequence = "Die_Airborne"
+	local velocity = dmginfo:GetDamageForce():GetNormalized() * 1500
+	if (dmginfo:GetDamageType()==DMG_CLUB) then
+		velocity = velocity * 0.3
+	end
+	self.imposter.Velocity = Vector(velocity.x, velocity.y, velocity.z + 500)
+	self.imposter.Angle = Angle(0,dmginfo:GetDamageForce():Angle().y,0)
+	self.imposter:Spawn()
+end
+	
 
 function ENT:RunItemDropsOnDeathCode(dmginfo,hitgroup)
 	if self.HasItemDropsOnDeath == false then return end

@@ -95,11 +95,26 @@ ENT.Skins = {
 ENT.ColorRange = {Vector (255,255,255), Vector(255,255,255)}
 ---------------------------------------------------------------------------------------------------------------------------------------------
 function ENT:CustomOnInitialize()
-	self.GrenadeAttackEntity = VJ_PICKRANDOMTABLE(self.GrenadeTypes)
 	timer.Simple(0.01, function() 
 		if (GetConVarNumber("vj_spv3_UNSCCovWeps")==1 and math.random(0,1)==1) then
 			self:GetActiveWeapon():Remove()
 			self:Give(VJ_PICKRANDOMTABLE(self.CovWeps))
+		end
+		if (GetConVarNumber("vj_spv3_UNSCCovWeps")==1) then
+			self.GrenadeTypes = {
+				"obj_vj_cov_spv3_gravity_nade",
+				"obj_vj_cov_spv3_plasma_nade",
+				"obj_vj_cov_spv3_cluster_nade",
+				"obj_vj_unsc_spv3_frag_nade",
+				"obj_vj_cov_spv3_needler_nade",
+			}
+			self.GrenadeWeps = {
+				"weapon_vj_cov_spv3_needler_nade",
+				"weapon_vj_cov_spv3_plasma_nade",
+				"weapon_vj_cov_spv3_gravity_nade",
+				"weapon_vj_cov_spv3_cluster_nade",
+				"weapon_vj_unsc_spv3_frag_nade",
+			}
 		end
 		if (self:GetActiveWeapon().HoldType!="pistol" or string.find(tostring(self:GetActiveWeapon()), "cov")) then
 			self.AnimTbl_WeaponAttack = {ACT_IDLE_RIFLE} -- Animation played when the SNPC does weapon attack
@@ -107,6 +122,7 @@ function ENT:CustomOnInitialize()
 			self.AnimTbl_ShootWhileMovingWalk = {ACT_RUN_RIFLE} -- Animations it will play when shooting while walking | NOTE: Weapon may translate the animation that they see fit!
 			self.AnimTbl_Run = {ACT_RUN_RIFLE}
 		end
+		self.GrenadeAttackEntity = VJ_PICKRANDOMTABLE(self.GrenadeTypes)
 	end)
 	if (GetConVarNumber("vj_spv3_ffretal")==0) then 
 		self.BecomeEnemyToPlayer = false -- Should the friendly SNPC become enemy towards the player if it's damaged by a player?
@@ -118,16 +134,13 @@ function ENT:CustomOnInitialize()
 	self:SetHealth(self.StartHealth)
 	self:SetBodygroup(0, self.BGs[1])
 	self:SetBodygroup(1, self.BGs[2])
+	self.NextMoveTime = 0
+	self.NextDodgeTime = 0
+	self.NextMoveAroundTime = 0
+	self.NextBlockTime = 0
 end
 ---------------------------------------------------------------------------------------------------------------------------------------------
-function ENT:CustomOnThink_AIEnabled()
-	-- Detection --
-	if self:GetEnemy() != nil then
-		self.AnimTbl_IdleStand = {ACT_IDLE}
-	else
-		self.AnimTbl_IdleStand = {ACT_IDLE_AGITATED}
-	end
-end
+
 
 ENT.SoundTbl_OnKilledEnemy = {
 	"marine/killed_enemy/killed_enemy (1).wav",
@@ -309,58 +322,44 @@ function ENT:RunItemDropsOnDeathCode(dmginfo,hitgroup)
 	end
 end
 
+ENT.EvadeCooldown = 0
 function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 	if (dmginfo:GetAttacker():IsNPC()) then
 		dmginfo:ScaleDamage(GetConVarNumber("vj_spv3_NPCTakeDamageModifier"))
 	end
-	-- if (dmginfo:GetDamageType()==DMG_BLAST) then
-	-- 	dmginfo:ScaleDamage(3.5)
-	-- 	if (dmginfo:GetDamage()>=self:Health()) then
-	-- 		self:FlyingDeath(dmginfo,hitgroup)
-	-- 	end
-	-- end
+	if (math.random(0,2) == 2) then
+		if (self.EvadeCooldown <= CurTime()) then
+			if (math.random(0,1)==1) then
+				self:VJ_ACT_PLAYACTIVITY(ACT_SIGNAL1,true,1.5,false)
+			else
+				self:VJ_ACT_PLAYACTIVITY(ACT_SIGNAL2,true,1.5,false)
+			end
+			self.EvadeCooldown = CurTime() + 4
+		end
+	end
+	if (dmginfo:GetDamageType()==DMG_BLAST) then
+		dmginfo:ScaleDamage(3.5)
+	end
+	if (dmginfo:GetDamage() >= self:Health()) then
+		if (dmginfo:GetDamageType()==DMG_BLAST or dmginfo:GetDamageType()==DMG_CLUB or dmginfo:GetDamageForce():Length()>=10000) then
+			self:FlyingDeath(dmginfo)
+		end
+	end
 end
 
-ENT.HasCollided=false
-function ENT:FlyingDeath(dmginfo,hitgroup)
-	if (dmginfo:GetDamageType()==DMG_BLAST) then
-		self.HasDeathanimation=false
-		self.HasDeathRagdoll=false
-		self:SetHealth(9999)
-		self:SetNoDraw(true)
-		self.imposter = ents.Create("prop_dynamic")
-		self.imposter:SetModel(self:GetModel())
-		for k, v in pairs(self:GetBodyGroups()) do
-			self.imposter:SetBodygroup(self:GetBodyGroups()[k]["id"], self:GetBodygroup(self:GetBodyGroups()[k]["id"]))
-		end
-		self.imposter:SetColor(self:GetColor())
-		self.imposter:SetSkin(self:GetSkin())
-		self.imposter:SetPos(self:GetPos())
-		self.imposter:Spawn()
-		self.imposter:ResetSequenceInfo()
-		self.imposter:SetSequence("Die_Airborne")
-		self.imposter:PhysicsInit(2)
-		self.imposter:GetPhysicsObject():SetVelocity(Vector(dmginfo:GetDamageForce():GetNormalized().x*1000,dmginfo:GetDamageForce():GetNormalized().y*1000,dmginfo:GetDamageForce():GetNormalized().z*1500))
-		self.imposter:SetAngles(Angle(0,dmginfo:GetDamageForce():GetNormalized():Angle().y,0))
-		self.imposter:AddCallback("PhysicsCollide", function()
-		if (self.HasCollided==true) then return end
-			self.HasCollided=true
-			self.deathRagdoll = ents.Create("prop_ragdoll")
-			self.deathRagdoll:SetModel(self.imposter:GetModel())
-			self.deathRagdoll:SetPos(self.imposter:GetPos())
-			self.deathRagdoll:SetAngles(self.imposter:GetAngles())
-			self.deathRagdoll:Spawn()
-			for k, v in pairs(self:GetBodyGroups()) do
-				self.deathRagdoll:SetBodygroup(self.deathRagdoll:GetBodyGroups()[k]["id"], self.imposter:GetBodygroup(self.imposter:GetBodyGroups()[k]["id"]))
-			end
-			self.deathRagdoll:SetColor(self.imposter:GetColor())
-			self.deathRagdoll:SetSkin(self.imposter:GetSkin())
-			self.deathRagdoll:SetVelocity(self.imposter:GetPhysicsObject():GetVelocity()*1.5)
-			self.imposter:Remove()
-			self:Remove()
-		end)
-		
+function ENT:FlyingDeath(dmginfo)
+	self.HasDeathRagdoll = false
+	self.HasDeathAnimation = false
+	self.imposter = ents.Create("obj_vj_imposter")
+	self.imposter:SetOwner(self)
+	self.imposter.Sequence = "Die_Airborne"
+	local velocity = dmginfo:GetDamageForce():GetNormalized() * 1500
+	if (dmginfo:GetDamageType()==DMG_CLUB or dmginfo:GetDamageForce():Length()) then
+		velocity = velocity * 0.3
 	end
+	self.imposter.Velocity = Vector(velocity.x, velocity.y, velocity.z + 500)
+	self.imposter.Angle = Angle(0,dmginfo:GetDamageForce():Angle().y,0)
+	self.imposter:Spawn()
 end
 
 function ENT:CheckForGrenades()

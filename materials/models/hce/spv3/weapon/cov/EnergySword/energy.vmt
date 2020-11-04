@@ -1,0 +1,18 @@
+"UnlitGeneric"
+{
+	"$basetexture" "models/hce/spv3/weapon/cov/energysword/energy_diff_new"
+	$translucent 1
+	$selfillum 1
+	$color2 "[0.7 0.9 0.9]"
+
+"Proxies"
+	{
+	"TextureScroll"
+		{
+		"texturescrollvar" "$baseTextureTransform"
+		"texturescrollrate" "0.3"
+		"texturescrollangle" "0"
+		}
+	}
+
+}

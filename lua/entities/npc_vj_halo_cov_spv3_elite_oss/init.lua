@@ -22,6 +22,7 @@ ENT.ShieldHealth = 0
 ENT.ShieldCurrentHealth = ENT.ShieldHealth
 ENT.ExtraShotCount = 0
 ENT.Skin=0
+ENT.HasSword = true
 ---------------------------------------------------------------------------------------------------------------------------------------------
 function ENT:CustomOnInitialize()
 	self.material = self:GetMaterial()

@@ -27,6 +27,22 @@ ENT.CovWeps = {
 	"weapon_vj_cov_spv3_shredder",
 	"weapon_vj_cov_spv3_needler",
 }
+
+ENT.GrenadeTypes = {
+	"obj_vj_cov_spv3_gravity_nade",
+	"obj_vj_cov_spv3_plasma_nade",
+	"obj_vj_cov_spv3_cluster_nade",
+	"obj_vj_unsc_spv3_frag_nade",
+	"obj_vj_cov_spv3_needler_nade",
+}
+ENT.GrenadeWeps = {
+	"weapon_vj_cov_spv3_needler_nade",
+	"weapon_vj_cov_spv3_plasma_nade",
+	"weapon_vj_cov_spv3_gravity_nade",
+	"weapon_vj_cov_spv3_cluster_nade",
+	"weapon_vj_unsc_spv3_frag_nade",
+}
+
 ENT.ColorRange = {Vector (170,200,120), Vector (170,200,120)}
 
 ENT.SoundTbl_OnKilledEnemy = {
@@ -81,7 +97,6 @@ ENT.SoundTbl_Suppressing = {
 
 }
 function ENT:CustomOnInitialize()
-	self.GrenadeAttackEntity = VJ_PICKRANDOMTABLE(self.GrenadeTypes)
 	timer.Simple(0.01, function() 
 		if (GetConVarNumber("vj_spv3_UNSCCovWeps")==1 and math.random(0,1)==1) then
 			self:GetActiveWeapon():Remove()
@@ -93,6 +108,7 @@ function ENT:CustomOnInitialize()
 			self.AnimTbl_ShootWhileMovingWalk = {ACT_RUN_RIFLE} -- Animations it will play when shooting while walking | NOTE: Weapon may translate the animation that they see fit!
 			self.AnimTbl_Run = {ACT_RUN_RIFLE}
 		end
+	self.GrenadeAttackEntity = VJ_PICKRANDOMTABLE(self.GrenadeTypes)
 	end)
 	if (GetConVarNumber("vj_spv3_ffretal")==0) then 
 		self.BecomeEnemyToPlayer = false -- Should the friendly SNPC become enemy towards the player if it's damaged by a player?

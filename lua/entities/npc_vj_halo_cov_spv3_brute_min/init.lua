@@ -77,7 +77,6 @@ ENT.GrenadeTypes = {
 	"obj_vj_cov_spv3_gravity_nade",
 	"obj_vj_cov_spv3_plasma_nade",
 	"obj_vj_cov_spv3_cluster_nade",
-	"obj_vj_unsc_spv3_frag_nade",
 	"obj_vj_cov_spv3_needler_nade",
 }
 ENT.GrenadeWeps = {
@@ -85,7 +84,6 @@ ENT.GrenadeWeps = {
 	"weapon_vj_cov_spv3_plasma_nade",
 	"weapon_vj_cov_spv3_gravity_nade",
 	"weapon_vj_cov_spv3_cluster_nade",
-	"weapon_vj_unsc_spv3_frag_nade",
 }
 ENT.GrenadeAttackModel = nil -- The model for the grenade entity
 ENT.TimeUntilGrenadeIsReleased = 1 -- Time until the grenade is released
@@ -106,11 +104,27 @@ ENT.CanFlinch = 1
 ENT.EntitiesToRunFrom = {obj_spore=true,obj_vj_grenade=true,obj_grenade=true,obj_handgrenade=true,npc_grenade_frag=true,doom3_grenade=true,fas2_thrown_m67=true,cw_grenade_thrown=true,obj_cpt_grenade=true,cw_flash_thrown=true,ent_hl1_grenade=true, obj_vj_unsc_spv3_frag_nade=true,obj_vj_cov_spv3_plasma_nade=true,obj_vj_cov_spv3_gravity_nade=true,obj_vj_cov_spv3_cluster_nade=true,obj_vj_cov_spv3_needler_nade=true}
 
 function ENT:CustomOnInitialize()
-	self.GrenadeAttackEntity = VJ_PICKRANDOMTABLE(self.GrenadeTypes)
+	
 	timer.Simple(0.01, function() 
 		if (GetConVarNumber("vj_spv3_covUNSCWeps")==1 and math.random(0,1)==1) then
 			self:GetActiveWeapon():Remove()
 			self:Give(VJ_PICKRANDOMTABLE(self.UNSCWeps))
+		end
+		if (GetConVarNumber("vj_spv3_covUNSCWeps")==1) then
+			self.GrenadeTypes = {
+				"obj_vj_cov_spv3_gravity_nade",
+				"obj_vj_cov_spv3_plasma_nade",
+				"obj_vj_cov_spv3_cluster_nade",
+				"obj_vj_unsc_spv3_frag_nade",
+				"obj_vj_cov_spv3_needler_nade",
+			}
+			self.GrenadeWeps = {
+				"weapon_vj_cov_spv3_needler_nade",
+				"weapon_vj_cov_spv3_plasma_nade",
+				"weapon_vj_cov_spv3_gravity_nade",
+				"weapon_vj_cov_spv3_cluster_nade",
+				"weapon_vj_unsc_spv3_frag_nade",
+			}
 		end
 		if (self:GetActiveWeapon().HoldType=="ar2") then
 			self.AnimTbl_WeaponAttack = {ACT_IDLE_RIFLE} -- Animation played when the SNPC does weapon attack
@@ -120,7 +134,9 @@ function ENT:CustomOnInitialize()
 			self.AnimTbl_Run = {ACT_RUN_RIFLE}
 
 		end
+		self.GrenadeAttackEntity = VJ_PICKRANDOMTABLE(self.GrenadeTypes)
 	end)
+
 	
 	self.NextMoveTime = 0
 	self.NextDodgeTime = 0
@@ -144,104 +160,12 @@ function ENT:CustomOnInitialize()
 
 end
 ---------------------------------------------------------------------------------------------------------------------------------------------
-function ENT:CustomOnThink_AIEnabled()
-	-- Shields --
-	if self.ShieldActivated == true then
-		self.Bleeds = false
-	else
-		self.Bleeds = true
-	end
-	
-	-- Dodging --
-	if self:GetEnemy() != nil then
-		local attackthev = ents.FindInSphere(self:GetPos(),500)
-		for _,v in pairs(attackthev) do
-			local EnemyDistance = self:GetPos():Distance(v:GetPos())
-			if EnemyDistance < 500 && math.random(1,10) == 1 && CurTime() > self.NextMoveTime && self:CanDodge("normal") then -- Random movement
-				local Evade = self:VJ_CheckAllFourSides(500)
-				self:StopAttacks(true)
-				if Evade.Right == false then
-					self:VJ_ACT_PLAYACTIVITY(ACT_SIGNAL_RIGHT,true,1,false) -- Left dodge anim
-					timer.Simple(0.3,function() if self:IsValid() then self.ConstantlyFaceEnemy = true end end)
-					timer.Simple(1,function() if self:IsValid() then self.ConstantlyFaceEnemy = false end end)
-				
-				elseif Evade.Left == false then
-					self:VJ_ACT_PLAYACTIVITY(ACT_SIGNAL_LEFT,true,1,false) -- Right dodge anim	
-					timer.Simple(0.3,function() if self:IsValid() then self.ConstantlyFaceEnemy = true end end)
-					timer.Simple(1,function() if self:IsValid() then self.ConstantlyFaceEnemy = false end end)
-					
-				elseif Evade.Forward == false then
-					local rnd_dodge = math.random(1,2)
-					if rnd_dodge == 1 then
-						self:VJ_ACT_PLAYACTIVITY(ACT_SIGNAL_FORWARD,true,1,false) -- Left dodge anim
-						timer.Simple(0.3,function() if self:IsValid() then self.ConstantlyFaceEnemy = true end end)
-						timer.Simple(1,function() if self:IsValid() then self.ConstantlyFaceEnemy = false end end)	
-					elseif rnd_dodge == 2 then
-						self:VJ_ACT_PLAYACTIVITY(ACT_SIGNAL_FORWARD,true,1,false) -- Left dodge anim
-						timer.Simple(0.3,function() if self:IsValid() then self.ConstantlyFaceEnemy = true end end)
-						timer.Simple(1,function() if self:IsValid() then self.ConstantlyFaceEnemy = false end end)						
-					end
-				
-				elseif Evade.Backward == false then
-				end
-				self.NextMoveTime = CurTime() +math.random(4,7)
-			elseif EnemyDistance < 500 && math.random(1,30) == 1 && CurTime() > self.NextDodgeTime && self:CanDodge("player") then -- Dodge attack
-				local Evade = self:VJ_CheckAllFourSides(500)
-				self:StopAttacks(true)
-				if Evade.Right == false then
-					self:VJ_ACT_PLAYACTIVITY(ACT_SIGNAL_RIGHT,true,1,false) -- Left dodge anim
-					timer.Simple(0.3,function() if self:IsValid() then self.ConstantlyFaceEnemy = true end end)
-					timer.Simple(1,function() if self:IsValid() then self.ConstantlyFaceEnemy = false end end)
-					
-				elseif Evade.Left == false then
-					self:VJ_ACT_PLAYACTIVITY(ACT_SIGNAL_LEFT,true,1,false) -- Right dodge anim	
-					timer.Simple(0.3,function() if self:IsValid() then self.ConstantlyFaceEnemy = true end end)
-					timer.Simple(1,function() if self:IsValid() then self.ConstantlyFaceEnemy = false end end)
-					
-				elseif Evade.Forward == false then
-				local rnd_dodge = math.random(1,2)
-					if rnd_dodge == 1 then
-						self:VJ_ACT_PLAYACTIVITY(ACT_SIGNAL_FORWARD,true,1,false) -- Left dodge anim
-						timer.Simple(0.3,function() if self:IsValid() then self.ConstantlyFaceEnemy = true end end)
-						timer.Simple(1,function() if self:IsValid() then self.ConstantlyFaceEnemy = false end end)	
-					elseif rnd_dodge == 2 then
-						self:VJ_ACT_PLAYACTIVITY(ACT_SIGNAL_FORWARD,true,1,false) -- Left dodge anim
-						timer.Simple(0.3,function() if self:IsValid() then self.ConstantlyFaceEnemy = true end end)
-						timer.Simple(1,function() if self:IsValid() then self.ConstantlyFaceEnemy = false end end)						
-					end
-				end
-				self.NextDodgeTime = CurTime() +math.random(2,4.5)
-			end
-		end
-	end
-	
-	-- -- Detection --
-	-- if self:GetEnemy() != nil then
-	-- self.AnimTbl_IdleStand = {ACT_IDLE}
-	-- else
-	-- self.AnimTbl_IdleStand = {ACT_IDLE_AGITATED}
-	-- end
-end
+
 ---------------------------------------------------------------------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------------------------------------------------------------------
 ENT.AcceptableWeaponsTbl = {"gmod_camera","gmod_tool","weapon_physgun","weapon_physcannon"}
 ---------------------------------------------------------------------------------------------------------------------------------------------
-function ENT:CanDodge(dodgetype)
-	if dodgetype == "normal" then
-		if self.UsingMagic == false && self.MeleeAttacking == false && self.onfire == false && self.Flinching == false && self:GetEnemy():IsNPC() && ((self:GetEnemy().MeleeAttacking && self:GetEnemy().MeleeAttacking == true) or (self:GetEnemy().cpt_atkAttacking && self:GetEnemy().cpt_atkAttacking == true)) then
-			return true
-		else
-			return false
-		end
-	elseif dodgetype == "player" then
-		if self.UsingMagic == false && self.MeleeAttacking == false && self:GetEnemy():IsPlayer() && self:GetEnemy():GetEyeTrace().Entity == self && self.onfire == false && self.Flinching == false && self:GetEnemy():IsPlayer() && self:GetEnemy():GetActiveWeapon() != nil && !table.HasValue(self.AcceptableWeaponsTbl,self:GetEnemy():GetActiveWeapon():GetClass()) && (self:GetEnemy():KeyPressed(IN_ATTACK) or self:GetEnemy():KeyPressed(IN_ATTACK2) or self:GetEnemy():KeyReleased(IN_ATTACK) or self:GetEnemy():KeyReleased(IN_ATTACK2) or self:GetEnemy():KeyDown(IN_ATTACK) or self:GetEnemy():KeyDown(IN_ATTACK2)) then
-			return true
-		else
-			return false
-		end
-	end
-end
 ---------------------------------------------------------------------------------------------------------------------------------------------
 function ENT:FindSeq(seq)
 	return self:GetSequenceActivity(self:LookupSequence(seq))
@@ -478,9 +402,20 @@ function ENT:CheckForGrenades()
 end
 
 ENT.Berserked = false
+ENT.EvadeCooldown = 0
 function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 	if (dmginfo:GetDamageType()==DMG_BLAST) then
 		dmginfo:ScaleDamage(3.5)
+	end
+	if (math.random(0,2) == 2) then
+		if (self.EvadeCooldown <= CurTime()) then
+			if (math.random(0,1)==1) then
+				self:VJ_ACT_PLAYACTIVITY(ACT_SIGNAL1,true,1,false)
+			else
+				self:VJ_ACT_PLAYACTIVITY(ACT_SIGNAL2,true,1,false)
+			end
+			self.EvadeCooldown = CurTime() + 4
+		end
 	end
 	if (dmginfo:GetAttacker():IsNPC()) then
 		dmginfo:ScaleDamage(GetConVarNumber("vj_spv3_NPCTakeDamageModifier"))
@@ -488,6 +423,26 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 	if (self.bodyParts["Head"]["Removed"]==true and hitgroup==500) then
 		dmginfo:ScaleDamage(3)
 	end
+	if (dmginfo:GetDamage() >= self:Health()) then
+		if (dmginfo:GetDamageType()==DMG_BLAST or dmginfo:GetDamageType()==DMG_CLUB) then
+			self:FlyingDeath(dmginfo)
+		end
+	end
+end
+
+function ENT:FlyingDeath(dmginfo)
+	self.HasDeathRagdoll = false
+	self.HasDeathAnimation = false
+	self.imposter = ents.Create("obj_vj_imposter")
+	self.imposter:SetOwner(self)
+	self.imposter.Sequence = "Die_Airborne"
+	local velocity = dmginfo:GetDamageForce():GetNormalized() * 1500
+	if (dmginfo:GetDamageType()==DMG_CLUB) then
+		velocity = velocity * 0.3
+	end
+	self.imposter.Velocity = Vector(velocity.x, velocity.y, velocity.z + 500)
+	self.imposter.Angle = Angle(0,dmginfo:GetDamageForce():Angle().y,0)
+	self.imposter:Spawn()
 end
 
 

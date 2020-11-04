@@ -19,17 +19,17 @@ ENT.HasGibOnDeathSounds = false -- Does it have gib sounds? | Mostly used for th
 ENT.HasLeapAttack = true -- Should the SNPC have a leap attack?
 ENT.HasMeleeAttack = false-- Should the SNPC have a leap attack?
 
-ENT.AnimTbl_LeapAttack = {ACT_GLIDE} -- Melee Attack Animations
-ENT.LeapDistance = 200 -- The distance of the leap, for example if it is set to 500, when the SNPC is 500 Unit away, it will jump
+ENT.AnimTbl_LeapAttack = {ACT_JUMP} -- Melee Attack Animations
+ENT.LeapDistance = 300 -- The distance of the leap, for example if it is set to 500, when the SNPC is 500 Unit away, it will jump
 ENT.LeapToMeleeDistance = 0 -- How close does it have to be until it uses melee?
 ENT.TimeUntilLeapAttackDamage = 0.4 -- How much time until it runs the leap damage code?
-ENT.NextLeapAttackTime = 0.4 -- How much time until it can use a leap attack?
-ENT.NextAnyAttackTime_Leap = 0.4 -- How much time until it can use any attack again? | Counted in Seconds
-ENT.LeapAttackExtraTimers = {0.2,0.6} -- Extra leap attack timers | it will run the damage code after the given amount of seconds
-ENT.LeapAttackVelocityForward = 50 -- How much forward force should it apply?
-ENT.LeapAttackVelocityUp = 250 -- How much upward force should it apply?
+ENT.NextLeapAttackTime = 2 -- How much time until it can use a leap attack?
+ENT.NextAnyAttackTime_Leap = 2 -- How much time until it can use any attack again? | Counted in Seconds
+ENT.LeapAttackExtraTimers = {0.2,0.6,0.8, 1, 1.2} -- Extra leap attack timers | it will run the damage code after the given amount of seconds
+ENT.LeapAttackVelocityForward = -150 -- How much forward force should it apply?
+ENT.LeapAttackVelocityUp = 200 -- How much upward force should it apply?
 ENT.LeapAttackDamage = 5
-ENT.LeapAttackDamageDistance = 100 -- How far does the damage go?
+ENT.LeapAttackDamageDistance = 30 -- How far does the damage go?
 ENT.HasDeathRagdoll = false -- If set to false, it will not spawn the regular ragdoll of the SNPC
 ENT.PushProps = false -- Should it push props when trying to move?
 //Prevent blocking of infection forms but also don't block the way of other combat forms
@@ -85,6 +85,7 @@ ENT.SoundTbl_LeapAttackDamage = {
 "infection_form/infector_bite/infector_bite10.wav",
 "infection_form/infector_bite/infector_bite11.wav"
 }
+ENT.LeapAttackDamageSoundLevel = 30
 
 ENT.SoundTbl_Death = {
 "infection_form/infection_pop/pop1.wav",
@@ -102,6 +103,14 @@ ENT.NextSoundTime_Idle1 = 1
 ENT.NextSoundTime_Idle2 = 2
 ---------------------------------------------------------------------------------------------------------------------------------------------
 function ENT:CustomOnInitialize()
+	self.MovingSound = CreateSound(self, "infection_form/infector_sound/infector/move/move"..math.random(1,3)..".wav")
+	timer.Simple(0.1, function() 
+		if (IsValid(self)) then
+			self:SetGravity(0.5)
+			self:SetFriction(0.3)
+		end
+	end)
+	
 	self:CapabilitiesAdd(bit.bor(CAP_MOVE_CLIMB))
 	self.StartHealth = self.StartHealth * GetConVarNumber("vj_spv3_HealthModifier")
 	self:SetHealth(self.StartHealth)
@@ -129,6 +138,24 @@ ENT.enemyShields = 0
 ENT.enemySeqDur = 0
 ENT.imposter = ""
 function ENT:CustomOnDoKilledEnemy(argent,attacker,inflictor)
+	if (argent.AttachedInfectForms) then
+		for k=0, #argent.AttachedInfectForms do
+			local infection = argent.AttachedInfectForms[k]
+			if (IsValid(infection)) then
+				infection:FollowBone(NULL, 0)
+				infection:SetAngles(Angle(0,0,0))
+				infection:SetMoveType(3)
+				infection:RemoveFlags(FL_NOTARGET)
+				infection:SetCollisionGroup(0)
+				infection:SetNotSolid(false)
+				local spreadRadius = 20
+				local velocity = Vector(math.random(-spreadRadius, spreadRadius),math.random(-spreadRadius, spreadRadius),math.random(100, 175))
+				infection:GetPhysicsObject():SetVelocity(velocity)
+				infection:SetAngles(Angle(infection:GetAngles().x, velocity:Angle().y, infection:GetAngles().z))
+				infection:VJ_ACT_PLAYACTIVITY("Melee_1",true,1.3,false)	
+			end
+		end
+	end
 	if (self:GetEnemy():IsPlayer()==true) then self:Remove() return end
 	self.enemyModel = self:GetEnemy():GetModel()
 	self.enemyPos = self:GetEnemy():GetPos()
@@ -140,44 +167,47 @@ function ENT:CustomOnDoKilledEnemy(argent,attacker,inflictor)
 	if (self:GetEnemy().ShieldHealth) then self.enemyShields = self:GetEnemy().ShieldHealth end
 	if (GetConVarString("vj_spv3_floodOption") == "infect_nothing") then return end
 	if ((GetConVarString("vj_spv3_floodOption") == "infect_onlyHalo") or (GetConVarString("vj_spv3_floodOption") == "infect_anything")) then
-		if (string.find(tostring(argent), "unsc")) then
-			if (string.find(tostring(argent), "marine")) then
-				self.combatForm = ents.Create("npc_vj_halo_flood_spv3_marine")
-				self.enemyHealth = self:GetEnemy().StartHealth * 1.25
-			elseif (string.find(tostring(argent), "odst")) then
-				self.combatForm = ents.Create("npc_vj_halo_flood_spv3_odst")
-				self.enemyHealth = self:GetEnemy().StartHealth * 1.25
-			end
-		elseif (string.find(tostring(argent), "cov")) then
-			if (string.find(tostring(argent), "elite")) and (string.find(tostring(argent), "hg")) then
-				self.combatForm = ents.Create("npc_vj_halo_flood_spv3_elite_hg")
+		if (string.find(tostring(argent), "marine") or string.find(tostring(argent), "crewman")) then
+			self.combatForm = ents.Create("npc_vj_halo_flood_spv3_marine")
+			self.enemyHealth = self:GetEnemy().StartHealth * 1.25
+		elseif (string.find(tostring(argent), "odst")) then
+			self.combatForm = ents.Create("npc_vj_halo_flood_spv3_odst")
+			self.enemyHealth = self:GetEnemy().StartHealth * 1.25
+		end
+		if (string.find(tostring(argent), "elite")) and (string.find(tostring(argent), "hg")) then
+			self.combatForm = ents.Create("npc_vj_halo_flood_spv3_elite_hg")
+			self.enemyHealth = self:GetEnemy().StartHealth * 1.25
+			self.enemyShields = self:GetEnemy().ShieldHealth
+		elseif (string.find(tostring(argent), "elite")) and (string.find(tostring(argent), "oss")) then
+			self.combatForm = ents.Create("npc_vj_halo_flood_spv3_elite_oss")
+			self.enemyHealth = self:GetEnemy().StartHealth * 1.25
+			self.enemyShields = self:GetEnemy().ShieldHealth
+		elseif (string.find(tostring(argent), "elite")) then
+			local random = math.random(0,100)
+			if (random > 75) then
+				self.combatForm = ents.Create("npc_vj_halo_flood_spv3_elite_runner")
 				self.enemyHealth = self:GetEnemy().StartHealth * 1.25
 				self.enemyShields = self:GetEnemy().ShieldHealth
-			elseif (string.find(tostring(argent), "elite")) and (string.find(tostring(argent), "oss")) then
-				self.combatForm = ents.Create("npc_vj_halo_flood_spv3_elite_oss")
+			elseif (random <=75 and random >= 50) then
+				self.combatForm = ents.Create("npc_vj_halo_flood_spv3_elite_suicide")
 				self.enemyHealth = self:GetEnemy().StartHealth * 1.25
 				self.enemyShields = self:GetEnemy().ShieldHealth
-			elseif (string.find(tostring(argent), "elite")) then
-				if ((math.random(0,1)) == 0) then
-					self.combatForm = ents.Create("npc_vj_halo_flood_spv3_elite_runner")
-					self.enemyHealth = self:GetEnemy().StartHealth * 1.25
-					self.enemyShields = self:GetEnemy().ShieldHealth
-				else
-					self.combatForm = ents.Create("npc_vj_halo_flood_spv3_elite")
-					self.enemyHealth = self:GetEnemy().StartHealth * 1.25
-					self.enemyShields = self:GetEnemy().ShieldHealth
-				end
-			elseif (string.find(tostring(argent), "grunt")) then
-				self.combatForm = ents.Create("npc_vj_halo_flood_spv3_carrier")
-				self.enemyHealth = self:GetEnemy().StartHealth * .35
-			elseif (string.find(tostring(argent), "jackal")) then
-				self.combatForm = ents.Create("npc_vj_halo_flood_spv3_jackal")
-				self.enemyHealth = self:GetEnemy().StartHealth * .35
-			elseif (string.find(tostring(argent), "brute")) then
-				self.combatForm = ents.Create("npc_vj_halo_flood_spv3_brute")
+			else
+				self.combatForm = ents.Create("npc_vj_halo_flood_spv3_elite")
 				self.enemyHealth = self:GetEnemy().StartHealth * 1.25
+				self.enemyShields = self:GetEnemy().ShieldHealth
 			end
-		elseif (string.find(tostring(argent), "nat")) then
+		elseif (string.find(tostring(argent), "grunt")) then
+			self.combatForm = ents.Create("npc_vj_halo_flood_spv3_carrier")
+			self.enemyHealth = self:GetEnemy().StartHealth * .35
+		elseif (string.find(tostring(argent), "jackal")) then
+			self.combatForm = ents.Create("npc_vj_halo_flood_spv3_jackal")
+			self.enemyHealth = self:GetEnemy().StartHealth * .35
+		elseif (string.find(tostring(argent), "brute")) then
+			self.combatForm = ents.Create("npc_vj_halo_flood_spv3_brute")
+			self.enemyHealth = self:GetEnemy().StartHealth * 1.25
+		end
+		if (string.find(tostring(argent), "nat")) then
 			if (string.find(tostring(argent), "wolf")) then
 				self.combatForm = ents.Create("npc_vj_halo_flood_spv3_wolf")
 				self.enemyHealth = self:GetEnemy().StartHealth * 1.25
@@ -263,6 +293,9 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 	if ((IsValid(dmginfo:GetInflictor())) and (dmginfo:GetInflictor():GetClass()=="npc_vj_halo_flood_spv3_carrier" or dmginfo:GetInflictor():GetClass()=="npc_vj_halo_flood_spv3_elite_runner" or dmginfo:GetInflictor():GetClass()=="npc_vj_halo_flood_spv3_odst" or dmginfo:GetInflictor():GetClass()=="npc_vj_halo_flood_spv3_jackal" or dmginfo:GetInflictor():GetClass()=="npc_vj_halo_flood_spv3_wolf")) then
 		dmginfo:SetDamage(0)
 	end
+	if (dmginfo:GetInflictor()==self.AttachedTo) then
+		dmginfo:SetDamage(0)
+	end
 	if (dmginfo:GetDamageType()==DMG_BLAST) then
 		dmginfo:ScaleDamage(3.5)
 	end
@@ -271,27 +304,61 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 	end
 end
 
+
+function ENT:CustomOnLeapAttack_BeforeChecks() 
+	if (self:GetEnemy()) then
+		self.CollConstraint = constraint.NoCollide(self, self:GetEnemy(), 0, 0)
+	end
+end
+
+ENT.AttachedTo = ""
 function ENT:CustomOnLeapAttack_AfterChecks(TheHitEntity) 
-	if (IsValid(self) and IsValid(self:GetEnemy()) and !self:GetEnemy().HasLatch  and self:GetEnemy():Health() < self:GetEnemy():GetMaxHealth()*.4) then
-		self:GetEnemy().HasLatch = true
-		self:SetMoveType(MOVETYPE_NONE)
-		self:AddFlags(FL_NOTARGET)
-		self:SetCollisionGroup(0)
-		self:SetNotSolid(true)
-		self:SetPos(self:GetEnemy():GetPos()+self:GetForward()*-10 + self:GetEnemy():OBBCenter()*1.25)
-		self:SetAngles(self:GetEnemy():GetAngles() + Angle(-90,0,0))
-		self:SetParent(self:GetEnemy())
-		if (self:GetEnemy().SoundTbl_Stuck) then
-			self:GetEnemy():EmitSound(VJ_PICKRANDOMTABLE(self:GetEnemy().SoundTbl_Stuck))
+	if (TheHitEntity.ShieldCurrentHealth && TheHitEntity.ShieldCurrentHealth > 0) then
+		TheHitEntity:TakeDamage(self.LeapAttackDamage, self, self)
+		self:TakeDamage(self:GetMaxHealth(), TheHitEntity, TheHitEntity)
+	end
+	if (IsValid(self) and IsValid(self:GetEnemy())  and self:GetEnemy():Health() < self:GetEnemy():GetMaxHealth()*.4) then
+		if (self:GetEnemy().HasLatch==nil) then
+			self:GetEnemy().HasLatch = 0
 		end
-		self:SetVelocity(Vector(0,0,0))
-		self:GetEnemy():SetSequence(27)
-		timer.Create("Damage"..self:GetCreationID(), 1.25, 0, function()
+		if (self:GetEnemy().AttachedInfectForms==nil) then
+			self:GetEnemy().AttachedInfectForms = {}
+		end
+		if (self:GetEnemy().HasLatch >= 7) then
+			return
+		end
+		if (self:GetEnemy().HasLatch==0 or self:GetEnemy().TerrorOwner==nil) then
+			self:GetEnemy().TerrorOwner=self
+			if (self:GetEnemy().SoundTbl_Stuck) then
+				self:GetEnemy():EmitSound(VJ_PICKRANDOMTABLE(self:GetEnemy().SoundTbl_Stuck))
+			end
+			timer.Create("Terror"..self:GetCreationID(), 2, 0, function()
 			if (IsValid(self) and IsValid(self:GetEnemy())) then
 				if (self:GetEnemy().SoundTbl_Stuck) then
 					self:GetEnemy():EmitSound(VJ_PICKRANDOMTABLE(self:GetEnemy().SoundTbl_Stuck))
 				end
-				self:GetEnemy():TakeDamage(10, self, self)
+			end
+		end)
+		end
+		table.insert(self:GetEnemy().AttachedInfectForms, self)
+		self:VJ_ACT_PLAYACTIVITY("Melee_1",true,30,false)	
+		self.AttachedTo = self:GetEnemy()
+		self:GetEnemy().HasLatch = self:GetEnemy().HasLatch + 1
+		self:SetMoveType(MOVETYPE_NONE)
+		self:AddFlags(FL_NOTARGET)
+		self:SetCollisionGroup(0)
+		self:SetNotSolid(true)
+		self:SetAngles(self:GetEnemy():GetAngles() + Angle(-90,0,0))
+		self.BoneToFollow = VJ_PICKRANDOMTABLE(math.random(0, self:GetEnemy():GetBoneCount()-1))
+		self.BonePos, self.BoneAng = self:GetEnemy():GetBonePosition(self.BoneToFollow)
+		self:FollowBone(self:GetEnemy(), self.BoneToFollow)
+		self:SetPos(self.BonePos)
+		self:SetAngles(self.BoneAng + Angle(90, 0, 0))
+		self:SetVelocity(Vector(0,0,0))
+		self:GetEnemy():SetSequence(27)
+		timer.Create("Damage"..self:GetCreationID(), 0.5, 0, function()
+			if (IsValid(self) and IsValid(self.AttachedTo)) then //May need fixing, line below giving errors
+				self.AttachedTo:TakeDamage(1, self, self)
 			end
 		end)
 	end
@@ -299,6 +366,19 @@ end
 
 function ENT:MultipleMeleeAttacks() end
 
+ENT.isMoving = false
+function ENT:CustomOnAcceptInput(key,activator,caller,data)
+	if key == "Moving" and self.isMoving == false then
+		self.MovingSound:PlayEx(math.random(0.2, 0.6), math.random(80, 170))
+		self.isMoving = true
+	elseif key == "StopMoving" then
+		self.MovingSound:Stop()
+		self.isMoving = false
+	end
+end
+function ENT:CustomOnRemove() 
+	self.MovingSound:Stop()
+end
 /*-----------------------------------------------
 	*** Copyright (c) 2012-2016 by DrVrej, All rights reserved. ***
 	No parts of this code or any of its contents may be reproduced, copied, modified or adapted,

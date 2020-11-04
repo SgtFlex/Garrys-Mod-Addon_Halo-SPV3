@@ -1,15 +1,17 @@
 "VertexlitGeneric"
 {
-	"$basetexture" "models/hce/spv3/flood/infector/infection_form_diff"
-	"$bumpmap" "models/hce/spv3/flood/infector/infection_form_nrml"
+	"$basetexture" "models/hce/spv3/cov/elite/elite_main_diff"
+	"$bumpmap" "models/hce/spv3/cov/elite/elite_main_nrml_new"
+	"$surfaceprop" metal
 
 	"$color2"		"[0.87 0.87 0.87]"
-	
+
 	"$normalmapalphaenvmapmask"    "1"
 	"$phong" "1"
-	"$phongexponent"				"15"
-	"$phongboost"					"15.996837"
+	"$phongexponent"				"2"
+	"$phongboost"					"5.996837"
 	"$phongfresnelranges"			"[0.67 0.83 1]"
+
 	"$phongalbedotint" 1
 	"$phongexponenttexture" "models\Dark_Souls\shared\souls_green"
 	"$phongwarptexture" "models\Dark_Souls\shared\testwarp2"
@@ -17,24 +19,21 @@
 	"$envmap" "models\Dark_Souls\shared\painted_silver_ldr"
 	"$envmaptint""[0.000125 0.000124 0.000115]"
 	"$envmapfresnel""1"
+	
+	"$detail" "models/hce/spv3/cov/elite/shieldoverlay"
+	$detailscale 1
+	$detailblendmode 5
+	$detailblendfactor 1
 
 	"$blendtintbybasealpha" "1"
 	"$blendtintcoloroverbase" "0"
-	$avar 0
 	Proxies
 	{
-		EntityRandom
+		TextureScroll
 		{
-			scale 1
-			resultVar $avar
-		}
-		Sine
-		{
-			resultVar "$color2[1]"
-			sineperiod 1
-			sinemin 0.87
-			sinemax 1.2
-			timeoffset "$avar"
+			textureScrollVar $detail
+			textureScrollRate 0.5
+			textureScrollAngle 90
 		}
 	}
 }

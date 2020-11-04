@@ -25,8 +25,6 @@ ENT.VJ_NPC_Class = {"CLASS_PARASITE"} -- NPCs with the same class with be allied
 ENT.HasDeathRagdoll = false -- If set to false, it will not spawn the regular ragdoll of the SNPC
 ENT.HasDeathAnimation = true -- Does it play an animation when it dies?
 ENT.AnimTbl_Death = {"Melee_1"} -- Death Animations
-ENT.DeathAnimationTime = 1.65 -- Time until the SNPC spawns its corpse and gets removed
-ENT.DisableDeathAnimationSCHED = true -- If set to true, it will disable the setschedule code
 ENT.EntitiesToNoCollide = {"npc_vj_halo_flood_spv3_infection"}
 
 	-- Melee Attack ---------------------------------------------------------------------------------------------------------------------------------------------
@@ -93,28 +91,33 @@ ENT.infFormCount = 10
 ENT.infForm = nil
 local spreadRadius = 275
 function ENT:CustomDeathAnimationCode(dmginfo,hitgroup)
+	if (GetConVarNumber("vj_spv3_bonusInfForms")==0) then
+		self.HasDeathRagdoll = true
+		return
+	end
 	self.infFormCount = math.Round(self.infFormCount*(GetConVarNumber("vj_spv3_infModifier")))
-	timer.Simple(1.64,function() if self:IsValid() then
-		for k=1, self.infFormCount do
-			self.infForm = nil
-			self.infForm = ents.Create("npc_vj_halo_flood_spv3_infection")
-			self.infForm:SetPos(self:GetPos())
-			self.infForm:Spawn()
-			local velocity = Vector(math.random(-spreadRadius, spreadRadius),math.random(-spreadRadius, spreadRadius),math.random(200, 500))
-			self.infForm:SetVelocity(velocity)
-			self.infForm:SetAngles(Angle(self.infForm:GetAngles().x, velocity:Angle().y, self.infForm:GetAngles().z))
-			self.infForm:VJ_ACT_PLAYACTIVITY("Melee_1",true,1.3,false)		
-		end
-		local BlastInfo = DamageInfo()
-		BlastInfo:SetDamageType(DMG_BLAST)
-		BlastInfo:SetDamage(20 * GetConVarNumber("vj_spv3_damageModifier"))
-		BlastInfo:SetDamagePosition(self:GetPos())
-		BlastInfo:SetInflictor(self)
-		BlastInfo:SetReportedPosition(self:GetPos())
-		util.BlastDamageInfo(BlastInfo, self:GetPos(), 250)
-		util.ScreenShake(self:GetPos(),16,100,1,800)
-		ParticleEffect("hcea_flood_carrier_death", self:LocalToWorld(Vector(0,0,20)), self:GetAngles(), nil)
-		//ParticleEffectAttach("hcea_flood_inf_death",PATTACH_POINT_FOLLOW,self,0)
+	self:EmitSound("carrier/hkillbackgut/hkillbackgut.wav")
+	timer.Simple(1.3,function() if self:IsValid() then
+	local BlastInfo = DamageInfo()
+	BlastInfo:SetDamageType(DMG_BLAST)
+	BlastInfo:SetDamage(20 * GetConVarNumber("vj_spv3_damageModifier"))
+	BlastInfo:SetDamagePosition(self:GetPos())
+	BlastInfo:SetInflictor(self)
+	BlastInfo:SetReportedPosition(self:GetPos())
+	util.BlastDamageInfo(BlastInfo, self:GetPos(), 250)
+	util.ScreenShake(self:GetPos(),16,100,1,800)
+	ParticleEffect("hcea_flood_carrier_death", self:LocalToWorld(Vector(0,0,20)), self:GetAngles(), nil)
+	//ParticleEffectAttach("hcea_flood_inf_death",PATTACH_POINT_FOLLOW,self,0)
+	for k=1, self.infFormCount do
+		self.infForm = ents.Create("npc_vj_halo_flood_spv3_infection")
+		self.infForm:SetPos(self:GetPos())
+		self.infForm:SetOwner(self)
+		self.infForm:Spawn()
+		local velocity = Vector(math.random(-spreadRadius, spreadRadius),math.random(-spreadRadius, spreadRadius),math.random(100, 300))
+		self.infForm:SetVelocity(velocity)
+		self.infForm:SetAngles(Angle(self.infForm:GetAngles().x, velocity:Angle().y, self.infForm:GetAngles().z))
+		self.infForm:VJ_ACT_PLAYACTIVITY("Melee_1",true,1.3,false)		
+	end
 	
 	-- local posone = self:LocalToWorld(Vector(math.random(-20, 20),math.random(-20,20),0))
 	-- local infector1 = ents.Create("npc_vj_halo_flood_spv3_infection")
@@ -190,7 +193,7 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 		self:StopMoving()
 		self:SetAngles(Angle(0, dmginfo:GetDamageForce():Angle().y, 0))
 		self:SetVelocity(Vector(dmginfo:GetDamageForce():GetNormalized().x*1000,dmginfo:GetDamageForce():GetNormalized().y*1000,500))
-		timer.Simple(1.5, function() self:TakeDamage(999999999999999,self,self) end)
+		timer.Simple(1.5, function() if(IsValid(self)) then self:TakeDamage(999999999999999,self,self) end end)
 		 //end end)
 
 	end

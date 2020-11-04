@@ -34,7 +34,7 @@ ENT.TimeUntilMeleeAttackDamage = false
 ENT.NextAnyAttackTime_Melee = 1.9666666197777
 ENT.MeleeAttackAnimationFaceEnemy = false
 ENT.MeleeAttackDamage = 30 * GetConVarNumber("vj_spv3_damagemodifier")
-ENT.MeleeAttackDamageType = DMG_SLASH	
+ENT.MeleeAttackDamageType = DMG_CLUB
 
 	-- Range Attack ---------------------------------------------------------------------------------------------------------------------------------------------
 ENT.HasRangeAttack = true -- Should the SNPC have a range attack?

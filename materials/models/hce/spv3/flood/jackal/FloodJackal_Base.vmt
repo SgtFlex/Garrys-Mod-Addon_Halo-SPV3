@@ -1,11 +1,14 @@
 "VertexLitGeneric"
 {
-  	"$basetexture" 			"\models\hce\spv3\flood\jackal\FloodJackal_Diffuse"
+  	"$basetexture" 			"\models\hce\spv3\flood\jackal\FloodJackal_Diffuse_new"
     	"$bumpmap" 			"\models\hce\spv3\flood\jackal\FloodJackal_Normal"
 	"$phong" "1"
 	"$phongboost" "0.5"
 	"$PhongExponent" "0"
 	"$phongalbedotint" "1"
 	"$phongfresnelranges" "[3 5 7]"
+
+	"$blendtintbybasealpha" "1"
+	"$blendtintcoloroverbase" "0"	
 }
 

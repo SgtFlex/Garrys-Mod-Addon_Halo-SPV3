@@ -17,3 +17,4 @@ ENT.StartHealth = 80
 ENT.ShieldHealth = 165
 ENT.ExtraShotCount = 3
 ENT.Skin = 3
+ENT.HasSword = true

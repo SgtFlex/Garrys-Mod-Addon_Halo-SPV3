@@ -1,0 +1,15 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/hce/spv3/cov/elite/overlaytest"
+
+	"Proxies"
+	{
+		"TextureScroll"
+		{
+			"texturescrollvar" "$basetexturetransform"
+			"texturescrollrate" 0.3
+			"texturescrollangle" 90
+		}
+	}
+}
+

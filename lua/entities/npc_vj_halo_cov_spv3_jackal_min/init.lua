@@ -106,9 +106,20 @@ function ENT:CustomOnThink_AIEnabled()
 	end
 end
 ---------------------------------------------------------------------------------------------------------------------------------------------
+ENT.EvadeCooldown = 0
 function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 	if (dmginfo:GetDamageType()==DMG_BLAST) then
 		dmginfo:ScaleDamage(3.5)
+	end
+	if (math.random(0,2) == 2) then
+		if (self.EvadeCooldown <= CurTime()) then
+			if (math.random(0,1)==1) then
+				self:VJ_ACT_PLAYACTIVITY(ACT_SIGNAL1,true,1.5,false)
+			else
+				self:VJ_ACT_PLAYACTIVITY(ACT_SIGNAL2,true,1.5,false)
+			end
+			self.EvadeCooldown = CurTime() + 4
+		end
 	end
 	if (dmginfo:GetAttacker():IsNPC()) then
 		dmginfo:ScaleDamage(GetConVarNumber("vj_spv3_NPCTakeDamageModifier"))
@@ -117,6 +128,26 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 		dmginfo:ScaleDamage(0)
 		ParticleEffect("hcea_shield_impact", dmginfo:GetDamagePosition(), dmginfo:GetDamageForce():Angle(), self)
 	end
+	if (dmginfo:GetDamage() >= self:Health()) then
+		if (dmginfo:GetDamageType()==DMG_BLAST or dmginfo:GetDamageType()==DMG_CLUB) then
+			self:FlyingDeath(dmginfo)
+		end
+	end
+end
+
+function ENT:FlyingDeath(dmginfo)
+	self.HasDeathRagdoll = false
+	self.HasDeathAnimation = false
+	self.imposter = ents.Create("obj_vj_imposter")
+	self.imposter:SetOwner(self)
+	self.imposter.Sequence = "Die_Airborne"
+	local velocity = dmginfo:GetDamageForce():GetNormalized() * 1500
+	if (dmginfo:GetDamageType()==DMG_CLUB) then
+		velocity = velocity * 0.3
+	end
+	self.imposter.Velocity = Vector(velocity.x, velocity.y, velocity.z + 500)
+	self.imposter.Angle = Angle(0,dmginfo:GetDamageForce():Angle().y,0)
+	self.imposter:Spawn()
 end
 ---------------------------------------------------------------------------------------------------------------------------------------------
 
