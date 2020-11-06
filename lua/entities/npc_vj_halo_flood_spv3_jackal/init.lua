@@ -136,7 +136,7 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 end
 ---------------------------------------------------------------------------------------------------------------------------------------------
 ENT.infFormCount = 10
-local spreadRadius = 275
+local spreadRadius = 200
 function ENT:CustomDeathAnimationCode(dmginfo,hitgroup)
 	self.infFormCount = math.Round(self.infFormCount*(GetConVarNumber("vj_spv3_infModifier")))
 	self:EmitSound((self.SoundTbl_Expl[math.random(1, #(self.SoundTbl_Expl))]))
@@ -155,7 +155,7 @@ function ENT:CustomDeathAnimationCode(dmginfo,hitgroup)
 		self.infForm:SetPos(self:GetPos())
 		self.infForm:SetOwner(self)
 		self.infForm:Spawn()
-		local velocity = Vector(math.random(-spreadRadius, spreadRadius),math.random(-spreadRadius, spreadRadius),math.random(200, 500))
+		local velocity = Vector(math.random(-spreadRadius, spreadRadius),math.random(-spreadRadius, spreadRadius),math.random(100, 200))
 		self.infForm:SetVelocity(velocity)
 		self.infForm:SetAngles(Angle(self.infForm:GetAngles().x, velocity:Angle().y, self.infForm:GetAngles().z))
 		self.infForm:VJ_ACT_PLAYACTIVITY("Melee_1",true,1.3,false)		

@@ -10,14 +10,19 @@ ENT.HullType = HULL_MEDIUM
 
 ENT.Model = {"models/hce/spv3/flood/human/floodmarine.mdl"} -- The game will pick a random model from the table when the SNPC is spawned | Add as many as you want
 ENT.modelColor = Color(0,110,255)
-ENT.bodyGroup = 1
-ENT.StartHealth = 100
+ENT.bodyGroups = {1,1,1}
+ENT.StartHealth = 150
 
 ENT.infFormCount = 6
 local spreadRadius = 175
 
 ENT.HasDeathRagdoll = false -- If set to false, it will not spawn the regular ragdoll of the SNPC
-
+ENT.bodyParts = {
+	Head = {Health = 50, Bodygroup = "Head", Removed = false},
+	Right_Arm = {Health = 50, Bodygroup = "Right Arm", Removed = false},
+	Left_Arm = {Health = 25, Bodygroup = "Left Arm", Removed = false},
+	Inf_Form = {Health = 50, Bodygroup = "Inf Form", Removed = false},
+}
 function ENT:CustomDeathAnimationCode(dmginfo,hitgroup)
 	if (GetConVarNumber("vj_spv3_bonusInfForms")==0) then
 		self.HasDeathRagdoll = true
@@ -41,7 +46,7 @@ function ENT:CustomDeathAnimationCode(dmginfo,hitgroup)
 		self.infForm:SetPos(self:GetPos())
 		self.infForm:SetOwner(self)
 		self.infForm:Spawn()
-		local velocity = Vector(math.random(-spreadRadius, spreadRadius),math.random(-spreadRadius, spreadRadius),math.random(200, 500))
+		local velocity = Vector(math.random(-spreadRadius, spreadRadius),math.random(-spreadRadius, spreadRadius),math.random(100, 200))
 		self.infForm:SetVelocity(velocity)
 		self.infForm:SetAngles(Angle(self.infForm:GetAngles().x, velocity:Angle().y, self.infForm:GetAngles().z))
 		self.infForm:VJ_ACT_PLAYACTIVITY("Melee_1",true,1.3,false)		
@@ -92,10 +97,4 @@ function ENT:CustomDeathAnimationCode(dmginfo,hitgroup)
 	-- infector5:SetVelocity(Vector(math.random(-100,100), math.random(-100, 100), math.random(200, 500)))
 		end
 	end)
-end
-
-function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
-	if (dmginfo:GetAttacker():IsNPC()) then
-		dmginfo:ScaleDamage(GetConVarNumber("vj_spv3_NPCTakeDamageModifier"))
-	end
 end

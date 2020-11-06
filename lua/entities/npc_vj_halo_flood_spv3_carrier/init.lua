@@ -100,7 +100,7 @@ function ENT:CustomDeathAnimationCode(dmginfo,hitgroup)
 	timer.Simple(1.3,function() if self:IsValid() then
 	local BlastInfo = DamageInfo()
 	BlastInfo:SetDamageType(DMG_BLAST)
-	BlastInfo:SetDamage(35 * GetConVarNumber("vj_spv3_damageModifier"))
+	BlastInfo:SetDamage(60 * GetConVarNumber("vj_spv3_damageModifier"))
 	BlastInfo:SetDamagePosition(self:GetPos())
 	BlastInfo:SetInflictor(self)
 	BlastInfo:SetReportedPosition(self:GetPos())

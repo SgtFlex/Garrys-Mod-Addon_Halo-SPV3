@@ -9,8 +9,8 @@ ENT.HullType = HULL_MEDIUM
 
 ENT.Model = {"models/hce/spv3/flood/human/floodmarine.mdl"} -- The game will pick a random model from the table when the SNPC is spawned | Add as many as you want
 ENT.modelColor = Color(127,0,0)
-ENT.bodyGroup = 0
-ENT.StartHealth = 75
+ENT.bodyGroups = {0,0,0}
+ENT.StartHealth = 113
 ---------------------------------------------------------------------------------------------------------------------------------------------
 	-- ====== Blood-Related Variables ====== --
 ENT.Bleeds = true -- Does the SNPC bleed? (Blood decal, particle, etc.)
@@ -125,13 +125,15 @@ ENT.SpawnedFromInf=false
 function ENT:CustomOnInitialize()
 	self.MeleeAttackDamage = self.MeleeAttackDamage * GetConVarNumber("vj_spv3_damageModifier")
 	timer.Simple(0.1, function() 
-		if (GetConVarNumber("vj_spv3_floodWeps")==1 and math.random(0,1)==1) then
+		if (GetConVarNumber("vj_spv3_floodWeps")==1 and math.random(0,1)==1 and #self.WeaponTable>0) then
 			self:Give(VJ_PICKRANDOMTABLE(self.WeaponTable))
 		end
 	end)
 	self:CapabilitiesAdd(bit.bor(CAP_MOVE_CLIMB))
 	self:SetColor(self.modelColor)
-	self:SetBodygroup(0, self.bodyGroup)
+	self:SetBodygroup(0, self.bodyGroups[1])
+	self:SetBodygroup(1, self.bodyGroups[2])
+	self:SetBodygroup(3, self.bodyGroups[3])
 		if (self.SpawnedFromInf==false) then
 			self.StartHealth = self.StartHealth * GetConVarNumber("vj_spv3_HealthModifier")
 		end
