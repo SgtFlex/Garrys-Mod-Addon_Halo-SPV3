@@ -72,10 +72,7 @@ ENT.GrenadeWeps = {
 ENT.CovWeps = {
 	"weapon_vj_cov_spv3_plasmarifle",
 	"weapon_vj_cov_spv3_plasmarifleBrute",
-	"weapon_vj_cov_spv3_plasmapistol",
-	"weapon_vj_cov_spv3_plasmapistolBrute",
 	"weapon_vj_cov_spv3_particleCarbine",
-	"weapon_vj_cov_spv3_piercer",
 	"weapon_vj_cov_spv3_shredder",
 	"weapon_vj_cov_spv3_needler",
 }
@@ -200,6 +197,10 @@ ENT.SoundTbl_Death = {
 	"marine/death/death (11).wav",
 	"marine/death/death (12).wav",
 	"marine/death/death (13).wav",
+}
+ENT.SoundTbl_Fall = {
+	"marine/fall/fall (1).wav",
+	"marine/fall/fall (2).wav",
 }
 ENT.SoundTbl_OnGrenadeSight = {
 	"marine/seeGrenade/seeGrenade (1).wav",

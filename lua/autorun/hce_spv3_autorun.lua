@@ -53,7 +53,7 @@ if VJExists == true then
 	VJ.AddNPC_HUMAN("[Cov] Elite HG Minor","npc_vj_halo_cov_spv3_elite_hg_min",{"weapon_vj_cov_spv3_plasmarifle"},vCat)
 	VJ.AddNPC_HUMAN("[Cov] Elite HG Major","npc_vj_halo_cov_spv3_elite_hg_maj",{"weapon_vj_cov_spv3_plasmarifle", "weapon_vj_cov_spv3_energysword"},vCat)
 	VJ.AddNPC_HUMAN("[Cov] Elite HG Ultra","npc_vj_halo_cov_spv3_elite_hg_ult",{"weapon_vj_cov_spv3_plasmarifle", "weapon_vj_cov_spv3_energysword"},vCat)
-	VJ.AddNPC_HUMAN("[Cov] Elite HG Zealot","npc_vj_halo_cov_spv3_elite_hg_zel",{"weapon_vj_cov_spv3_plasmarifle", "weapon_vj_cov_spv3_energysword"},vCat)
+	VJ.AddNPC_HUMAN("[Cov] Elite HG Zealot","npc_vj_halo_cov_spv3_elite_hg_zel",{"weapon_vj_cov_spv3_energysword"},vCat)
 	VJ.AddNPC_HUMAN("[Cov] Grunt Minor","npc_vj_halo_cov_spv3_grunt_min",{"weapon_vj_cov_spv3_needler","weapon_vj_cov_spv3_plasmapistol"},vCat)
 	VJ.AddNPC_HUMAN("[Cov] Grunt Major","npc_vj_halo_cov_spv3_grunt_maj",{"weapon_vj_cov_spv3_needler","weapon_vj_cov_spv3_plasmapistol"},vCat)
 	VJ.AddNPC_HUMAN("[Cov] Grunt Spec-Ops","npc_vj_halo_cov_spv3_grunt_spc",{"weapon_vj_cov_spv3_needler","weapon_vj_cov_spv3_plasmapistol","weapon_vj_cov_spv3_piercer"},vCat)
@@ -66,7 +66,7 @@ if VJExists == true then
 	VJ.AddNPC_HUMAN("[Cov] Jackal MKM. Ultra","npc_vj_halo_cov_spv3_jackal_mkm_ult",{"weapon_vj_cov_spv3_particleCarbine", "weapon_vj_cov_spv3_focusrifle"},vCat)
 
 	VJ.AddNPC_HUMAN("[UNSC] ODST","npc_vj_halo_unsc_spv3_odst",{"weapon_vj_unsc_spv3_br", "weapon_vj_unsc_spv3_dmr", "weapon_vj_unsc_spv3_sr", "weapon_vj_unsc_spv3_smgsd", "weapon_vj_unsc_spv3_rl"},vCat)
-	VJ.AddNPC_HUMAN("[UNSC] Marine","npc_vj_halo_unsc_spv3_marine",{"weapon_vj_unsc_spv3_ar", "weapon_vj_unsc_spv3_sg", "weapon_vj_unsc_spv3_br", "weapon_vj_unsc_spv3_magnum", "weapon_vj_unsc_spv3_smg"},vCat)
+	VJ.AddNPC_HUMAN("[UNSC] Marine","npc_vj_halo_unsc_spv3_marine",{"weapon_vj_unsc_spv3_ar", "weapon_vj_unsc_spv3_sg", "weapon_vj_unsc_spv3_br", "weapon_vj_unsc_spv3_smg"},vCat)
 	VJ.AddNPC_HUMAN("[UNSC] Crewman","npc_vj_halo_unsc_spv3_crewman",{"weapon_vj_unsc_spv3_magnum"},vCat)
 	VJ.AddNPC_HUMAN("[UNSC] Sgt. Stacker","npc_vj_halo_unsc_spv3_stacker",{"weapon_vj_unsc_spv3_ar", "weapon_vj_unsc_spv3_sg", "weapon_vj_unsc_spv3_br", "weapon_vj_unsc_spv3_magnum", "weapon_vj_unsc_spv3_smg", "weapon_vj_unsc_spv3_sr"},vCat)
 	VJ.AddNPC_HUMAN("[UNSC] Sgt. Johnson","npc_vj_halo_unsc_spv3_johnson",{"weapon_vj_unsc_spv3_ar", "weapon_vj_unsc_spv3_sg", "weapon_vj_unsc_spv3_br", "weapon_vj_unsc_spv3_magnum", "weapon_vj_unsc_spv3_smg"},vCat)

@@ -371,10 +371,12 @@ function ENT:CustomRangeAttackCode()
 	self.Accuracy = self.Accuracy + (self.StartingAccuracyPos*-self.attackStats["beamTickRate"])
 	self.expPos = ((self.predictedPos + self.Accuracy) - self:GetPos()) * 10000
 	if (self.dead) then self:BeamThing(false) return end
-	self.fireTrace = util.TraceLine({
+	self.fireTrace = util.TraceHull({
 		start = self:GetPos(),
 		endpos = self.expPos,
 		filter = self,
+		mins = Vector( -5, -5, -5 ),
+		maxs = Vector( 5, 5, 5 ),
 	})
 	util.Decal("FadingScorch", self.fireTrace.HitPos, self.fireTrace.HitPos + self:GetAimVector()*50)
 	self:SetNWVector("SentinelBeam1",self.fireTrace.HitPos) --used to draw a beam from current pos to enemy pos in cl_init.lua
@@ -385,8 +387,8 @@ function ENT:CustomRangeAttackCode()
 	-- if (self.fireTrace.Entity!=self.currentEnemy) then //Currently causes tremendous lag
 	-- 	return false
 	-- end
-	if (IsValid(self.currentEnemy)) and (self.fireTrace.HitPos:WithinAABox(self.currentEnemy:GetPos() + self.currentEnemy:OBBMins() + Vector(-20, -20, -20), self.currentEnemy:GetPos() + self.currentEnemy:OBBMaxs() + Vector(20, 20, 20))) then
-		self.currentEnemy:TakeDamage((self.attackStats["beamTickRate"]*self.attackStats["damage"]/self.attackStats["beamDuration"]),self,self)
+	if (self.fireTrace.Entity) then
+		self.fireTrace.Entity:TakeDamage((self.attackStats["beamTickRate"]*self.attackStats["damage"]/self.attackStats["beamDuration"]),self,self)
 	end
 	if (!timer.Exists("firing"..self.uniqueId)) then
 		self:BeamThing(true)

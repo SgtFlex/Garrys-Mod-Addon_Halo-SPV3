@@ -237,6 +237,12 @@ ENT.SoundTbl_OnGrenadeSight = {
 	"brute/sightGrenade/sightGrenade (14).wav",
 	"brute/sightGrenade/sightGrenade (15).wav",
 }
+ENT.SoundTbl_Fall = {
+	"brute/fall/fall (1).wav",
+	"brute/fall/fall (2).wav",
+	"brute/fall/fall (3).wav",
+	"brute/fall/fall (4).wav",
+}
 ENT.SoundTbl_GrenadeAttack = {
 	"brute/throwGrenade/throwGrenade (1).wav",
 	"brute/throwGrenade/throwGrenade (2).wav",

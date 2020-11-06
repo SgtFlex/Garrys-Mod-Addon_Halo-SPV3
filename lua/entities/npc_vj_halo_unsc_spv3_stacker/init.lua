@@ -65,6 +65,12 @@ ENT.SoundTbl_Death = {
 	"stacker/death/death (9).wav",
 	"stacker/death/death (10).wav",
 }
+ENT.SoundTbl_Fall = {
+	"stacker/fall/fall (1).wav",
+	"stacker/fall/fall (2).wav",
+	"stacker/fall/fall (3).wav",
+	"stacker/fall/fall (4).wav",
+}
 ENT.SoundTbl_OnGrenadeSight = {
 	"stacker/seeGrenade/seeGrenade (1).wav",
 	"stacker/seeGrenade/seeGrenade (2).wav",

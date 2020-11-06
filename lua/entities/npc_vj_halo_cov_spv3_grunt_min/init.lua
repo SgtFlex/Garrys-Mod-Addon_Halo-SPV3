@@ -88,131 +88,131 @@ ENT.UNSCWeps = {
 function ENT:CustomOnPreInitialize()
 	self.voicePermutation = tostring(math.random(1,4))
 	self.SoundTbl_Alert = {
-	"grunt/grunt0"..self.voicePermutation.."/seeFoe/seeFoe (1).wav",
-	"grunt/grunt0"..self.voicePermutation.."/seeFoe/seeFoe (2).wav",
-	"grunt/grunt0"..self.voicePermutation.."/seeFoe/seeFoe (3).wav",
-	"grunt/grunt0"..self.voicePermutation.."/seeFoe/seeFoe (4).wav",
-	"grunt/grunt0"..self.voicePermutation.."/seeFoe/seeFoe (5).wav",
+	"grunt/grunt0"..self.voicePermutation.."/seeFoe/seeFoe (1).ogg",
+	"grunt/grunt0"..self.voicePermutation.."/seeFoe/seeFoe (2).ogg",
+	"grunt/grunt0"..self.voicePermutation.."/seeFoe/seeFoe (3).ogg",
+	"grunt/grunt0"..self.voicePermutation.."/seeFoe/seeFoe (4).ogg",
+	"grunt/grunt0"..self.voicePermutation.."/seeFoe/seeFoe (5).ogg",
 }
 self.SoundTbl_AllyDeath = {
-	"grunt/grunt0"..self.voicePermutation.."/ally_death/ally_death (1).wav",
-	"grunt/grunt0"..self.voicePermutation.."/ally_death/ally_death (2).wav",
+	"grunt/grunt0"..self.voicePermutation.."/ally_death/ally_death (1).ogg",
+	"grunt/grunt0"..self.voicePermutation.."/ally_death/ally_death (2).ogg",
 }
 self.SoundTbl_CallForHelp = {
 
 }
 self.SoundTbl_CombatIdle = {
-	"grunt/grunt0"..self.voicePermutation.."/combat_idle/combat_idle (1).wav",
-	"grunt/grunt0"..self.voicePermutation.."/combat_idle/combat_idle (2).wav",
-	"grunt/grunt0"..self.voicePermutation.."/combat_idle/combat_idle (3).wav",
-	"grunt/grunt0"..self.voicePermutation.."/combat_idle/combat_idle (4).wav",
-	"grunt/grunt0"..self.voicePermutation.."/combat_idle/combat_idle (5).wav",
-	"grunt/grunt0"..self.voicePermutation.."/combat_idle/combat_idle (6).wav",
-	"grunt/grunt0"..self.voicePermutation.."/combat_idle/combat_idle (7).wav",
-	"grunt/grunt0"..self.voicePermutation.."/combat_idle/combat_idle (8).wav",
+	"grunt/grunt0"..self.voicePermutation.."/combat_idle/combat_idle (1).ogg",
+	"grunt/grunt0"..self.voicePermutation.."/combat_idle/combat_idle (2).ogg",
+	"grunt/grunt0"..self.voicePermutation.."/combat_idle/combat_idle (3).ogg",
+	"grunt/grunt0"..self.voicePermutation.."/combat_idle/combat_idle (4).ogg",
+	"grunt/grunt0"..self.voicePermutation.."/combat_idle/combat_idle (5).ogg",
+	"grunt/grunt0"..self.voicePermutation.."/combat_idle/combat_idle (6).ogg",
+	"grunt/grunt0"..self.voicePermutation.."/combat_idle/combat_idle (7).ogg",
+	"grunt/grunt0"..self.voicePermutation.."/combat_idle/combat_idle (8).ogg",
 }
 self.SoundTbl_Death = {
-	"grunt/grunt0"..self.voicePermutation.."/death/death (1).wav",
-	"grunt/grunt0"..self.voicePermutation.."/death/death (2).wav",
-	"grunt/grunt0"..self.voicePermutation.."/death/death (3).wav",
-	"grunt/grunt0"..self.voicePermutation.."/death/death (4).wav",
-	"grunt/grunt0"..self.voicePermutation.."/death/death (5).wav",
+	"grunt/grunt0"..self.voicePermutation.."/death/death (1).ogg",
+	"grunt/grunt0"..self.voicePermutation.."/death/death (2).ogg",
+	"grunt/grunt0"..self.voicePermutation.."/death/death (3).ogg",
+	"grunt/grunt0"..self.voicePermutation.."/death/death (4).ogg",
+	"grunt/grunt0"..self.voicePermutation.."/death/death (5).ogg",
 }
 self.SoundTbl_Fall = {
-	"grunt/grunt01/fall/fall (1).ogg",
-	"grunt/grunt01/fall/fall (2).ogg",
+	"grunt/grunt0"..self.voicePermutation.."/fall/fall (1).ogg",
+	"grunt/grunt0"..self.voicePermutation.."/fall/fall (2).ogg",
 }
 self.SoundTbl_GrenadeAttack = {
-	"grunt/grunt0"..self.voicePermutation.."/throwGrenade/throwGrenade (1).wav",
-	"grunt/grunt0"..self.voicePermutation.."/throwGrenade/throwGrenade (2).wav",
-	"grunt/grunt0"..self.voicePermutation.."/throwGrenade/throwGrenade (3).wav",
-	"grunt/grunt0"..self.voicePermutation.."/throwGrenade/throwGrenade (4).wav",
-	"grunt/grunt0"..self.voicePermutation.."/throwGrenade/throwGrenade (5).wav",
-	"grunt/grunt0"..self.voicePermutation.."/throwGrenade/throwGrenade (6).wav",
-	"grunt/grunt0"..self.voicePermutation.."/throwGrenade/throwGrenade (7).wav",
+	"grunt/grunt0"..self.voicePermutation.."/throwGrenade/throwGrenade (1).ogg",
+	"grunt/grunt0"..self.voicePermutation.."/throwGrenade/throwGrenade (2).ogg",
+	"grunt/grunt0"..self.voicePermutation.."/throwGrenade/throwGrenade (3).ogg",
+	"grunt/grunt0"..self.voicePermutation.."/throwGrenade/throwGrenade (4).ogg",
+	"grunt/grunt0"..self.voicePermutation.."/throwGrenade/throwGrenade (5).ogg",
+	"grunt/grunt0"..self.voicePermutation.."/throwGrenade/throwGrenade (6).ogg",
+	"grunt/grunt0"..self.voicePermutation.."/throwGrenade/throwGrenade (7).ogg",
 }
 self.SoundTbl_Investigate = {
-	"grunt/grunt0"..self.voicePermutation.."/investigate/investigate (1).wav",
-	"grunt/grunt0"..self.voicePermutation.."/investigate/investigate (2).wav",
-	"grunt/grunt0"..self.voicePermutation.."/investigate/investigate (3).wav",
-	"grunt/grunt0"..self.voicePermutation.."/investigate/investigate (4).wav",
-	"grunt/grunt0"..self.voicePermutation.."/investigate/investigate (5).wav",
-	"grunt/grunt0"..self.voicePermutation.."/investigate/investigate (6).wav",
-	"grunt/grunt0"..self.voicePermutation.."/investigate/investigate (7).wav",
-	"grunt/grunt0"..self.voicePermutation.."/investigate/investigate (8).wav",
+	"grunt/grunt0"..self.voicePermutation.."/investigate/investigate (1).ogg",
+	"grunt/grunt0"..self.voicePermutation.."/investigate/investigate (2).ogg",
+	"grunt/grunt0"..self.voicePermutation.."/investigate/investigate (3).ogg",
+	"grunt/grunt0"..self.voicePermutation.."/investigate/investigate (4).ogg",
+	"grunt/grunt0"..self.voicePermutation.."/investigate/investigate (5).ogg",
+	"grunt/grunt0"..self.voicePermutation.."/investigate/investigate (6).ogg",
+	"grunt/grunt0"..self.voicePermutation.."/investigate/investigate (7).ogg",
+	"grunt/grunt0"..self.voicePermutation.."/investigate/investigate (8).ogg",
 }
 self.SoundTbl_LostEnemy = {
-	"grunt/grunt0"..self.voicePermutation.."/lost_enemy/lost_enemy (1).wav",
-	"grunt/grunt0"..self.voicePermutation.."/lost_enemy/lost_enemy (2).wav",
-	"grunt/grunt0"..self.voicePermutation.."/lost_enemy/lost_enemy (3).wav",
-	"grunt/grunt0"..self.voicePermutation.."/lost_enemy/lost_enemy (4).wav",
-	"grunt/grunt0"..self.voicePermutation.."/lost_enemy/lost_enemy (5).wav",
-	"grunt/grunt0"..self.voicePermutation.."/lost_enemy/lost_enemy (6).wav",
-	"grunt/grunt0"..self.voicePermutation.."/lost_enemy/lost_enemy (7).wav",
+	"grunt/grunt0"..self.voicePermutation.."/lost_enemy/lost_enemy (1).ogg",
+	"grunt/grunt0"..self.voicePermutation.."/lost_enemy/lost_enemy (2).ogg",
+	"grunt/grunt0"..self.voicePermutation.."/lost_enemy/lost_enemy (3).ogg",
+	"grunt/grunt0"..self.voicePermutation.."/lost_enemy/lost_enemy (4).ogg",
+	"grunt/grunt0"..self.voicePermutation.."/lost_enemy/lost_enemy (5).ogg",
+	"grunt/grunt0"..self.voicePermutation.."/lost_enemy/lost_enemy (6).ogg",
+	"grunt/grunt0"..self.voicePermutation.."/lost_enemy/lost_enemy (7).ogg",
 }
 self.SoundTbl_OnGrenadeSight = {
-	"grunt/grunt0"..self.voicePermutation.."/seeGrenade/seeGrenade (1).wav",
-	"grunt/grunt0"..self.voicePermutation.."/seeGrenade/seeGrenade (2).wav",
-	"grunt/grunt0"..self.voicePermutation.."/seeGrenade/seeGrenade (3).wav",
-	"grunt/grunt0"..self.voicePermutation.."/seeGrenade/seeGrenade (4).wav",
-	"grunt/grunt0"..self.voicePermutation.."/seeGrenade/seeGrenade (5).wav",
+	"grunt/grunt0"..self.voicePermutation.."/seeGrenade/seeGrenade (1).ogg",
+	"grunt/grunt0"..self.voicePermutation.."/seeGrenade/seeGrenade (2).ogg",
+	"grunt/grunt0"..self.voicePermutation.."/seeGrenade/seeGrenade (3).ogg",
+	"grunt/grunt0"..self.voicePermutation.."/seeGrenade/seeGrenade (4).ogg",
+	"grunt/grunt0"..self.voicePermutation.."/seeGrenade/seeGrenade (5).ogg",
 }
 self.SoundTbl_OnKilledEnemy = {
-	"grunt/grunt0"..self.voicePermutation.."/killed_enemy/killed_enemy (1).wav",
-	"grunt/grunt0"..self.voicePermutation.."/killed_enemy/killed_enemy (2).wav",
-	"grunt/grunt0"..self.voicePermutation.."/killed_enemy/killed_enemy (3).wav",
+	"grunt/grunt0"..self.voicePermutation.."/killed_enemy/killed_enemy (1).ogg",
+	"grunt/grunt0"..self.voicePermutation.."/killed_enemy/killed_enemy (2).ogg",
+	"grunt/grunt0"..self.voicePermutation.."/killed_enemy/killed_enemy (3).ogg",
 }
 self.SoundTbl_OnReceiveOrder = {
-	"grunt/grunt0"..self.voicePermutation.."/ok/ok (1).wav",
-	"grunt/grunt0"..self.voicePermutation.."/ok/ok (2).wav",
-	"grunt/grunt0"..self.voicePermutation.."/ok/ok (3).wav",
-	"grunt/grunt0"..self.voicePermutation.."/ok/ok (4).wav",
-	"grunt/grunt0"..self.voicePermutation.."/ok/ok (5).wav",
-	"grunt/grunt0"..self.voicePermutation.."/ok/ok (6).wav",
+	"grunt/grunt0"..self.voicePermutation.."/ok/ok (1).ogg",
+	"grunt/grunt0"..self.voicePermutation.."/ok/ok (2).ogg",
+	"grunt/grunt0"..self.voicePermutation.."/ok/ok (3).ogg",
+	"grunt/grunt0"..self.voicePermutation.."/ok/ok (4).ogg",
+	"grunt/grunt0"..self.voicePermutation.."/ok/ok (5).ogg",
+	"grunt/grunt0"..self.voicePermutation.."/ok/ok (6).ogg",
 }
 self.SoundTbl_Pain = {
-	"grunt/grunt0"..self.voicePermutation.."/pain/pain (1).wav",
-	"grunt/grunt0"..self.voicePermutation.."/pain/pain (2).wav",
-	"grunt/grunt0"..self.voicePermutation.."/pain/pain (3).wav",
-	"grunt/grunt0"..self.voicePermutation.."/pain/pain (4).wav",
-	"grunt/grunt0"..self.voicePermutation.."/pain/pain (5).wav",
+	"grunt/grunt0"..self.voicePermutation.."/pain/pain (1).ogg",
+	"grunt/grunt0"..self.voicePermutation.."/pain/pain (2).ogg",
+	"grunt/grunt0"..self.voicePermutation.."/pain/pain (3).ogg",
+	"grunt/grunt0"..self.voicePermutation.."/pain/pain (4).ogg",
+	"grunt/grunt0"..self.voicePermutation.."/pain/pain (5).ogg",
 }
 self.SoundTbl_Scared = {
-	"grunt/grunt0"..self.voicePermutation.."/flee/flee (1).wav",
-	"grunt/grunt0"..self.voicePermutation.."/flee/flee (2).wav",
-	"grunt/grunt0"..self.voicePermutation.."/flee/flee (3).wav",
-	"grunt/grunt0"..self.voicePermutation.."/flee/flee (4).wav",
-	"grunt/grunt0"..self.voicePermutation.."/flee/flee (5).wav",
-	"grunt/grunt0"..self.voicePermutation.."/flee/flee (6).wav",
-	"grunt/grunt0"..self.voicePermutation.."/flee/flee (7).wav",
-	"grunt/grunt0"..self.voicePermutation.."/flee/flee (8).wav",
+	"grunt/grunt0"..self.voicePermutation.."/flee/flee (1).ogg",
+	"grunt/grunt0"..self.voicePermutation.."/flee/flee (2).ogg",
+	"grunt/grunt0"..self.voicePermutation.."/flee/flee (3).ogg",
+	"grunt/grunt0"..self.voicePermutation.."/flee/flee (4).ogg",
+	"grunt/grunt0"..self.voicePermutation.."/flee/flee (5).ogg",
+	"grunt/grunt0"..self.voicePermutation.."/flee/flee (6).ogg",
+	"grunt/grunt0"..self.voicePermutation.."/flee/flee (7).ogg",
+	"grunt/grunt0"..self.voicePermutation.."/flee/flee (8).ogg",
 }
 self.SoundTbl_Stuck = {
-	"grunt/grunt0"..self.voicePermutation.."/stuck/stuck (1).wav",
-	"grunt/grunt0"..self.voicePermutation.."/stuck/stuck (2).wav",
-	"grunt/grunt0"..self.voicePermutation.."/stuck/stuck (3).wav",
+	"grunt/grunt0"..self.voicePermutation.."/stuck/stuck (1).ogg",
+	"grunt/grunt0"..self.voicePermutation.."/stuck/stuck (2).ogg",
+	"grunt/grunt0"..self.voicePermutation.."/stuck/stuck (3).ogg",
 }
 self.SoundTbl_Suppressing = {
-	"grunt/grunt0"..self.voicePermutation.."/firing/firing (1).wav",
-	"grunt/grunt0"..self.voicePermutation.."/firing/firing (2).wav",
-	"grunt/grunt0"..self.voicePermutation.."/firing/firing (3).wav",
-	"grunt/grunt0"..self.voicePermutation.."/firing/firing (4).wav",
-	"grunt/grunt0"..self.voicePermutation.."/firing/firing (5).wav",
-	"grunt/grunt0"..self.voicePermutation.."/firing/firing (6).wav",
-	"grunt/grunt0"..self.voicePermutation.."/firing/firing (7).wav",
-	"grunt/grunt0"..self.voicePermutation.."/firing/firing (8).wav",
-	"grunt/grunt0"..self.voicePermutation.."/firing/firing (9).wav",
+	"grunt/grunt0"..self.voicePermutation.."/firing/firing (1).ogg",
+	"grunt/grunt0"..self.voicePermutation.."/firing/firing (2).ogg",
+	"grunt/grunt0"..self.voicePermutation.."/firing/firing (3).ogg",
+	"grunt/grunt0"..self.voicePermutation.."/firing/firing (4).ogg",
+	"grunt/grunt0"..self.voicePermutation.."/firing/firing (5).ogg",
+	"grunt/grunt0"..self.voicePermutation.."/firing/firing (6).ogg",
+	"grunt/grunt0"..self.voicePermutation.."/firing/firing (7).ogg",
+	"grunt/grunt0"..self.voicePermutation.."/firing/firing (8).ogg",
+	"grunt/grunt0"..self.voicePermutation.."/firing/firing (9).ogg",
 }
 self.SoundTbl_Transform = {
-	"grunt/grunt0"..self.voicePermutation.."/transform/transform (1).wav",
-	"grunt/grunt0"..self.voicePermutation.."/transform/transform (2).wav",
-	"grunt/grunt0"..self.voicePermutation.."/transform/transform (3).wav",
+	"grunt/grunt0"..self.voicePermutation.."/transform/transform (1).ogg",
+	"grunt/grunt0"..self.voicePermutation.."/transform/transform (2).ogg",
+	"grunt/grunt0"..self.voicePermutation.."/transform/transform (3).ogg",
 }
 self.SoundTbl_WeaponReload = {
-	"grunt/grunt0"..self.voicePermutation.."/cover/cover (1).wav",
-	"grunt/grunt0"..self.voicePermutation.."/cover/cover (2).wav",
-	"grunt/grunt0"..self.voicePermutation.."/cover/cover (3).wav",
-	"grunt/grunt0"..self.voicePermutation.."/cover/cover (4).wav",
+	"grunt/grunt0"..self.voicePermutation.."/cover/cover (1).ogg",
+	"grunt/grunt0"..self.voicePermutation.."/cover/cover (2).ogg",
+	"grunt/grunt0"..self.voicePermutation.."/cover/cover (3).ogg",
+	"grunt/grunt0"..self.voicePermutation.."/cover/cover (4).ogg",
 }
 end
 
@@ -259,7 +259,7 @@ end
 ---------------------------------------------------------------------------------------------------------------------------------------------
 function ENT:CustomOnAcceptInput(key,activator,caller,data)
 	if key == "Step" then
-		self:EmitSound("grunt/walk/walk"..math.random(1,6)..".wav", 80, 100, 1)
+		self:EmitSound("grunt/walk/walk"..math.random(1,6)..".ogg", 80, 100, 1)
 	end
 end
 

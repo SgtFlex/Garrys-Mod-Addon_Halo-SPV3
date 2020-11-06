@@ -14,6 +14,7 @@ ENT.BGs = {
 ENT.CovWeps = {
 	"weapon_vj_cov_spv3_plasmapistol",
 	"weapon_vj_cov_spv3_plasmapistolBrute",
+	"weapon_vj_cov_spv3_piercer"
 }
 ENT.ColorRange = {Vector (0,0,0), Vector(255,255,255)}
 ENT.Cooldown = 0

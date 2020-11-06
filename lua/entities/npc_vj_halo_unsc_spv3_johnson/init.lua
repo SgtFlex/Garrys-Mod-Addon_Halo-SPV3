@@ -71,6 +71,15 @@ ENT.SoundTbl_Death = {
 	"johnson/death/death (4).wav",
 	"johnson/death/death (5).wav",
 }
+ENT.SoundTbl_Fall = {
+	"johnson/fall/fall (1).wav",
+	"johnson/fall/fall (2).wav",
+	"johnson/fall/fall (3).wav",
+	"johnson/fall/fall (4).wav",
+	"johnson/fall/fall (5).wav",
+	"johnson/fall/fall (6).wav",
+	"johnson/fall/fall (7).wav",
+}
 ENT.SoundTbl_OnGrenadeSight = {
 	"johnson/seeGrenade/seeGrenade (1).ogg",
 	"johnson/seeGrenade/seeGrenade (2).ogg",

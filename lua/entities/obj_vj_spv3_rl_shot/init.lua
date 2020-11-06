@@ -11,7 +11,9 @@ ENT.RadiusDamageRadius = 500 -- How far the damage go? The farther away it's fro
 ENT.RadiusDamage = 200 -- How much damage should it deal? Remember this is a radius damage, therefore it will do less damage the farther away the entity is from its enemy
 ENT.RadiusDamageUseRealisticRadius = true -- Should the damage decrease the farther away the enemy is from the position that the projectile hit?
 ENT.RadiusDamageType = DMG_BLAST -- Damage type
-ENT.ShakeWorldOnDeath = false -- Should the world shake when the projectile hits something?
+ENT.RadiusDamageForce = 500 -- Put the force amount it should apply | false = Don't apply any force
+ENT.RadiusDamageForce_Up = 0 -- How much up force should it have? | false = Let the base automatically decide the force using RadiusDamageForce value
+ENT.ShakeWorldOnDeath = true -- Should the world shake when the projectile hits something?
 ENT.DecalTbl_DeathDecals = {"FadingScorch"}
 ENT.SoundTbl_Idle = {""}
 ENT.SoundTbl_OnCollide = {"weapons/rocket launcher/impact/1.wav", "weapons/rocket launcher/impact/2.wav", "weapons/rocket launcher/impact/3.wav", "weapons/rocket launcher/impact/4.wav"}

@@ -25,7 +25,7 @@ ENT.LeapToMeleeDistance = 0 -- How close does it have to be until it uses melee?
 ENT.TimeUntilLeapAttackDamage = 0.4 -- How much time until it runs the leap damage code?
 ENT.NextLeapAttackTime = 2 -- How much time until it can use a leap attack?
 ENT.NextAnyAttackTime_Leap = 2 -- How much time until it can use any attack again? | Counted in Seconds
-ENT.LeapAttackExtraTimers = {0.2,0.6,0.8, 1, 1.2} -- Extra leap attack timers | it will run the damage code after the given amount of seconds
+ENT.LeapAttackExtraTimers = {0.2,0.6,0.8, 1, 1.2, 1.5, 2} -- Extra leap attack timers | it will run the damage code after the given amount of seconds
 ENT.LeapAttackVelocityForward = -150 -- How much forward force should it apply?
 ENT.LeapAttackVelocityUp = 200 -- How much upward force should it apply?
 ENT.LeapAttackDamage = 5
@@ -364,6 +364,14 @@ function ENT:CustomOnLeapAttack_AfterChecks(TheHitEntity)
 	end
 end
 
+function ENT:CustomOnLeapAttack_BeforeStartTimer() 
+	self.NextLeapAttackTime = math.random(2.5, 4.5) -- How much time until it can use a leap attack?
+	self.LeapAttackVelocityRight = math.random(-50, 50) -- How much right force should it apply?
+	self.LeapAttackVelocityUp = math.random(150, 230) -- How much upward force should it apply?
+	self.LeapDistance = math.random(400, 600)-- The distance of the leap, for example if it is set to 500, when the SNPC is 500 Unit away, it will jump
+
+end
+
 function ENT:MultipleMeleeAttacks() end
 
 ENT.isMoving = false
@@ -376,9 +384,32 @@ function ENT:CustomOnAcceptInput(key,activator,caller,data)
 		self.isMoving = false
 	end
 end
+
 function ENT:CustomOnRemove() 
 	self.MovingSound:Stop()
 end
+
+-- function ENT:CustomOnThink() 
+-- 	local posOrNeg = 1
+-- 	if (self:GetAngles().y >= 0) then
+-- 		posOrNeg=-1
+-- 	else
+-- 		posOrNeg=1
+-- 	end
+-- 	local angletrace = util.TraceLine(
+-- 	{
+-- 		start = self:GetPos(),
+-- 		endpos = self:GetPos() + Vector(0, 0, -100),
+-- 		filter = self,
+-- 		mask = MASK_SOLID_BRUSHONLY,
+-- 		ignoreworld = false
+-- 	}
+-- 	)
+-- 	angletrace.HitNormal:Rotate(Angle(0,self:GetAngles().y,0))
+-- 	local groundData = angletrace.HitNormal:Angle()
+-- 	PrintMessage(3, tostring(groundData))
+-- 	self:SetAngles(Angle((groundData.x + 90)*posOrNeg, self:GetAngles().y, groundData.z))
+-- end
 /*-----------------------------------------------
 	*** Copyright (c) 2012-2016 by DrVrej, All rights reserved. ***
 	No parts of this code or any of its contents may be reproduced, copied, modified or adapted,

@@ -48,6 +48,12 @@ ENT.LeapAttackVelocityForward = 200 -- How much forward force should it apply?
 ENT.LeapAttackVelocityUp = 500 -- How much upward force should it apply?
 ENT.LeapToMeleeDistance = 600 -- How close does it have to be until it uses melee?
 ENT.NextLeapAttackTime = 2.5 -- How much time until it can use a leap attack?
+ENT.bodyParts = {
+	Head = {Health = 15, Bodygroup = "Head", Removed = false},
+	Right_Arm = {Health = 25, Bodygroup = "Right Arm", Removed = false},
+	Left_Arm = {Health = 25, Bodygroup = "Left Arm", Removed = false},
+	Inf_Form = {Health = 20, Bodygroup = "Inf Form", Removed = false},
+}
 
 	-- ====== Sound File Paths ====== --
 -- Leave blank if you don't want any sounds to play
@@ -140,6 +146,63 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 		dmginfo:ScaleDamage(GetConVarNumber("vj_spv3_NPCTakeDamageModifier"))
 	end
 	self:EmitSound("infested_shared/hit/floodflesh_hit_small"..math.random(1,11)..".wav", 80, 100, 1)
+	if (dmginfo:GetDamage() >= self:Health()) then
+		if (dmginfo:GetDamageType()==DMG_BLAST or dmginfo:GetDamageType()==DMG_CLUB) then
+			self:FlyingDeath(dmginfo)
+		end
+	end
+	if (hitgroup==502 and self.bodyParts["Right_Arm"]["Removed"]==false) then
+		self.bodyParts["Right_Arm"]["Health"] = self.bodyParts["Right_Arm"]["Health"] - dmginfo:GetDamage()
+		if (self.bodyParts["Right_Arm"]["Health"] <= 0) then
+			self.bodyParts["Right_Arm"]["Removed"]=true
+			self:SetBodygroup(self:FindBodygroupByName(self.bodyParts["Right_Arm"]["Bodygroup"]), 2)
+			if (IsValid(self:GetActiveWeapon())) then
+				local wep = ents.Create(self:GetActiveWeapon():GetClass())
+				wep:SetPos(self:GetActiveWeapon():GetPos())
+				wep:SetAngles(self:GetActiveWeapon():GetAngles())
+				wep:Spawn()
+				self:GetActiveWeapon():Remove()
+			end
+		end
+	elseif (hitgroup==503 and self.bodyParts["Left_Arm"]["Removed"]==false) then
+		self.bodyParts["Left_Arm"]["Health"] = self.bodyParts["Left_Arm"]["Health"] - dmginfo:GetDamage()
+		if (self.bodyParts["Left_Arm"]["Health"] <= 0) then
+			self.bodyParts["Left_Arm"]["Removed"]=true
+			self:SetBodygroup(self:FindBodygroupByName(self.bodyParts["Left_Arm"]["Bodygroup"]), 2)
+			self.HasMeleeAttack = false
+		end
+	elseif (hitgroup==500 and self.bodyParts["Head"]["Removed"]==false) then
+		self.bodyParts["Head"]["Health"] = self.bodyParts["Head"]["Health"] - dmginfo:GetDamage()
+		if (self.bodyParts["Head"]["Health"] <= 0) then
+			self.bodyParts["Head"]["Removed"]=true
+			self:SetBodygroup(self:FindBodygroupByName(self.bodyParts["Head"]["Bodygroup"]), 2)
+		end
+	elseif (hitgroup==501 and self.bodyParts["Inf_Form"]["Removed"]==false) then
+		self.bodyParts["Inf_Form"]["Health"] = self.bodyParts["Inf_Form"]["Health"] - dmginfo:GetDamage()
+		if (self.bodyParts["Inf_Form"]["Health"] <= 0) then
+			self.bodyParts["Inf_Form"]["Removed"]=true
+			self:SetBodygroup(self:FindBodygroupByName(self.bodyParts["Inf_Form"]["Bodygroup"]), 2)
+			self:EmitSound("infection_form/infection_pop/pop1.wav")
+			ParticleEffect("hcea_flood_infected_death", self:LocalToWorld(Vector(0,0,50)), self:GetAngles() + Angle(90,0,0), nil)
+			self:TakeDamage(1000)
+		end
+	end
+end
+
+function ENT:FlyingDeath(dmginfo)
+	self.HasDeathRagdoll = false
+	self.HasDeathAnimation = false
+	self.HasDeathSounds = false -- If set to false, it won't play the death sounds
+	self.imposter = ents.Create("obj_vj_imposter")
+	self.imposter:SetOwner(self)
+	self.imposter.Sequence = "Die_Airborne"
+	local velocity = dmginfo:GetDamageForce():GetNormalized() * 1500
+	if (dmginfo:GetDamageType()==DMG_CLUB) then
+		velocity = velocity * 0.3
+	end
+	self.imposter.Velocity = Vector(velocity.x, velocity.y, velocity.z + 500)
+	self.imposter.Angle = Angle(0,dmginfo:GetDamageForce():Angle().y,0)
+	self.imposter:Spawn()
 end
 ---------------------------------------------------------------------------------------------------------------------------------------------
 function ENT:CustomOnAcceptInput(key,activator,caller,data)
