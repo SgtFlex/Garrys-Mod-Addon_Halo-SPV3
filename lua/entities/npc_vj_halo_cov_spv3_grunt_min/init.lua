@@ -282,7 +282,7 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 		dmginfo:ScaleDamage(GetConVarNumber("vj_spv3_NPCTakeDamageModifier"))
 	end
 	if (dmginfo:GetDamage() >= self:Health()) then
-		if (dmginfo:GetDamageType()==DMG_BLAST or dmginfo:GetDamageType()==DMG_CLUB) then
+		if (dmginfo:GetDamageType()==DMG_BLAST or dmginfo:GetDamageType()==DMG_CLUB or dmginfo:GetDamageForce():Length()>=10000) then
 			self:FlyingDeath(dmginfo)
 		end
 	end
@@ -295,7 +295,7 @@ function ENT:FlyingDeath(dmginfo)
 	self.imposter:SetOwner(self)
 	self.imposter.Sequence = "Die_Airborne"
 	local velocity = dmginfo:GetDamageForce():GetNormalized() * 1500
-	if (dmginfo:GetDamageType()==DMG_CLUB) then
+	if (dmginfo:GetDamageType()==DMG_CLUB or dmginfo:GetDamageForce():Length()) then
 		velocity = velocity * 0.3
 	end
 	self.imposter.Velocity = Vector(velocity.x, velocity.y, velocity.z + 500)

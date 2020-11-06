@@ -164,7 +164,9 @@ function ENT:NeedleExplode()
 	self:EmitSound("weapons/needler/super/superneedleboom.wav")
 	local BlastInfo = DamageInfo()
 	BlastInfo:SetDamageType(DMG_BLAST)
-	BlastInfo:SetAttacker(self:GetOwner())
+	if (IsValid(self:GetOwner())) then
+		BlastInfo:SetAttacker(self:GetOwner())
+	end
 	BlastInfo:SetDamage(self.RadiusDamage)
 	BlastInfo:SetDamagePosition(self:GetPos())
 	BlastInfo:SetReportedPosition(self:GetPos())

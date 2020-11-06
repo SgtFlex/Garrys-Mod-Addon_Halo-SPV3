@@ -155,6 +155,7 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 		self.bodyParts["Right_Arm"]["Health"] = self.bodyParts["Right_Arm"]["Health"] - dmginfo:GetDamage()
 		if (self.bodyParts["Right_Arm"]["Health"] <= 0) then
 			self.bodyParts["Right_Arm"]["Removed"]=true
+			self:RemoveAllDecals()
 			self:SetBodygroup(self:FindBodygroupByName(self.bodyParts["Right_Arm"]["Bodygroup"]), 1)
 			if (IsValid(self:GetActiveWeapon())) then
 				local wep = ents.Create(self:GetActiveWeapon():GetClass())
@@ -168,6 +169,7 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 		self.bodyParts["Left_Arm"]["Health"] = self.bodyParts["Left_Arm"]["Health"] - dmginfo:GetDamage()
 		if (self.bodyParts["Left_Arm"]["Health"] <= 0) then
 			self.bodyParts["Left_Arm"]["Removed"]=true
+			self:RemoveAllDecals()
 			self:SetBodygroup(self:FindBodygroupByName(self.bodyParts["Left_Arm"]["Bodygroup"]), 1)
 			self.HasMeleeAttack = false
 		end
@@ -175,12 +177,14 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 		self.bodyParts["Head"]["Health"] = self.bodyParts["Head"]["Health"] - dmginfo:GetDamage()
 		if (self.bodyParts["Head"]["Health"] <= 0) then
 			self.bodyParts["Head"]["Removed"]=true
+			self:RemoveAllDecals()
 			self:SetBodygroup(self:FindBodygroupByName(self.bodyParts["Head"]["Bodygroup"]), 1)
 		end
 	elseif (hitgroup==501 and self.bodyParts["Inf_Form"]["Removed"]==false) then
 		self.bodyParts["Inf_Form"]["Health"] = self.bodyParts["Inf_Form"]["Health"] - dmginfo:GetDamage()
 		if (self.bodyParts["Inf_Form"]["Health"] <= 0) then
 			self.bodyParts["Inf_Form"]["Removed"]=true
+			self:RemoveAllDecals()
 			self:SetBodygroup(self:FindBodygroupByName(self.bodyParts["Inf_Form"]["Bodygroup"]), 1)
 			self:EmitSound("infection_form/infection_pop/pop1.wav")
 			ParticleEffect("hcea_flood_infected_death", self:LocalToWorld(Vector(0,0,50)), self:GetAngles() + Angle(90,0,0), nil)

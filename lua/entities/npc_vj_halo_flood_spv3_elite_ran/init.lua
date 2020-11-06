@@ -136,17 +136,17 @@ ENT.WeaponTable = {
 }
 
 ENT.Variants = {
-	{Name = "Minor", Color = Color(67,79,127), BodyGroup = 0, Health = 44, Shields = 100},
-	{Name = "Major", Color = Color(127,0,0), BodyGroup = 0, Health = 45, Shields = 120},
-	{Name = "Ultra", Color = Color(182,182,182), BodyGroup = 0, Health = 63, Shields = 135},
-	{Name = "Zealot", Color = Color(255,191,0), BodyGroup = 0, Health = 75, Shields = 150},
-	{Name = "Spec-Ops", Color = Color(36,36,36), BodyGroup = 0, Health = 63, Shields = 135},
-	{Name = "Ossoona", Color = Color(36,36,36), BodyGroup = 0, Health = 75, Shields = 0},
-	{Name = "HG Minor", Color = Color(67,79,127), BodyGroup = 2, Health = 50, Shields = 135},
-	{Name = "HG Major", Color = Color(127,0,0), BodyGroup = 2, Health = 75, Shields = 145},
-	{Name = "HG Ultra", Color = Color(182,182,182), BodyGroup = 2, Health = 88, Shields = 155},
-	{Name = "HG Zealot", Color = Color(255,191,0), BodyGroup = 2, Health = 100, Shields = 165},
-	{Name = "Runner", Color = Color(67,79,127), BodyGroup = 1, Health = 45, Shields = 100},
+	{Name = "Minor", Color = Color(67,79,127), BodyGroup = 0, Skin = 1, Health = 44, Shields = 100},
+	{Name = "Major", Color = Color(127,0,0), BodyGroup = 0, Skin = 2, Health = 45, Shields = 120},
+	{Name = "Ultra", Color = Color(182,182,182), BodyGroup = 0, Skin = 0, Health = 63, Shields = 135},
+	{Name = "Zealot", Color = Color(255,191,0), BodyGroup = 0, Skin = 3, Health = 75, Shields = 150},
+	{Name = "Spec-Ops", Color = Color(36,36,36), BodyGroup = 0, Skin = 0, Health = 63, Shields = 135},
+	{Name = "Ossoona", Color = Color(36,36,36), BodyGroup = 0, Skin = 0, Health = 75, Shields = 0},
+	{Name = "HG Minor", Color = Color(67,79,127), BodyGroup = 1, Skin = 1, Health = 50, Shields = 135},
+	{Name = "HG Major", Color = Color(127,0,0), BodyGroup = 1, Skin = 2, Health = 75, Shields = 145},
+	{Name = "HG Ultra", Color = Color(182,182,182), BodyGroup = 1, Skin = 0, Health = 88, Shields = 155},
+	{Name = "HG Zealot", Color = Color(255,191,0), BodyGroup = 1, Skin = 3, Health = 100, Shields = 165},
+	{Name = "Runner", Color = Color(67,79,127), BodyGroup = 2, Skin = 0, Health = 45, Shields = 100},
 }
 ---------------------------------------------------------------------------------------------------------------------------------------------
 function ENT:CustomOnInitialize()
@@ -168,7 +168,10 @@ function ENT:CustomOnInitialize()
 		end)
 	end
 	self:SetColor(self.Variants[self.variantSelector]["Color"])
-	self:SetBodygroup(0, self.Variants[self.variantSelector]["BodyGroup"])
+	for i=0, 2 do
+		self:SetBodygroup(i, self.Variants[self.variantSelector]["BodyGroup"])
+	end
+	self:SetSkin(self.Variants[self.variantSelector]["Skin"])
 	self.MeleeAttackDamage = self.MeleeAttackDamage * GetConVarNumber("vj_spv3_damageModifier")
 	self:CapabilitiesAdd(bit.bor(CAP_MOVE_CLIMB))
 	self:SetCollisionBounds(Vector(30, 30, 80), Vector(-30, -30, 0))
@@ -262,7 +265,26 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 	else
 		self.CurrentHealth = self.CurrentHealth - dmginfo:GetDamage()
 	end
-	
+	if (dmginfo:GetDamage() >= self:Health()) then
+		if (dmginfo:GetDamageType()==DMG_BLAST or dmginfo:GetDamageType()==DMG_CLUB or dmginfo:GetDamageForce():Length()>=10000) then
+			self:FlyingDeath(dmginfo)
+		end
+	end
+end
+
+function ENT:FlyingDeath(dmginfo)
+	self.HasDeathRagdoll = false
+	self.HasDeathAnimation = false
+	self.imposter = ents.Create("obj_vj_imposter")
+	self.imposter:SetOwner(self)
+	self.imposter.Sequence = "Die_Airborne"
+	local velocity = dmginfo:GetDamageForce():GetNormalized() * 1500
+	if (dmginfo:GetDamageType()==DMG_CLUB or dmginfo:GetDamageForce():Length()) then
+		velocity = velocity * 0.3
+	end
+	self.imposter.Velocity = Vector(velocity.x, velocity.y, velocity.z + 500)
+	self.imposter.Angle = Angle(0,dmginfo:GetDamageForce():Angle().y,0)
+	self.imposter:Spawn()
 end
 
 function ENT:CustomOnTakeDamage_AfterDamage(dmginfo,hitgroup)

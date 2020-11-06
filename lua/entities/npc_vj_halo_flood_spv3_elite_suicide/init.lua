@@ -8,7 +8,7 @@ include('entities/npc_vj_halo_flood_spv3_elite/init.lua')
 -----------------------------------------------*/
 ENT.Model = {"models/hce/spv3/flood/elite/floodelite.mdl"} -- The game will pick a random model from the table when the SNPC is spawned | Add as many as you want
 ENT.modelColor = Color(127,0,0)
-ENT.bodyGroup = 0
+ENT.bodyGroupTable = {0, 0, 0, 0, 0}
 ENT.HasRangeAttack = true -- Should the SNPC have a range attack?
 ENT.RangeDistance = 500 -- This is how far away it can shoot
 ENT.DisableRangeAttackAnimation = true -- if true, it will disable the animation code
@@ -35,7 +35,10 @@ function ENT:CustomOnInitialize()
 		end
 	end)
 	self:SetColor(self.modelColor)
-	self:SetBodygroup(0, self.bodyGroup)
+	for i=0, #self.bodyGroupTable-1 do
+		self:SetBodygroup(i, self.bodyGroupTable[i+1])
+	end
+	self:SetSkin(2)
 	self.MeleeAttackDamage = self.MeleeAttackDamage * GetConVarNumber("vj_spv3_damageModifier")
 	self:CapabilitiesAdd(bit.bor(CAP_MOVE_CLIMB))
 	self:SetCollisionBounds(Vector(30, 30, 80), Vector(-30, -30, 0))

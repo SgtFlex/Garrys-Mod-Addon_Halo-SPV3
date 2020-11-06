@@ -104,7 +104,7 @@ if VJExists == true then
 	VJ.AddConVar("vj_spv3_NPCTakeDamageModifier", 2, FCVAR_ARCHIVE)
 	VJ.AddConVar("vj_spv3_HealthModifier", 1, FCVAR_ARCHIVE)
 	VJ.AddConVar("vj_spv3_ShieldModifier", 1, FCVAR_ARCHIVE)
-	VJ.AddConVar("vj_spv3_infModifier", 1, FCVAR_ARCHIVE)
+	VJ.AddConVar("vj_spv3_infModifier", 2.5, FCVAR_ARCHIVE)
 	VJ.AddConVar("vj_spv3_floodOption", "infect_onlyHalo", FCVAR_ARCHIVE)
 	VJ.AddConVar("vj_spv3_ffretal", 1, FCVAR_ARCHIVE)
 	VJ.AddConVar("vj_spv3_bonusInfForms", 1, FCVAR_ARCHIVE)

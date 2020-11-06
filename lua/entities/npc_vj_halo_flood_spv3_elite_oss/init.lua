@@ -8,7 +8,7 @@ include('entities/npc_vj_halo_flood_spv3_elite/init.lua')
 -----------------------------------------------*/
 ENT.Model = {"models/hce/spv3/flood/elite/floodelite.mdl"} -- The game will pick a random model from the table when the SNPC is spawned | Add as many as you want
 ENT.modelColor = Color(0,0,0)
-ENT.bodyGroup = 0
+ENT.bodyGroups = {0, 0, 0, 0, 0}
 
 ENT.StartHealth = 63
 ENT.ShieldHealth = 0
@@ -29,7 +29,9 @@ function ENT:CustomOnInitialize()
 		end
 	end)
 	self:SetColor(self.modelColor)
-	self:SetBodygroup(0, self.bodyGroup)
+	for i=0, #self.bodyGroupTable-1 do
+		self:SetBodygroup(i, self.bodyGroupTable[i+1])
+	end
 	self.MeleeAttackDamage = self.MeleeAttackDamage * GetConVarNumber("vj_spv3_damageModifier")
 	self:CapabilitiesAdd(bit.bor(CAP_MOVE_CLIMB))
 	self:SetCollisionBounds(Vector(30, 30, 80), Vector(-30, -30, 0))
@@ -65,6 +67,26 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 			end
 		end
 	end)
+	if (dmginfo:GetDamage() >= self:Health()) then
+		if (dmginfo:GetDamageType()==DMG_BLAST or dmginfo:GetDamageType()==DMG_CLUB or dmginfo:GetDamageForce():Length()>=10000) then
+			self:FlyingDeath(dmginfo)
+		end
+	end
+end
+
+function ENT:FlyingDeath(dmginfo)
+	self.HasDeathRagdoll = false
+	self.HasDeathAnimation = false
+	self.imposter = ents.Create("obj_vj_imposter")
+	self.imposter:SetOwner(self)
+	self.imposter.Sequence = "Die_Airborne"
+	local velocity = dmginfo:GetDamageForce():GetNormalized() * 1500
+	if (dmginfo:GetDamageType()==DMG_CLUB or dmginfo:GetDamageForce():Length()) then
+		velocity = velocity * 0.3
+	end
+	self.imposter.Velocity = Vector(velocity.x, velocity.y, velocity.z + 500)
+	self.imposter.Angle = Angle(0,dmginfo:GetDamageForce():Angle().y,0)
+	self.imposter:Spawn()
 end
 
 function ENT:CustomOnTakeDamage_AfterDamage(dmginfo,hitgroup)

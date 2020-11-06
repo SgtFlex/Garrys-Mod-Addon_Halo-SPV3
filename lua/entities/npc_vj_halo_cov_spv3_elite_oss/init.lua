@@ -25,6 +25,11 @@ ENT.Skin=0
 ENT.HasSword = true
 ---------------------------------------------------------------------------------------------------------------------------------------------
 function ENT:CustomOnInitialize()
+	-- local matEnt = ents.Create("material_modify_control")
+	-- matEnt:Spawn()
+	-- matEnt:SetKeyValue("MaterialName", "models/hce/spv3/cov/elite/elite_main_diff_blue")
+	-- matEnt:SetKeyValue("MaterialVar", "$color2")
+	-- matEnt:SetKeyValue("MaterialVarValue", "[5 1 1]")
 	self.material = self:GetMaterial()
 	timer.Simple(0.01, function()
 		self.weaponMaterial = self:GetActiveWeapon():GetMaterial()
@@ -33,6 +38,26 @@ function ENT:CustomOnInitialize()
 	end)
 	self:SetMaterial("models/props_c17/frostedglass_01a")
 	self:AddFlags(FL_NOTARGET)
+	self:SetSkin(self.Skin)
+	timer.Simple(0.1, function()
+	if (self:GetActiveWeapon().HoldType=="ar2") then
+		self.AnimTbl_WeaponAttack = {ACT_IDLE_RIFLE} -- Animation played when the SNPC does weapon attack
+		self.AnimTbl_ShootWhileMovingRun = {ACT_RUN_RIFLE} -- Animations it will play when shooting while running | NOTE: Weapon may translate the animation that they see fit!
+		self.AnimTbl_ShootWhileMovingWalk = {ACT_RUN_RIFLE} -- Animations it will play when shooting while walking | NOTE: Weapon may translate the animation that they see fit!
+		self.AnimTbl_Run = {ACT_RUN_RIFLE}
+		self.AnimTbl_TakingCover = {ACT_COVER_MED}
+		self.AnimTbl_WeaponAttackCrouch = {ACT_COVER_MED}
+	elseif (self:GetActiveWeapon().HoldType == "melee") then
+		self.MeleeAttackDamage = 300 * GetConVarNumber("vj_spv3_damageModifier")
+		self.AnimTbl_ShootWhileMovingRun = {ACT_MP_RUN_MELEE} -- Animations it will play when shooting while running | NOTE: Weapon may translate the animation that they see fit!
+		self.AnimTbl_ShootWhileMovingWalk = {ACT_MP_RUN_MELEE} -- Animations it will play when shooting while walking | NOTE: Weapon may translate the animation that they see fit!
+		self.AnimTbl_Run = {ACT_MP_RUN_MELEE}
+		self.AnimTbl_IdleStand = {ACT_IDLE_MELEE}
+		self.AnimTbl_WeaponAttack = {ACT_MELEE_ATTACK2} -- Melee Attack Animations
+		self.Berserked = true
+	end
+end)
+	self.GrenadeAttackEntity = VJ_PICKRANDOMTABLE(self.GrenadeTypes)
 	self.NextMoveTime = 0
 	self.NextDodgeTime = 0
 	self.NextMoveAroundTime = 0
@@ -52,7 +77,7 @@ function ENT:CustomOnInitialize()
 	self.CurrentHealth = self.StartHealth
 	self.ShieldActivated = true
 	self:SetHealth(self.ShieldHealth + self.StartHealth)
-	self:SetSkin(self.Skin)
+
 end
 
 
@@ -75,6 +100,27 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 			self:GetActiveWeapon():SetMaterial("models/props_c17/frostedglass_01a")
 		end
 	end)
+	if (dmginfo:GetDamage() >= self:Health()) then
+		if (dmginfo:GetDamageType()==DMG_BLAST or dmginfo:GetDamageType()==DMG_CLUB) then
+			self:FlyingDeath(dmginfo)
+		end
+	end
+end
+
+function ENT:FlyingDeath(dmginfo)
+	self.HasDeathRagdoll = false
+	self.HasDeathAnimation = false
+	self.HasDeathSounds = false -- If set to false, it won't play the death sounds
+	self.imposter = ents.Create("obj_vj_imposter")
+	self.imposter:SetOwner(self)
+	self.imposter.Sequence = "Die_Airborne"
+	local velocity = dmginfo:GetDamageForce():GetNormalized() * 1500
+	if (dmginfo:GetDamageType()==DMG_CLUB) then
+		velocity = velocity * 0.3
+	end
+	self.imposter.Velocity = Vector(velocity.x, velocity.y, velocity.z + 500)
+	self.imposter.Angle = Angle(0,dmginfo:GetDamageForce():Angle().y,0)
+	self.imposter:Spawn()
 end
 
 function ENT:CustomOnTakeDamage_AfterDamage(dmginfo,hitgroup)

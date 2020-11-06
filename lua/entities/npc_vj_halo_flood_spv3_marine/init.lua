@@ -149,7 +149,7 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 	end
 	self:EmitSound("infested_shared/hit/floodflesh_hit_small"..math.random(1,11)..".wav", 80, 100, 1)
 	if (dmginfo:GetDamage() >= self:Health()) then
-		if (dmginfo:GetDamageType()==DMG_BLAST or dmginfo:GetDamageType()==DMG_CLUB) then
+		if (dmginfo:GetDamageType()==DMG_BLAST or dmginfo:GetDamageType()==DMG_CLUB or dmginfo:GetDamageForce():Length()>=10000) then
 			self:FlyingDeath(dmginfo)
 		end
 	end
@@ -157,6 +157,7 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 		self.bodyParts["Right_Arm"]["Health"] = self.bodyParts["Right_Arm"]["Health"] - dmginfo:GetDamage()
 		if (self.bodyParts["Right_Arm"]["Health"] <= 0) then
 			self.bodyParts["Right_Arm"]["Removed"]=true
+			self:RemoveAllDecals()
 			self:SetBodygroup(self:FindBodygroupByName(self.bodyParts["Right_Arm"]["Bodygroup"]), 2)
 			if (IsValid(self:GetActiveWeapon())) then
 				local wep = ents.Create(self:GetActiveWeapon():GetClass())
@@ -170,19 +171,22 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 		self.bodyParts["Left_Arm"]["Health"] = self.bodyParts["Left_Arm"]["Health"] - dmginfo:GetDamage()
 		if (self.bodyParts["Left_Arm"]["Health"] <= 0) then
 			self.bodyParts["Left_Arm"]["Removed"]=true
-			self:SetBodygroup(self:FindBodygroupByName(self.bodyParts["Left_Arm"]["Bodygroup"]), 2)
+			self:RemoveAllDecals()
+			self:SetBodygroup(self:FindBodygroupByName(self.bodyParts["Left_Arm"]["Bodygroup"]), 1)
 			self.HasMeleeAttack = false
 		end
 	elseif (hitgroup==500 and self.bodyParts["Head"]["Removed"]==false) then
 		self.bodyParts["Head"]["Health"] = self.bodyParts["Head"]["Health"] - dmginfo:GetDamage()
 		if (self.bodyParts["Head"]["Health"] <= 0) then
 			self.bodyParts["Head"]["Removed"]=true
+			self:RemoveAllDecals()
 			self:SetBodygroup(self:FindBodygroupByName(self.bodyParts["Head"]["Bodygroup"]), 2)
 		end
 	elseif (hitgroup==501 and self.bodyParts["Inf_Form"]["Removed"]==false) then
 		self.bodyParts["Inf_Form"]["Health"] = self.bodyParts["Inf_Form"]["Health"] - dmginfo:GetDamage()
 		if (self.bodyParts["Inf_Form"]["Health"] <= 0) then
 			self.bodyParts["Inf_Form"]["Removed"]=true
+			self:RemoveAllDecals()
 			self:SetBodygroup(self:FindBodygroupByName(self.bodyParts["Inf_Form"]["Bodygroup"]), 2)
 			self:EmitSound("infection_form/infection_pop/pop1.wav")
 			ParticleEffect("hcea_flood_infected_death", self:LocalToWorld(Vector(0,0,50)), self:GetAngles() + Angle(90,0,0), nil)
@@ -194,12 +198,11 @@ end
 function ENT:FlyingDeath(dmginfo)
 	self.HasDeathRagdoll = false
 	self.HasDeathAnimation = false
-	self.HasDeathSounds = false -- If set to false, it won't play the death sounds
 	self.imposter = ents.Create("obj_vj_imposter")
 	self.imposter:SetOwner(self)
 	self.imposter.Sequence = "Die_Airborne"
 	local velocity = dmginfo:GetDamageForce():GetNormalized() * 1500
-	if (dmginfo:GetDamageType()==DMG_CLUB) then
+	if (dmginfo:GetDamageType()==DMG_CLUB or dmginfo:GetDamageForce():Length()) then
 		velocity = velocity * 0.3
 	end
 	self.imposter.Velocity = Vector(velocity.x, velocity.y, velocity.z + 500)

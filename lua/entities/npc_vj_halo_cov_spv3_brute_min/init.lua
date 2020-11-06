@@ -104,7 +104,6 @@ ENT.CanFlinch = 1
 ENT.EntitiesToRunFrom = {obj_spore=true,obj_vj_grenade=true,obj_grenade=true,obj_handgrenade=true,npc_grenade_frag=true,doom3_grenade=true,fas2_thrown_m67=true,cw_grenade_thrown=true,obj_cpt_grenade=true,cw_flash_thrown=true,ent_hl1_grenade=true, obj_vj_unsc_spv3_frag_nade=true,obj_vj_cov_spv3_plasma_nade=true,obj_vj_cov_spv3_gravity_nade=true,obj_vj_cov_spv3_cluster_nade=true,obj_vj_cov_spv3_needler_nade=true}
 
 function ENT:CustomOnInitialize()
-	
 	timer.Simple(0.01, function() 
 		if (GetConVarNumber("vj_spv3_covUNSCWeps")==1 and math.random(0,1)==1) then
 			self:GetActiveWeapon():Remove()
@@ -430,7 +429,7 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 		dmginfo:ScaleDamage(3)
 	end
 	if (dmginfo:GetDamage() >= self:Health()) then
-		if (dmginfo:GetDamageType()==DMG_BLAST or dmginfo:GetDamageType()==DMG_CLUB) then
+		if (dmginfo:GetDamageType()==DMG_BLAST or dmginfo:GetDamageType()==DMG_CLUB or dmginfo:GetDamageForce():Length()>=10000) then
 			self:FlyingDeath(dmginfo)
 		end
 	end
@@ -443,7 +442,7 @@ function ENT:FlyingDeath(dmginfo)
 	self.imposter:SetOwner(self)
 	self.imposter.Sequence = "Die_Airborne"
 	local velocity = dmginfo:GetDamageForce():GetNormalized() * 1500
-	if (dmginfo:GetDamageType()==DMG_CLUB) then
+	if (dmginfo:GetDamageType()==DMG_CLUB or dmginfo:GetDamageForce():Length()) then
 		velocity = velocity * 0.3
 	end
 	self.imposter.Velocity = Vector(velocity.x, velocity.y, velocity.z + 500)

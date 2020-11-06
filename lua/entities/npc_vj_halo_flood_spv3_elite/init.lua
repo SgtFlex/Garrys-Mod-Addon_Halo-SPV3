@@ -9,7 +9,7 @@ ENT.HullType = HULL_MEDIUM
 	-- ====Variant Variables==== --
 ENT.Model = {"models/hce/spv3/flood/elite/floodelite.mdl"} -- The game will pick a random model from the table when the SNPC is spawned | Add as many as you want
 ENT.modelColor = Color(67,79,127)
-ENT.bodyGroup = 0
+ENT.Skin = 1
 ENT.StartHealth = 44
 ENT.ShieldHealth = 100
 ENT.CurrentHealth = ENT.StartHealth
@@ -139,18 +139,26 @@ ENT.WeaponTable = {
 	"weapon_vj_cov_spv3_plasmarifle",
 	"weapon_vj_cov_spv3_shredder",
 }
-
-
+ENT.bodyParts = {
+	Head = {Health = 5, Bodygroup = "Head", Removed = false},
+	Right_Arm = {Health = 15, Bodygroup = "Right Arm", Removed = false},
+	Left_Arm = {Health = 15, Bodygroup = "Left Arm", Removed = false},
+	Inf_Form = {Health = 5, Bodygroup = "Inf Form", Removed = false},
+}
+ENT.bodyGroupTable = {0, 0, 0, 0, 0}
 ---------------------------------------------------------------------------------------------------------------------------------------------
 ENT.SpawnedFromInf=false
 function ENT:CustomOnInitialize()
+	self:SetSkin(self.Skin)
 	timer.Simple(0.01, function() 
 		if (GetConVarNumber("vj_spv3_floodWeps")==1 and math.random(0,1)==1) then
 			self:Give(VJ_PICKRANDOMTABLE(self.WeaponTable))
 		end
 	end)
 	self:SetColor(self.modelColor)
-	self:SetBodygroup(0, self.bodyGroup)
+	for i=0, #self.bodyGroupTable-1 do
+		self:SetBodygroup(i, self.bodyGroupTable[i+1])
+	end
 	self.MeleeAttackDamage = self.MeleeAttackDamage * GetConVarNumber("vj_spv3_damageModifier")
 	self:CapabilitiesAdd(bit.bor(CAP_MOVE_CLIMB))
 	self:SetCollisionBounds(Vector(30, 30, 80), Vector(-30, -30, 0))
@@ -230,11 +238,53 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 	else
 		self.CurrentHealth = self.CurrentHealth - dmginfo:GetDamage()
 	end
+	if (self.ShieldCurrentHealth <= 0) then
+		if (hitgroup==502 and self.bodyParts["Right_Arm"]["Removed"]==false) then
+			self.bodyParts["Right_Arm"]["Health"] = self.bodyParts["Right_Arm"]["Health"] - dmginfo:GetDamage()
+			if (self.bodyParts["Right_Arm"]["Health"] <= 0) then
+				self.bodyParts["Right_Arm"]["Removed"]=true
+				self:RemoveAllDecals()
+				self:SetBodygroup(self:FindBodygroupByName(self.bodyParts["Right_Arm"]["Bodygroup"]), 3)
+				if (IsValid(self:GetActiveWeapon())) then
+					local wep = ents.Create(self:GetActiveWeapon():GetClass())
+					wep:SetPos(self:GetActiveWeapon():GetPos())
+					wep:SetAngles(self:GetActiveWeapon():GetAngles())
+					wep:Spawn()
+					self:GetActiveWeapon():Remove()
+				end
+			end
+		elseif (hitgroup==503 and self.bodyParts["Left_Arm"]["Removed"]==false) then
+			self.bodyParts["Left_Arm"]["Health"] = self.bodyParts["Left_Arm"]["Health"] - dmginfo:GetDamage()
+			if (self.bodyParts["Left_Arm"]["Health"] <= 0) then
+				self.bodyParts["Left_Arm"]["Removed"]=true
+				self:RemoveAllDecals()
+				self:SetBodygroup(self:FindBodygroupByName(self.bodyParts["Left_Arm"]["Bodygroup"]), 3)
+				self.HasMeleeAttack = false
+			end
+		elseif (hitgroup==500 and self.bodyParts["Head"]["Removed"]==false) then
+			self.bodyParts["Head"]["Health"] = self.bodyParts["Head"]["Health"] - dmginfo:GetDamage()
+			if (self.bodyParts["Head"]["Health"] <= 0) then
+				self.bodyParts["Head"]["Removed"]=true
+				self:RemoveAllDecals()
+				self:SetBodygroup(self:FindBodygroupByName(self.bodyParts["Head"]["Bodygroup"]), 1)
+			end
+		elseif (hitgroup==501 and self.bodyParts["Inf_Form"]["Removed"]==false) then
+			self.bodyParts["Inf_Form"]["Health"] = self.bodyParts["Inf_Form"]["Health"] - dmginfo:GetDamage()
+			if (self.bodyParts["Inf_Form"]["Health"] <= 0) then
+				self.bodyParts["Inf_Form"]["Removed"]=true
+				self:RemoveAllDecals()
+				self:SetBodygroup(self:FindBodygroupByName(self.bodyParts["Inf_Form"]["Bodygroup"]), 1)
+				self:EmitSound("infection_form/infection_pop/pop1.wav")
+				ParticleEffect("hcea_flood_infected_death", self:LocalToWorld(Vector(0,0,50)), self:GetAngles() + Angle(90,0,0), nil)
+				self:TakeDamage(1000)
+			end
+		end
 	if (dmginfo:GetDamage() >= self:Health()) then
-		if (dmginfo:GetDamageType()==DMG_BLAST or dmginfo:GetDamageType()==DMG_CLUB) then
+		if (dmginfo:GetDamageType()==DMG_BLAST or dmginfo:GetDamageType()==DMG_CLUB or dmginfo:GetDamageForce():Length()>=10000) then
 			self:FlyingDeath(dmginfo)
 		end
 	end
+end
 end
 
 function ENT:FlyingDeath(dmginfo)
@@ -244,7 +294,7 @@ function ENT:FlyingDeath(dmginfo)
 	self.imposter:SetOwner(self)
 	self.imposter.Sequence = "Die_Airborne"
 	local velocity = dmginfo:GetDamageForce():GetNormalized() * 1500
-	if (dmginfo:GetDamageType()==DMG_CLUB) then
+	if (dmginfo:GetDamageType()==DMG_CLUB or dmginfo:GetDamageForce():Length()) then
 		velocity = velocity * 0.3
 	end
 	self.imposter.Velocity = Vector(velocity.x, velocity.y, velocity.z + 500)

@@ -153,6 +153,7 @@ function ENT:CustomOnDoKilledEnemy(argent,attacker,inflictor)
 				infection:GetPhysicsObject():SetVelocity(velocity)
 				infection:SetAngles(Angle(infection:GetAngles().x, velocity:Angle().y, infection:GetAngles().z))
 				infection:VJ_ACT_PLAYACTIVITY("Melee_1",true,1.3,false)	
+
 			end
 		end
 	end
@@ -161,6 +162,7 @@ function ENT:CustomOnDoKilledEnemy(argent,attacker,inflictor)
 	self.enemyPos = self:GetEnemy():GetPos()
 	self.enemyAng = self:GetEnemy():GetAngles()
 	self.enemyCol = self:GetEnemy():GetColor()
+	self.enemySkin = self:GetEnemy():GetSkin()
 	if (IsValid(self:GetEnemy():GetActiveWeapon())) then self.enemyWep = self:GetEnemy():GetActiveWeapon():GetClass() end
 	if (self:GetEnemy().StartHealth) then self.enemyHealth = self:GetEnemy().StartHealth 
 	else self.enemyHealth = self:GetEnemy():GetMaxHealth() end
@@ -176,6 +178,7 @@ function ENT:CustomOnDoKilledEnemy(argent,attacker,inflictor)
 		end
 		if (string.find(tostring(argent), "elite")) and (string.find(tostring(argent), "hg")) then
 			self.combatForm = ents.Create("npc_vj_halo_flood_spv3_elite_hg")
+			self.Skin = self:GetEnemy():GetSkin()
 			self.enemyHealth = self:GetEnemy().StartHealth * 1.25
 			self.enemyShields = self:GetEnemy().ShieldHealth
 		elseif (string.find(tostring(argent), "elite")) and (string.find(tostring(argent), "oss")) then
@@ -192,10 +195,12 @@ function ENT:CustomOnDoKilledEnemy(argent,attacker,inflictor)
 				self.combatForm = ents.Create("npc_vj_halo_flood_spv3_elite_suicide")
 				self.enemyHealth = self:GetEnemy().StartHealth * 1.25
 				self.enemyShields = self:GetEnemy().ShieldHealth
+				self.Skin = self:GetEnemy():GetSkin()
 			else
 				self.combatForm = ents.Create("npc_vj_halo_flood_spv3_elite")
 				self.enemyHealth = self:GetEnemy().StartHealth * 1.25
 				self.enemyShields = self:GetEnemy().ShieldHealth
+				self.Skin = self:GetEnemy():GetSkin()
 			end
 		elseif (string.find(tostring(argent), "grunt")) then
 			self.combatForm = ents.Create("npc_vj_halo_flood_spv3_carrier")
@@ -241,6 +246,7 @@ function ENT:CustomOnDoKilledEnemy(argent,attacker,inflictor)
 				self:GetEnemy():EmitSound(VJ_PICKRANDOMTABLE(self:GetEnemy().SoundTbl_Transform))
 			end
 			self.imposter:SetModel(self.enemyModel)
+			self.imposter:SetSkin(self.enemySkin)
 			self.imposter:SetAngles(self.enemyAng)
 			self.imposter:SetPos(self.enemyPos)
 			self.imposter:Spawn()
@@ -266,6 +272,7 @@ function ENT:CustomOnDoKilledEnemy(argent,attacker,inflictor)
 					self.combatForm:SetAngles(self.enemyAng)
 					self.combatForm:SetPos(self.enemyPos)
 					self.combatForm:SetColor(self.enemyCol)
+					if (self.Skin!=nil) then self.combatForm:SetSkin(self.Skin) end
 					self.combatForm:VJ_ACT_PLAYACTIVITY(ACT_COVER_PISTOL_LOW,true,1.5,false)
 					self:Remove()
 				end
@@ -278,6 +285,12 @@ function ENT:CustomOnDoKilledEnemy(argent,attacker,inflictor)
 			self.combatForm.SpawnedFromInf = true
 			self.combatForm.StartHealth = self.enemyHealth
 			self.combatForm.ShieldHealth = self.enemyShields
+			self.combatForm:SetCollisionGroup(1)
+			timer.Simple(0.5, function()
+				if (IsValid(self)) then
+					self.combatForm:SetCollisionGroup(0)
+				end
+			end)
 			self.combatForm:Spawn()
 			self.combatForm:SetAngles(self.enemyAng)
 			self.combatForm:SetPos(self.enemyPos)
@@ -316,6 +329,7 @@ function ENT:CustomOnLeapAttack_AfterChecks(TheHitEntity)
 	if (TheHitEntity.ShieldCurrentHealth && TheHitEntity.ShieldCurrentHealth > 0) then
 		TheHitEntity:TakeDamage(self.LeapAttackDamage, self, self)
 		self:TakeDamage(self:GetMaxHealth(), TheHitEntity, TheHitEntity)
+		return
 	end
 	if (IsValid(self) and IsValid(self:GetEnemy())  and self:GetEnemy():Health() < self:GetEnemy():GetMaxHealth()*.4) then
 		if (self:GetEnemy().HasLatch==nil) then
@@ -357,8 +371,10 @@ function ENT:CustomOnLeapAttack_AfterChecks(TheHitEntity)
 		self:SetVelocity(Vector(0,0,0))
 		self:GetEnemy():SetSequence(27)
 		timer.Create("Damage"..self:GetCreationID(), 0.5, 0, function()
-			if (IsValid(self) and IsValid(self.AttachedTo)) then //May need fixing, line below giving errors
-				self.AttachedTo:TakeDamage(1, self, self)
+			if (IsValid(self) and self.AttachedTo==self:GetEnemy()) then //May need fixing, line below giving errors
+				self:GetEnemy():TakeDamage(1, self, self)
+			elseif (IsValid(self)) then
+				timer.Destroy("Damage"..self:GetCreationID())
 			end
 		end)
 	end

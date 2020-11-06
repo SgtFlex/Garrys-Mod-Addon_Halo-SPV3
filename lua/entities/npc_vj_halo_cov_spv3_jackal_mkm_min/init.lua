@@ -52,6 +52,3 @@ end)
 	self:SetColor(self.Color)
 	self:SetCollisionBounds(Vector(20, 20, 75), Vector(-20, -20, 0))
 end
-
-function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
-end
