@@ -17,7 +17,6 @@ ENT.Skins = {
 ENT.CovWeps = {
 	"weapon_vj_cov_spv3_plasmarifle",
 	"weapon_vj_cov_spv3_plasmarifleBrute",
-	"weapon_vj_cov_spv3_plasmapistolBrute",
 	"weapon_vj_cov_spv3_bruteshot",
 	"weapon_vj_cov_spv3_focusrifle",
 	"weapon_vj_cov_spv3_particleCarbine",
@@ -26,13 +25,15 @@ ENT.CovWeps = {
 }
 ENT.ColorRange = {Vector (255,255,255), Vector(255,255,255)}
 
-ENT.SoundTbl_OnKilledEnemy = {
+function ENT:CustomOnPreInitialize()
+
+self.SoundTbl_OnKilledEnemy = {
 	"johnson/killed_enemy/killed_enemy (1).wav",
 	"johnson/killed_enemy/killed_enemy (2).wav",
 	"johnson/killed_enemy/killed_enemy (3).wav",
 	"johnson/killed_enemy/killed_enemy (4).wav",
 }
-ENT.SoundTbl_Alert = {
+self.SoundTbl_Alert = {
 	"johnson/seeFoe/seeFoe (1).wav",
 	"johnson/seeFoe/seeFoe (2).wav",
 	"johnson/seeFoe/seeFoe (3).wav",
@@ -43,7 +44,7 @@ ENT.SoundTbl_Alert = {
 	"johnson/seeFoe/seeFoe (8).wav",
 	"johnson/seeFoe/seeFoe (9).wav",
 }
-ENT.SoundTbl_Pain = {
+self.SoundTbl_Pain = {
 	"johnson/pain/pain (1).wav",
 	"johnson/pain/pain (2).wav",
 	"johnson/pain/pain (3).wav",
@@ -64,14 +65,14 @@ ENT.SoundTbl_Pain = {
 	"johnson/pain/pain (18).wav",
 
 }
-ENT.SoundTbl_Death = {
+self.SoundTbl_Death = {
 	"johnson/death/death (1).wav",
 	"johnson/death/death (2).wav",
 	"johnson/death/death (3).wav",
 	"johnson/death/death (4).wav",
 	"johnson/death/death (5).wav",
 }
-ENT.SoundTbl_Fall = {
+self.SoundTbl_Fall = {
 	"johnson/fall/fall (1).wav",
 	"johnson/fall/fall (2).wav",
 	"johnson/fall/fall (3).wav",
@@ -80,39 +81,39 @@ ENT.SoundTbl_Fall = {
 	"johnson/fall/fall (6).wav",
 	"johnson/fall/fall (7).wav",
 }
-ENT.SoundTbl_OnGrenadeSight = {
+self.SoundTbl_OnGrenadeSight = {
 	"johnson/seeGrenade/seeGrenade (1).ogg",
 	"johnson/seeGrenade/seeGrenade (2).ogg",
 	"johnson/seeGrenade/seeGrenade (3).ogg",
 }
-ENT.SoundTbl_GrenadeAttack = {
+self.SoundTbl_GrenadeAttack = {
 	"johnson/throwGrenade/throwGrenade (1).ogg",
 	"johnson/throwGrenade/throwGrenade (2).ogg",
 	"johnson/throwGrenade/throwGrenade (3).ogg",
 }
-ENT.SoundTbl_LostEnemy = {
+self.SoundTbl_LostEnemy = {
 	
 }
-ENT.SoundTbl_Investigate = {
+self.SoundTbl_Investigate = {
 	
 }
-ENT.SoundTbl_WeaponReload = {
+self.SoundTbl_WeaponReload = {
 	"johnson/cover/cover (1).wav",
 	"johnson/cover/cover (2).wav",
 	"johnson/cover/cover (3).wav",
 	"johnson/cover/cover (4).wav",
 
 }
-ENT.SoundTbl_AllyDeath = {
+self.SoundTbl_AllyDeath = {
 	"johnson/ally_death/ally_death (1).wav",
 	"johnson/ally_death/ally_death (2).wav",
 	"johnson/ally_death/ally_death (3).wav",
 	"johnson/ally_death/ally_death (4).wav",
 	"johnson/ally_death/ally_death (5).wav",
 }
-ENT.SoundTbl_Stuck = nil
-ENT.SoundTbl_Transform = nil
-ENT.SoundTbl_Suppressing = {
+self.SoundTbl_Stuck = nil
+self.SoundTbl_Transform = nil
+self.SoundTbl_Suppressing = {
 	"johnson/firing/firing (1).wav",
 	"johnson/firing/firing (2).wav",
 	"johnson/firing/firing (3).wav",
@@ -123,3 +124,4 @@ ENT.SoundTbl_Suppressing = {
 	"johnson/firing/firing (8).wav",
 	"johnson/firing/firing (9).wav",
 }
+end

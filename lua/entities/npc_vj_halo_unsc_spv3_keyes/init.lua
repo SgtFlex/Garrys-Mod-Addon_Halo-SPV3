@@ -26,13 +26,14 @@ ENT.CovWeps = {
 }
 ENT.ColorRange = {Vector (255,255,255), Vector(255,255,255)}
 
-ENT.SoundTbl_OnKilledEnemy = {
+function ENT:CustomOnPreInitialize()
+self.SoundTbl_OnKilledEnemy = {
 
 }
-ENT.SoundTbl_Alert = {
+self.SoundTbl_Alert = {
 
 }
-ENT.SoundTbl_Pain = {
+self.SoundTbl_Pain = {
 	"keyes/pain/pain (1).ogg",
 	"keyes/pain/pain (2).ogg",
 	"keyes/pain/pain (3).ogg",
@@ -40,7 +41,7 @@ ENT.SoundTbl_Pain = {
 	"keyes/pain/pain (5).ogg",
 
 }
-ENT.SoundTbl_Death = {
+self.SoundTbl_Death = {
 	"keyes/death/death (1).ogg",
 	"keyes/death/death (2).ogg",
 	"keyes/death/death (3).ogg",
@@ -49,27 +50,28 @@ ENT.SoundTbl_Death = {
 	"keyes/death/death (6).ogg",
 	"keyes/death/death (7).ogg",
 }
-ENT.SoundTbl_OnGrenadeSight = {
+self.SoundTbl_OnGrenadeSight = {
 
 }
-ENT.SoundTbl_GrenadeAttack = {
+self.SoundTbl_GrenadeAttack = {
 
 }
-ENT.SoundTbl_LostEnemy = {
+self.SoundTbl_LostEnemy = {
 	
 }
-ENT.SoundTbl_Investigate = {
+self.SoundTbl_Investigate = {
 	
 }
-ENT.SoundTbl_WeaponReload = {
+self.SoundTbl_WeaponReload = {
 
 
 }
-ENT.SoundTbl_AllyDeath = {
+self.SoundTbl_AllyDeath = {
 
 }
-ENT.SoundTbl_Stuck = nil
-ENT.SoundTbl_Transform = nil
-ENT.SoundTbl_Suppressing = {
+self.SoundTbl_Stuck = nil
+self.SoundTbl_Transform = nil
+self.SoundTbl_Suppressing = {
 
 }
+end

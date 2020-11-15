@@ -26,28 +26,28 @@ function ENT:CustomOnThink()
 		self.Cooldown = 0
 	end
 end
-
-ENT.SoundTbl_OnKilledEnemy = {
+function ENT:CustomOnPreInitialize()
+self.SoundTbl_OnKilledEnemy = {
 	"crewman/killed_enemy/killed_enemy (1).ogg",
 	"crewman/killed_enemy/killed_enemy (2).ogg",
 	"crewman/killed_enemy/killed_enemy (3).ogg",
 	"crewman/killed_enemy/killed_enemy (4).ogg",
 	"crewman/killed_enemy/killed_enemy (5).ogg",
 }
-ENT.SoundTbl_Alert = {
+self.SoundTbl_Alert = {
 	"crewman/seeFoe/seeFoe (1).ogg",
 	"crewman/seeFoe/seeFoe (2).ogg",
 	"crewman/seeFoe/seeFoe (3).ogg",
 	"crewman/seeFoe/seeFoe (4).ogg",
 	"crewman/seeFoe/seeFoe (5).ogg",
 }
-ENT.SoundTbl_Pain = {
+self.SoundTbl_Pain = {
 	"crewman/pain/pain (1).ogg",
 	"crewman/pain/pain (2).ogg",
 	"crewman/pain/pain (3).ogg",
 
 }
-ENT.SoundTbl_Death = {
+self.SoundTbl_Death = {
 	"marine/death/death (1).ogg",
 	"marine/death/death (2).ogg",
 	"marine/death/death (3).ogg",
@@ -62,31 +62,31 @@ ENT.SoundTbl_Death = {
 	"marine/death/death (12).ogg",
 	"marine/death/death (13).ogg",
 }
-ENT.SoundTbl_OnGrenadeSight = {
+self.SoundTbl_OnGrenadeSight = {
 }
-ENT.SoundTbl_GrenadeAttack = {
+self.SoundTbl_GrenadeAttack = {
 	"crewman/firing/firing (1).ogg",
 	"crewman/firing/firing (2).ogg",
 	"crewman/firing/firing (3).ogg",
 	"crewman/firing/firing (4).ogg",
 }
-ENT.SoundTbl_LostEnemy = {
+self.SoundTbl_LostEnemy = {
 	
 }
-ENT.SoundTbl_Investigate = {
+self.SoundTbl_Investigate = {
 	
 }
-ENT.SoundTbl_WeaponReload = {
+self.SoundTbl_WeaponReload = {
 	"crewman/cover/cover (1).ogg",
 	"crewman/cover/cover (2).ogg",
 	"crewman/cover/cover (3).ogg",
 	"crewman/cover/cover (4).ogg",
 	"crewman/cover/cover (5).ogg",
 }
-ENT.SoundTbl_AllyDeath = {
+self.SoundTbl_AllyDeath = {
 	"marine/ally_death/ally_death.ogg",
 }
-ENT.SoundTbl_Stuck = {
+self.SoundTbl_Stuck = {
 	"marine/stuck/stuck (1).wav",
 	"marine/stuck/stuck (2).wav",
 	"marine/stuck/stuck (3).wav",
@@ -95,7 +95,7 @@ ENT.SoundTbl_Stuck = {
 	"marine/stuck/stuck (6).wav",
 }
 
-ENT.SoundTbl_Transform = {
+self.SoundTbl_Transform = {
 	"marine/transform/transform (1).wav",
 	"marine/transform/transform (2).wav",
 	"marine/transform/transform (3).wav",
@@ -104,15 +104,16 @@ ENT.SoundTbl_Transform = {
 	"marine/transform/transform (6).wav",
 	"marine/transform/transform (7).wav",
 }
-ENT.SoundTbl_Suppressing = {
+self.SoundTbl_Suppressing = {
 	"crewman/firing/firing (1).ogg",
 	"crewman/firing/firing (2).ogg",
 	"crewman/firing/firing (3).ogg",
 	"crewman/firing/firing (4).ogg",
 }
-ENT.SoundTbl_Cower = {
+self.SoundTbl_Cower = {
 	"crewman/cower/cower (1).ogg",
 	"crewman/cower/cower (2).ogg",
 	"crewman/cower/cower (3).ogg",
 	"crewman/cower/cower (4).ogg",
 }
+end

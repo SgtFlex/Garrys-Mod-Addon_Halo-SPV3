@@ -91,6 +91,162 @@ ENT.Skins = {
 }
 ENT.ColorRange = {Vector (255,255,255), Vector(255,255,255)}
 ---------------------------------------------------------------------------------------------------------------------------------------------
+function ENT:CustomOnPreInitialize()
+	self.voicePermutation = tostring(math.random(1,9))
+	self.SoundTbl_OnKilledEnemy = {
+	"marine/marine0"..self.voicePermutation.."/killed_enemy/killed_enemy (1).wav",
+	"marine/marine0"..self.voicePermutation.."/killed_enemy/killed_enemy (2).wav",
+	-- "marine/marine0"..self.voicePermutation.."/killed_enemy/killed_enemy (3).wav",
+	-- "marine/marine0"..self.voicePermutation.."/killed_enemy/killed_enemy (4).wav",
+	-- "marine/marine0"..self.voicePermutation.."/killed_enemy/killed_enemy (5).wav",
+	-- "marine/marine0"..self.voicePermutation.."/killed_enemy/killed_enemy (6).wav",
+	-- "marine/marine0"..self.voicePermutation.."/killed_enemy/killed_enemy (7).wav",
+}
+self.SoundTbl_Alert = {
+	"marine/marine0"..self.voicePermutation.."/seeFoe/seeFoe (1).wav",
+	"marine/marine0"..self.voicePermutation.."/seeFoe/seeFoe (2).wav",
+	"marine/marine0"..self.voicePermutation.."/seeFoe/seeFoe (3).wav",
+	"marine/marine0"..self.voicePermutation.."/seeFoe/seeFoe (4).wav",
+	"marine/marine0"..self.voicePermutation.."/seeFoe/seeFoe (5).wav",
+	"marine/marine0"..self.voicePermutation.."/seeFoe/seeFoe (6).wav",
+	"marine/marine0"..self.voicePermutation.."/seeFoe/seeFoe (7).wav",
+	-- "marine/marine0"..self.voicePermutation.."/seeFoe/seeFoe (8).wav",
+	-- "marine/marine0"..self.voicePermutation.."/seeFoe/seeFoe (9).wav",
+	-- "marine/marine0"..self.voicePermutation.."/seeFoe/seeFoe (10).wav",
+	-- "marine/marine0"..self.voicePermutation.."/seeFoe/seeFoe (11).wav",
+	-- "marine/marine0"..self.voicePermutation.."/seeFoe/seeFoe (12).wav",
+	-- "marine/marine0"..self.voicePermutation.."/seeFoe/seeFoe (13).wav",
+	-- "marine/marine0"..self.voicePermutation.."/seeFoe/seeFoe (14).wav",
+	-- "marine/marine0"..self.voicePermutation.."/seeFoe/seeFoe (15).wav",
+	-- "marine/marine0"..self.voicePermutation.."/seeFoe/seeFoe (16).wav",
+	-- "marine/marine0"..self.voicePermutation.."/seeFoe/seeFoe (17).wav",
+	-- "marine/marine0"..self.voicePermutation.."/seeFoe/seeFoe (18).wav",
+}
+self.SoundTbl_Pain = {
+	"marine/marine0"..self.voicePermutation.."/pain/pain (1).wav",
+	"marine/marine0"..self.voicePermutation.."/pain/pain (2).wav",
+	"marine/marine0"..self.voicePermutation.."/pain/pain (3).wav",
+	"marine/marine0"..self.voicePermutation.."/pain/pain (4).wav",
+	-- "marine/marine0"..self.voicePermutation.."/pain/pain (5).wav",
+	-- "marine/marine0"..self.voicePermutation.."/pain/pain (6).wav",
+	-- "marine/marine0"..self.voicePermutation.."/pain/pain (7).wav",
+	-- "marine/marine0"..self.voicePermutation.."/pain/pain (8).wav",
+	-- "marine/marine0"..self.voicePermutation.."/pain/pain (9).wav",
+	-- "marine/marine0"..self.voicePermutation.."/pain/pain (10).wav",
+	-- "marine/marine0"..self.voicePermutation.."/pain/pain (11).wav",
+	-- "marine/marine0"..self.voicePermutation.."/pain/pain (12).wav",
+
+}
+self.SoundTbl_Death = {
+	"marine/marine0"..self.voicePermutation.."/death/death (1).wav",
+	"marine/marine0"..self.voicePermutation.."/death/death (2).wav",
+	"marine/marine0"..self.voicePermutation.."/death/death (3).wav",
+	"marine/marine0"..self.voicePermutation.."/death/death (4).wav",
+	"marine/marine0"..self.voicePermutation.."/death/death (5).wav",
+	-- "marine/marine0"..self.voicePermutation.."/death/death (6).wav",
+	-- "marine/marine0"..self.voicePermutation.."/death/death (7).wav",
+	-- "marine/marine0"..self.voicePermutation.."/death/death (8).wav",
+	-- "marine/marine0"..self.voicePermutation.."/death/death (9).wav",
+	-- "marine/marine0"..self.voicePermutation.."/death/death (10).wav",
+	-- "marine/marine0"..self.voicePermutation.."/death/death (11).wav",
+	-- "marine/marine0"..self.voicePermutation.."/death/death (12).wav",
+	-- "marine/marine0"..self.voicePermutation.."/death/death (13).wav",
+}
+self.SoundTbl_Fall = {
+	"marine/marine0"..self.voicePermutation.."/fall/fall (1).wav",
+	"marine/marine0"..self.voicePermutation.."/fall/fall (2).wav",
+}
+self.SoundTbl_OnGrenadeSight = {
+	"marine/marine0"..self.voicePermutation.."/seeGrenade/seeGrenade (1).wav",
+	"marine/marine0"..self.voicePermutation.."/seeGrenade/seeGrenade (2).wav",
+	"marine/marine0"..self.voicePermutation.."/seeGrenade/seeGrenade (3).wav",
+	"marine/marine0"..self.voicePermutation.."/seeGrenade/seeGrenade (4).wav",
+	-- "marine/marine0"..self.voicePermutation.."/seeGrenade/seeGrenade (5).wav",
+	-- "marine/marine0"..self.voicePermutation.."/seeGrenade/seeGrenade (6).wav",
+	-- "marine/marine0"..self.voicePermutation.."/seeGrenade/seeGrenade (7).wav",
+	-- "marine/marine0"..self.voicePermutation.."/seeGrenade/seeGrenade (8).wav",
+	-- "marine/marine0"..self.voicePermutation.."/seeGrenade/seeGrenade (9).wav",
+	-- "marine/marine0"..self.voicePermutation.."/seeGrenade/seeGrenade (10).wav",
+	-- "marine/marine0"..self.voicePermutation.."/seeGrenade/seeGrenade (11).wav",
+	-- "marine/marine0"..self.voicePermutation.."/seeGrenade/seeGrenade (12).wav",
+	-- "marine/marine0"..self.voicePermutation.."/seeGrenade/seeGrenade (13).wav",
+	-- "marine/marine0"..self.voicePermutation.."/seeGrenade/seeGrenade (14).wav",
+}
+self.SoundTbl_GrenadeAttack = {
+	"marine/marine0"..self.voicePermutation.."/throwGrenade/throwGrenade (1).wav",
+	"marine/marine0"..self.voicePermutation.."/throwGrenade/throwGrenade (2).wav",
+	-- "marine/marine0"..self.voicePermutation.."/throwGrenade/throwGrenade (3).wav",
+	-- "marine/marine0"..self.voicePermutation.."/throwGrenade/throwGrenade (4).wav",
+	-- "marine/marine0"..self.voicePermutation.."/throwGrenade/throwGrenade (5).wav",
+	-- "marine/marine0"..self.voicePermutation.."/throwGrenade/throwGrenade (6).wav",
+	-- "marine/marine0"..self.voicePermutation.."/throwGrenade/throwGrenade (7).wav",
+	-- "marine/marine0"..self.voicePermutation.."/throwGrenade/throwGrenade (8).wav",
+	-- "marine/marine0"..self.voicePermutation.."/throwGrenade/throwGrenade (9).wav",
+	-- "marine/marine0"..self.voicePermutation.."/throwGrenade/throwGrenade (10).wav",
+	-- "marine/marine0"..self.voicePermutation.."/throwGrenade/throwGrenade (11).wav",
+	-- "marine/marine0"..self.voicePermutation.."/throwGrenade/throwGrenade (12).wav",
+	-- "marine/marine0"..self.voicePermutation.."/throwGrenade/throwGrenade (13).wav",
+}
+self.SoundTbl_LostEnemy = {
+	
+}
+self.SoundTbl_Investigate = {
+	
+}
+self.SoundTbl_WeaponReload = {
+	"marine/marine0"..self.voicePermutation.."/cover/cover (1).wav",
+	"marine/marine0"..self.voicePermutation.."/cover/cover (2).wav",
+	-- "marine/marine0"..self.voicePermutation.."/cover/cover (3).wav",
+	-- "marine/marine0"..self.voicePermutation.."/cover/cover (4).wav",
+	-- "marine/marine0"..self.voicePermutation.."/cover/cover (5).wav",
+	-- "marine/marine0"..self.voicePermutation.."/cover/cover (6).wav",
+
+}
+self.SoundTbl_AllyDeath = {
+	"marine/marine0"..self.voicePermutation.."/ally_death/ally_death (1).wav",
+	"marine/marine0"..self.voicePermutation.."/ally_death/ally_death (2).wav",
+	-- "marine/marine0"..self.voicePermutation.."/ally_death/ally_death (3).wav",
+	-- "marine/marine0"..self.voicePermutation.."/ally_death/ally_death (4).wav",
+}
+self.SoundTbl_Stuck = {
+	"marine/marine0"..self.voicePermutation.."/stuck/stuck (1).wav",
+	"marine/marine0"..self.voicePermutation.."/stuck/stuck (2).wav",
+	-- "marine/marine0"..self.voicePermutation.."/stuck/stuck (3).wav",
+	-- "marine/marine0"..self.voicePermutation.."/stuck/stuck (4).wav",
+	-- "marine/marine0"..self.voicePermutation.."/stuck/stuck (5).wav",
+	-- "marine/marine0"..self.voicePermutation.."/stuck/stuck (6).wav",
+}
+
+self.SoundTbl_Transform = {
+	"marine/marine0"..self.voicePermutation.."/transform/transform (1).wav",
+	-- "marine/marine0"..self.voicePermutation.."/transform/transform (2).wav",
+	-- "marine/marine0"..self.voicePermutation.."/transform/transform (3).wav",
+	-- "marine/marine0"..self.voicePermutation.."/transform/transform (4).wav",
+	-- "marine/marine0"..self.voicePermutation.."/transform/transform (5).wav",
+	-- "marine/marine0"..self.voicePermutation.."/transform/transform (6).wav",
+	-- "marine/marine0"..self.voicePermutation.."/transform/transform (7).wav",
+}
+self.SoundTbl_Suppressing = {
+	"marine/marine0"..self.voicePermutation.."/firing/firing (1).wav",
+	"marine/marine0"..self.voicePermutation.."/firing/firing (2).wav",
+	"marine/marine0"..self.voicePermutation.."/firing/firing (3).wav",
+	"marine/marine0"..self.voicePermutation.."/firing/firing (4).wav",
+	-- "marine/marine0"..self.voicePermutation.."/firing/firing (5).wav",
+	-- "marine/marine0"..self.voicePermutation.."/firing/firing (6).wav",
+	-- "marine/marine0"..self.voicePermutation.."/firing/firing (7).wav",
+	-- "marine/marine0"..self.voicePermutation.."/firing/firing (8).wav",
+	-- "marine/marine0"..self.voicePermutation.."/firing/firing (9).wav",
+	-- "marine/marine0"..self.voicePermutation.."/firing/firing (10).wav",
+	-- "marine/marine0"..self.voicePermutation.."/firing/firing (11).wav",
+	-- "marine/marine0"..self.voicePermutation.."/firing/firing (12).wav",
+	-- "marine/marine0"..self.voicePermutation.."/firing/firing (13).wav",
+	-- "marine/marine0"..self.voicePermutation.."/firing/firing (14).wav",
+	-- "marine/marine0"..self.voicePermutation.."/firing/firing (15).wav",
+	-- "marine/marine0"..self.voicePermutation.."/firing/firing (16).wav",
+}
+end
+
+
 function ENT:CustomOnInitialize()
 	timer.Simple(0.01, function() 
 		if (GetConVarNumber("vj_spv3_UNSCCovWeps")==1 and math.random(0,1)==1) then
@@ -139,157 +295,7 @@ end
 ---------------------------------------------------------------------------------------------------------------------------------------------
 
 
-ENT.SoundTbl_OnKilledEnemy = {
-	"marine/killed_enemy/killed_enemy (1).wav",
-	"marine/killed_enemy/killed_enemy (2).wav",
-	"marine/killed_enemy/killed_enemy (3).wav",
-	"marine/killed_enemy/killed_enemy (4).wav",
-	"marine/killed_enemy/killed_enemy (5).wav",
-	"marine/killed_enemy/killed_enemy (6).wav",
-	"marine/killed_enemy/killed_enemy (7).wav",
-}
-ENT.SoundTbl_Alert = {
-	"marine/seeFoe/seeFoe (1).wav",
-	"marine/seeFoe/seeFoe (2).wav",
-	"marine/seeFoe/seeFoe (3).wav",
-	"marine/seeFoe/seeFoe (4).wav",
-	"marine/seeFoe/seeFoe (5).wav",
-	"marine/seeFoe/seeFoe (6).wav",
-	"marine/seeFoe/seeFoe (7).wav",
-	"marine/seeFoe/seeFoe (8).wav",
-	"marine/seeFoe/seeFoe (9).wav",
-	"marine/seeFoe/seeFoe (10).wav",
-	"marine/seeFoe/seeFoe (11).wav",
-	"marine/seeFoe/seeFoe (12).wav",
-	"marine/seeFoe/seeFoe (13).wav",
-	"marine/seeFoe/seeFoe (14).wav",
-	"marine/seeFoe/seeFoe (15).wav",
-	"marine/seeFoe/seeFoe (16).wav",
-	"marine/seeFoe/seeFoe (17).wav",
-	"marine/seeFoe/seeFoe (18).wav",
-}
-ENT.SoundTbl_Pain = {
-	"marine/pain/pain (1).wav",
-	"marine/pain/pain (2).wav",
-	"marine/pain/pain (3).wav",
-	"marine/pain/pain (4).wav",
-	"marine/pain/pain (5).wav",
-	"marine/pain/pain (6).wav",
-	"marine/pain/pain (7).wav",
-	"marine/pain/pain (8).wav",
-	"marine/pain/pain (9).wav",
-	"marine/pain/pain (10).wav",
-	"marine/pain/pain (11).wav",
-	"marine/pain/pain (12).wav",
 
-}
-ENT.SoundTbl_Death = {
-	"marine/death/death (1).wav",
-	"marine/death/death (2).wav",
-	"marine/death/death (3).wav",
-	"marine/death/death (4).wav",
-	"marine/death/death (5).wav",
-	"marine/death/death (6).wav",
-	"marine/death/death (7).wav",
-	"marine/death/death (8).wav",
-	"marine/death/death (9).wav",
-	"marine/death/death (10).wav",
-	"marine/death/death (11).wav",
-	"marine/death/death (12).wav",
-	"marine/death/death (13).wav",
-}
-ENT.SoundTbl_Fall = {
-	"marine/fall/fall (1).wav",
-	"marine/fall/fall (2).wav",
-}
-ENT.SoundTbl_OnGrenadeSight = {
-	"marine/seeGrenade/seeGrenade (1).wav",
-	"marine/seeGrenade/seeGrenade (2).wav",
-	"marine/seeGrenade/seeGrenade (3).wav",
-	"marine/seeGrenade/seeGrenade (4).wav",
-	"marine/seeGrenade/seeGrenade (5).wav",
-	"marine/seeGrenade/seeGrenade (6).wav",
-	"marine/seeGrenade/seeGrenade (7).wav",
-	"marine/seeGrenade/seeGrenade (8).wav",
-	"marine/seeGrenade/seeGrenade (9).wav",
-	"marine/seeGrenade/seeGrenade (10).wav",
-	"marine/seeGrenade/seeGrenade (11).wav",
-	"marine/seeGrenade/seeGrenade (12).wav",
-	"marine/seeGrenade/seeGrenade (13).wav",
-	"marine/seeGrenade/seeGrenade (14).wav",
-}
-ENT.SoundTbl_GrenadeAttack = {
-	"marine/throwGrenade/throwGrenade (1).wav",
-	"marine/throwGrenade/throwGrenade (2).wav",
-	"marine/throwGrenade/throwGrenade (3).wav",
-	"marine/throwGrenade/throwGrenade (4).wav",
-	"marine/throwGrenade/throwGrenade (5).wav",
-	"marine/throwGrenade/throwGrenade (6).wav",
-	"marine/throwGrenade/throwGrenade (7).wav",
-	"marine/throwGrenade/throwGrenade (8).wav",
-	"marine/throwGrenade/throwGrenade (9).wav",
-	"marine/throwGrenade/throwGrenade (10).wav",
-	"marine/throwGrenade/throwGrenade (11).wav",
-	"marine/throwGrenade/throwGrenade (12).wav",
-	"marine/throwGrenade/throwGrenade (13).wav",
-}
-ENT.SoundTbl_LostEnemy = {
-	
-}
-ENT.SoundTbl_Investigate = {
-	
-}
-ENT.SoundTbl_WeaponReload = {
-	"marine/cover/cover (1).wav",
-	"marine/cover/cover (2).wav",
-	"marine/cover/cover (3).wav",
-	"marine/cover/cover (4).wav",
-	"marine/cover/cover (5).wav",
-	"marine/cover/cover (6).wav",
-
-}
-ENT.SoundTbl_AllyDeath = {
-	"marine/ally_death/ally_death (1).wav",
-	"marine/ally_death/ally_death (2).wav",
-	"marine/ally_death/ally_death (3).wav",
-	"marine/ally_death/ally_death (4).wav",
-}
-ENT.SoundTbl_Stuck = {
-	"marine/stuck/stuck (1).wav",
-	"marine/stuck/stuck (2).wav",
-	"marine/stuck/stuck (3).wav",
-	"marine/stuck/stuck (4).wav",
-	"marine/stuck/stuck (5).wav",
-	"marine/stuck/stuck (6).wav",
-}
-
-ENT.SoundTbl_Transform = {
-	"marine/transform/transform (1).wav",
-	"marine/transform/transform (2).wav",
-	"marine/transform/transform (3).wav",
-	"marine/transform/transform (4).wav",
-	"marine/transform/transform (5).wav",
-	"marine/transform/transform (6).wav",
-	"marine/transform/transform (7).wav",
-}
-ENT.SoundTbl_Suppressing = {
-	"marine/firing/firing (1).wav",
-	"marine/firing/firing (2).wav",
-	"marine/firing/firing (3).wav",
-	"marine/firing/firing (4).wav",
-	"marine/firing/firing (5).wav",
-	"marine/firing/firing (6).wav",
-	"marine/firing/firing (7).wav",
-	"marine/firing/firing (8).wav",
-	"marine/firing/firing (9).wav",
-	"marine/firing/firing (10).wav",
-	"marine/firing/firing (11).wav",
-	"marine/firing/firing (12).wav",
-	"marine/firing/firing (13).wav",
-	"marine/firing/firing (14).wav",
-	"marine/firing/firing (15).wav",
-	"marine/firing/firing (16).wav",
-}
 ---------------------------------------------------------------------------------------------------------------------------------------------
 function ENT:CustomOnAcceptInput(key,activator,caller,data)
 	if key == "Step" then

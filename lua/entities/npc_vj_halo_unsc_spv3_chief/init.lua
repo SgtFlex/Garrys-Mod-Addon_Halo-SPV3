@@ -22,10 +22,13 @@ ENT.Skins = {
 	9
 }
 ENT.CovWeps = {
-	"weapon_vj_cov_spv3_particleCarbine",
-	"weapon_vj_cov_spv3_piercer",
+	"weapon_vj_cov_spv3_plasmarifle",
+	"weapon_vj_cov_spv3_plasmarifleBrute",
 	"weapon_vj_cov_spv3_shredder",
 	"weapon_vj_cov_spv3_needler",
+	"weapon_vj_cov_spv3_bruteshot",
+	"weapon_vj_cov_spv3_focusrifle",
+	"weapon_vj_cov_spv3_particleCarbine",
 }
 
 ENT.GrenadeTypes = {
@@ -44,17 +47,17 @@ ENT.GrenadeWeps = {
 }
 
 ENT.ColorRange = {Vector (170,200,120), Vector (170,200,120)}
-
-ENT.SoundTbl_OnKilledEnemy = {
-
-}
-ENT.SoundTbl_Alert = {
+function ENT:CustomOnPreInitialize()
+self.SoundTbl_OnKilledEnemy = {
 
 }
-ENT.SoundTbl_Pain = {
+self.SoundTbl_Alert = {
 
 }
-ENT.SoundTbl_Death = {
+self.SoundTbl_Pain = {
+
+}
+self.SoundTbl_Death = {
 	"chief/death/death (1).ogg",
 	"chief/death/death (2).ogg",
 	"chief/death/death (3).ogg",
@@ -72,30 +75,31 @@ ENT.SoundTbl_Death = {
 	"chief/death/death (15).ogg",
 	"chief/death/death (16).ogg",
 }
-ENT.SoundTbl_OnGrenadeSight = {
+self.SoundTbl_OnGrenadeSight = {
 
 }
-ENT.SoundTbl_GrenadeAttack = {
+self.SoundTbl_GrenadeAttack = {
 
 }
-ENT.SoundTbl_LostEnemy = {
+self.SoundTbl_LostEnemy = {
 	
 }
-ENT.SoundTbl_Investigate = {
+self.SoundTbl_Investigate = {
 	
 }
-ENT.SoundTbl_WeaponReload = {
+self.SoundTbl_WeaponReload = {
 
 
 }
-ENT.SoundTbl_AllyDeath = {
+self.SoundTbl_AllyDeath = {
 
 }
-ENT.SoundTbl_Stuck = nil
-ENT.SoundTbl_Transform = nil
-ENT.SoundTbl_Suppressing = {
+self.SoundTbl_Stuck = nil
+self.SoundTbl_Transform = nil
+self.SoundTbl_Suppressing = {
 
 }
+end
 function ENT:CustomOnInitialize()
 	timer.Simple(0.01, function() 
 		if (GetConVarNumber("vj_spv3_UNSCCovWeps")==1 and math.random(0,1)==1) then
