@@ -2,7 +2,6 @@
  A Garry's Mod Addon focused on implementing the NPC's and their features from the Halo CE mod, "SPV3" into Garry's Mod. Originally created by Mayhem.
 
 Changes that are different and WIP comapred to the workshop version:
-[list]
    <br/>-Sentinels are now much much more effective against large swaths of flood (can hit more than 1 target per sweep)
    <br/>-Added 8 additional voice permutations for marines
    <br/>-Added hitgroups and dismemberment to Flood Marine
@@ -17,17 +16,17 @@ Changes that are different and WIP comapred to the workshop version:
    <br/>-Changed evasion code for Elites, Brutes, and Jackals (So they evade when fighting other NPCs too and not just players)
    <br/>-Added flying death animations for all relevant NPCs
    <br/>-Changed infection forms and made them feel more "floaty"
-	<br/>      -Infection forms now explode on contact with shields
-	<br/>      -Infection forms deal double damage to active shields
-	<br/>      -Removed collision between infection form and its target
-	<br/>      -Reduced friction on infection forms
-	<br/>      -Infection forms now attach to individual bones
-	<br/>      -Infection forms can now pile onto enemies, and will jump off once one of them has taken over
-	<br/>      -Infection forms can no longer be meleed/damaged by the entity they are attached to
-	<br/>      -Modified airborne animation to make it more "wiggly" and last longer
-	<br/>      -Added climbing animations for when climbing nodes are available
-	<br/>      -Added jumping capabilities (Node related)
-	<br/>      -Added some randomization in their leaping to spread them out a bit more as a swarm
+	<br/>-Infection forms now explode on contact with shields
+	<br/>-Infection forms deal double damage to active shields
+	<br/>-Removed collision between infection form and its target
+	<br/>-Reduced friction on infection forms
+	<br/>   -Infection forms now attach to individual bones
+	<br/>   -Infection forms can now pile onto enemies, and will jump off once one of them has taken over
+	<br/>   -Infection forms can no longer be meleed/damaged by the entity they are attached to
+	<br/>   -Modified airborne animation to make it more "wiggly" and last longer
+	<br/>   -Added climbing animations for when climbing nodes are available
+	<br/>   -Added jumping capabilities (Node related)
+	<br/>   -Added some randomization in their leaping to spread them out a bit more as a swarm
    <br/>-Changed default infection count Modifier 1->2.5
    <br/>-Increased health on Marine and ODST combat forms to be inline with increased marine health from last update
    <br/>-Changed around weapon tables within UNSC faction
@@ -46,4 +45,3 @@ Changes that are different and WIP comapred to the workshop version:
    <br/>-Fixed needler nade causing errors in certain situations
    <br/>-Fixed elite combat forms not using skins (better coloring)
    <br/>-Loosened requirements "infect_onlyhalo"
-[/list]
