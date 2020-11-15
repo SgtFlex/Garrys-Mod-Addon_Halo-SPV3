@@ -1,7 +1,7 @@
 # Garrys-Mod-Addon_Halo-SPV3
  A Garry's Mod Addon focused on implementing the NPC's and their features from the Halo CE mod, "SPV3" into Garry's Mod. Originally created by Mayhem.
 
-Changes that are different and WIP comapred to the workshop version:
+Changes that are different and WIP compared to the workshop version:
    <br/>-Sentinels are now much much more effective against large swaths of flood (can hit more than 1 target per sweep)
    <br/>-Added 8 additional voice permutations for marines
    <br/>-Added hitgroups and dismemberment to Flood Marine
