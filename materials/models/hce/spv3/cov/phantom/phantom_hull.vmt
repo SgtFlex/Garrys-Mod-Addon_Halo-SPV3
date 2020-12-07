@@ -1,0 +1,26 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/hce/spv3/cov/phantom/phantom_hull_diff1"
+	"$bumpmap" "models/hce/spv3/cov/phantom/phantom_hull_nrml"
+	"$surfaceprop" metal
+	"$alphatest" 1
+	"$nocull" 1
+	"$color2"		"[0.4 0.14 0.4]"
+
+	"$normalmapalphaenvmapmask"    "1"
+	"$phong" "1"
+	"$phongexponent"				"20"
+	"$phongboost"					"20"
+	"$phongfresnelranges"			"[0.67 1.5 1]"
+
+	"$phongtint" "[0.1 0.1 0.4]"
+	"$phongexponenttexture" "models\Dark_Souls\shared\souls_green"
+	"$phongwarptexture" "models\Dark_Souls\shared\testwarp2"
+
+	"$envmap" "models\Dark_Souls\shared\painted_silver_ldr"
+	"$envmaptint""[0.000125 0.000124 0.000115]"
+	"$envmapfresnel""1"
+	"$blendtintbybasealpha" "1"
+
+
+}

@@ -2,6 +2,8 @@
  A Garry's Mod Addon focused on implementing the NPC's and their features from the Halo CE mod, "SPV3" into Garry's Mod. Originally created by Mayhem.
 
 Changes that are different and WIP compared to the workshop version:
+   <br/>-Added Covenant Phantom w/ Turret
+   <br/>-Added Flood Biomass
    <br/>-Sentinels are now much much more effective against large swaths of flood (can hit more than 1 target per sweep)
    <br/>-Added 8 additional voice permutations for marines
    <br/>-Added hitgroups and dismemberment to Flood Marine
@@ -45,3 +47,9 @@ Changes that are different and WIP compared to the workshop version:
    <br/>-Fixed needler nade causing errors in certain situations
    <br/>-Fixed elite combat forms not using skins (better coloring)
    <br/>-Loosened requirements "infect_onlyhalo"
+ <br/>
+ <br/>
+To install the addon, simply click "Code" and then "Download Zip"
+![Image](https://i.imgur.com/ctkLnSD.png)
+After that, take the folder inside the zip and put it in your "Addons" folder in your garrys mod folder.
+![Image](https://i.imgur.com/YOMBLXU.png)

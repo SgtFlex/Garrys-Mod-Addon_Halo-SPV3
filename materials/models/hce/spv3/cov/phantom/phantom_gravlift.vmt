@@ -1,0 +1,32 @@
+"UnlitGeneric"
+{
+	"$basetexture" "models/hce/spv3/cov/phantom/phantom_gravlift_diff"
+	"$surfaceprop" metal
+	"$translucent" 1
+	"$nocull" 1
+	"$color2"		"[1.3 0 0.9]"
+
+	"$normalmapalphaenvmapmask"    "1"
+	"$phong" "1"
+	"$phongexponent"				"10"
+	"$phongboost"					"5.996837"
+	"$phongfresnelranges"			"[0.67 0.83 1]"
+
+	"$phongalbedotint" 1
+	"$phongexponenttexture" "models\Dark_Souls\shared\souls_green"
+	"$phongwarptexture" "models\Dark_Souls\shared\testwarp2"
+
+	"$envmap" "models\Dark_Souls\shared\painted_silver_ldr"
+	"$envmaptint""[0.000125 0.000124 0.000115]"
+	"$envmapfresnel""1"
+"Proxies"
+	{
+	"TextureScroll"
+		{
+		"texturescrollvar" "$baseTextureTransform"
+		"texturescrollrate" "0.1"
+		"texturescrollangle" "0"
+		}
+	}
+
+}

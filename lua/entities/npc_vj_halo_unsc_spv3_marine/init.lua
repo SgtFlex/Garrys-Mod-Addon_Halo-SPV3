@@ -18,6 +18,7 @@ ENT.BloodColor = "Red" -- The blood type, this will determine what it should use
 -- Use the following variables to customize the blood the way you want it:
 ENT.HasBloodParticle = true -- Does it spawn a particle when damaged?
 ENT.EntitiesToNoCollide = {"npc_vj_halo_flood_spv3_infection"}
+ENT.CanCrouchOnWeaponAttack = false -- Can it crouch while shooting?
 	-- Relationships ---------------------------------------------------------------------------------------------------------------------------------------------
 ENT.PlayerFriendly=true
 ENT.HasAllies = true -- Put to false if you want it not to have any allies
@@ -57,10 +58,11 @@ ENT.HasGrenadeAttack = true -- Should the SNPC have a grenade attack?
 ENT.AnimTbl_GrenadeAttack = {"Throw"} -- Grenade Attack Animations
 ENT.TimeUntilGrenadeIsReleased = 0.97 -- Time until the grenade is released
 ENT.GrenadeAttackThrowDistance = 5000 -- How far it can throw grenades
-ENT.AnimTbl_WeaponAttack = {ACT_IDLE_PISTOL} -- Animation played when the SNPC does weapon attack
-ENT.AnimTbl_ShootWhileMovingRun = {ACT_RUN_PISTOL} -- Animations it will play when shooting while running | NOTE: Weapon may translate the animation that they see fit!
-ENT.AnimTbl_ShootWhileMovingWalk = {ACT_RUN_PISTOL} -- Animations it will play when shooting while walking | NOTE: Weapon may translate the animation that they see fit!
-ENT.AnimTbl_Run = {ACT_RUN_PISTOL}
+ENT.AnimTbl_IdleStand = {ACT_IDLE}
+ENT.AnimTbl_WeaponAttack = {ACT_IDLE_AGITATED} -- Animation played when the SNPC does weapon attack
+ENT.AnimTbl_ShootWhileMovingRun = {ACT_RUN} -- Animations it will play when shooting while running | NOTE: Weapon may translate the animation that they see fit!
+ENT.AnimTbl_ShootWhileMovingWalk = {ACT_RUN} -- Animations it will play when shooting while walking | NOTE: Weapon may translate the animation that they see fit!
+ENT.AnimTbl_Run = {ACT_RUN}
 ENT.AnimTbl_WeaponReload = {ACT_ARM} -- Animations that play when the SNPC reloads
 
 ENT.GrenadeTypes = {
@@ -269,11 +271,11 @@ function ENT:CustomOnInitialize()
 				"weapon_vj_unsc_spv3_frag_nade",
 			}
 		end
-		if (self:GetActiveWeapon().HoldType!="pistol" or string.find(tostring(self:GetActiveWeapon()), "cov")) then
-			self.AnimTbl_WeaponAttack = {ACT_IDLE_RIFLE} -- Animation played when the SNPC does weapon attack
-			self.AnimTbl_ShootWhileMovingRun = {ACT_RUN_RIFLE} -- Animations it will play when shooting while running | NOTE: Weapon may translate the animation that they see fit!
-			self.AnimTbl_ShootWhileMovingWalk = {ACT_RUN_RIFLE} -- Animations it will play when shooting while walking | NOTE: Weapon may translate the animation that they see fit!
-			self.AnimTbl_Run = {ACT_RUN_RIFLE}
+		if (self:GetActiveWeapon().HoldType=="pistol" and !string.find(tostring(self:GetActiveWeapon()), "cov")) then
+			self.AnimTbl_WeaponAttack = {ACT_IDLE_PISTOL} -- Animation played when the SNPC does weapon attack
+			self.AnimTbl_ShootWhileMovingRun = {ACT_RUN_PISTOL} -- Animations it will play when shooting while running | NOTE: Weapon may translate the animation that they see fit!
+			self.AnimTbl_ShootWhileMovingWalk = {ACT_RUN_PISTOL} -- Animations it will play when shooting while walking | NOTE: Weapon may translate the animation that they see fit!
+			self.AnimTbl_Run = {ACT_RUN_PISTOL}
 		end
 		self.GrenadeAttackEntity = VJ_PICKRANDOMTABLE(self.GrenadeTypes)
 	end)

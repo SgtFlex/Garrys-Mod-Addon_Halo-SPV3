@@ -16,28 +16,29 @@ ENT.RadiusDamageForceTowardsPhysics = 3000 -- How much force should it deal to p
 ENT.RadiusDamageForceTowardsRagdolls = 3000 -- How much force should it deal to ragdolls?
 ENT.ShakeWorldOnDeath = false -- Should the world shake when the projectile hits something?
 ENT.DecalTbl_DeathDecals = {"Scorch"}
-ENT.SoundTbl_Idle = {"hunter/hunter_cannon/hunter_cannon_loop/hunter_cannon/loop.wav"}
-ENT.SoundTbl_OnCollide = {"weapons/fuel rod gun/explosion/fuelrod_explo1.wav", "weapons/fuel rod gun/explosion/fuelrod_explo2.wav", "weapons/fuel rod gun/explosion/fuelrod_explo3.wav"}
+ENT.SoundTbl_Idle = {"phantom/turret_shade_flyby.wav"}
+ENT.SoundTbl_OnCollide = {"phantom/turret_shade_explode.wav"}
 ---------------------------------------------------------------------------------------------------------------------------------------------
 function ENT:CustomOnInitialize()
 	self.RadiusDamage = self.RadiusDamage * GetConVarNumber("vj_spv3_damageModifier") -- How much damage should it deal? Remember this is a radius damage, therefore it will do less damage the farther away the entity is from its enemy
 	self:SetNoDraw(true)
-	ParticleEffectAttach("hcea_hunter_shade_cannon_proj", PATTACH_ABSORIGIN_FOLLOW, self, 0)
+	ParticleEffectAttach("hcea_hunter_plasma_rifle_proj", PATTACH_ABSORIGIN_FOLLOW, self, 0)
+	self.glow = ents.Create("env_sprite")
+	self.glow:SetKeyValue("rendermode", "9")
+	self.glow:SetKeyValue("renderamt", "255")
+	self.glow:SetKeyValue("model","blueflare1_noz.vmt")
+	self.glow:SetKeyValue("GlowProxySize","3")
+	self.glow:SetKeyValue("rendercolor", "255 120 255")
+	self.glow:SetKeyValue("scale","3")
+	self.glow:SetPos(self:GetPos())
+	self.glow:SetParent(self)
+	self.glow:Spawn()
+	self.glow:Activate()
+	self:DeleteOnRemove(self.glow)
 end
 ---------------------------------------------------------------------------------------------------------------------------------------------
 function ENT:DeathEffects(data,phys)
-	ParticleEffect("hcea_hunter_shade_cannon_explode_ground",self:GetPos(),Angle(0,0,0),nil)
-	self.ExplosionLight1 = ents.Create("light_dynamic")
-	self.ExplosionLight1:SetKeyValue("brightness", "4")
-	self.ExplosionLight1:SetKeyValue("distance", "300")
-	self.ExplosionLight1:SetLocalPos(data.HitPos)
-	self.ExplosionLight1:SetLocalAngles(self:GetAngles())
-	self.ExplosionLight1:Fire("Color", "255 150 0")
-	self.ExplosionLight1:SetParent(self)
-	self.ExplosionLight1:Spawn()
-	self.ExplosionLight1:Activate()
-	self.ExplosionLight1:Fire("TurnOn", "", 0)
-	self:DeleteOnRemove(self.ExplosionLight1)
+	ParticleEffect("hcea_hunter_plasma_rifle_impact",self:GetPos(),Angle(0,0,0),nil)
 end
 /*-----------------------------------------------
 	*** Copyright (c) 2012-2016 by DrVrej, All rights reserved. ***
