@@ -1,6 +1,15 @@
 # Garrys-Mod-Addon_Halo-SPV3
  A Garry's Mod Addon focused on implementing the NPC's and their features from the Halo CE mod, "SPV3" into Garry's Mod. Originally created by Mayhem.
 
+# Installation
+The best way to keep an up-to-date version with me would be to use Github desktop or another version of fetching clones. To install using Github Desktop, check the instructions in this link: https://giant.gfycat.com/ColossalIdealisticAlbino.webm
+
+ To install the addon manually, simply click "Code" and then "Download Zip"
+![Image](https://i.imgur.com/ctkLnSD.png)
+After that, take the folder inside the zip and put it in your "Addons" folder in your garrys mod folder.
+![Image](https://i.imgur.com/YOMBLXU.png)
+
+# Changes from current workshop version
 Changes that are different and WIP compared to the workshop version:
    <br/>-Added Covenant Phantom w/ Turret
    <br/>-Added Flood Biomass
@@ -29,6 +38,7 @@ Changes that are different and WIP compared to the workshop version:
 	<br/>   -Added climbing animations for when climbing nodes are available
 	<br/>   -Added jumping capabilities (Node related)
 	<br/>   -Added some randomization in their leaping to spread them out a bit more as a swarm
+   <br/>-Added convar and option for exploding infection forms
    <br/>-Changed default infection count Modifier 1->2.5
    <br/>-Increased health on Marine and ODST combat forms to be inline with increased marine health from last update
    <br/>-Changed around weapon tables within UNSC faction
@@ -49,7 +59,4 @@ Changes that are different and WIP compared to the workshop version:
    <br/>-Loosened requirements "infect_onlyhalo"
  <br/>
  <br/>
-To install the addon, simply click "Code" and then "Download Zip"
-![Image](https://i.imgur.com/ctkLnSD.png)
-After that, take the folder inside the zip and put it in your "Addons" folder in your garrys mod folder.
-![Image](https://i.imgur.com/YOMBLXU.png)
+
