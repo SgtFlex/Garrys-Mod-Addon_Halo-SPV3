@@ -1,5 +1,7 @@
 # Garrys-Mod-Addon_Halo-SPV3
  A Garry's Mod Addon focused on implementing the NPC's and their features from the Halo CE mod, "SPV3" into Garry's Mod. Originally created by Mayhem.
+ 
+ Changes from workshop version can be found further down.
 
 # Installation
 The best way to keep an up-to-date version with me would be to use Github desktop or another version of fetching clones. To install using Github Desktop, check the instructions in this link: https://giant.gfycat.com/ColossalIdealisticAlbino.webm
