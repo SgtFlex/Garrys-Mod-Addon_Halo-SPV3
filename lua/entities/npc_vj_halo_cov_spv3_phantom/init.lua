@@ -60,10 +60,11 @@ function ENT:CustomOnInitialize()
 	self:SetAngles(Angle(0, math.random(0, 360), 0))
 	local trace = util.TraceLine({
 		start = self:GetPos(),
-		endpos = self:GetPos() + self:GetUp()*-500
+		endpos = self:GetPos() + self:GetUp()*-10000,
+		filter = self,
 	})
 	if (trace.Hit) then
-		self:SetPos(self:GetPos() + Vector(0,0,500 - self:GetPos():Distance(trace.HitPos)))
+		self:SetPos(trace.HitPos + Vector(0,0,math.random(300, 1000)))
 	end
 	self:SetNoDraw(true)
 

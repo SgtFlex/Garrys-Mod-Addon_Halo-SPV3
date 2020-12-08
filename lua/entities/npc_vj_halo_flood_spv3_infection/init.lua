@@ -6,7 +6,7 @@ include('shared.lua')
 	without the prior written consent of the author, unless otherwise indicated for stand-alone materials.
 -----------------------------------------------*/
 ENT.Model = {"models/hce/spv3/flood/infector/infectionform.mdl"} -- The game will pick a random model from the table when the SNPC is spawned | Add as many as you want
-ENT.StartHealth = 5
+ENT.StartHealth = 1
 ENT.HullType = HULL_TINY
 ---------------------------------------------------------------------------------------------------------------------------------------------
 	-- Relationships ---------------------------------------------------------------------------------------------------------------------------------------------
@@ -117,9 +117,18 @@ function ENT:CustomOnInitialize()
 	self.LeapAttackDamage = self.LeapAttackDamage * GetConVarNumber("vj_spv3_damageModifier")
 end
 ---------------------------------------------------------------------------------------------------------------------------------------------
-function ENT:CustomOnKilled(dmginfo,hitgroup)
+function ENT:CustomOnPriorToKilled(dmginfo,hitgroup)
 	if (GetConVarNumber("vj_spv3_InfFormsExplode")==1) then
-		util.BlastDamage(dmginfo:GetAttacker(), dmginfo:GetInflictor(), self:GetPos(), 50, 5)
+		local blast = DamageInfo()
+		local vector = self:GetPos()
+		blast:SetDamageType(4)
+		blast:SetDamage(1)
+		blast:SetInflictor(dmginfo:GetInflictor())
+		blast:SetAttacker(dmginfo:GetAttacker())
+		blast:SetDamagePosition(self:GetPos())
+		timer.Simple(0.2, function()
+			util.BlastDamageInfo(blast, vector, 50)
+		end)
 	end
 end
 

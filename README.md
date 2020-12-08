@@ -6,6 +6,8 @@
 # Installation
 The best way to keep an up-to-date version with me would be to use Github desktop or another version of fetching clones. To install using Github Desktop, check the instructions in this link: https://giant.gfycat.com/ColossalIdealisticAlbino.webm
 
+After you have a clone, anytime an update occurs, you just have to click "Pull Origin" (Click "Fetch Origin" first if that button isn't there)
+
  To install the addon manually, simply click "Code" and then "Download Zip"
 ![Image](https://i.imgur.com/ctkLnSD.png)
 After that, take the folder inside the zip and put it in your "Addons" folder in your garrys mod folder.
