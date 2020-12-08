@@ -117,10 +117,12 @@ function ENT:CustomOnInitialize()
 	self.LeapAttackDamage = self.LeapAttackDamage * GetConVarNumber("vj_spv3_damageModifier")
 end
 ---------------------------------------------------------------------------------------------------------------------------------------------
-/*function ENT:CustomOnKilled(dmginfo,hitgroup)
-	ParticleEffect("hcea_flood_inf_death", self:LocalToWorld(Vector(0,0,10)), self:GetAngles(), self)
-	//ParticleEffectAttach("hcea_flood_inf_death",PATTACH_POINT_FOLLOW,self,0)
-end*/
+function ENT:CustomOnKilled(dmginfo,hitgroup)
+	if (GetConVarNumber("vj_spv3_InfFormsExplode")==1) then
+		util.BlastDamage(dmginfo:GetAttacker(), dmginfo:GetInflictor(), self:GetPos(), 50, 5)
+	end
+end
+
 function ENT:SetUpGibesOnDeath(dmginfo,hitgroup)
 	if self.HasGibDeathParticles == true then
 		ParticleEffect("hcea_flood_infected_death", self:LocalToWorld(Vector(0,0,20)), self:GetAngles(), nil)
@@ -327,7 +329,9 @@ end
 ENT.AttachedTo = ""
 function ENT:CustomOnLeapAttack_AfterChecks(TheHitEntity) 
 	if (TheHitEntity.ShieldCurrentHealth && TheHitEntity.ShieldCurrentHealth > 0) then
-		TheHitEntity:TakeDamage(self.LeapAttackDamage, self, self)
+		if (GetConVarNumber("vj_spv3_InfFormsExplode")==0) then
+			TheHitEntity:TakeDamage(self.LeapAttackDamage, self, self)
+		end
 		self:TakeDamage(self:GetMaxHealth(), TheHitEntity, TheHitEntity)
 		return
 	end

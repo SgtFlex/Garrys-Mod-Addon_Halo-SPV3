@@ -8,7 +8,7 @@ include('shared.lua')
 ENT.HullType = HULL_MEDIUM
 	-- ====Variant Variables==== --
 ENT.Model = {"models/hce/spv3/cov/phantom/phantomturret.mdl"} -- The game will pick a random model from the table when the SNPC is spawned | Add as many as you want
-ENT.StartHealth = 250
+ENT.StartHealth = 500
 	-- ====== Blood-Related Variables ====== --
 ENT.Bleeds = false-- Does the SNPC bleed? (Blood decal, particle, etc.)
 ENT.Immune_Dissolve = true -- Immune to Dissolving | Example: Combine Ball
@@ -50,5 +50,11 @@ end -- return other value then 0 to override the projectile's position
 function ENT:CustomOn_PoseParameterLookingCode(pitch,yaw,roll) 
 	if (IsValid(self:GetEnemy())) then
 		self:SetAngles(Angle(self:GetAngles().x, self:GetAimVector():Angle().y, self:GetAngles().z))
+	end
+end
+
+function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
+	if (dmginfo:GetDamageType()==DMG_BLAST) then
+		dmginfo:ScaleDamage(3.5)
 	end
 end

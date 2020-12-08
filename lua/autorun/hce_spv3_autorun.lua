@@ -111,9 +111,11 @@ if VJExists == true then
 	VJ.AddConVar("vj_spv3_floodOption", "infect_onlyHalo", FCVAR_ARCHIVE)
 	VJ.AddConVar("vj_spv3_ffretal", 1, FCVAR_ARCHIVE)
 	VJ.AddConVar("vj_spv3_bonusInfForms", 1, FCVAR_ARCHIVE)
+	VJ.AddConVar("vj_spv3_InfFormsExplode", 1, FCVAR_ARCHIVE)
 	VJ.AddConVar("vj_spv3_covUNSCWeps", 0, FCVAR_ARCHIVE)
 	VJ.AddConVar("vj_spv3_UNSCCovWeps", 0, FCVAR_ARCHIVE)
 	VJ.AddConVar("vj_spv3_floodWeps", 1, FCVAR_ARCHIVE)
+	VJ.AddConVar("vj_spv3_phantomAssistTime", 10, FCVAR_ARCHIVE)
 
 
 	local function VJ_SPV3_MAIN(Panel)
@@ -139,6 +141,7 @@ if VJExists == true then
 		Panel:AddControl("Checkbox", {Label ="UNSC can use Covenant weapons?", Command ="vj_spv3_UNSCCovWeps"})
 		Panel:AddControl("Checkbox", {Label ="Flood can use weapons?", Command ="vj_spv3_FloodWeps"})
 		Panel:AddControl("Checkbox", {Label ="Flood runners and ODSTs drop inf forms?", Command ="vj_spv3_bonusInfForms"})
+		Panel:AddControl("Checkbox", {Label ="Infection forms explode? (Damaging other inf forms)", Command ="vj_spv3_InfFormsExplode"})
 		Panel:AddControl("Slider", {Type ="float", Label ="SPV3 Health Multiplier",min = 0.01,max = 100,Command ="vj_spv3_HealthModifier"})
 		Panel:AddControl("Slider", {Type ="float", Label ="SPV3 Shield Multiplier",min = 0.01,max = 100,Command ="vj_spv3_ShieldModifier"})
 		Panel:AddControl("Slider", {Type ="float", Label ="SPV3 Overall Damage Multiplier",min = 0.01,max = 100,Command ="vj_spv3_DamageModifier"})
@@ -146,6 +149,8 @@ if VJExists == true then
 		Panel:AddControl("Slider", {Type ="float", Label ="NPC Vulnerability",min = 0.01,max = 100,Command ="vj_spv3_NPCTakeDamageModifier"})
 		Panel:ControlHelp("Dictates how much damage SPV3 NPCs take from other NPCs (including each other), either amplified or reduced.")
 		Panel:ControlHelp("\nThe two above sliders can be used to create custom balancing.")
+		Panel:AddControl("Slider", {Type ="float", Label ="Phantom Assist Time",min = 0,max = 1000,Command ="vj_spv3_phantomAssistTime"})
+		Panel:ControlHelp("Controls how long phantoms stick around after droppping off units (if they still have a turret")
 		Panel:AddControl("Slider", {Type ="float", Label ="SPV3 Inf Form Multiplier",min = 0.01,max = 100,Command ="vj_spv3_infModifier"})
 		local typebox = vgui.Create("DComboBox")
 		typebox:SetValue("vj_spv3_floodOption: "..GetConVarString("vj_spv3_floodOption"))

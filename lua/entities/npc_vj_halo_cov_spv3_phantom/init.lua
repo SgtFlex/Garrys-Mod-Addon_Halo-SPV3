@@ -57,6 +57,7 @@ ENT.UnitCost = {
 	{Name = "jackal_mkm_ult", Cost = 6},
 }
 function ENT:CustomOnInitialize()
+	self:SetAngles(Angle(0, math.random(0, 360), 0))
 	local trace = util.TraceLine({
 		start = self:GetPos(),
 		endpos = self:GetPos() + self:GetUp()*-500
@@ -72,7 +73,7 @@ function ENT:CustomOnInitialize()
 			self:VJ_ACT_PLAYACTIVITY("Descend",true,3,false)	
 		end
 	end)
-	self:SetCollisionBounds(Vector(-500, -300, 0), Vector(500, 300, 400))
+	self:SetCollisionBounds(Vector(-500, -300, 50), Vector(500, 300, 400))
 	self.engineSound = CreateSound(self, "phantom/engine_hover.wav")
 	self.movingSound = CreateSound(self, "phantom/engine_moving.wav")
 	self.hoverSound = CreateSound(self, "phantom/hover (2).wav")
@@ -85,9 +86,11 @@ function ENT:CustomOnInitialize()
 	self.movingSound:Play()
 	self.hoverSound:Play()
 	self.gravSound:Play()
+	self.movingSound:ChangeVolume(0)
 	self.gravSound:ChangeVolume(0)
 	self.hoverSound:ChangeVolume(0)
 	self.engineSound:ChangeVolume(0)
+	self.movingSound:ChangeVolume(1, 5)
 	self.turret = ents.Create("npc_vj_halo_cov_spv3_phantom_turret")
 	self.turret:SetPos(self:GetAttachment(self:LookupAttachment("Cannon"))["Pos"])
 	self.turret:SetAngles(self:GetAngles())
@@ -96,7 +99,7 @@ function ENT:CustomOnInitialize()
 	self.turret:Spawn()
 	self.turret:SetNoDraw(true)
 	timer.Simple(0.3, function()
-		if (IsValid(self)) then
+		if (IsValid(self) and IsValid(self.turret)) then
 			self:SetNoDraw(false)
 			self.turret:SetNoDraw(false)
 		end
@@ -122,28 +125,35 @@ function ENT:SpawnCovies()
 				until unit["Cost"] <= self.Resource
 				local covie = ents.Create("npc_vj_halo_cov_spv3_"..unit["Name"])
 				self.Resource = self.Resource - unit["Cost"]
-				covie:SetPos(self:GetAttachment(self:LookupAttachment("Spawn"))["Pos"])
+				covie:SetPos(self:GetAttachment(self:LookupAttachment("Spawn"))["Pos"] + Vector(0,0,-50))
 				covie:SetAngles(self:GetAngles())
 				covie:Spawn()
+				timer.Simple(0.5, function()
+					if (IsValid(self) and IsValid(covie)) then
+						covie:SetVelocity(Vector(math.random(-150, 150),math.random(-150, 150), 0))
+					end
+				end)	
 				timer.Simple(2, function() if (IsValid(self) and IsValid(covie)) then covie:VJ_TASK_COVER_FROM_ENEMY() end end)
-				table.insert(self.covies, covie)
-				for k, v in ipairs(self.covies) do
-					constraint.NoCollide(covie, self.covies[k], 0, 0)
-				end
+				-- table.insert(self.covies, covie)
+				-- for k, v in ipairs(self.covies) do
+				-- 	constraint.NoCollide(covie, self.covies[k], 0, 0)
+				-- end
 				constraint.NoCollide(self, covie, 0, 0)
 				if (list.Get("NPC")[covie:GetClass()].Weapons != nil) then
 					covie:Give(VJ_PICK(list.Get("NPC")[covie:GetClass()].Weapons))
 				end
 				-- PrintMessage(3, tostring("Cost: "..unit["Cost"]))
 				-- PrintMessage(3, tostring("Resource: "..self.Resource))
-			elseif (self.Resource <= 0 and self.leaving==false) then
+			elseif (self.depletedTime==nil) then
+				self.depletedTime = CurTime()
+			elseif (self.Resource <= 0 and self.leaving==false and (CurTime() >= self.depletedTime + GetConVarNumber("vj_spv3_phantomAssistTime") or !IsValid(self.turret))) then
 				self.leaving = true
-				timer.Simple(math.random(5, 20), function()
 					if (IsValid(self)) then
 						self:VJ_ACT_PLAYACTIVITY("Ascend",true,self:SequenceDuration(self:LookupSequence("Ascend")),false)
 						timer.Simple(self:SequenceDuration(self:LookupSequence("Ascend")), function()
 							if (IsValid(self)) then
-								self:VJ_ACT_PLAYACTIVITY("Leave",true,self:SequenceDuration(self:LookupSequence("Leave")),false)	
+								self:VJ_ACT_PLAYACTIVITY("Leave",true,self:SequenceDuration(self:LookupSequence("Leave")),false)
+								self.movingSound:ChangeVolume(0, 5)	
 								timer.Simple(self:SequenceDuration(self:LookupSequence("Leave")), function()
 									if (IsValid(self)) then
 										self:Remove()
@@ -152,11 +162,13 @@ function ENT:SpawnCovies()
 							end
 						end)
 					end
-				end)
 			end
-		
 		end
 	end)
+end
+
+function ENT:Leave()
+
 end
 
 function ENT:CustomOnThink() 
