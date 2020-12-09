@@ -20,7 +20,7 @@ ENT.SoundTbl_Idle = {"phantom/turret_shade_flyby.wav"}
 ENT.SoundTbl_OnCollide = {"phantom/turret_shade_explode.wav"}
 ---------------------------------------------------------------------------------------------------------------------------------------------
 function ENT:CustomOnInitialize()
-	if (self:GetOwner():GetOwner()!=nil) then
+	if (self:GetOwner()!=nil and self:GetOwner():GetOwner()!=nil) then
 		constraint.NoCollide(self, self:GetOwner():GetOwner(), 0, 0)
 	end
 	self.RadiusDamage = self.RadiusDamage * GetConVarNumber("vj_spv3_damageModifier") -- How much damage should it deal? Remember this is a radius damage, therefore it will do less damage the farther away the entity is from its enemy

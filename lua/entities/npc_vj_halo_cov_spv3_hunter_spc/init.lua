@@ -56,7 +56,7 @@ ENT.RangeAttackAnimationStopMovement = false -- Should it stop moving when perfo
 ENT.RangeUseAttachmentForPos = true -- Should the projectile spawn on a attachment?
 ENT.RangeUseAttachmentForPosID = "cannon_1" -- The attachment used on the range attack if RangeUseAttachmentForPos is set to true
 ENT.RangeAttackReps = 1 -- How many times does it run the projectile code?
-ENT.RangeAttackExtraTimers = {0.3, 0.6, 0.9} -- Extra range attack timers | it will run the projectile code after the given amount of seconds
+ENT.RangeAttackExtraTimers = {0.35, 0.7, 1.05, 1.4} -- Extra range attack timers | it will run the projectile code after the given amount of seconds
 ENT.RangeAttackAngleRadius = 40 -- What is the attack angle radius? | 100 = In front of the SNPC | 180 = All around the SNPC
 ---------------------------------------------------------------------------------------------------------------------------------------------
 function ENT:CustomOnThink_AIEnabled()
@@ -131,10 +131,10 @@ function ENT:RangeAttackCode_GetShootPos(TheProjectile)
 	return (self:GetEnemy():GetPos()+self:GetEnemy():OBBCenter()-self:GetAttachment(self:LookupAttachment(self.RangeUseAttachmentForPosID)).Pos):GetNormal()*2000
 end
 ---------------------------------------------------------------------------------------------------------------------------------------------
-function ENT:CustomRangeAttackCode_AfterProjectileSpawn(TheProjectile)
-	util.ScreenShake(self:GetPos(),16,100,0.8,700)
-	self:EmitSound("weapons/shadeturret/shade_turret_fire_"..math.random(1,5)..".wav", 80, 100, 1)
-	ParticleEffectAttach("hcea_hunter_shade_cannon_trigger_muzzle",PATTACH_POINT_FOLLOW,self,1)
+function ENT:CustomRangeAttackCode_BeforeProjectileSpawn(TheProjectile) 
+	self:EmitSound("phantom/turret_shade.wav", 105)
+	TheProjectile:SetOwner(self)
+	ParticleEffectAttach("hcea_hunter_shade_cannon_trigger_muzzle", PATTACH_POINT_FOLLOW, self, 1)
 end
 ---------------------------------------------------------------------------------------------------------------------------------------------
 function ENT:CustomOnAcceptInput(key,activator,caller,data)
