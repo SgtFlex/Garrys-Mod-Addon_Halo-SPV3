@@ -111,7 +111,7 @@ function ENT:CustomOnPhysicsCollide(data,phys)
 			for _, v in pairs(ents.FindInSphere(self:GetPos(), self.RadiusDamageRadius)) do
 				if !(v:IsWorld()) then
 					if (IsValid(v:GetPhysicsObject())) then
-						if (v:IsNPC() or v:IsPlayer()) then
+						if (v:IsNPC() or v:IsPlayer()) and (v.MovementType != VJ_MOVETYPE_STATIONARY) then
 							v:SetVelocity((v:GetPos()-self:GetPos())*-self:GetPos():DistToSqr(v:GetPos())/9000)
 							v:TakeDamage(self.RadiusDamage/20, self:GetOwner(), self:GetOwner())
 						else

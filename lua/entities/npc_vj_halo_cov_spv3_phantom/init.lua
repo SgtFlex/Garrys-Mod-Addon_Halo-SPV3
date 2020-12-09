@@ -17,7 +17,7 @@ ENT.GibOnDeathDamagesTable = {"All"} -- Damages that it gibs from | "UseDefault"
 	-- Relationships ---------------------------------------------------------------------------------------------------------------------------------------------
 ENT.HasAllies = true -- Put to false if you want it not to have any allies
 ENT.VJ_NPC_Class = {"CLASS_COV"} -- NPCs with the same class with be allied to each other
-
+ENT.ConstantlyFaceEnemy_IfVisible = false -- Should it only face the enemy if it's visible?
 -- ENT.AnimTbl_WeaponAttackFiringGesture = {} -- Firing Gesture animations used when the SNPC is firing the weapon
 -- ENT.AnimTbl_TakingCover = {} -- The animation it plays when hiding in a covered position
 ENT.AnimTbl_MoveToCover = {ACT_RUN} -- The animation it plays when moving to a covered position
