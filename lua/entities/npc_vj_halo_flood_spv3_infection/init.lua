@@ -128,7 +128,7 @@ function ENT:CustomDeathAnimationCode(dmginfo,hitgroup) //Perhaps giving errors 
 	self.inflictor = dmginfo:GetInflictor()
 	self.vector = self:GetPos()
 	self:SetNoDraw(true)
-	if (GetConVarNumber("vj_spv3_InfFormsExplode")==1) then
+	if (GetConVarNumber("vj_spv3_InfFormsExplode")==1 and self.AlreadyDoneFirstLeapAttack == false and self.LeapAttacking == false) then
 		timer.Simple(0.2, function()
 			if (IsValid(self)) then
 				self.BlastInfo = DamageInfo()
@@ -137,8 +137,8 @@ function ENT:CustomDeathAnimationCode(dmginfo,hitgroup) //Perhaps giving errors 
 				self.BlastInfo:SetDamagePosition(self.vector)
 				if (IsValid(self.inflictor)) then
 					self.BlastInfo:SetInflictor(self.inflictor)
+					self.BlastInfo:SetAttacker(self.inflictor)
 				end
-				self.BlastInfo:SetAttacker(self.inflictor)
 				self.BlastInfo:SetReportedPosition(self.vector)
 				util.BlastDamageInfo(self.BlastInfo, self.vector, 50)
 			end

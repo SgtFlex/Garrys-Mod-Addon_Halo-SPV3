@@ -56,6 +56,22 @@ ENT.UnitCost = {
 	{Name = "jackal_mkm_maj", Cost = 5},
 	{Name = "jackal_mkm_ult", Cost = 6},
 }
+ENT.AnimTbl_Spawn = {
+	"Spawn_1",
+	"Spawn_2",
+	"Spawn_3",
+}
+
+ENT.AnimTbl_Leave = {
+	"Leave_1",
+	"Leave_2",
+	"Leave_3",
+}
+function ENT:CustomOnPreInitialize()
+	self.SpawnAnim = VJ_PICK(self.AnimTbl_Spawn)
+	self.LeaveAnim = VJ_PICK(self.AnimTbl_Leave)
+end
+
 function ENT:CustomOnInitialize()
 	self:SetAngles(Angle(0, math.random(0, 360), 0))
 	local trace = util.TraceLine({
@@ -67,13 +83,7 @@ function ENT:CustomOnInitialize()
 		self:SetPos(trace.HitPos + Vector(0,0,math.random(300, 1000)))
 	end
 	self:SetNoDraw(true)
-
-	self:VJ_ACT_PLAYACTIVITY("Spawn",true,self:SequenceDuration(self:LookupSequence("Spawn")),false)	
-	timer.Simple(self:SequenceDuration(self:LookupSequence("Spawn")), function()
-		if (IsValid(self)) then
-			self:VJ_ACT_PLAYACTIVITY("Descend",true,3,false)	
-		end
-	end)
+	self:VJ_ACT_PLAYACTIVITY(self.SpawnAnim,true,self:SequenceDuration(self:LookupSequence(self.SpawnAnim)),false)	
 	self:SetCollisionBounds(Vector(-500, -300, 50), Vector(500, 300, 400))
 	self.engineSound = CreateSound(self, "phantom/engine_hover.wav")
 	self.movingSound = CreateSound(self, "phantom/engine_moving.wav")
@@ -105,7 +115,7 @@ function ENT:CustomOnInitialize()
 			self.turret:SetNoDraw(false)
 		end
 	end)
-	timer.Simple(self:SequenceDuration(self:LookupSequence("Spawn")) + self:SequenceDuration(self:LookupSequence("Descend")), function()
+	timer.Simple(self:SequenceDuration(self:LookupSequence(self.SpawnAnim)), function()
 		if (IsValid(self)) then
 			self:VJ_ACT_PLAYACTIVITY("Idle",true,3,false)	
 			self:SpawnCovies()
@@ -150,21 +160,16 @@ function ENT:SpawnCovies()
 			elseif (self.Resource <= 0 and self.leaving==false and (CurTime() >= self.depletedTime + GetConVarNumber("vj_spv3_phantomAssistTime") or !IsValid(self.turret))) then
 				self.leaving = true
 					if (IsValid(self)) then
-						self:VJ_ACT_PLAYACTIVITY("Ascend",true,self:SequenceDuration(self:LookupSequence("Ascend")),false)
-						timer.Simple(self:SequenceDuration(self:LookupSequence("Ascend")), function()
+						self:VJ_ACT_PLAYACTIVITY(self.LeaveAnim,true,self:SequenceDuration(self:LookupSequence(self.LeaveAnim)),false)
+						self.movingSound:ChangeVolume(0, 5)	
+						timer.Simple(self:SequenceDuration(self:LookupSequence(self.LeaveAnim)), function()
 							if (IsValid(self)) then
-								self:VJ_ACT_PLAYACTIVITY("Leave",true,self:SequenceDuration(self:LookupSequence("Leave")),false)
-								self.movingSound:ChangeVolume(0, 5)	
-								timer.Simple(self:SequenceDuration(self:LookupSequence("Leave")), function()
-									if (IsValid(self)) then
-										self:Remove()
-									end
-								end)
+								self:Remove()
 							end
 						end)
 					end
+				end
 			end
-		end
 	end)
 end
 
