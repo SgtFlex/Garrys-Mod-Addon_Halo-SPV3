@@ -110,25 +110,26 @@ function ENT:CustomOnInitialize()
 			self:SetFriction(0.3)
 		end
 	end)
-	
 	self:CapabilitiesAdd(bit.bor(CAP_MOVE_CLIMB))
 	self.StartHealth = self.StartHealth * GetConVarNumber("vj_spv3_HealthModifier")
 	self:SetHealth(self.StartHealth)
 	self.LeapAttackDamage = self.LeapAttackDamage * GetConVarNumber("vj_spv3_damageModifier")
 end
 ---------------------------------------------------------------------------------------------------------------------------------------------
-function ENT:CustomOnPriorToKilled(dmginfo,hitgroup)
-	if (GetConVarNumber("vj_spv3_InfFormsExplode")==1) then
+function ENT:CustomOnPriorToKilled(dmginfo,hitgroup) //Perhaps giving errors because inflictor is dead?
+	if (GetConVarNumber("vj_spv3_InfFormsExplode")==1 and self.AlreadyDoneFirstLeapAttack == false) then
+		local prevDmg = dmginfo
 		local blast = DamageInfo()
 		local vector = self:GetPos()
 		blast:SetDamageType(4)
 		blast:SetDamage(1)
-		blast:SetInflictor(dmginfo:GetInflictor())
 		blast:SetAttacker(dmginfo:GetAttacker())
-		blast:SetDamagePosition(self:GetPos())
+		blast:SetInflictor(dmginfo:GetInflictor()) //errors without inflictor
+		blast:SetDamagePosition(vector)
 		timer.Simple(0.2, function()
 			util.BlastDamageInfo(blast, vector, 50)
 		end)
+		
 	end
 end
 
@@ -338,10 +339,7 @@ end
 ENT.AttachedTo = ""
 function ENT:CustomOnLeapAttack_AfterChecks(TheHitEntity) 
 	if (TheHitEntity.ShieldCurrentHealth && TheHitEntity.ShieldCurrentHealth > 0) then
-		if (GetConVarNumber("vj_spv3_InfFormsExplode")==0) then
-			TheHitEntity:TakeDamage(self.LeapAttackDamage, self, self)
-		end
-		self:TakeDamage(self:GetMaxHealth(), TheHitEntity, TheHitEntity)
+		self:TakeDamage(5, TheHitEntity, TheHitEntity)
 		return
 	end
 	if (IsValid(self) and IsValid(self:GetEnemy())  and self:GetEnemy():Health() < self:GetEnemy():GetMaxHealth()*.4) then
