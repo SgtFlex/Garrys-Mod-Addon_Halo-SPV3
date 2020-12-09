@@ -36,6 +36,7 @@ ENT.RangeToMeleeDistance = 0 -- How close does it have to be until it uses melee
 ENT.RangeAttackAngleRadius = 180 -- What is the attack angle radius? | 100 = In front of the SNPC | 180 = All around the SNPC
 function ENT:CustomRangeAttackCode_BeforeProjectileSpawn(TheProjectile) 
 	self:EmitSound("phantom/turret_shade.wav", 105)
+	TheProjectile:SetOwner(self)
 	ParticleEffectAttach("hcea_hunter_plasma_rifle_fire", PATTACH_POINT_FOLLOW, self, 1)
 end -- This is ran before Spawn() is called
 

@@ -20,6 +20,9 @@ ENT.SoundTbl_Idle = {"phantom/turret_shade_flyby.wav"}
 ENT.SoundTbl_OnCollide = {"phantom/turret_shade_explode.wav"}
 ---------------------------------------------------------------------------------------------------------------------------------------------
 function ENT:CustomOnInitialize()
+	if (self:GetOwner():GetOwner()!=nil) then
+		constraint.NoCollide(self, self:GetOwner():GetOwner(), 0, 0)
+	end
 	self.RadiusDamage = self.RadiusDamage * GetConVarNumber("vj_spv3_damageModifier") -- How much damage should it deal? Remember this is a radius damage, therefore it will do less damage the farther away the entity is from its enemy
 	self:SetNoDraw(true)
 	ParticleEffectAttach("hcea_hunter_plasma_rifle_proj", PATTACH_ABSORIGIN_FOLLOW, self, 0)
@@ -40,6 +43,7 @@ end
 function ENT:DeathEffects(data,phys)
 	ParticleEffect("hcea_hunter_plasma_rifle_impact",self:GetPos(),Angle(0,0,0),nil)
 end
+
 /*-----------------------------------------------
 	*** Copyright (c) 2012-2016 by DrVrej, All rights reserved. ***
 	No parts of this code or any of its contents may be reproduced, copied, modified or adapted,

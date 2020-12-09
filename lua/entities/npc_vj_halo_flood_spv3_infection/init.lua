@@ -39,6 +39,11 @@ ENT.OnlyDoKillEnemyWhenClear = false -- If set to true, it will only play the On
 ENT.canFlinch = 0
 	-- ====== Sound File Paths ====== --
 -- Leave blank if you don't want any sounds to play
+
+ENT.HasDeathAnimation = true -- Does it play an animation when it dies?
+ENT.DeathAnimationTime = 2
+ENT.AnimTbl_Death = {"Melee_1"}
+
 ENT.SoundTbl_Idle = {
 "infection_form/infector_sound/infector/loop/infector_sound1.wav",
 "infection_form/infector_sound/infector/loop/infector_sound2.wav",
@@ -110,37 +115,39 @@ function ENT:CustomOnInitialize()
 			self:SetFriction(0.3)
 		end
 	end)
+	
 	self:CapabilitiesAdd(bit.bor(CAP_MOVE_CLIMB))
 	self.StartHealth = self.StartHealth * GetConVarNumber("vj_spv3_HealthModifier")
 	self:SetHealth(self.StartHealth)
 	self.LeapAttackDamage = self.LeapAttackDamage * GetConVarNumber("vj_spv3_damageModifier")
 end
 ---------------------------------------------------------------------------------------------------------------------------------------------
-function ENT:CustomOnPriorToKilled(dmginfo,hitgroup) //Perhaps giving errors because inflictor is dead?
-	if (GetConVarNumber("vj_spv3_InfFormsExplode")==1 and self.AlreadyDoneFirstLeapAttack == false) then
-		local prevDmg = dmginfo
-		local blast = DamageInfo()
-		local vector = self:GetPos()
-		blast:SetDamageType(4)
-		blast:SetDamage(1)
-		blast:SetAttacker(dmginfo:GetAttacker())
-		blast:SetInflictor(dmginfo:GetInflictor()) //errors without inflictor
-		blast:SetDamagePosition(vector)
+ENT.inflictor = nil
+function ENT:CustomDeathAnimationCode(dmginfo,hitgroup) //Perhaps giving errors because inflictor is dead?
+	ParticleEffect("hcea_flood_infected_death", self:LocalToWorld(Vector(0,0,20)), self:GetAngles(), nil)
+	self.inflictor = dmginfo:GetInflictor()
+	self.vector = self:GetPos()
+	self:SetNoDraw(true)
+	if (GetConVarNumber("vj_spv3_InfFormsExplode")==1) then
 		timer.Simple(0.2, function()
-			util.BlastDamageInfo(blast, vector, 50)
+			if (IsValid(self)) then
+				self.BlastInfo = DamageInfo()
+				self.BlastInfo:SetDamageType(DMG_SLASH)
+				self.BlastInfo:SetDamage(5 * GetConVarNumber("vj_spv3_damageModifier"))
+				self.BlastInfo:SetDamagePosition(self.vector)
+				if (IsValid(self.inflictor)) then
+					self.BlastInfo:SetInflictor(self.inflictor)
+				end
+				self.BlastInfo:SetAttacker(self.inflictor)
+				self.BlastInfo:SetReportedPosition(self.vector)
+				util.BlastDamageInfo(self.BlastInfo, self.vector, 50)
+			end
 		end)
 		
 	end
 end
 
-function ENT:SetUpGibesOnDeath(dmginfo,hitgroup)
-	if self.HasGibDeathParticles == true then
-		ParticleEffect("hcea_flood_infected_death", self:LocalToWorld(Vector(0,0,20)), self:GetAngles(), nil)
-		//ParticleEffect("doom_mancu_blast", self:LocalToWorld(Vector(0,0,20)), self:GetAngles(), nil)
-		//ParticleEffect("hound_explosion", self:LocalToWorld(Vector(0,0,20)), self:GetAngles(), nil)
-	end
-	return true
-end
+
 
 ENT.combatForm =""
 ENT.enemyModel = ""
@@ -337,8 +344,13 @@ function ENT:CustomOnLeapAttack_BeforeChecks()
 end
 
 ENT.AttachedTo = ""
+
+
 function ENT:CustomOnLeapAttack_AfterChecks(TheHitEntity) 
 	if (TheHitEntity.ShieldCurrentHealth && TheHitEntity.ShieldCurrentHealth > 0) then
+		if (GetConVarNumber("vj_spv3_InfFormsExplode")==0) then
+			TheHitEntity:TakeDamage(self.LeapAttackDamage, self, self)
+		end
 		self:TakeDamage(5, TheHitEntity, TheHitEntity)
 		return
 	end
