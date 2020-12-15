@@ -8,7 +8,7 @@ include('shared.lua')
 ENT.HullType = HULL_MEDIUM
 	-- ====Variant Variables==== --
 ENT.Model = {"models/hce/spv3/cov/phantom/phantomturret.mdl"} -- The game will pick a random model from the table when the SNPC is spawned | Add as many as you want
-ENT.StartHealth = 500
+ENT.StartHealth = 1000
 	-- ====== Blood-Related Variables ====== --
 ENT.Bleeds = false-- Does the SNPC bleed? (Blood decal, particle, etc.)
 ENT.Immune_Dissolve = true -- Immune to Dissolving | Example: Combine Ball
@@ -34,6 +34,9 @@ ENT.RangeAttackPos_Right = 0 -- Right/Left spawning position for range attack
 ENT.RangeDistance = 5000 -- This is how far away it can shoot
 ENT.RangeToMeleeDistance = 0 -- How close does it have to be until it uses melee?
 ENT.RangeAttackAngleRadius = 180 -- What is the attack angle radius? | 100 = In front of the SNPC | 180 = All around the SNPC
+ENT.ConstantlyFaceEnemy = true
+ENT.ConstantlyFaceEnemy_IfAttacking = true -- Should it face the enemy when attacking?
+ENT.RangeAttackAnimationFaceEnemy = false
 function ENT:CustomRangeAttackCode_BeforeProjectileSpawn(TheProjectile) 
 	self:EmitSound("phantom/turret_shade.wav", 105)
 	TheProjectile:SetOwner(self)

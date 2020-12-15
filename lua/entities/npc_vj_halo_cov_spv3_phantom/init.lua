@@ -8,7 +8,7 @@ include('shared.lua')
 ENT.HullType = HULL_MEDIUM
 	-- ====Variant Variables==== --
 ENT.Model = {"models/hce/spv3/cov/phantom/phantom.mdl"} -- The game will pick a random model from the table when the SNPC is spawned | Add as many as you want
-ENT.StartHealth = 1500
+ENT.StartHealth = 5000
 	-- ====== Blood-Related Variables ====== --
 ENT.Bleeds = false-- Does the SNPC bleed? (Blood decal, particle, etc.)
 ENT.Immune_Dissolve = true -- Immune to Dissolving | Example: Combine Ball
@@ -18,6 +18,7 @@ ENT.GibOnDeathDamagesTable = {"All"} -- Damages that it gibs from | "UseDefault"
 ENT.HasAllies = true -- Put to false if you want it not to have any allies
 ENT.VJ_NPC_Class = {"CLASS_COV"} -- NPCs with the same class with be allied to each other
 ENT.ConstantlyFaceEnemy_IfVisible = false -- Should it only face the enemy if it's visible?
+ENT.CallForHelpAnimationFaceEnemy = false-- Should it face the enemy when playing the animation?
 -- ENT.AnimTbl_WeaponAttackFiringGesture = {} -- Firing Gesture animations used when the SNPC is firing the weapon
 -- ENT.AnimTbl_TakingCover = {} -- The animation it plays when hiding in a covered position
 ENT.AnimTbl_MoveToCover = {ACT_RUN} -- The animation it plays when moving to a covered position
@@ -74,6 +75,7 @@ end
 
 function ENT:CustomOnInitialize()
 	self:SetAngles(Angle(0, math.random(0, 360), 0))
+	self:SetSolid(6)
 	local trace = util.TraceLine({
 		start = self:GetPos(),
 		endpos = self:GetPos() + self:GetUp()*-10000,
@@ -84,7 +86,7 @@ function ENT:CustomOnInitialize()
 	end
 	self:SetNoDraw(true)
 	self:VJ_ACT_PLAYACTIVITY(self.SpawnAnim,true,self:SequenceDuration(self:LookupSequence(self.SpawnAnim)),false)	
-	self:SetCollisionBounds(Vector(-500, -300, 50), Vector(500, 300, 400))
+	self:SetCollisionBounds(Vector(-500, -300, -50), Vector(500, 300, 400))
 	self.engineSound = CreateSound(self, "phantom/engine_hover.wav")
 	self.movingSound = CreateSound(self, "phantom/engine_moving.wav")
 	self.hoverSound = CreateSound(self, "phantom/hover (2).wav")
@@ -324,11 +326,25 @@ end -- returning false will make the default gibbing sounds not play
 ENT.IsDead = false
 
 function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
+	local mins1, maxs1 = self:GetHitBoxBounds(9, 0)
+	mins1 = self:LocalToWorld(mins1) - Vector(300, 250, 150)
+	maxs1 = self:LocalToWorld(maxs1) + Vector(300, 250, 150)
+	local mins2, maxs2 = self:GetHitBoxBounds(10, 0)
+	mins2 = self:LocalToWorld(mins2)- Vector(300, 250, 150)
+	maxs2 = self:LocalToWorld(maxs2)+ Vector(300, 250, 150)
+
 	if (dmginfo:GetDamageType()==DMG_BLAST) then
 		dmginfo:ScaleDamage(3.5)
 	end
-	if (hitgroup == 501 or hitgroup == 502) then
+	-- PrintMessage(3, "Min "..tostring(mins1))
+	-- PrintMessage(3, "Damage"..tostring(dmginfo:GetDamagePosition()))
+	-- PrintMessage(3, "Max "..tostring(maxs1))
+	if (dmginfo:GetDamagePosition():WithinAABox(mins1, maxs1) or dmginfo:GetDamagePosition():WithinAABox(mins2, maxs2)) then
 		dmginfo:ScaleDamage(3.5)
+		-- PrintMessage(3, tostring("Hit"))
+	end
+	if (hitgroup==503 and IsValid(self.turret)) then
+		self.turret:TakeDamage(5, self, self)
 	end
 	if ((dmginfo:GetDamage() >= self:Health()) and (self.IsDead==false)) then
 		self.IsDead = true

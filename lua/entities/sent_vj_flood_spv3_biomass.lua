@@ -23,10 +23,65 @@ ENT.SpawnTable = {
 	"npc_vj_halo_flood_spv3_wolf",
 	"npc_vj_halo_flood_spv3_brute"
 }
+ENT.SpawnedFromSpawner = true
+ENT.Number = 0
+ENT.SpawnFactorial = 3
+ENT.BlastRadius = 250
+ENT.HivePos = nil
 if (SERVER) then
 	AddCSLuaFile()
 	function ENT:CustomOnInitialize()
+		if (self.Number < self.SpawnFactorial) then
+			timer.Create("Spawn"..self:GetCreationID(), math.random(5, 15), self.SpawnFactorial - self.Number, function()
+				if (IsValid(self)) then
+					local spawnTrace = nil
+					local spawnBox = nil
+					self.spawnAttempts = 0
+					self.viablePos = true
+					repeat
+						self.spawnAttempts = self.spawnAttempts + 1
+						spawnTrace = util.TraceLine({
+							start = self:GetPos() + self:GetUp()*50,
+							endpos = (self:GetPos() + Vector(math.Rand(-1,1),math.Rand(-1,1),math.Rand(-1,1)):GetNormalized()*800),
+							filter = self,
+						})
+						spawnBox = util.TraceHull({
+							start = spawnTrace.HitPos + spawnTrace.HitNormal*60,
+							endpos = spawnTrace.HitPos + spawnTrace.HitNormal*60,
+							mins = Vector(-50, -50, -50),
+							maxs = Vector(50, 50, 50),
+							mask = MASK_NPCSOLID,
+							filter = self
+						})
+						debugoverlay.Line(spawnTrace.StartPos, spawnTrace.HitPos, 10, Color(255,255,255), false)
+						for k,v in pairs(ents.FindInSphere(spawnTrace.HitPos, self.BlastRadius)) do
+							if (v:GetClass()=="sent_vj_flood_spv3_biomass") then
+								self.viablePos = false
+								break
+							else
+								self.viablePos = true
+							end
+						end
+					until self.spawnAttempts >= 30 or (self.viablePos==true and spawnTrace.Hit and spawnTrace.HitPos:Distance(self:GetPos()) > self.BlastRadius and spawnBox.Hit==false)
+					//debugoverlay.Box(spawnTrace.HitPos + spawnTrace.HitNormal*60, Vector(-50, -50, -50), Vector(50, 50, 50), 10, Color(255,255,255))
+					
+					if (self.spawnAttempts < 30) then
+						local biomass = ents.Create("sent_vj_flood_spv3_biomass")
+						biomass:SetPos(spawnTrace.HitPos)
+						biomass.Number = self.Number + 1
+						biomass:SetAngles(spawnTrace.HitNormal:Angle() + Angle(90, 0, 0))
+						biomass:Spawn()
+					end
+				end
+			end)
+		end
+		self:SetMaxHealth(self.StartHealth)
 		self:SetHealth(self.StartHealth)
+		timer.Simple(math.random(30, 120), function()
+		if (IsValid(self)) then
+			self:TakeDamage(self:GetMaxHealth(), self, self)
+		end
+		end)
 		self:SetModel("models/hce/spv3/flood/biomass1/biomass1.mdl")
 		self:SetBodygroup(0, math.random(0, 2))
 		self:SetBodygroup(1, math.random(0, 2))
@@ -51,6 +106,7 @@ if (SERVER) then
 			end
 		end)
 	end
+	
 end
 ENT.Bursted = false
 function ENT:OnTakeDamage(dmginfo)
@@ -64,6 +120,7 @@ ENT.infForm = nil
 local spreadRadius = 275
 
 function ENT:DoDeath()
+	self:SetCollisionGroup(1)
 	self.Bursted = true
 	self:EmitSound("carrier/hkillbackgut/hkillbackgut.wav")
 	local BlastInfo = DamageInfo()
@@ -72,17 +129,18 @@ function ENT:DoDeath()
 	BlastInfo:SetDamagePosition(self:GetPos())
 	BlastInfo:SetInflictor(self)
 	BlastInfo:SetReportedPosition(self:GetPos())
-	util.BlastDamageInfo(BlastInfo, self:GetPos(), 250)
+	util.BlastDamageInfo(BlastInfo, self:GetPos(), self.BlastRadius)
 	util.ScreenShake(self:GetPos(),16,100,1,800)
 	ParticleEffect("hcea_flood_carrier_death", self:LocalToWorld(Vector(0,0,20)), self:GetAngles(), nil)
+	self.SpawnedNPCs = {}
 	if (math.random(0,1)==0 || self:GetBodygroup(1)==2) then
 		self.infFormCount = (3 - self:GetBodygroup(1)) * math.Round(self.infFormCount*(GetConVarNumber("vj_spv3_infModifier")))
 		for k=1, self.infFormCount do
 			self.infForm = ents.Create("npc_vj_halo_flood_spv3_infection")
-			self.infForm:SetPos(self:GetPos())
+			self.infForm:SetPos(self:GetPos() + self:GetUp()*25)
 			self.infForm:SetOwner(self)
 			self.infForm:Spawn()
-			local velocity = Vector(math.random(-spreadRadius, spreadRadius),math.random(-spreadRadius, spreadRadius),math.random(100, 300))
+			local velocity = self:GetLocalPos():GetNormalized() + Vector(math.random(-spreadRadius, spreadRadius),math.random(-spreadRadius, spreadRadius),math.random(100, 300))
 			self.infForm:SetVelocity(velocity)
 			self.infForm:SetAngles(Angle(self.infForm:GetAngles().x, velocity:Angle().y, self.infForm:GetAngles().z))
 			self.infForm:VJ_ACT_PLAYACTIVITY("Melee_1",true,1.3,false)		
@@ -90,9 +148,14 @@ function ENT:DoDeath()
 	else
 		for k=1, (3 - self:GetBodygroup(1)) do
 			self.infForm = ents.Create(VJ_PICK(self.SpawnTable))
-			self.infForm:SetPos(self:GetPos())
+			table.insert(self.SpawnedNPCs, self.infForm)
+			//self.infForm:SetPos(self:GetPos() + self:GetUp()*60)
 			self.infForm:SetOwner(self)
 			self.infForm:Spawn()
+			for k, v in pairs(self.SpawnedNPCs) do
+				constraint.NoCollide(self.infForm, self.SpawnedNPCs[k], 0, 0)
+				self.infForm:SetPos(self:GetPos() + self:GetUp()*self.SpawnedNPCs[k]:OBBMaxs().z)
+			end
 			local velocity = Vector(math.random(-spreadRadius, spreadRadius),math.random(-spreadRadius, spreadRadius),math.random(100, 300))
 			self.infForm:SetVelocity(velocity)
 			self.infForm:SetAngles(Angle(self.infForm:GetAngles().x, velocity:Angle().y, self.infForm:GetAngles().z))
@@ -100,6 +163,11 @@ function ENT:DoDeath()
 		end
 	end
 	self:SetBodygroup(1, 3)
+	timer.Simple(20, function()
+		if (IsValid(self)) then
+			self:Remove()
+		end
+	end)
 end
 /*--------------------------------------------------
 	*** Copyright (c) 2012-2020 by DrVrej, All rights reserved. ***

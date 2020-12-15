@@ -14,9 +14,13 @@ local VJExists = file.Exists("lua/autorun/vj_base_autorun.lua","GAME")
 if VJExists == true then
 	include('autorun/vj_controls.lua')
 	local vCat = "Halo CE SPV3"
+	VJ.AddNPC("[Spawn] Map Spawner","obj_vj_halo_spv3_map_spawner",vCat)
 	VJ.AddNPC("[Nat] Blind Wolf","npc_vj_halo_nat_spv3_blindwolf",vCat)
-	VJ.AddNPC("[Cov Spawn] Phantom","npc_vj_halo_cov_spv3_phantom",vCat)
+	VJ.AddNPC("[Spawn Cov] Phantom","npc_vj_halo_cov_spv3_phantom",vCat)
+	VJ.AddNPC("[Spawn UNSC] Pelican","npc_vj_halo_unsc_spv3_pelican",vCat)
 	VJ.AddNPC("[Cov] Turret","npc_vj_halo_cov_spv3_phantom_turret",vCat)
+	VJ.AddNPC("[UNSC] Hanging Turret","npc_vj_halo_unsc_spv3_pelican_turret",vCat)
+	VJ.AddNPC("[UNSC] Rocket Turret","npc_vj_halo_unsc_spv3_rocket_pod",vCat)
 	VJ.AddNPC("[For] Aggressor","npc_vj_halo_for_spv3_aggressor",vCat)
 	VJ.AddNPC("[For] Aggressor Major","npc_vj_halo_for_spv3_aggressor_major",vCat)
 	VJ.AddNPC("[For] Aggressor Black","npc_vj_halo_for_spv3_aggressor_black",vCat)
@@ -35,7 +39,7 @@ if VJExists == true then
 	VJ.AddNPC("[Flood] Carrier","npc_vj_halo_flood_spv3_carrier",vCat)
 	VJ.AddNPC("[Flood] Jackal","npc_vj_halo_flood_spv3_jackal",vCat)
 	VJ.AddNPC("[Flood] Wolf","npc_vj_halo_flood_spv3_wolf",vCat)
-	VJ.AddNPC("[Flood Spawn] Biomass","sent_vj_flood_spv3_biomass",vCat)
+	VJ.AddNPC("[Spawn Flood] Biomass","sent_vj_flood_spv3_biomass",vCat)
 	--==__Covenant__==--
 	VJ.AddNPC("[Cov] Hunter (Minor)","npc_vj_halo_cov_spv3_hunter_min",vCat)
 	VJ.AddNPC("[Cov] Hunter (Major)","npc_vj_halo_cov_spv3_hunter_maj",vCat)

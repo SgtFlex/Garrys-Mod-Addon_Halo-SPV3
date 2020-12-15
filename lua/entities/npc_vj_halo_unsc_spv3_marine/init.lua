@@ -18,7 +18,7 @@ ENT.BloodColor = "Red" -- The blood type, this will determine what it should use
 -- Use the following variables to customize the blood the way you want it:
 ENT.HasBloodParticle = true -- Does it spawn a particle when damaged?
 ENT.EntitiesToNoCollide = {"npc_vj_halo_flood_spv3_infection"}
-ENT.CanCrouchOnWeaponAttack = false -- Can it crouch while shooting?
+ENT.CanCrouchOnWeaponAttack = true -- Can it crouch while shooting?
 	-- Relationships ---------------------------------------------------------------------------------------------------------------------------------------------
 ENT.PlayerFriendly=true
 ENT.HasAllies = true -- Put to false if you want it not to have any allies
