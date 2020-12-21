@@ -120,25 +120,208 @@ if VJExists == true then
 	VJ.AddConVar("vj_spv3_UNSCCovWeps", 0, FCVAR_ARCHIVE)
 	VJ.AddConVar("vj_spv3_floodWeps", 1, FCVAR_ARCHIVE)
 	VJ.AddConVar("vj_spv3_phantomAssistTime", 10, FCVAR_ARCHIVE)
+	VJ.AddConVar("vj_spv3_phantomSpawns", 311111, FCVAR_ARCHIVE)
+	VJ.AddConVar("vj_spv3_phantomMinReinfStr", 35, FCVAR_ARCHIVE)
+	VJ.AddConVar("vj_spv3_phantomMaxReinfStr", 45, FCVAR_ARCHIVE)
+	VJ.AddConVar("vj_spv3_phantomMinUnitStr", 1, FCVAR_ARCHIVE)
+	VJ.AddConVar("vj_spv3_phantomMaxUnitStr", 15, FCVAR_ARCHIVE)
 
 
 	local function VJ_SPV3_MAIN(Panel)
-		-- local reset = vgui.Create("DButton")
-		-- reset:SetFont("DermaDefaultBold")
-		-- reset:SetText("Reset To Default")
-		-- reset:SetSize(150,25)
-		-- reset:SetColor(Color(0,0,0,255))
-		-- reset.DoClick = function(reset)
-		-- 	for k,v in pairs(DefaultConVarsMain) do
-		-- 		LocalPlayer():ConCommand("vj_sent_"..k.." "..v)
-		-- 		timer.Simple(0.05,function()
-		-- 		GetPanel = controlpanel.Get("VJ_SPV3_MAIN")
-		-- 		GetPanel:ClearControls()
-		-- 		VJ_SENTINELS_MAIN(GetPanel)
-		-- 		end)
-		-- 	end
-		-- end
-		-- Panel:AddPanel(reset)
+		local reset = vgui.Create("DButton")
+		local output = {}
+		reset:SetFont("DermaDefaultBold")
+		reset:SetText("Configure Dropship Spawning")
+		reset:SetSize(150,25)
+		reset:SetColor(Color(0,0,0,255))
+		reset.DoClick = function(reset)
+			local Frame = vgui.Create( "DFrame" )
+			Frame:SetPos(ScrW() * .4, ScrH() * .5) 
+			Frame:SetSize(ScrW() * .15, ScrH() * .5) 
+			Frame:SetTitle( "Configure Phantom" ) 
+			Frame:Center()
+			Frame:SetVisible( true ) 
+			Frame:SetDraggable( false ) 
+			Frame:ShowCloseButton( true ) 
+			Frame:MakePopup()
+
+			local label = vgui.Create("DLabel", Frame)
+			label:SetText("\"Reinforcement Strength\" is the accumulative strength of all the units\n that the phantom drops off. You can randomize this amount with the\n Min and Max Sliders. Having a low Max Unit strength means\n that the phantom will drop off more lower-tier units, while having a high\n Min Unit strength means the phantom will drop less, but more\n powerful high-tier units.")
+			label:SetPos(Frame:GetWide()*.05, Frame:GetTall()*.075)
+			label:SetSize(Frame:GetWide()*.9, 75)
+
+			local totStr = vgui.Create("DNumSlider", Frame)
+			totStr:SetText("Min Reinforcement Strength")
+			totStr:SetMin(1)
+			totStr:SetMax(300)
+			totStr:SetSize(Frame:GetWide()*.9, 20)
+			totStr:SetPos(Frame:GetWide()*.05, Frame:GetTall()*.2)
+			totStr:SetDecimals(0)
+			totStr:SetConVar("vj_spv3_phan")
+			totStr:SetConVar("vj_spv3_phantomMinReinfStr")
+
+			local totMaxStr = vgui.Create("DNumSlider", Frame)
+			totMaxStr:SetText("Max Reinforcement Strength")
+			totMaxStr:SetMin(1)
+			totMaxStr:SetMax(300)
+			totMaxStr:SetSize(Frame:GetWide()*.9, 20)
+			totMaxStr:SetPos(Frame:GetWide()*.05, Frame:GetTall()*.25)
+			totMaxStr:SetDecimals(0)
+			totMaxStr:SetConVar("vj_spv3_phan")
+			totMaxStr:SetConVar("vj_spv3_phantomMaxReinfStr")
+
+			local minStr = vgui.Create("DNumSlider", Frame)
+			minStr:SetText("Minimum Unit Strength")
+			minStr:SetMin(1)
+			minStr:SetMax(15)
+			minStr:SetSize(Frame:GetWide()*.9, 20)
+			minStr:SetPos(Frame:GetWide()*.05, Frame:GetTall()*.3)
+			minStr:SetDecimals(0)
+			minStr:SetConVar("vj_spv3_phantomMinUnitStr")
+
+			local maxStr = vgui.Create("DNumSlider", Frame)
+			maxStr:SetText("Maximum Unit Strength")
+			maxStr:SetMin(1)
+			maxStr:SetMax(15)
+			maxStr:SetSize(Frame:GetWide()*.9, 20)
+			maxStr:SetPos(Frame:GetWide()*.05, Frame:GetTall()*.35)
+			maxStr:SetDecimals(0)
+			maxStr:SetConVar("vj_spv3_phantomMaxUnitStr")
+
+
+
+
+			local value = 5
+			local customSpawn = vgui.Create("DCheckBoxLabel", Frame)
+			customSpawn:SetPos(Frame:GetWide()*.05, Frame:GetTall()*.05)
+			customSpawn:SetText("Use custom spawning?")
+			if (GetConVar("vj_spv3_phantomSpawns"):GetInt()==0) then
+				customSpawn:SetChecked(false)
+			else
+				customSpawn:SetChecked(true)
+			end
+
+			local numberScratch = vgui.Create("DNumberWang", Frame)
+			numberScratch:SetPos(Frame:GetWide()*.05, Frame:GetTall()*.1)
+			numberScratch:SetSize(100, 20)
+			numberScratch.OnValueChanged = function(self)
+				value = tonumber(self:GetValue())
+				if (value >= 10) then
+					output[1] = tostring(value)
+				else
+					output[1] = "0"..tostring(value)
+				end				
+			end
+
+			local meButton = vgui.Create("DButton", Frame)
+			meButton:SetFont("DermaDefaultBold")
+			meButton:SetText("Initialize Table")
+			meButton:SetSize(150,25)
+			meButton:SetPos(Frame:GetWide()*.05, Frame:GetTall()*.15)
+			meButton:SetColor(Color(0,0,0,255))
+			local combobox = {}
+			local form = nil
+			meButton.DoClick = function(reset)
+				form = vgui.Create("DForm", Frame)
+				form:SetSize(200, 200)
+				form:SetPos(Frame:GetWide()*.05, Frame:GetTall()*.2)
+				
+				for k=1, value do
+					combobox[k] = form:ComboBox("NPC #"..k)
+					combobox[k]:AddChoice( "Grunt Minor" ) -- 10 will be used as convar value
+					combobox[k]:AddChoice( "Grunt Major" ) -- 10 will be used as convar value
+					combobox[k]:AddChoice( "Grunt Spec-Ops" ) -- 10 will be used as convar value
+					combobox[k]:AddChoice( "Grunt Ultra" ) -- 10 will be used as convar value
+					combobox[k]:AddChoice( "Elite Minor" ) -- 10 will be used as convar value
+					combobox[k]:AddChoice( "Elite Major" ) -- 10 will be used as convar value
+					combobox[k]:AddChoice( "Elite Spec-Ops" ) -- 10 will be used as convar value
+					combobox[k]:AddChoice( "Elite Ultra" ) -- 10 will be used as convar value
+					combobox[k]:AddChoice( "Elite Zealot" ) -- 10 will be used as convar value
+					combobox[k]:AddChoice( "Elite HG Minor" ) -- 10 will be used as convar value
+					combobox[k]:AddChoice( "Elite HG Major" ) -- 10 will be used as convar value
+					combobox[k]:AddChoice( "Elite HG Ultra" ) -- 10 will be used as convar value
+					combobox[k]:AddChoice( "Elite HG Zealot" ) -- 10 will be used as convar value
+					combobox[k]:AddChoice( "Brute Minor" ) -- 10 will be used as convar value
+					combobox[k]:AddChoice( "Brute Major" ) -- 10 will be used as convar value
+					combobox[k]:AddChoice( "Brute Ultra" ) -- 10 will be used as convar value
+					combobox[k]:AddChoice( "Brute Chieftain" ) -- 10 will be used as convar value
+					combobox[k]:AddChoice( "Brute Warchieftain" ) -- 10 will be used as convar value
+					combobox[k]:AddChoice( "Hunter Minor" ) -- 10 will be used as convar value
+					combobox[k]:AddChoice( "Hunter Major" ) -- 10 will be used as convar value
+					combobox[k]:AddChoice( "Hunter Spec-Ops" ) -- 10 will be used as convar value
+					combobox[k]:AddChoice( "Jackal Minor" ) -- 10 will be used as convar value
+					combobox[k]:AddChoice( "Jackal Major" ) -- 10 will be used as convar value
+					combobox[k]:AddChoice( "Jackal Spec-Ops" ) -- 10 will be used as convar value
+					combobox[k]:AddChoice( "Jackal Mkm Minor" ) -- 10 will be used as convar value
+					combobox[k]:AddChoice( "Jackal Mkm Major" ) -- 10 will be used as convar value
+					combobox[k]:AddChoice( "Jackal Mkm Spec-Ops" ) -- 10 will be used as convar value
+					combobox[k]:ChooseOptionID(1)
+				end
+			end
+
+			local SetButton = vgui.Create("DButton", Frame)
+			SetButton:SetFont("DermaDefaultBold")
+			SetButton:SetText("Set Phantom Spawns")
+			SetButton:SetSize(150,25)
+			SetButton:SetPos(Frame:GetWide()*.05, Frame:GetTall()*.95)
+			SetButton:SetColor(Color(0,0,0,255))
+			SetButton.DoClick = function(reset)
+				for k=1, #combobox do
+					if (combobox[k]:GetSelectedID() < 10) then
+						output[k+1] = tostring("0"..combobox[k]:GetSelectedID())
+					else
+						output[k+1] = tostring(combobox[k]:GetSelectedID())
+					end
+				end
+				local outputString = ""
+				for k=1, #output do
+					outputString = outputString..tostring(output[k])
+				end
+				print(outputString)
+				LocalPlayer():ConCommand("vj_spv3_phantomSpawns "..outputString)
+			end
+			customSpawn.OnChange = function(self)
+				print("value changed")
+				numberScratch:SetVisible(customSpawn:GetChecked())
+				meButton:SetVisible(customSpawn:GetChecked())
+				if (form!=nil) then
+					form:SetVisible(customSpawn:GetChecked())
+				end
+				totStr:SetVisible(!customSpawn:GetChecked())
+				totMaxStr:SetVisible(!customSpawn:GetChecked())
+				minStr:SetVisible(!customSpawn:GetChecked())
+				maxStr:SetVisible(!customSpawn:GetChecked())
+				label:SetVisible(!customSpawn:GetChecked())
+				if (customSpawn:GetChecked()==false) then
+					LocalPlayer():ConCommand("vj_spv3_phantomSpawns "..0)
+				end
+			end
+			numberScratch:SetVisible(customSpawn:GetChecked())
+			meButton:SetVisible(customSpawn:GetChecked())
+			if (form!=nil) then
+				form:SetVisible(customSpawn:GetChecked())
+			end
+
+
+			totStr:SetVisible(!customSpawn:GetChecked())
+			totMaxStr:SetVisible(!customSpawn:GetChecked())
+			minStr:SetVisible(!customSpawn:GetChecked())
+			maxStr:SetVisible(!customSpawn:GetChecked())
+			label:SetVisible(!customSpawn:GetChecked())
+			minStr.OnValueChanged = function(self)
+				maxStr:SetMin(minStr:GetValue())
+			end
+			maxStr.OnValueChanged = function(self)
+				minStr:SetMax(maxStr:GetValue())
+			end
+			totStr.OnValueChanged = function(self)
+				totMaxStr:SetMin(totStr:GetValue())
+			end
+			totMaxStr.OnValueChanged = function(self)
+				totStr:SetMax(totMaxStr:GetValue())
+			end
+		end
+		Panel:AddPanel(reset)
 		Panel:ControlHelp("NOTE: These settings will only apply to newly spawned SNPCs.")
 		Panel:AddControl("Checkbox", {Label ="Friendly fire retaliation(UNSC)?", Command ="vj_spv3_ffretal"})
 		Panel:AddControl("Checkbox", {Label ="Covenant can use UNSC Weapons?", Command ="vj_spv3_covUNSCWeps"})

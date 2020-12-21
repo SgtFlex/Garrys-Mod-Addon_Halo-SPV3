@@ -53,13 +53,14 @@ end
 ENT.Curve = 0
 ENT.StraightenVector = nil
 function ENT:Think()
-	self.Curve = self.Curve + 0.05
+	self.Curve = self.Curve + 0.2
 	self.Velocity = self:GetPhysicsObject():GetVelocity()
 	if (IsValid(self:GetOwner()) and self.AimVector and (self.Velocity:Dot(self.EnemyPos - self:GetPos()))>0) then
 		self:GetPhysicsObject():SetVelocity((self.Velocity + (self.EnemyPos - self:GetPos())*self.Curve):GetNormalized()*1300)
 		//debugoverlay.Line(self:GetPos(),self:GetPos() + (self.EnemyPos - self:GetPos()), 0.1, Color(0,255,0), false)
 	else
 		self:GetPhysicsObject():SetVelocity(self:GetForward()*1300)
+	
 	end
 	self:SetAngles(self:GetPhysicsObject():GetVelocity():Angle())
 end

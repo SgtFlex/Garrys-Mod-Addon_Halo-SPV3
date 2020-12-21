@@ -57,6 +57,8 @@ ENT.UnitCost = {
 	{Name = "jackal_mkm_maj", Cost = 5},
 	{Name = "jackal_mkm_ult", Cost = 6},
 }
+
+ENT.TableSpawns = {}
 ENT.AnimTbl_Spawn = {
 	"Spawn_1",
 	"Spawn_2",
@@ -71,6 +73,30 @@ ENT.AnimTbl_Leave = {
 function ENT:CustomOnPreInitialize()
 	self.SpawnAnim = VJ_PICK(self.AnimTbl_Spawn)
 	self.LeaveAnim = VJ_PICK(self.AnimTbl_Leave)
+
+	if (GetConVar("vj_spv3_phantomSpawns"):GetInt()!=0) then
+		local v = 1
+		for k=3, (tonumber(string.sub(GetConVar("vj_spv3_phantomSpawns"):GetString(), 1, 2))*2)+1, 2 do
+			self.TableSpawns[v] = self.UnitCost[tonumber(string.sub(tostring(GetConVar("vj_spv3_phantomSpawns"):GetString()), k, k+1))]
+			-- PrintMessage(3, tostring(GetConVar("vj_spv3_phantomSpawns"):GetString()))
+			-- PrintMessage(3, tostring(string.sub(tostring(GetConVar("vj_spv3_phantomSpawns"):GetString()), k, k+1)))
+			v = v + 1
+		end
+	else
+		self.Resource = math.random(GetConVar("vj_spv3_phantomMinReinfStr"):GetInt(), GetConVar("vj_spv3_phantomMaxReinfStr"):GetInt())
+		local unit
+		local k = 1
+		local tries = 0
+		while (self.Resource >= GetConVar("vj_spv3_phantomMinUnitStr"):GetInt()) do
+			unit = VJ_PICK(self.UnitCost)
+			if (unit["Cost"] <= self.Resource and unit["Cost"] <= GetConVar("vj_spv3_phantomMaxUnitStr"):GetInt() and unit["Cost"] >= GetConVar("vj_spv3_phantomMinUnitStr"):GetInt()) then
+				self.Resource = self.Resource - unit["Cost"]
+				self.TableSpawns[k] = unit
+				k = k + 1
+			end
+		end
+	end
+	PrintTable(self.TableSpawns)
 end
 
 function ENT:CustomOnInitialize()
@@ -127,40 +153,98 @@ end
 
 ENT.covies = {}
 ENT.leaving = false
+-- function ENT:SpawnCovies()
+-- 	local unit
+-- 	self.Resource = math.random(20, 35)
+-- 	local k = 0
+-- 	timer.Create("Spawn"..self:GetCreationID(), 2, 0, function()
+-- 		if (IsValid(self)) then
+-- 			if (tostring(GetConVarNumber("vj_spv3_phantomSpawns"))[1]==0) then
+-- 				if (self.Resource > 0) then
+-- 					repeat
+-- 						unit = VJ_PICK(self.UnitCost)
+-- 					until unit["Cost"] <= self.Resource
+-- 					local covie = ents.Create("npc_vj_halo_cov_spv3_"..unit["Name"])
+-- 					self.Resource = self.Resource - unit["Cost"]
+-- 					covie:SetPos(self:GetAttachment(self:LookupAttachment("Spawn"))["Pos"] + Vector(0,0,-50))
+-- 					covie:SetAngles(self:GetAngles())
+-- 					covie:Spawn()
+-- 					timer.Simple(0.5, function()
+-- 						if (IsValid(self) and IsValid(covie)) then
+-- 							covie:SetVelocity(Vector(math.random(-150, 150),math.random(-150, 150), 0))
+-- 						end
+-- 					end)	
+-- 					timer.Simple(2, function() if (IsValid(self) and IsValid(covie)) then covie:VJ_TASK_COVER_FROM_ENEMY() end end)
+-- 					-- table.insert(self.covies, covie)
+-- 					-- for k, v in ipairs(self.covies) do
+-- 					-- 	constraint.NoCollide(covie, self.covies[k], 0, 0)
+-- 					-- end
+-- 					constraint.NoCollide(self, covie, 0, 0)
+-- 					if (list.Get("NPC")[covie:GetClass()].Weapons != nil) then
+-- 						covie:Give(VJ_PICK(list.Get("NPC")[covie:GetClass()].Weapons))
+-- 					end
+-- 					-- PrintMessage(3, tostring("Cost: "..unit["Cost"]))
+-- 					-- PrintMessage(3, tostring("Resource: "..self.Resource))
+-- 				elseif (self.depletedTime==nil) then
+-- 					self.depletedTime = CurTime()
+-- 				elseif (self.Resource <= 0 and self.leaving==false and (CurTime() >= self.depletedTime + GetConVarNumber("vj_spv3_phantomAssistTime") or !IsValid(self.turret))) then
+-- 					self.leaving = true
+-- 					if (IsValid(self)) then
+-- 						self:VJ_ACT_PLAYACTIVITY(self.LeaveAnim,true,self:SequenceDuration(self:LookupSequence(self.LeaveAnim)),false)
+-- 						self.movingSound:ChangeVolume(0, 5)	
+-- 						timer.Simple(self:SequenceDuration(self:LookupSequence(self.LeaveAnim)), function()
+-- 							if (IsValid(self)) then
+-- 								self:Remove()
+-- 							end
+-- 						end)
+-- 					end
+-- 				end
+-- 			else
+-- 				for k=1, tostring(GetConVarNumber("vj_spv3_phantomSpawns"))[1] do
+-- 					PrintMessage(3, tostring(GetConVarNumber("vj_spv3_phantomSpawns"))[1])
+-- 					unit = self.UnitCost[tonumber(string.sub(tostring(GetConVarNumber("vj_spv3_phantomSpawns")), k, k+1))]
+-- 					local covie = ents.Create("npc_vj_halo_cov_spv3_"..unit["Name"])
+-- 					covie:SetPos(self:GetAttachment(self:LookupAttachment("Spawn"))["Pos"] + Vector(0,0,-50))
+-- 					covie:SetAngles(self:GetAngles())
+-- 					covie:Spawn()
+-- 					timer.Simple(0.5, function()
+-- 						if (IsValid(self) and IsValid(covie)) then
+-- 							covie:SetVelocity(Vector(math.random(-150, 150),math.random(-150, 150), 0))
+-- 						end
+-- 					end)	
+-- 					timer.Simple(2, function() if (IsValid(self) and IsValid(covie)) then covie:VJ_TASK_COVER_FROM_ENEMY() end end)
+-- 					constraint.NoCollide(self, covie, 0, 0)
+-- 					if (list.Get("NPC")[covie:GetClass()].Weapons != nil) then
+-- 						covie:Give(VJ_PICK(list.Get("NPC")[covie:GetClass()].Weapons))
+-- 					end
+
+-- 				end
+-- 			end
+-- 		end
+-- 	end)
+-- end
+
 function ENT:SpawnCovies()
-	local unit
-	self.Resource = math.random(20, 35)
-	timer.Create("Spawn"..self:GetCreationID(), 2, 0, function()
+	local k = 1
+	timer.Create("Spawn"..self:GetCreationID(), 2, #self.TableSpawns, function()
 		if (IsValid(self)) then
-			if (self.Resource > 0) then
-				repeat
-					unit = VJ_PICK(self.UnitCost)
-				until unit["Cost"] <= self.Resource
-				local covie = ents.Create("npc_vj_halo_cov_spv3_"..unit["Name"])
-				self.Resource = self.Resource - unit["Cost"]
-				covie:SetPos(self:GetAttachment(self:LookupAttachment("Spawn"))["Pos"] + Vector(0,0,-50))
-				covie:SetAngles(self:GetAngles())
-				covie:Spawn()
-				timer.Simple(0.5, function()
-					if (IsValid(self) and IsValid(covie)) then
-						covie:SetVelocity(Vector(math.random(-150, 150),math.random(-150, 150), 0))
-					end
-				end)	
-				timer.Simple(2, function() if (IsValid(self) and IsValid(covie)) then covie:VJ_TASK_COVER_FROM_ENEMY() end end)
-				-- table.insert(self.covies, covie)
-				-- for k, v in ipairs(self.covies) do
-				-- 	constraint.NoCollide(covie, self.covies[k], 0, 0)
-				-- end
-				constraint.NoCollide(self, covie, 0, 0)
-				if (list.Get("NPC")[covie:GetClass()].Weapons != nil) then
-					covie:Give(VJ_PICK(list.Get("NPC")[covie:GetClass()].Weapons))
+			local covie = ents.Create("npc_vj_halo_cov_spv3_"..self.TableSpawns[k]["Name"])
+			covie:SetPos(self:GetAttachment(self:LookupAttachment("Spawn"))["Pos"] + Vector(0,0,-50))
+			covie:SetAngles(self:GetAngles())
+			covie:Spawn()
+			timer.Simple(0.5, function()
+				if (IsValid(self) and IsValid(covie)) then
+					covie:SetVelocity(Vector(math.random(-150, 150),math.random(-150, 150), 0))
 				end
-				-- PrintMessage(3, tostring("Cost: "..unit["Cost"]))
-				-- PrintMessage(3, tostring("Resource: "..self.Resource))
-			elseif (self.depletedTime==nil) then
-				self.depletedTime = CurTime()
-			elseif (self.Resource <= 0 and self.leaving==false and (CurTime() >= self.depletedTime + GetConVarNumber("vj_spv3_phantomAssistTime") or !IsValid(self.turret))) then
-				self.leaving = true
+			end)	
+			timer.Simple(2, function() if (IsValid(self) and IsValid(covie)) then covie:VJ_TASK_COVER_FROM_ENEMY() end end)
+			constraint.NoCollide(self, covie, 0, 0)
+			if (list.Get("NPC")[covie:GetClass()].Weapons != nil) then
+				covie:Give(VJ_PICK(list.Get("NPC")[covie:GetClass()].Weapons))
+			end
+			k = k + 1
+			if (k==(#self.TableSpawns + 1)) then
+				timer.Simple(GetConVar("vj_spv3_phantomAssistTime"):GetInt(), function()
 					if (IsValid(self)) then
 						self:VJ_ACT_PLAYACTIVITY(self.LeaveAnim,true,self:SequenceDuration(self:LookupSequence(self.LeaveAnim)),false)
 						self.movingSound:ChangeVolume(0, 5)	
@@ -170,13 +254,14 @@ function ENT:SpawnCovies()
 							end
 						end)
 					end
-				end
+				end)
 			end
+		end
 	end)
 end
 
 function ENT:Leave()
-
+	PrintMessage(3, "Done")
 end
 
 function ENT:CustomOnThink() 

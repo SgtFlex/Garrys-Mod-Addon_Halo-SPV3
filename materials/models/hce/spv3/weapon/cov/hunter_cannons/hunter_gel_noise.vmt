@@ -1,12 +1,12 @@
 "VertexlitGeneric"
 {
-	"$basetexture" "models/hce/spv3/weapon/cov/hunter_cannons/black_box"
+	"$basetexture" "models/hce/spv3/weapon/cov/hunter_cannons/white_box"
 	"$additive" 1
-
+	$color2 "[0 2.5 0]"
 	"$detail" "models/hce/spv3/weapon/cov/hunter_cannons/hunter_gel_noise"
 	$detailscale 1
 	$detailblendmode 5
-	$detailblendfactor 1
+	$detailblendfactor 10
 
 
 "Proxies"

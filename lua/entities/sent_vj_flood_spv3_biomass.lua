@@ -31,6 +31,8 @@ ENT.HivePos = nil
 if (SERVER) then
 	AddCSLuaFile()
 	function ENT:CustomOnInitialize()
+		self:SetModelScale(0)
+		self:SetModelScale(1, 5)
 		if (self.Number < self.SpawnFactorial) then
 			timer.Create("Spawn"..self:GetCreationID(), math.random(5, 15), self.SpawnFactorial - self.Number, function()
 				if (IsValid(self)) then
@@ -39,9 +41,10 @@ if (SERVER) then
 					self.spawnAttempts = 0
 					self.viablePos = true
 					repeat
+						self.viablePos = true
 						self.spawnAttempts = self.spawnAttempts + 1
 						spawnTrace = util.TraceLine({
-							start = self:GetPos() + self:GetUp()*50,
+							start = self:GetPos() + self:GetUp()*100,
 							endpos = (self:GetPos() + Vector(math.Rand(-1,1),math.Rand(-1,1),math.Rand(-1,1)):GetNormalized()*800),
 							filter = self,
 						})
@@ -62,10 +65,10 @@ if (SERVER) then
 								self.viablePos = true
 							end
 						end
-					until self.spawnAttempts >= 30 or (self.viablePos==true and spawnTrace.Hit and spawnTrace.HitPos:Distance(self:GetPos()) > self.BlastRadius and spawnBox.Hit==false)
+					until self.spawnAttempts >= 50 or (self.viablePos==true and spawnTrace.Hit and spawnTrace.HitPos:Distance(self:GetPos()) > self.BlastRadius and spawnBox.Hit==false)
 					//debugoverlay.Box(spawnTrace.HitPos + spawnTrace.HitNormal*60, Vector(-50, -50, -50), Vector(50, 50, 50), 10, Color(255,255,255))
 					
-					if (self.spawnAttempts < 30) then
+					if (self.spawnAttempts < 50) then
 						local biomass = ents.Create("sent_vj_flood_spv3_biomass")
 						biomass:SetPos(spawnTrace.HitPos)
 						biomass.Number = self.Number + 1
@@ -115,14 +118,14 @@ function ENT:OnTakeDamage(dmginfo)
 end
 
 
-ENT.infFormCount = 5
+ENT.infFormCount = 4
 ENT.infForm = nil
 local spreadRadius = 275
 
 function ENT:DoDeath()
 	self:SetCollisionGroup(1)
 	self.Bursted = true
-	self:EmitSound("carrier/hkillbackgut/hkillbackgut.wav")
+	self:EmitSound("carrier/kill_instant/kill_instant.wav")
 	local BlastInfo = DamageInfo()
 	BlastInfo:SetDamageType(DMG_BLAST)
 	BlastInfo:SetDamage(60 * GetConVarNumber("vj_spv3_damageModifier"))
@@ -134,7 +137,7 @@ function ENT:DoDeath()
 	ParticleEffect("hcea_flood_carrier_death", self:LocalToWorld(Vector(0,0,20)), self:GetAngles(), nil)
 	self.SpawnedNPCs = {}
 	if (math.random(0,1)==0 || self:GetBodygroup(1)==2) then
-		self.infFormCount = (3 - self:GetBodygroup(1)) * math.Round(self.infFormCount*(GetConVarNumber("vj_spv3_infModifier")))
+		self.infFormCount = ((3 - self:GetBodygroup(1)) * 2) + math.Round(self.infFormCount*(GetConVarNumber("vj_spv3_infModifier")))
 		for k=1, self.infFormCount do
 			self.infForm = ents.Create("npc_vj_halo_flood_spv3_infection")
 			self.infForm:SetPos(self:GetPos() + self:GetUp()*25)

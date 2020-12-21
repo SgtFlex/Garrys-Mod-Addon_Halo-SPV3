@@ -98,3 +98,19 @@ function ENT:CustomDeathAnimationCode(dmginfo,hitgroup)
 		end
 	end)
 end
+
+function ENT:FlyingDeath(dmginfo)
+	self.HasDeathRagdoll = false
+	self.HasDeathAnimation = false
+	self.imposter = ents.Create("obj_vj_imposter")
+	self.imposter.IsCarrier = true
+	self.imposter:SetOwner(self)
+	self.imposter.Sequence = "Die_Airborne"
+	local velocity = dmginfo:GetDamageForce():GetNormalized() * 1500
+	if (dmginfo:GetDamageType()==DMG_CLUB or dmginfo:GetDamageForce():Length()) then
+		velocity = velocity * 0.3
+	end
+	self.imposter.Velocity = Vector(velocity.x, velocity.y, velocity.z + 500)
+	self.imposter.Angle = Angle(0,dmginfo:GetDamageForce():Angle().y,0)
+	self.imposter:Spawn()
+end

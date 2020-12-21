@@ -17,6 +17,7 @@ ENT.bodyGroupTable = {
 	1,
 	1,
 }
+ENT.Skin = 2
 ENT.StartHealth = 250
 ENT.ExtraShotCount = 3
 ENT.modelColor = Color(82,0,0)

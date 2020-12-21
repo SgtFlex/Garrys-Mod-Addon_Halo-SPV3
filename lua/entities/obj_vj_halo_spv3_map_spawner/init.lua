@@ -99,8 +99,9 @@ function ENT:SpawnAnEntity(keys, values, initspawn)
 		repeat
 			navArea = self.TableNavAreas[math.random(1, #self.TableNavAreas)]
 			pos = navArea:GetRandomPoint()
-		until (!navArea:IsUnderwater() and #navArea:GetHidingSpots(1) >= 1 and !navArea:IsClosed() and navArea:GetSizeX()>= 150 and navArea:GetSizeY()>= 150) 
+		until (!navArea:IsUnderwater() and !navArea:HasAttributes(NAV_MESH_DONT_HIDE) and !navArea:HasAttributes(NAV_MESH_AVOID) and !navArea:HasAttributes(NAV_MESH_JUMP) and !navArea:HasAttributes(NAV_MESH_CROUCH) and #navArea:GetHidingSpots(1) >= 1 and navArea:GetSizeX()>= 150 and navArea:GetSizeY()>= 150) 
 		getthename:SetPos(pos)
+		PrintMessage(3, tostring(navArea:HasAttributes(2)))
 	end
 
 	//getthename:SetPos(self:GetPos() +self:GetForward()*spawnpos.vForward +self:GetRight()*spawnpos.vRight +self:GetUp()*spawnpos.vUp)

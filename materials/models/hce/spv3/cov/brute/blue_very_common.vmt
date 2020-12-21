@@ -1,0 +1,11 @@
+patch
+{
+	include materials\models\hce\spv3\cov\brute\brute_armour_very_common.vmt
+	insert
+	{
+		"$phongalbedotint" "0"
+		"$phongtint" "[0 0.3 0.5]"
+	}
+}
+
+

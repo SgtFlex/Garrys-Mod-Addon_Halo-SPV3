@@ -12,8 +12,11 @@ INFO: Used to make simple props and animate them, since prop_dynamic doesn't wor
 ENT.Sequence = ""
 ENT.Velocity = Vector(0, 0, 0)
 ENT.Angle = Angle(0, 0, 0)
+
 --------------------------------------------------*/
 ---------------------------------------------------------------------------------------------------------------------------------------------
+ENT.IsCarrier = false
+
 function ENT:Initialize()
 	self:SetSolid(SOLID_OBB)
 	self:PhysicsInitBox(Vector(-25, -25, -12), Vector(25, 25, 12))
@@ -44,6 +47,8 @@ function ENT:CustomOnInitialize()
 end
 
 ENT.FirstCollision = true
+ENT.infFormCount = 6
+local spreadRadius = 175
  function ENT:PhysicsCollide( data, phys )
  	if (self.FirstCollision == false) then return end
  	self.FirstCollision = false
@@ -67,7 +72,45 @@ ENT.FirstCollision = true
 			childphys:SetVelocity(self:GetVelocity() * 1.5)
 		end
 	end
-	self:Remove()
+
+
+
+	if (self.IsCarrier==false) then
+		self:Remove()
+	else
+		self:SetNoDraw(true)
+		self:EmitSound("carrier/hkillbackgut/hkillbackgut.wav")
+		timer.Simple(1, function()
+			if (GetConVarNumber("vj_spv3_bonusInfForms")==0) then
+				self.HasDeathRagdoll = true 
+				return
+			end
+			self.infFormCount = math.Round(self.infFormCount*(GetConVarNumber("vj_spv3_infModifier")))
+			
+			local BlastInfo = DamageInfo()
+			BlastInfo:SetDamageType(DMG_BLAST)
+			BlastInfo:SetDamage(20 * GetConVarNumber("vj_spv3_damageModifier"))
+			BlastInfo:SetDamagePosition(self.ragdoll:GetPos())
+			BlastInfo:SetInflictor(self.ragdoll)
+			BlastInfo:SetReportedPosition(self.ragdoll:GetPos())
+			util.BlastDamageInfo(BlastInfo, self.ragdoll:GetPos(), 250)
+			util.ScreenShake(self.ragdoll:GetPos(),16,100,1,800)
+			ParticleEffect("hcea_flood_carrier_death", self.ragdoll:LocalToWorld(Vector(0,0,20)), self.ragdoll:GetAngles(), nil)
+			//ParticleEffectAttach("hcea_flood_inf_death",PATTACH_POINT_FOLLOW,self,0)
+			for k=1, self.infFormCount do
+				self.infForm = ents.Create("npc_vj_halo_flood_spv3_infection")
+				self.infForm:SetPos(self.ragdoll:GetPos())
+				self.infForm:SetOwner(self.ragdoll)
+				self.infForm:Spawn()
+				local velocity = Vector(math.random(-spreadRadius, spreadRadius),math.random(-spreadRadius, spreadRadius),math.random(100, 200))
+				self.infForm:SetVelocity(velocity)
+				self.infForm:SetAngles(Angle(self.infForm:GetAngles().x, velocity:Angle().y, self.infForm:GetAngles().z))
+				self.infForm:VJ_ACT_PLAYACTIVITY("Melee_1",true,1.3,false)		
+			end
+			self:Remove()
+			self.ragdoll:Remove()
+		end)
+	end
  end
 ---------------------------------------------------------------------------------------------------------------------------------------------
 function ENT:Think()

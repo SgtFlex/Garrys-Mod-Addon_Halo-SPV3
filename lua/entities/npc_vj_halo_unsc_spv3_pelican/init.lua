@@ -44,6 +44,12 @@ ENT.lights = {
 	BLeftLight2 = {Object = "", Attachment = "Thruster_L_B_2", Color = "255 0 0", Scale = 2, Offset = Vector(0, 0, 0)},
 	BRightLight1 = {Object = "", Attachment = "Thruster_R_B_1", Color = "0 180 255", Scale = 2, Offset = Vector(0, 0, 0)},
 	BRightLight2 = {Object = "", Attachment = "Thruster_R_B_2", Color = "255 0 0", Scale = 2, Offset = Vector(0, 0, 0)},
+	TailLight1 = {Object = "", Attachment = "Tail_L", Color = "0 180 255", Scale = 0.5, Offset = Vector(0, 0, 0)},
+	TailLight2 = {Object = "", Attachment = "Tail_R", Color = "0 180 255", Scale = 0.5, Offset = Vector(0, 0, 0)},
+	WindowLight1 = {Object = "", Attachment = "Window_L", Color = "0 180 255", Scale = 0.5, Offset = Vector(0, 0, 0)},
+	WindowLight2 = {Object = "", Attachment = "Window_R", Color = "0 180 255", Scale = 0.5, Offset = Vector(0, 0, 0)},
+	EngineLight1 = {Object = "", Attachment = "Engine_L", Color = "255 0 0", Scale = 0.5, Offset = Vector(0, 0, 0)},
+	EngineLight2 = {Object = "", Attachment = "Engine_R", Color = "255 0 0", Scale = 0.5, Offset = Vector(0, 0, 0)},
 }
 
 ENT.AnimTbl_Spawn = {
@@ -87,6 +93,11 @@ function ENT:CustomOnInitialize()
 	self.engineSound:Play()
 	self.engineSound:ChangeVolume(0)
 	self.engineSound:ChangeVolume(1, 5)
+	self.engineSound:ChangePitch(150)
+	self.windSound = CreateSound(self, "pelican/wind_loop.wav")
+	self.windSound:SetSoundLevel(80)
+	self.windSound:Play()
+	self.windSound:ChangeVolume(0)
 	self:SetCollisionBounds(Vector(-500, -300, -50), Vector(500, 300, 400))
 	self:SetAngles(Angle(0, math.random(0, 360), 0))
 	local trace = util.TraceLine({
@@ -201,4 +212,14 @@ end
 
 function ENT:CustomOnRemove()
 	self.engineSound:Stop()
+end
+
+function ENT:CustomOnAcceptInput(key,activator,caller,data)
+	if key == "Engine_moving"then
+		self.engineSound:ChangePitch(150, 3)
+		self.windSound:ChangeVolume(0, 3)
+	elseif key == "Engine_hovering" then
+		self.engineSound:ChangePitch(100, 3)
+		self.windSound:ChangeVolume(1, 3)
+	end
 end

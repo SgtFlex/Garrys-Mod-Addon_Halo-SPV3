@@ -1,7 +1,8 @@
 "VertexlitGeneric"
 {
 	"$basetexture" "models/hce/spv3/weapon/cov/hunter_cannons/green/hunter_gel_color_alpha_bitmap_2"
-
+	$additive 1
+	$color2 "[0 7 0]"
 	"$detail" "models/hce/spv3/weapon/cov/hunter_cannons/hunter_gel_noise"
 	$detailscale 1
 	$detailblendmode 5
@@ -18,6 +19,5 @@
 	}
 
 
-	"$blendtintbybasealpha" "1"
 	"$blendtintcoloroverbase" "0"
 }

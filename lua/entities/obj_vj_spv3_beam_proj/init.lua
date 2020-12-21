@@ -18,6 +18,7 @@ ENT.ShakeWorldOnDeath = false -- Should the world shake when the projectile hits
 ENT.DecalTbl_DeathDecals = {"Scorch"}
 ENT.SoundTbl_Idle = {"hunter/hunter_cannon/hunter_cannon_loop/hunter_cannon/loop.wav"}
 ENT.SoundTbl_OnCollide = {"weapons/fuel rod gun/explosion/fuelrod_explo1.wav", "weapons/fuel rod gun/explosion/fuelrod_explo2.wav", "weapons/fuel rod gun/explosion/fuelrod_explo3.wav"}
+ENT.OnCollideSoundLevel = 50
 ---------------------------------------------------------------------------------------------------------------------------------------------
 function ENT:CustomOnInitialize()
 	self.RadiusDamage = self.RadiusDamage * GetConVarNumber("vj_spv3_damageModifier") -- How much damage should it deal? Remember this is a radius damage, therefore it will do less damage the farther away the entity is from its enemy
@@ -26,7 +27,7 @@ function ENT:CustomOnInitialize()
 end
 ---------------------------------------------------------------------------------------------------------------------------------------------
 function ENT:DeathEffects(data,phys)
-	ParticleEffect("hcea_hunter_ab_explode",self:GetPos(),Angle(0,0,0),nil)
+	//ParticleEffect("hcea_hunter_ab_explode",self:GetPos(),Angle(0,0,0),nil)
 	self.ExplosionLight1 = ents.Create("light_dynamic")
 	self.ExplosionLight1:SetKeyValue("brightness", "4")
 	self.ExplosionLight1:SetKeyValue("distance", "300")
