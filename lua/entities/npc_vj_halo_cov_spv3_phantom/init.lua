@@ -129,7 +129,6 @@ function ENT:CustomOnInitialize()
 	self.gravSound:ChangeVolume(0)
 	self.hoverSound:ChangeVolume(0)
 	self.engineSound:ChangeVolume(0)
-	self.movingSound:ChangeVolume(1, 5)
 	self.turret = ents.Create("npc_vj_halo_cov_spv3_phantom_turret")
 	self.turret:SetParent(self, 2)
 	self.turret:SetPos(self:GetAttachment(self:LookupAttachment("Cannon"))["Pos"])
@@ -229,10 +228,10 @@ function ENT:SpawnCovies()
 	timer.Create("Spawn"..self:GetCreationID(), 2, #self.TableSpawns, function()
 		if (IsValid(self)) then
 			local covie = ents.Create("npc_vj_halo_cov_spv3_"..self.TableSpawns[k]["Name"])
-			covie:SetPos(self:GetAttachment(self:LookupAttachment("Spawn"))["Pos"] + Vector(0,0,-50))
+			covie:SetPos(self:GetAttachment(self:LookupAttachment("Spawn"))["Pos"] + Vector(0,0,50))
 			covie:SetAngles(self:GetAngles())
 			covie:Spawn()
-			timer.Simple(0.5, function()
+			timer.Simple(1, function()
 				if (IsValid(self) and IsValid(covie)) then
 					covie:SetVelocity(Vector(math.random(-150, 150),math.random(-150, 150), 0))
 				end
@@ -246,13 +245,7 @@ function ENT:SpawnCovies()
 			if (k==(#self.TableSpawns + 1)) then
 				timer.Simple(GetConVar("vj_spv3_phantomAssistTime"):GetInt(), function()
 					if (IsValid(self)) then
-						self:VJ_ACT_PLAYACTIVITY(self.LeaveAnim,true,self:SequenceDuration(self:LookupSequence(self.LeaveAnim)),false)
-						self.movingSound:ChangeVolume(0, 5)	
-						timer.Simple(self:SequenceDuration(self:LookupSequence(self.LeaveAnim)), function()
-							if (IsValid(self)) then
-								self:Remove()
-							end
-						end)
+						self:Leave()
 					end
 				end)
 			end
@@ -261,7 +254,13 @@ function ENT:SpawnCovies()
 end
 
 function ENT:Leave()
-	PrintMessage(3, "Done")
+	self:VJ_ACT_PLAYACTIVITY(self.LeaveAnim,true,self:SequenceDuration(self:LookupSequence(self.LeaveAnim)),false)
+	self.movingSound:ChangeVolume(0, 5)	
+	timer.Simple(self:SequenceDuration(self:LookupSequence(self.LeaveAnim)), function()
+		if (IsValid(self)) then
+			self:Remove()
+		end
+	end)
 end
 
 function ENT:CustomOnThink() 
@@ -278,15 +277,15 @@ end
 
 function ENT:CustomOnAcceptInput(key,activator,caller,data)
 	if key == "Engine_moving"then
-		self.hoverSound:ChangeVolume(0, 2)
-		self.movingSound:ChangeVolume(1, 2)
-		self.engineSound:ChangeVolume(0, 2)
-		self.gravSound:ChangeVolume(0, 2)
+		self.hoverSound:ChangeVolume(0, 10)
+		self.movingSound:ChangeVolume(1, 10)
+		self.engineSound:ChangeVolume(0, 10)
+		self.gravSound:ChangeVolume(0, 10)
 	elseif key == "Engine_hovering" then
-		self.hoverSound:ChangeVolume(1, 2)
-		self.movingSound:ChangeVolume(0, 2)
-		self.engineSound:ChangeVolume(1, 2)
-		self.gravSound:ChangeVolume(1, 2)
+		self.hoverSound:ChangeVolume(1, 10)
+		self.movingSound:ChangeVolume(0, 10)
+		self.engineSound:ChangeVolume(1, 10)
+		self.gravSound:ChangeVolume(1, 10)
 	end
 end
 

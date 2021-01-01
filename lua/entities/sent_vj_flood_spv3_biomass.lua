@@ -33,6 +33,7 @@ if (SERVER) then
 	function ENT:CustomOnInitialize()
 		self:SetModelScale(0)
 		self:SetModelScale(1, 5)
+		self.SpawnFactorial = GetConVar("vj_spv3_biomassSpread"):GetInt()
 		if (self.Number < self.SpawnFactorial) then
 			timer.Create("Spawn"..self:GetCreationID(), math.random(5, 15), self.SpawnFactorial - self.Number, function()
 				if (IsValid(self)) then
@@ -49,14 +50,16 @@ if (SERVER) then
 							filter = self,
 						})
 						spawnBox = util.TraceHull({
-							start = spawnTrace.HitPos + spawnTrace.HitNormal*60,
-							endpos = spawnTrace.HitPos + spawnTrace.HitNormal*60,
+							start = spawnTrace.HitPos + spawnTrace.HitNormal*100,
+							endpos = spawnTrace.HitPos + spawnTrace.HitNormal*100,
 							mins = Vector(-50, -50, -50),
 							maxs = Vector(50, 50, 50),
 							mask = MASK_NPCSOLID,
 							filter = self
 						})
 						debugoverlay.Line(spawnTrace.StartPos, spawnTrace.HitPos, 10, Color(255,255,255), false)
+						debugoverlay.Box(spawnTrace.HitPos + spawnTrace.HitNormal*100, Vector(-50, -50, -50), Vector(50, 50, 50), 10, Color(255,255,255,0))
+
 						for k,v in pairs(ents.FindInSphere(spawnTrace.HitPos, self.BlastRadius)) do
 							if (v:GetClass()=="sent_vj_flood_spv3_biomass") then
 								self.viablePos = false
@@ -66,7 +69,6 @@ if (SERVER) then
 							end
 						end
 					until self.spawnAttempts >= 50 or (self.viablePos==true and spawnTrace.Hit and spawnTrace.HitPos:Distance(self:GetPos()) > self.BlastRadius and spawnBox.Hit==false)
-					//debugoverlay.Box(spawnTrace.HitPos + spawnTrace.HitNormal*60, Vector(-50, -50, -50), Vector(50, 50, 50), 10, Color(255,255,255))
 					
 					if (self.spawnAttempts < 50) then
 						local biomass = ents.Create("sent_vj_flood_spv3_biomass")
@@ -118,7 +120,7 @@ function ENT:OnTakeDamage(dmginfo)
 end
 
 
-ENT.infFormCount = 4
+ENT.infFormCount = 2
 ENT.infForm = nil
 local spreadRadius = 275
 
@@ -137,10 +139,10 @@ function ENT:DoDeath()
 	ParticleEffect("hcea_flood_carrier_death", self:LocalToWorld(Vector(0,0,20)), self:GetAngles(), nil)
 	self.SpawnedNPCs = {}
 	if (math.random(0,1)==0 || self:GetBodygroup(1)==2) then
-		self.infFormCount = ((3 - self:GetBodygroup(1)) * 2) + math.Round(self.infFormCount*(GetConVarNumber("vj_spv3_infModifier")))
+		self.infFormCount = ((3 - self:GetBodygroup(1)) * 1) + math.Round(self.infFormCount*(GetConVarNumber("vj_spv3_infModifier")))
 		for k=1, self.infFormCount do
 			self.infForm = ents.Create("npc_vj_halo_flood_spv3_infection")
-			self.infForm:SetPos(self:GetPos() + self:GetUp()*25)
+			self.infForm:SetPos(self:GetPos() + self:GetUp()*35)
 			self.infForm:SetOwner(self)
 			self.infForm:Spawn()
 			local velocity = self:GetLocalPos():GetNormalized() + Vector(math.random(-spreadRadius, spreadRadius),math.random(-spreadRadius, spreadRadius),math.random(100, 300))

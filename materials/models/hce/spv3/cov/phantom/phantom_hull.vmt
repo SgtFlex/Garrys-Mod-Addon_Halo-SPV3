@@ -3,17 +3,15 @@
 	"$basetexture" "models/hce/spv3/cov/phantom/phantom_hull_diff1"
 	"$bumpmap" "models/hce/spv3/cov/phantom/phantom_hull_nrml"
 	"$surfaceprop" metal
-	"$alphatest" 1
-	"$nocull" 1
-	"$color2"		"[0.4 0.14 0.4]"
+	"$color2"		"[0.4 0 0.4]"
 
 	"$normalmapalphaenvmapmask"    "1"
 	"$phong" "1"
-	"$phongexponent"				"20"
-	"$phongboost"					"20"
+	"$phongexponent"				"5"
+	"$phongboost"					"5"
 	"$phongfresnelranges"			"[0.67 1.5 1]"
-
-	"$phongtint" "[0.1 0.1 0.4]"
+	"$phongwarptexture" "models/hce/spv3/cov/phantom/untitled"
+	"$phongtint" "[0.1 0.1 1.5]"
 	"$phongexponenttexture" "models\Dark_Souls\shared\souls_green"
 	"$phongwarptexture" "models\Dark_Souls\shared\testwarp2"
 

@@ -8,19 +8,22 @@ include("shared.lua")
 	without the prior written consent of the author, unless otherwise indicated for stand-alone materials.
 INFO: Used to make spawners.
 --------------------------------------------------*/
+/*
+	Spawner is not that different from the default, uses only moderately adjusted code.
+*/
 ENT.VJBaseSpawnerDisabled = false -- If set to true, it will stop spawning the entities
 ENT.OverrideDisableOnSpawn = false -- If set to true, the spawner will create entities on initialize even if it's disabled!
 ENT.SingleSpawner = false -- If set to true, it will spawn the entities once then remove itself
-ENT.Model = {""} -- The models it should spawn with | Picks a random one from the table
+ENT.Model = {"models/props_c17/furnitureStove001a.mdl"} -- The models it should spawn with | Picks a random one from the table
 ENT.EntitiesToSpawn = {
-	{EntityName = "Phantom", SpawnPosition = {vForward=0, vRight=0, vUp=0}, Entities = {"npc_vj_halo_cov_spv3_phantom"}},
-	{EntityName = "Pelican", SpawnPosition = {vForward=0, vRight=0, vUp=0}, Entities = {"npc_vj_halo_unsc_spv3_pelican"}},
-	{EntityName = "Biomass", SpawnPosition = {vForward=0, vRight=0, vUp=0}, Entities = {"sent_vj_flood_spv3_biomass"}},
+	{EntityName = "Phantom", SpawnPosition = {vForward=0, vRight=0, vUp=0}, Entities = {"npc_vj_halo_cov_spv3_phantom"}, Weight = GetConVar("vj_spv3_mapCov"):GetFloat()},
+	{EntityName = "Pelican", SpawnPosition = {vForward=0, vRight=0, vUp=0}, Entities = {"npc_vj_halo_unsc_spv3_pelican"}, Weight = GetConVar("vj_spv3_mapUNSC"):GetFloat()},
+	{EntityName = "Biomass", SpawnPosition = {vForward=0, vRight=0, vUp=0}, Entities = {"sent_vj_flood_spv3_biomass"}, Weight = GetConVar("vj_spv3_mapFlood"):GetFloat()},
 	/* Extras:
 		- WeaponsList = {} (Use "default" to make it spawn the NPC with its default weapons)
 	*/
 }
-ENT.TimedSpawn_Time = 10 -- How much time until it spawns another SNPC?
+ENT.TimedSpawn_Time = 30 -- How much time until it spawns another SNPC?
 ENT.TimedSpawn_OnlyOne = false -- If it's true then it will only have one SNPC spawned at a time
 ENT.HasIdleSounds = true -- Does it have idle sounds?
 	-- Sounds ---------------------------------------------------------------------------------------------------------------------------------------------
@@ -61,7 +64,8 @@ function ENT:CustomOnThink_AfterAliveChecks() end
 function ENT:CustomOnRemove() end
 ---------------------------------------------------------------------------------------------------------------------------------------------
 function ENT:SpawnAnEntity(keys, values, initspawn)
-	PrintMessage(3, "Spawned an enemy")
+	self.LastSpawnTime = CurTime()
+	self.TimedSpawn_Time = math.random(20, 80)
 	local k = keys
 	local v = values
 	initspawn = initspawn or false
@@ -73,6 +77,19 @@ function ENT:SpawnAnEntity(keys, values, initspawn)
 	
 	local getthename = v.EntityName
 	local spawnpos = v.SpawnPosition
+	local totalWeight = 0
+	local spawnIndex = 0
+	for k, v in pairs(self.EntitiesToSpawn) do
+		totalWeight = totalWeight + v["Weight"]
+	end
+	randomSelection = math.random(0, totalWeight)
+	for k, v in pairs(self.EntitiesToSpawn) do
+			randomSelection = randomSelection - v["Weight"]
+			spawnIndex = spawnIndex + 1
+			if (randomSelection <= 0 && v["Weight"]>0) then break end
+	end
+	k = keys
+	v = self.EntitiesToSpawn[spawnIndex]
 	getthename = ents.Create(VJ_PICK(v.Entities))
 
 	if (v.EntityName == "Phantom") then
@@ -101,7 +118,6 @@ function ENT:SpawnAnEntity(keys, values, initspawn)
 			pos = navArea:GetRandomPoint()
 		until (!navArea:IsUnderwater() and !navArea:HasAttributes(NAV_MESH_DONT_HIDE) and !navArea:HasAttributes(NAV_MESH_AVOID) and !navArea:HasAttributes(NAV_MESH_JUMP) and !navArea:HasAttributes(NAV_MESH_CROUCH) and #navArea:GetHidingSpots(1) >= 1 and navArea:GetSizeX()>= 150 and navArea:GetSizeY()>= 150) 
 		getthename:SetPos(pos)
-		PrintMessage(3, tostring(navArea:HasAttributes(2)))
 	end
 
 	//getthename:SetPos(self:GetPos() +self:GetForward()*spawnpos.vForward +self:GetRight()*spawnpos.vRight +self:GetUp()*spawnpos.vUp)
@@ -125,7 +141,12 @@ function ENT:SpawnAnEntity(keys, values, initspawn)
 	timer.Simple(0.1,function() if IsValid(self) && self.SingleSpawner == true then self:DoSingleSpawnerRemove() end end)
 end
 ---------------------------------------------------------------------------------------------------------------------------------------------
+ENT.nav = nil
+ENT.spv3Npcs = {}
+ENT.spv3NpcCount = 0
 function ENT:Initialize()
+	self:SetPos(Vector(0,0,0))
+	self.nav = navmesh.Find(self:GetPos(), 50, 10, 10)[1]
 	if self:GetModel() == "models/error.mdl" then
 	self:SetModel(VJ_PICK(self.Model)) end
 	self:DrawShadow(false)
@@ -141,6 +162,8 @@ function ENT:Initialize()
 end
 // lua_run for k,v in ipairs(ents.GetAll()) do if v.IsVJBaseSpawner == true then v.VJBaseSpawnerDisabled = false end end
 ---------------------------------------------------------------------------------------------------------------------------------------------
+ENT.LastSpawnTime = 0
+//Currently hardcoded cap of 80 total NPCS spawned, but infection forms count as 1/3 of an NPC.
 function ENT:Think()
 	if self.Dead == true then VJ_STOPSOUND(self.CurrentIdleSound) return end
 	if self.VJBaseSpawnerDisabled == true then self.AlreadyDoneVJBaseSpawnerDisabled = false end
@@ -155,18 +178,26 @@ function ENT:Think()
 		local v = self.EntitiesToSpawn[math.random(1, #self.EntitiesToSpawn)]
 		self:SpawnAnEntity(k, v, true)
 	end*/
-	
-	if self.VJBaseSpawnerDisabled == false && self.SingleSpawner == false then
-		for k, v in ipairs(self.CurrentEntities) do
-			if !IsValid(v.TheEntity) && v.Dead == false /*&& v.NextTimedSpawnT < CurTime()*/ then
-				v.Dead = true
-				timer.Simple(self.TimedSpawn_Time,function() if IsValid(self) then /*table.remove(self.CurrentEntities,k)*/ 
-					local k = 1
-					local v = self.EntitiesToSpawn[math.random(1, #self.EntitiesToSpawn)]
-					self:SpawnAnEntity(k, v, true)
-				 end end)
+	if (CurTime() >= self.LastSpawnTime + self.TimedSpawn_Time) then
+		local k = 1
+		local v = self.EntitiesToSpawn[math.random(1, #self.EntitiesToSpawn)]
+		
+		local ents = ents.GetAll()
+		self.spv3Npcs = {}
+		self.spv3NpcCount = 0
+		for i=1, #ents do
+			if (string.find(tostring(ents[i]), "npc") and string.find(tostring(ents[i]), "spv3")) then
+				if (string.find(tostring(ents[i]), "infection")) then
+					self.spv3NpcCount = self.spv3NpcCount + 0.33
+				else
+					self.spv3NpcCount = self.spv3NpcCount + 1
+				end
 			end
 		end
+		if (self.spv3NpcCount < GetConVar("vj_spv3_mapLimit"):GetInt()) then
+			self:SpawnAnEntity(k, v, true)
+		end
+		print(self.spv3NpcCount)
 	end
 	self:CustomOnThink_AfterAliveChecks()
 end

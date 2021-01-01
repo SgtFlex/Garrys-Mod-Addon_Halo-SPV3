@@ -119,25 +119,30 @@ if VJExists == true then
 	VJ.AddConVar("vj_spv3_covUNSCWeps", 0, FCVAR_ARCHIVE)
 	VJ.AddConVar("vj_spv3_UNSCCovWeps", 0, FCVAR_ARCHIVE)
 	VJ.AddConVar("vj_spv3_floodWeps", 1, FCVAR_ARCHIVE)
-	VJ.AddConVar("vj_spv3_phantomAssistTime", 10, FCVAR_ARCHIVE)
-	VJ.AddConVar("vj_spv3_phantomSpawns", 311111, FCVAR_ARCHIVE)
+	VJ.AddConVar("vj_spv3_phantomAssistTime", 20, FCVAR_ARCHIVE)
+	VJ.AddConVar("vj_spv3_phantomSpawns", 0 , FCVAR_ARCHIVE)
 	VJ.AddConVar("vj_spv3_phantomMinReinfStr", 35, FCVAR_ARCHIVE)
 	VJ.AddConVar("vj_spv3_phantomMaxReinfStr", 45, FCVAR_ARCHIVE)
 	VJ.AddConVar("vj_spv3_phantomMinUnitStr", 1, FCVAR_ARCHIVE)
 	VJ.AddConVar("vj_spv3_phantomMaxUnitStr", 15, FCVAR_ARCHIVE)
+	VJ.AddConVar("vj_spv3_biomassSpread", 3, FCVAR_ARCHIVE)
+	VJ.AddConVar("vj_spv3_mapCov", 100, FCVAR_ARCHIVE)
+	VJ.AddConVar("vj_spv3_mapUNSC", 100, FCVAR_ARCHIVE)
+	VJ.AddConVar("vj_spv3_mapFlood", 100, FCVAR_ARCHIVE)
+	VJ.AddConVar("vj_spv3_mapLimit", 80, FCVAR_ARCHIVE)
 
 
 	local function VJ_SPV3_MAIN(Panel)
 		local reset = vgui.Create("DButton")
 		local output = {}
 		reset:SetFont("DermaDefaultBold")
-		reset:SetText("Configure Dropship Spawning")
+		reset:SetText("Config Spawners/Dropships")
 		reset:SetSize(150,25)
 		reset:SetColor(Color(0,0,0,255))
 		reset.DoClick = function(reset)
 			local Frame = vgui.Create( "DFrame" )
 			Frame:SetPos(ScrW() * .4, ScrH() * .5) 
-			Frame:SetSize(ScrW() * .15, ScrH() * .5) 
+			Frame:SetSize(500, 700) 
 			Frame:SetTitle( "Configure Phantom" ) 
 			Frame:Center()
 			Frame:SetVisible( true ) 
@@ -145,9 +150,11 @@ if VJExists == true then
 			Frame:ShowCloseButton( true ) 
 			Frame:MakePopup()
 
+			
+
 			local label = vgui.Create("DLabel", Frame)
 			label:SetText("\"Reinforcement Strength\" is the accumulative strength of all the units\n that the phantom drops off. You can randomize this amount with the\n Min and Max Sliders. Having a low Max Unit strength means\n that the phantom will drop off more lower-tier units, while having a high\n Min Unit strength means the phantom will drop less, but more\n powerful high-tier units.")
-			label:SetPos(Frame:GetWide()*.05, Frame:GetTall()*.075)
+			label:SetPos(Frame:GetWide()*.05, 270)
 			label:SetSize(Frame:GetWide()*.9, 75)
 
 			local totStr = vgui.Create("DNumSlider", Frame)
@@ -155,7 +162,7 @@ if VJExists == true then
 			totStr:SetMin(1)
 			totStr:SetMax(300)
 			totStr:SetSize(Frame:GetWide()*.9, 20)
-			totStr:SetPos(Frame:GetWide()*.05, Frame:GetTall()*.2)
+			totStr:SetPos(Frame:GetWide()*.05, 350)
 			totStr:SetDecimals(0)
 			totStr:SetConVar("vj_spv3_phan")
 			totStr:SetConVar("vj_spv3_phantomMinReinfStr")
@@ -165,7 +172,7 @@ if VJExists == true then
 			totMaxStr:SetMin(1)
 			totMaxStr:SetMax(300)
 			totMaxStr:SetSize(Frame:GetWide()*.9, 20)
-			totMaxStr:SetPos(Frame:GetWide()*.05, Frame:GetTall()*.25)
+			totMaxStr:SetPos(Frame:GetWide()*.05, 380)
 			totMaxStr:SetDecimals(0)
 			totMaxStr:SetConVar("vj_spv3_phan")
 			totMaxStr:SetConVar("vj_spv3_phantomMaxReinfStr")
@@ -175,7 +182,7 @@ if VJExists == true then
 			minStr:SetMin(1)
 			minStr:SetMax(15)
 			minStr:SetSize(Frame:GetWide()*.9, 20)
-			minStr:SetPos(Frame:GetWide()*.05, Frame:GetTall()*.3)
+			minStr:SetPos(Frame:GetWide()*.05, 410)
 			minStr:SetDecimals(0)
 			minStr:SetConVar("vj_spv3_phantomMinUnitStr")
 
@@ -184,16 +191,87 @@ if VJExists == true then
 			maxStr:SetMin(1)
 			maxStr:SetMax(15)
 			maxStr:SetSize(Frame:GetWide()*.9, 20)
-			maxStr:SetPos(Frame:GetWide()*.05, Frame:GetTall()*.35)
+			maxStr:SetPos(Frame:GetWide()*.05, 440)
 			maxStr:SetDecimals(0)
 			maxStr:SetConVar("vj_spv3_phantomMaxUnitStr")
+
+
+			local nSlider1 = vgui.Create("DNumSlider", Frame)
+			nSlider1:SetText("Dropship Assist Time")
+			nSlider1:SetMin(1)
+			nSlider1:SetMax(120)
+			nSlider1:SetSize(Frame:GetWide()*.9, 20)
+			nSlider1:SetPos(Frame:GetWide()*.05, 30)
+			nSlider1:SetConVar("vj_spv3_phantomAssistTime")
+			nSlider1:SetDefaultValue(GetConVar("vj_spv3_phantomAssistTime"):GetFloat())
+
+			local nSlider2 = vgui.Create("DNumSlider", Frame)
+			nSlider2:SetText("Number of times Biomass spreads (exponential!)")
+			nSlider2:SetMin(0)
+			nSlider2:SetMax(5)
+			nSlider2:SetSize(Frame:GetWide()*.9, 20)
+			nSlider2:SetPos(Frame:GetWide()*.05, 60)
+			nSlider2:SetDecimals(0)
+			nSlider2:SetConVar("vj_spv3_biomassSpread")
+			nSlider2:SetDefaultValue(GetConVar("vj_spv3_biomassSpread"):GetInt())
+
+			local nSlider3 = vgui.Create("DNumSlider", Frame)
+			nSlider3:SetText("Multiplies spawn of infection forms")
+			nSlider3:SetMin(0.5)
+			nSlider3:SetMax(10)
+			nSlider3:SetSize(Frame:GetWide()*.9, 20)
+			nSlider3:SetPos(Frame:GetWide()*.05, 90)
+			nSlider3:SetConVar("vj_spv3_infModifier")
+			nSlider3:SetDefaultValue(GetConVar("vj_spv3_infModifier"):GetFloat())
+
+			local nSlider7 = vgui.Create("DNumSlider", Frame)
+			nSlider7:SetText("Map: SPV3 NPC limit")
+			nSlider7:SetMin(0)
+			nSlider7:SetMax(200)
+			nSlider7:SetSize(Frame:GetWide()*.9, 20)
+			nSlider7:SetPos(Frame:GetWide()*.05, 120)
+			nSlider7:SetConVar("vj_spv3_mapLimit")
+			nSlider7:SetDecimals(0)
+			nSlider7:SetDefaultValue(GetConVar("vj_spv3_mapLimit"):GetInt())
+
+
+			local nSlider4 = vgui.Create("DNumSlider", Frame)
+			nSlider4:SetText("Map: Flood Weight")
+			nSlider4:SetMin(0)
+			nSlider4:SetMax(100)
+			nSlider4:SetSize(Frame:GetWide()*.9, 20)
+			nSlider4:SetPos(Frame:GetWide()*.05, 150)
+			nSlider4:SetConVar("vj_spv3_mapFlood")
+			nSlider4:SetDefaultValue(GetConVar("vj_spv3_mapFlood"):GetFloat())
+
+			local nSlider5 = vgui.Create("DNumSlider", Frame)
+			nSlider5:SetText("Map: Cov Weight")
+			nSlider5:SetMin(0)
+			nSlider5:SetMax(100)
+			nSlider5:SetSize(Frame:GetWide()*.9, 20)
+			nSlider5:SetPos(Frame:GetWide()*.05, 180)
+			nSlider5:SetConVar("vj_spv3_mapCov")
+			nSlider5:SetDefaultValue(GetConVar("vj_spv3_mapCov"):GetFloat())
+
+			local nSlider6 = vgui.Create("DNumSlider", Frame)
+			nSlider6:SetText("Map: UNSC Weight")
+			nSlider6:SetMin(0)
+			nSlider6:SetMax(100)
+			nSlider6:SetSize(Frame:GetWide()*.9, 20)
+			nSlider6:SetPos(Frame:GetWide()*.05, 210)
+			nSlider6:SetConVar("vj_spv3_mapUNSC")
+			nSlider6:SetDefaultValue(GetConVar("vj_spv3_mapUNSC"):GetFloat())
+
+
+
+
 
 
 
 
 			local value = 5
 			local customSpawn = vgui.Create("DCheckBoxLabel", Frame)
-			customSpawn:SetPos(Frame:GetWide()*.05, Frame:GetTall()*.05)
+			customSpawn:SetPos(Frame:GetWide()*.05, 240)
 			customSpawn:SetText("Use custom spawning?")
 			if (GetConVar("vj_spv3_phantomSpawns"):GetInt()==0) then
 				customSpawn:SetChecked(false)
@@ -202,7 +280,7 @@ if VJExists == true then
 			end
 
 			local numberScratch = vgui.Create("DNumberWang", Frame)
-			numberScratch:SetPos(Frame:GetWide()*.05, Frame:GetTall()*.1)
+			numberScratch:SetPos(Frame:GetWide()*.05, 270)
 			numberScratch:SetSize(100, 20)
 			numberScratch.OnValueChanged = function(self)
 				value = tonumber(self:GetValue())
@@ -217,17 +295,21 @@ if VJExists == true then
 			meButton:SetFont("DermaDefaultBold")
 			meButton:SetText("Initialize Table")
 			meButton:SetSize(150,25)
-			meButton:SetPos(Frame:GetWide()*.05, Frame:GetTall()*.15)
+			meButton:SetPos(Frame:GetWide()*.05, 300)
 			meButton:SetColor(Color(0,0,0,255))
 			local combobox = {}
 			local form = nil
+			local scrollpanel = nil
 			meButton.DoClick = function(reset)
-				form = vgui.Create("DForm", Frame)
-				form:SetSize(200, 200)
-				form:SetPos(Frame:GetWide()*.05, Frame:GetTall()*.2)
+				scrollpanel = vgui.Create("DScrollPanel", Frame)
+				scrollpanel:SetSize(Frame:GetWide()*.9, 320)
+				scrollpanel:SetPos(Frame:GetWide()*.05, 330)
 				
 				for k=1, value do
-					combobox[k] = form:ComboBox("NPC #"..k)
+					combobox[k] = vgui.Create("DComboBox", scrollpanel)
+					scrollpanel:AddItem(combobox[k])
+					combobox[k]:Dock( TOP )
+					combobox[k]:DockMargin( 0, 0, 0, 5 )
 					combobox[k]:AddChoice( "Grunt Minor" ) -- 10 will be used as convar value
 					combobox[k]:AddChoice( "Grunt Major" ) -- 10 will be used as convar value
 					combobox[k]:AddChoice( "Grunt Spec-Ops" ) -- 10 will be used as convar value
@@ -257,6 +339,8 @@ if VJExists == true then
 					combobox[k]:AddChoice( "Jackal Mkm Spec-Ops" ) -- 10 will be used as convar value
 					combobox[k]:ChooseOptionID(1)
 				end
+
+
 			end
 
 			local SetButton = vgui.Create("DButton", Frame)
@@ -280,17 +364,34 @@ if VJExists == true then
 				print(outputString)
 				LocalPlayer():ConCommand("vj_spv3_phantomSpawns "..outputString)
 			end
+			if (customSpawn:GetChecked()==false) then
+				local x,y = maxStr:GetPos()
+				Frame:SetSize(500, y + 30)
+			else
+				local x,y = SetButton:GetPos()
+				Frame:SetSize(500, y + 30)
+			end
+			Frame:Center()
 			customSpawn.OnChange = function(self)
-				print("value changed")
+				if (customSpawn:GetChecked()==false) then
+					local x,y = maxStr:GetPos()
+					Frame:SetSize(500, y + 30)
+					Frame:Center()
+				else
+					local x,y = SetButton:GetPos()
+					Frame:SetSize(500, y + 30)
+					Frame:Center()
+				end
 				numberScratch:SetVisible(customSpawn:GetChecked())
 				meButton:SetVisible(customSpawn:GetChecked())
-				if (form!=nil) then
-					form:SetVisible(customSpawn:GetChecked())
+				if (scrollpanel!=nil) then
+					scrollpanel:SetVisible(customSpawn:GetChecked())
 				end
 				totStr:SetVisible(!customSpawn:GetChecked())
 				totMaxStr:SetVisible(!customSpawn:GetChecked())
 				minStr:SetVisible(!customSpawn:GetChecked())
 				maxStr:SetVisible(!customSpawn:GetChecked())
+				
 				label:SetVisible(!customSpawn:GetChecked())
 				if (customSpawn:GetChecked()==false) then
 					LocalPlayer():ConCommand("vj_spv3_phantomSpawns "..0)
@@ -321,36 +422,124 @@ if VJExists == true then
 				totStr:SetMax(totMaxStr:GetValue())
 			end
 		end
-		Panel:AddPanel(reset)
-		Panel:ControlHelp("NOTE: These settings will only apply to newly spawned SNPCs.")
-		Panel:AddControl("Checkbox", {Label ="Friendly fire retaliation(UNSC)?", Command ="vj_spv3_ffretal"})
-		Panel:AddControl("Checkbox", {Label ="Covenant can use UNSC Weapons?", Command ="vj_spv3_covUNSCWeps"})
-		Panel:AddControl("Checkbox", {Label ="UNSC can use Covenant weapons?", Command ="vj_spv3_UNSCCovWeps"})
-		Panel:AddControl("Checkbox", {Label ="Flood can use weapons?", Command ="vj_spv3_FloodWeps"})
-		Panel:AddControl("Checkbox", {Label ="Flood runners and ODSTs drop inf forms?", Command ="vj_spv3_bonusInfForms"})
-		Panel:AddControl("Checkbox", {Label ="Infection forms explode? (Damaging other inf forms)", Command ="vj_spv3_InfFormsExplode"})
-		Panel:AddControl("Slider", {Type ="float", Label ="SPV3 Health Multiplier",min = 0.01,max = 100,Command ="vj_spv3_HealthModifier"})
-		Panel:AddControl("Slider", {Type ="float", Label ="SPV3 Shield Multiplier",min = 0.01,max = 100,Command ="vj_spv3_ShieldModifier"})
-		Panel:AddControl("Slider", {Type ="float", Label ="SPV3 Overall Damage Multiplier",min = 0.01,max = 100,Command ="vj_spv3_DamageModifier"})
-		Panel:ControlHelp("Dictates how much damage SPV3 NPCs deal")
-		Panel:AddControl("Slider", {Type ="float", Label ="NPC Vulnerability",min = 0.01,max = 100,Command ="vj_spv3_NPCTakeDamageModifier"})
-		Panel:ControlHelp("Dictates how much damage SPV3 NPCs take from other NPCs (including each other), either amplified or reduced.")
-		Panel:ControlHelp("\nThe two above sliders can be used to create custom balancing.")
-		Panel:AddControl("Slider", {Type ="float", Label ="Phantom Assist Time",min = 0,max = 1000,Command ="vj_spv3_phantomAssistTime"})
-		Panel:ControlHelp("Controls how long phantoms stick around after droppping off units (if they still have a turret")
-		Panel:AddControl("Slider", {Type ="float", Label ="SPV3 Inf Form Multiplier",min = 0.01,max = 100,Command ="vj_spv3_infModifier"})
-		local typebox = vgui.Create("DComboBox")
-		typebox:SetValue("vj_spv3_floodOption: "..GetConVarString("vj_spv3_floodOption"))
-		typebox:AddChoice("infect_nothing")
-		typebox:AddChoice("infect_onlyHalo")
-		typebox:AddChoice("infect_anything")
-		Panel:ControlHelp("What can the flood turn into combat forms? Nothing? Only SNPCs that are related to Halo? Or anything?")
-		function typebox:OnSelect(index,value,data)
-			LocalPlayer():ConCommand("vj_spv3_floodOption "..value)
-			typebox:SetValue("vj_spv3_floodOption: "..value)
+		local damageConfig = vgui.Create("DButton")
+		damageConfig:SetFont("DermaDefaultBold")
+		damageConfig:SetText("Config Damage/Health")
+		damageConfig:SetSize(150,25)
+		damageConfig:SetColor(Color(0,0,0,255))
+		damageConfig.DoClick = function(damageConfig)
+			local Frame = vgui.Create( "DFrame" )
+			Frame:SetPos(ScrW() * .4, ScrH() * .5) 
+			Frame:SetSize(400, 500) 
+			Frame:SetTitle("Configure SPV3 Damage/Health") 
+			Frame:Center()
+			Frame:SetVisible( true ) 
+			Frame:SetDraggable( false ) 
+			Frame:ShowCloseButton( true ) 
+			Frame:MakePopup()
 
+			local nSlider1 = vgui.Create("DNumSlider", Frame)
+			nSlider1:SetText("Health Modifier")
+			nSlider1:SetMin(0.01)
+			nSlider1:SetMax(100)
+			nSlider1:SetSize(Frame:GetWide()*.9, 20)
+			nSlider1:SetPos(Frame:GetWide()*.05, 30)
+			nSlider1:SetConVar("vj_spv3_HealthModifier")
+			nSlider1:SetDefaultValue(GetConVar("vj_spv3_HealthModifier"):GetFloat())
+
+			local nSlider2 = vgui.Create("DNumSlider", Frame)
+			nSlider2:SetText("Shield Modifier")
+			nSlider2:SetMin(0.01)
+			nSlider2:SetMax(100)
+			nSlider2:SetSize(Frame:GetWide()*.9, 20)
+			nSlider2:SetPos(Frame:GetWide()*.05, 60)
+			nSlider2:SetConVar("vj_spv3_ShieldModifier")
+			nSlider2:SetDefaultValue(GetConVar("vj_spv3_ShieldModifier"):GetFloat())
+
+			local nSlider3 = vgui.Create("DNumSlider", Frame)
+			nSlider3:SetText("Damage Modifier")
+			nSlider3:SetMin(0.01)
+			nSlider3:SetMax(100)
+			nSlider3:SetSize(Frame:GetWide()*.9, 20)
+			nSlider3:SetPos(Frame:GetWide()*.05, 90)
+			nSlider3:SetConVar("vj_spv3_damageModifier")
+			nSlider3:SetDefaultValue(GetConVar("vj_spv3_damageModifier"):GetFloat())
+
+			local nSlider4 = vgui.Create("DNumSlider", Frame)
+			nSlider4:SetText("SPV3 NPC Vulnerability")
+			nSlider4:SetMin(0.01)
+			nSlider4:SetMax(100)
+			nSlider4:SetSize(Frame:GetWide()*.9, 20)
+			nSlider4:SetPos(Frame:GetWide()*.05, 120)
+			nSlider4:SetConVar("vj_spv3_npctakedamagemodifier")
+			nSlider4:SetDefaultValue(GetConVar("vj_spv3_npctakedamagemodifier"):GetFloat())
+
+			local x, y = nSlider4:GetPos()
+			Frame:SetSize(400, y + 30)
+			Frame:Center()
 		end
-		Panel:AddPanel(typebox)
+		local miscConfig = vgui.Create("DButton")
+		miscConfig:SetFont("DermaDefaultBold")
+		miscConfig:SetText("Config Miscellaneous")
+		miscConfig:SetSize(150,25)
+		miscConfig:SetColor(Color(0,0,0,255))
+		miscConfig.DoClick = function(miscConfig)
+			local Frame = vgui.Create( "DFrame" )
+			Frame:SetPos(ScrW() * .4, ScrH() * .5) 
+			Frame:SetSize(400, 500) 
+			Frame:SetTitle("Configure Miscellaneous") 
+			Frame:Center()
+			Frame:SetVisible( true ) 
+			Frame:SetDraggable( false ) 
+			Frame:ShowCloseButton( true ) 
+			Frame:MakePopup()
+
+			local check1 = vgui.Create("DCheckBoxLabel", Frame)
+			check1:SetPos(Frame:GetWide()*.05, 30)
+			check1:SetText("UNSC friendly fire retaliation?")
+			check1:SetConVar("vj_spv3_ffretal")
+
+			local check2 = vgui.Create("DCheckBoxLabel", Frame)
+			check2:SetPos(Frame:GetWide()*.05, 60)
+			check2:SetText("Covenant can use UNSC weapons?")
+			check2:SetConVar("vj_spv3_covUNSCWeps")
+
+			local check3 = vgui.Create("DCheckBoxLabel", Frame)
+			check3:SetPos(Frame:GetWide()*.05, 90)
+			check3:SetText("UNSC can use Covenant weapons?")
+			check3:SetConVar("vj_spv3_UNSCCovWeps")
+
+			local check4 = vgui.Create("DCheckBoxLabel", Frame)
+			check4:SetPos(Frame:GetWide()*.05, 120)
+			check4:SetText("Flood can use weapons?")
+			check4:SetConVar("vj_spv3_floodWeps")
+
+			local check5 = vgui.Create("DCheckBoxLabel", Frame)
+			check5:SetPos(Frame:GetWide()*.05, 150)
+			check5:SetText("Infection forms explode (thus causing chain kills)?")
+			check5:SetConVar("vj_spv3_InfFormsExplode")
+
+			local dbox1 = vgui.Create("DComboBox", Frame)
+			dbox1:SetPos(Frame:GetWide()*.05, 180)
+			dbox1:SetText("What is transformable by the Flood?")
+			dbox1:SetSize(Frame:GetWide()*.8, 20)
+			dbox1:AddChoice("Anything can be transformed by the Flood.", "vj_spv3_floodOption infect_anything")
+			dbox1:AddChoice("Only Halo-related NPCs can be transformed by the Flood.", "vj_spv3_floodOption infect_onlyHalo")
+			dbox1:AddChoice("Nothing can be transformed by the Flood.", "vj_spv3_floodOption infect_nothing")
+			dbox1.OnSelect = function(dbox1)
+				local none, result = dbox1:GetSelected()
+				LocalPlayer():ConCommand(result)
+				print(result)
+			end
+
+			local x, y = dbox1:GetPos()
+			Frame:SetSize(400, y + 30)
+			Frame:Center()
+		end
+		Panel:AddPanel(damageConfig)
+		Panel:AddPanel(reset)
+		Panel:AddPanel(miscConfig)
+		Panel:ControlHelp("NOTE: These settings will only apply to newly spawned SNPCs.")
 	end
 	function VJ_ADDTOMENU_SPV3(Panel)
 		spawnmenu.AddToolMenuOption("DrVrej","SNPC Configures","Halo SPV3","Halo SPV3","","", VJ_SPV3_MAIN, {} )
