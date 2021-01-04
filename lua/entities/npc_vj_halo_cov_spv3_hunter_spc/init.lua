@@ -54,7 +54,7 @@ function ENT:RangeAttackCode_GetShootPos(TheProjectile)
 end
 ---------------------------------------------------------------------------------------------------------------------------------------------
 function ENT:CustomRangeAttackCode_BeforeProjectileSpawn(TheProjectile) 
-	self:EmitSound("phantom/turret_shade.wav", 105)
+	self:EmitSound("phantom/turret_shade.ogg", 105)
 	TheProjectile:SetOwner(self)
 	ParticleEffectAttach("hcea_hunter_shade_cannon_trigger_muzzle", PATTACH_POINT_FOLLOW, self, 1)
 end

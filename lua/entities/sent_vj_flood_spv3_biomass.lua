@@ -127,7 +127,7 @@ local spreadRadius = 275
 function ENT:DoDeath()
 	self:SetCollisionGroup(1)
 	self.Bursted = true
-	self:EmitSound("carrier/kill_instant/kill_instant.wav")
+	self:EmitSound("carrier/kill_instant/kill_instant.ogg")
 	local BlastInfo = DamageInfo()
 	BlastInfo:SetDamageType(DMG_BLAST)
 	BlastInfo:SetDamage(60 * GetConVarNumber("vj_spv3_damageModifier"))

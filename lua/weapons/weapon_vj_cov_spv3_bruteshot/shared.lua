@@ -2,8 +2,8 @@ if (!file.Exists("autorun/vj_base_autorun.lua","LUA")) then return end
 include('weapons/weapon_vj_spv3_wbase/shared.lua')
 
 SWEP.WorldModel					= "models/hce/spv3/weapons/cov/bruteshot.mdl"
-SWEP.Primary.Sound				= {"weapons/brute shot/fire/fire_1.wav","weapons/brute shot/fire/fire_2.wav","weapons/brute shot/fire/fire_3.wav","weapons/brute shot/fire/fire_4.wav",}
-SWEP.ReloadSound = {"weapons/brute shot/reload/reload_full_1.wav", "weapons/brute shot/reload/reload_full_2.wav"}
+SWEP.Primary.Sound				= {"weapons/brute shot/fire/fire_1.ogg","weapons/brute shot/fire/fire_2.ogg","weapons/brute shot/fire/fire_3.ogg","weapons/brute shot/fire/fire_4.ogg",}
+SWEP.ReloadSound = {"weapons/brute shot/reload/reload_full_1.ogg", "weapons/brute shot/reload/reload_full_2.ogg"}
 SWEP.NPC_ReloadSound = SWEP.ReloadSound -- Sounds it plays when the base detects the SNPC playing a reload animation
 SWEP.Primary.TracerType 		= "AirboatGunHeavyTracer" -- Tracer type (Examples: AR2)
 SWEP.Primary.Damage				= 30

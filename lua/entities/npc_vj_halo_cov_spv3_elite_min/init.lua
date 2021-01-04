@@ -106,155 +106,155 @@ ENT.Skin = 1
 function ENT:CustomOnPreInitialize()
 	self.voicePermutation = tostring(math.random(1,2))
 	self.SoundTbl_Alert = {
-	"elite/elite0"..self.voicePermutation.."/seeFoe/seeFoe (1).wav",
-	"elite/elite0"..self.voicePermutation.."/seeFoe/seeFoe (2).wav",
-	"elite/elite0"..self.voicePermutation.."/seeFoe/seeFoe (3).wav",
-	"elite/elite0"..self.voicePermutation.."/seeFoe/seeFoe (4).wav",
-	"elite/elite0"..self.voicePermutation.."/seeFoe/seeFoe (5).wav",
-	"elite/elite0"..self.voicePermutation.."/seeFoe/seeFoe (6).wav",
-	"elite/elite0"..self.voicePermutation.."/seeFoe/seeFoe (7).wav",
-	"elite/elite0"..self.voicePermutation.."/seeFoe/seeFoe (8).wav",
-	"elite/elite0"..self.voicePermutation.."/seeFoe/seeFoe (9).wav",
-	"elite/elite0"..self.voicePermutation.."/seeFoe/seeFoe (10).wav",
+	"elite/elite0"..self.voicePermutation.."/seeFoe/seeFoe (1).ogg",
+	"elite/elite0"..self.voicePermutation.."/seeFoe/seeFoe (2).ogg",
+	"elite/elite0"..self.voicePermutation.."/seeFoe/seeFoe (3).ogg",
+	"elite/elite0"..self.voicePermutation.."/seeFoe/seeFoe (4).ogg",
+	"elite/elite0"..self.voicePermutation.."/seeFoe/seeFoe (5).ogg",
+	"elite/elite0"..self.voicePermutation.."/seeFoe/seeFoe (6).ogg",
+	"elite/elite0"..self.voicePermutation.."/seeFoe/seeFoe (7).ogg",
+	"elite/elite0"..self.voicePermutation.."/seeFoe/seeFoe (8).ogg",
+	"elite/elite0"..self.voicePermutation.."/seeFoe/seeFoe (9).ogg",
+	"elite/elite0"..self.voicePermutation.."/seeFoe/seeFoe (10).ogg",
 }
 self.SoundTbl_AllyDeath = {
-	"elite/elite0"..self.voicePermutation.."/ally_death/ally_death (1).wav",
-	"elite/elite0"..self.voicePermutation.."/ally_death/ally_death (2).wav",
-	"elite/elite0"..self.voicePermutation.."/ally_death/ally_death (3).wav",
-	"elite/elite0"..self.voicePermutation.."/ally_death/ally_death (4).wav",
-	"elite/elite0"..self.voicePermutation.."/ally_death/ally_death (5).wav",
+	"elite/elite0"..self.voicePermutation.."/ally_death/ally_death (1).ogg",
+	"elite/elite0"..self.voicePermutation.."/ally_death/ally_death (2).ogg",
+	"elite/elite0"..self.voicePermutation.."/ally_death/ally_death (3).ogg",
+	"elite/elite0"..self.voicePermutation.."/ally_death/ally_death (4).ogg",
+	"elite/elite0"..self.voicePermutation.."/ally_death/ally_death (5).ogg",
 }
 self.SoundTbl_Berserk = {
 	"elite/shared/berserk/berserk (1).ogg",
 	"elite/shared/berserk/berserk (2).ogg",
 }
 self.SoundTbl_CallForHelp = {
-	"elite/elite0"..self.voicePermutation.."/call_help (1).wav",
-	"elite/elite0"..self.voicePermutation.."/call_help (2).wav",
-	"elite/elite0"..self.voicePermutation.."/call_help (3).wav",
-	"elite/elite0"..self.voicePermutation.."/call_help (4).wav",
-	"elite/elite0"..self.voicePermutation.."/call_help (5).wav",
+	"elite/elite0"..self.voicePermutation.."/call_help (1).ogg",
+	"elite/elite0"..self.voicePermutation.."/call_help (2).ogg",
+	"elite/elite0"..self.voicePermutation.."/call_help (3).ogg",
+	"elite/elite0"..self.voicePermutation.."/call_help (4).ogg",
+	"elite/elite0"..self.voicePermutation.."/call_help (5).ogg",
 }
 self.SoundTbl_CombatIdle = {
-	"elite/elite0"..self.voicePermutation.."/combat_idle/combat_idle (1).wav",
-	"elite/elite0"..self.voicePermutation.."/combat_idle/combat_idle (2).wav",
-	"elite/elite0"..self.voicePermutation.."/combat_idle/combat_idle (3).wav",
-	"elite/elite0"..self.voicePermutation.."/combat_idle/combat_idle (4).wav",
-	"elite/elite0"..self.voicePermutation.."/combat_idle/combat_idle (5).wav",
-	"elite/elite0"..self.voicePermutation.."/combat_idle/combat_idle (6).wav",
-	"elite/elite0"..self.voicePermutation.."/combat_idle/combat_idle (7).wav",
-	"elite/elite0"..self.voicePermutation.."/combat_idle/combat_idle (8).wav",
-	"elite/elite0"..self.voicePermutation.."/combat_idle/combat_idle (9).wav",
-	"elite/elite0"..self.voicePermutation.."/combat_idle/combat_idle (10).wav",
-	"elite/elite0"..self.voicePermutation.."/combat_idle/combat_idle (11).wav",
+	"elite/elite0"..self.voicePermutation.."/combat_idle/combat_idle (1).ogg",
+	"elite/elite0"..self.voicePermutation.."/combat_idle/combat_idle (2).ogg",
+	"elite/elite0"..self.voicePermutation.."/combat_idle/combat_idle (3).ogg",
+	"elite/elite0"..self.voicePermutation.."/combat_idle/combat_idle (4).ogg",
+	"elite/elite0"..self.voicePermutation.."/combat_idle/combat_idle (5).ogg",
+	"elite/elite0"..self.voicePermutation.."/combat_idle/combat_idle (6).ogg",
+	"elite/elite0"..self.voicePermutation.."/combat_idle/combat_idle (7).ogg",
+	"elite/elite0"..self.voicePermutation.."/combat_idle/combat_idle (8).ogg",
+	"elite/elite0"..self.voicePermutation.."/combat_idle/combat_idle (9).ogg",
+	"elite/elite0"..self.voicePermutation.."/combat_idle/combat_idle (10).ogg",
+	"elite/elite0"..self.voicePermutation.."/combat_idle/combat_idle (11).ogg",
 }
 self.SoundTbl_Death = {
-	"elite/elite0"..self.voicePermutation.."/death/death (1).wav",
-	"elite/elite0"..self.voicePermutation.."/death/death (2).wav",
-	"elite/elite0"..self.voicePermutation.."/death/death (3).wav",
-	"elite/elite0"..self.voicePermutation.."/death/death (4).wav",
-	"elite/elite0"..self.voicePermutation.."/death/death (5).wav",
-	"elite/elite0"..self.voicePermutation.."/death/death (6).wav",
+	"elite/elite0"..self.voicePermutation.."/death/death (1).ogg",
+	"elite/elite0"..self.voicePermutation.."/death/death (2).ogg",
+	"elite/elite0"..self.voicePermutation.."/death/death (3).ogg",
+	"elite/elite0"..self.voicePermutation.."/death/death (4).ogg",
+	"elite/elite0"..self.voicePermutation.."/death/death (5).ogg",
+	"elite/elite0"..self.voicePermutation.."/death/death (6).ogg",
 }
 self.SoundTbl_Fall = {
-	"elite/elite0"..self.voicePermutation.."/fall/fall (1).wav",
-	"elite/elite0"..self.voicePermutation.."/fall/fall (2).wav",
-	"elite/elite0"..self.voicePermutation.."/fall/fall (3).wav",
-	"elite/elite0"..self.voicePermutation.."/fall/fall (4).wav",
+	"elite/elite0"..self.voicePermutation.."/fall/fall (1).ogg",
+	"elite/elite0"..self.voicePermutation.."/fall/fall (2).ogg",
+	"elite/elite0"..self.voicePermutation.."/fall/fall (3).ogg",
+	"elite/elite0"..self.voicePermutation.."/fall/fall (4).ogg",
 }
 self.SoundTbl_GrenadeAttack = {
-	"elite/elite0"..self.voicePermutation.."/throwGrenade/throwGrenade (1).wav",
-	"elite/elite0"..self.voicePermutation.."/throwGrenade/throwGrenade (2).wav",
-	"elite/elite0"..self.voicePermutation.."/throwGrenade/throwGrenade (3).wav",
-	"elite/elite0"..self.voicePermutation.."/throwGrenade/throwGrenade (4).wav",
-	"elite/elite0"..self.voicePermutation.."/throwGrenade/throwGrenade (5).wav",
-	"elite/elite0"..self.voicePermutation.."/throwGrenade/throwGrenade (6).wav",
-	"elite/elite0"..self.voicePermutation.."/throwGrenade/throwGrenade (7).wav",
+	"elite/elite0"..self.voicePermutation.."/throwGrenade/throwGrenade (1).ogg",
+	"elite/elite0"..self.voicePermutation.."/throwGrenade/throwGrenade (2).ogg",
+	"elite/elite0"..self.voicePermutation.."/throwGrenade/throwGrenade (3).ogg",
+	"elite/elite0"..self.voicePermutation.."/throwGrenade/throwGrenade (4).ogg",
+	"elite/elite0"..self.voicePermutation.."/throwGrenade/throwGrenade (5).ogg",
+	"elite/elite0"..self.voicePermutation.."/throwGrenade/throwGrenade (6).ogg",
+	"elite/elite0"..self.voicePermutation.."/throwGrenade/throwGrenade (7).ogg",
 }
 self.SoundTbl_Investigate = {
-	"elite/elite0"..self.voicePermutation.."/investigate/investigate (1).wav",
-	"elite/elite0"..self.voicePermutation.."/investigate/investigate (2).wav",
-	"elite/elite0"..self.voicePermutation.."/investigate/investigate (3).wav",
-	"elite/elite0"..self.voicePermutation.."/investigate/investigate (4).wav",
-	"elite/elite0"..self.voicePermutation.."/investigate/investigate (5).wav",
-	"elite/elite0"..self.voicePermutation.."/investigate/investigate (6).wav",
-	"elite/elite0"..self.voicePermutation.."/investigate/investigate (7).wav",
-	"elite/elite0"..self.voicePermutation.."/investigate/investigate (8).wav",
-	"elite/elite0"..self.voicePermutation.."/investigate/investigate (9).wav",
-	"elite/elite0"..self.voicePermutation.."/investigate/investigate (10).wav",
+	"elite/elite0"..self.voicePermutation.."/investigate/investigate (1).ogg",
+	"elite/elite0"..self.voicePermutation.."/investigate/investigate (2).ogg",
+	"elite/elite0"..self.voicePermutation.."/investigate/investigate (3).ogg",
+	"elite/elite0"..self.voicePermutation.."/investigate/investigate (4).ogg",
+	"elite/elite0"..self.voicePermutation.."/investigate/investigate (5).ogg",
+	"elite/elite0"..self.voicePermutation.."/investigate/investigate (6).ogg",
+	"elite/elite0"..self.voicePermutation.."/investigate/investigate (7).ogg",
+	"elite/elite0"..self.voicePermutation.."/investigate/investigate (8).ogg",
+	"elite/elite0"..self.voicePermutation.."/investigate/investigate (9).ogg",
+	"elite/elite0"..self.voicePermutation.."/investigate/investigate (10).ogg",
 }
 self.SoundTbl_LostEnemy = {
-	"elite/elite0"..self.voicePermutation.."/lost_enemy/lost_enemy (1).wav",
-	"elite/elite0"..self.voicePermutation.."/lost_enemy/lost_enemy (2).wav",
-	"elite/elite0"..self.voicePermutation.."/lost_enemy/lost_enemy (3).wav",
-	"elite/elite0"..self.voicePermutation.."/lost_enemy/lost_enemy (4).wav",
-	"elite/elite0"..self.voicePermutation.."/lost_enemy/lost_enemy (5).wav",
-	"elite/elite0"..self.voicePermutation.."/lost_enemy/lost_enemy (6).wav",
-	"elite/elite0"..self.voicePermutation.."/lost_enemy/lost_enemy (7).wav",
-	"elite/elite0"..self.voicePermutation.."/lost_enemy/lost_enemy (8).wav",
-	"elite/elite0"..self.voicePermutation.."/lost_enemy/lost_enemy (9).wav",
-	"elite/elite0"..self.voicePermutation.."/lost_enemy/lost_enemy (10).wav",
+	"elite/elite0"..self.voicePermutation.."/lost_enemy/lost_enemy (1).ogg",
+	"elite/elite0"..self.voicePermutation.."/lost_enemy/lost_enemy (2).ogg",
+	"elite/elite0"..self.voicePermutation.."/lost_enemy/lost_enemy (3).ogg",
+	"elite/elite0"..self.voicePermutation.."/lost_enemy/lost_enemy (4).ogg",
+	"elite/elite0"..self.voicePermutation.."/lost_enemy/lost_enemy (5).ogg",
+	"elite/elite0"..self.voicePermutation.."/lost_enemy/lost_enemy (6).ogg",
+	"elite/elite0"..self.voicePermutation.."/lost_enemy/lost_enemy (7).ogg",
+	"elite/elite0"..self.voicePermutation.."/lost_enemy/lost_enemy (8).ogg",
+	"elite/elite0"..self.voicePermutation.."/lost_enemy/lost_enemy (9).ogg",
+	"elite/elite0"..self.voicePermutation.."/lost_enemy/lost_enemy (10).ogg",
 }
 self.SoundTbl_OnGrenadeSight = {
-	"elite/elite0"..self.voicePermutation.."/seeGrenade/seeGrenade (1).wav",
-	"elite/elite0"..self.voicePermutation.."/seeGrenade/seeGrenade (2).wav",
-	"elite/elite0"..self.voicePermutation.."/seeGrenade/seeGrenade (3).wav",
-	"elite/elite0"..self.voicePermutation.."/seeGrenade/seeGrenade (4).wav",
-	"elite/elite0"..self.voicePermutation.."/seeGrenade/seeGrenade (5).wav",
-	"elite/elite0"..self.voicePermutation.."/seeGrenade/seeGrenade (6).wav",
-	"elite/elite0"..self.voicePermutation.."/seeGrenade/seeGrenade (7).wav",
-	"elite/elite0"..self.voicePermutation.."/seeGrenade/seeGrenade (8).wav",
+	"elite/elite0"..self.voicePermutation.."/seeGrenade/seeGrenade (1).ogg",
+	"elite/elite0"..self.voicePermutation.."/seeGrenade/seeGrenade (2).ogg",
+	"elite/elite0"..self.voicePermutation.."/seeGrenade/seeGrenade (3).ogg",
+	"elite/elite0"..self.voicePermutation.."/seeGrenade/seeGrenade (4).ogg",
+	"elite/elite0"..self.voicePermutation.."/seeGrenade/seeGrenade (5).ogg",
+	"elite/elite0"..self.voicePermutation.."/seeGrenade/seeGrenade (6).ogg",
+	"elite/elite0"..self.voicePermutation.."/seeGrenade/seeGrenade (7).ogg",
+	"elite/elite0"..self.voicePermutation.."/seeGrenade/seeGrenade (8).ogg",
 }
 self.SoundTbl_OnKilledEnemy = {
-	"elite/elite0"..self.voicePermutation.."/killed_enemy/killed_enemy (1).wav",
-	"elite/elite0"..self.voicePermutation.."/killed_enemy/killed_enemy (2).wav",
-	"elite/elite0"..self.voicePermutation.."/killed_enemy/killed_enemy (3).wav",
-	"elite/elite0"..self.voicePermutation.."/killed_enemy/killed_enemy (4).wav",
-	"elite/elite0"..self.voicePermutation.."/killed_enemy/killed_enemy (5).wav",
-	"elite/elite0"..self.voicePermutation.."/killed_enemy/killed_enemy (6).wav",
+	"elite/elite0"..self.voicePermutation.."/killed_enemy/killed_enemy (1).ogg",
+	"elite/elite0"..self.voicePermutation.."/killed_enemy/killed_enemy (2).ogg",
+	"elite/elite0"..self.voicePermutation.."/killed_enemy/killed_enemy (3).ogg",
+	"elite/elite0"..self.voicePermutation.."/killed_enemy/killed_enemy (4).ogg",
+	"elite/elite0"..self.voicePermutation.."/killed_enemy/killed_enemy (5).ogg",
+	"elite/elite0"..self.voicePermutation.."/killed_enemy/killed_enemy (6).ogg",
 }
 self.SoundTbl_OnReceiveOrder = {
-	"elite/elite0"..self.voicePermutation.."/ok/ok (1).wav",
-	"elite/elite0"..self.voicePermutation.."/ok/ok (2).wav",
-	"elite/elite0"..self.voicePermutation.."/ok/ok (3).wav",
-	"elite/elite0"..self.voicePermutation.."/ok/ok (4).wav",
-	"elite/elite0"..self.voicePermutation.."/ok/ok (5).wav",
-	"elite/elite0"..self.voicePermutation.."/ok/ok (6).wav",
+	"elite/elite0"..self.voicePermutation.."/ok/ok (1).ogg",
+	"elite/elite0"..self.voicePermutation.."/ok/ok (2).ogg",
+	"elite/elite0"..self.voicePermutation.."/ok/ok (3).ogg",
+	"elite/elite0"..self.voicePermutation.."/ok/ok (4).ogg",
+	"elite/elite0"..self.voicePermutation.."/ok/ok (5).ogg",
+	"elite/elite0"..self.voicePermutation.."/ok/ok (6).ogg",
 }
 self.SoundTbl_Pain = {
-	"elite/elite0"..self.voicePermutation.."/pain/pain (1).wav",
-	"elite/elite0"..self.voicePermutation.."/pain/pain (2).wav",
-	"elite/elite0"..self.voicePermutation.."/pain/pain (3).wav",
-	"elite/elite0"..self.voicePermutation.."/pain/pain (4).wav",
-	"elite/elite0"..self.voicePermutation.."/pain/pain (5).wav",
+	"elite/elite0"..self.voicePermutation.."/pain/pain (1).ogg",
+	"elite/elite0"..self.voicePermutation.."/pain/pain (2).ogg",
+	"elite/elite0"..self.voicePermutation.."/pain/pain (3).ogg",
+	"elite/elite0"..self.voicePermutation.."/pain/pain (4).ogg",
+	"elite/elite0"..self.voicePermutation.."/pain/pain (5).ogg",
 }
 self.SoundTbl_Stuck = {
-	"elite/elite0"..self.voicePermutation.."/stuck/stuck (1).wav",
-	"elite/elite0"..self.voicePermutation.."/stuck/stuck (2).wav",
-	"elite/elite0"..self.voicePermutation.."/stuck/stuck (3).wav",
+	"elite/elite0"..self.voicePermutation.."/stuck/stuck (1).ogg",
+	"elite/elite0"..self.voicePermutation.."/stuck/stuck (2).ogg",
+	"elite/elite0"..self.voicePermutation.."/stuck/stuck (3).ogg",
 }
 self.SoundTbl_Suppressing = {
-	"elite/elite0"..self.voicePermutation.."/firing/firing (1).wav",
-	"elite/elite0"..self.voicePermutation.."/firing/firing (2).wav",
-	"elite/elite0"..self.voicePermutation.."/firing/firing (3).wav",
-	"elite/elite0"..self.voicePermutation.."/firing/firing (4).wav",
-	"elite/elite0"..self.voicePermutation.."/firing/firing (5).wav",
-	"elite/elite0"..self.voicePermutation.."/firing/firing (6).wav",
-	"elite/elite0"..self.voicePermutation.."/firing/firing (7).wav",
-	"elite/elite0"..self.voicePermutation.."/firing/firing (8).wav",
-	"elite/elite0"..self.voicePermutation.."/firing/firing (9).wav",
-	"elite/elite0"..self.voicePermutation.."/firing/firing (10).wav",
-	"elite/elite0"..self.voicePermutation.."/firing/firing (11).wav",
+	"elite/elite0"..self.voicePermutation.."/firing/firing (1).ogg",
+	"elite/elite0"..self.voicePermutation.."/firing/firing (2).ogg",
+	"elite/elite0"..self.voicePermutation.."/firing/firing (3).ogg",
+	"elite/elite0"..self.voicePermutation.."/firing/firing (4).ogg",
+	"elite/elite0"..self.voicePermutation.."/firing/firing (5).ogg",
+	"elite/elite0"..self.voicePermutation.."/firing/firing (6).ogg",
+	"elite/elite0"..self.voicePermutation.."/firing/firing (7).ogg",
+	"elite/elite0"..self.voicePermutation.."/firing/firing (8).ogg",
+	"elite/elite0"..self.voicePermutation.."/firing/firing (9).ogg",
+	"elite/elite0"..self.voicePermutation.."/firing/firing (10).ogg",
+	"elite/elite0"..self.voicePermutation.."/firing/firing (11).ogg",
 }
 self.SoundTbl_Transform = {
-	"elite/elite0"..self.voicePermutation.."/transform/transform (1).wav",
-	"elite/elite0"..self.voicePermutation.."/transform/transform (2).wav",
-	"elite/elite0"..self.voicePermutation.."/transform/transform (3).wav",
+	"elite/elite0"..self.voicePermutation.."/transform/transform (1).ogg",
+	"elite/elite0"..self.voicePermutation.."/transform/transform (2).ogg",
+	"elite/elite0"..self.voicePermutation.."/transform/transform (3).ogg",
 }
 self.SoundTbl_WeaponReload = {
-	"elite/elite0"..self.voicePermutation.."/cover/cover (1).wav",
-	"elite/elite0"..self.voicePermutation.."/cover/cover (2).wav",
-	"elite/elite0"..self.voicePermutation.."/cover/cover (3).wav",
+	"elite/elite0"..self.voicePermutation.."/cover/cover (1).ogg",
+	"elite/elite0"..self.voicePermutation.."/cover/cover (2).ogg",
+	"elite/elite0"..self.voicePermutation.."/cover/cover (3).ogg",
 }
 end
 
@@ -477,7 +477,7 @@ function ENT:CustomOnTakeDamage_AfterDamage(dmginfo,hitgroup)
 		timer.Create("ShieldDelay"..self:GetCreationID(), self.ShieldDelay, 1, function() 
 			if (IsValid(self)) then
 				self:StopParticles()
-				self:EmitSound(Sound("ambient/energy/whiteflash.wav"),80,115)
+				self:EmitSound(Sound("ambient/energy/whiteflash.ogg"),80,115)
 				ParticleEffectAttach("hcea_shield_recharged",PATTACH_POINT_FOLLOW,self,self:LookupAttachment("origin"))
 				self.ShieldActivated = true
 				self.CanFlinch = 0
@@ -496,7 +496,7 @@ function ENT:CustomOnTakeDamage_ShieldsDestroyed(dmginfo)
 	elseif (self.Berserked==false) then
 		self:VJ_TASK_COVER_FROM_ENEMY("TASK_RUN_PATH")
 	end
-	self:EmitSound(Sound("ambient/energy/weld" .. math.random(1,2) .. ".wav"),80,100)
+	self:EmitSound(Sound("ambient/energy/weld" .. math.random(1,2) .. ".ogg"),80,100)
 	self:StopParticles()
 	ParticleEffectAttach("hcea_shield_disperse",PATTACH_POINT_FOLLOW,self,self:LookupAttachment("origin"))
 	ParticleEffectAttach("hcea_shield_enabled",PATTACH_POINT_FOLLOW,self,self:LookupAttachment("origin"))
@@ -529,19 +529,19 @@ ENT.voicePermutation = ""
 ---------------------------------------------------------------------------------------------------------------------------------------------
 function ENT:CustomOnAcceptInput(key,activator,caller,data)
 	if key == "Step" then
-		self:EmitSound("elite/shared/walk/walk ("..math.random(1,6)..").wav", 80, 100, 1)
+		self:EmitSound("elite/shared/walk/walk ("..math.random(1,6)..").ogg", 80, 100, 1)
 	elseif key == "Melee1" then
-		self:EmitSound("elite/shared/stand_pistol_melee/stand_pistol_melee"..math.random(1,2)..".wav", 80, 100, 1)
-		self:EmitSound("elite/elite0"..self.voicePermutation.."melee/melee ("..math.random(1,5)..").wav", 80, 100, 1)
+		self:EmitSound("elite/shared/stand_pistol_melee/stand_pistol_melee"..math.random(1,2)..".ogg", 80, 100, 1)
+		self:EmitSound("elite/elite0"..self.voicePermutation.."melee/melee ("..math.random(1,5)..").ogg", 80, 100, 1)
 	elseif key == "Hit" then
 		self:MeleeAttackCode()
 	elseif key == "EvadeR" then
-		self:EmitSound("elite/shared/stand_pistol_evade_right/stand_pistol_evade_right.wav", 80, 100, 1)
-		self:EmitSound("elite/elite0"..self.voicePermutation.."/dodge/dodge ("..math.random(1,4)..").wav", 80, 100, 1)
+		self:EmitSound("elite/shared/stand_pistol_evade_right/stand_pistol_evade_right.ogg", 80, 100, 1)
+		self:EmitSound("elite/elite0"..self.voicePermutation.."/dodge/dodge ("..math.random(1,4)..").ogg", 80, 100, 1)
 	
 	elseif key == "EvadeL" then
-		self:EmitSound("elite/shared/stand_pistol_evade_left/stand_pistol_evade_left.wav", 80, 100, 1)
-		self:EmitSound("elite/elite0"..self.voicePermutation.."/dodge/dodge ("..math.random(1,4)..").wav", 80, 100, 1)
+		self:EmitSound("elite/shared/stand_pistol_evade_left/stand_pistol_evade_left.ogg", 80, 100, 1)
+		self:EmitSound("elite/elite0"..self.voicePermutation.."/dodge/dodge ("..math.random(1,4)..").ogg", 80, 100, 1)
 	elseif key == "Pain" then
 		self:EmitSound(VJ_PICKRANDOMTABLE(self.SoundTbl_Pain))
 	end

@@ -77,13 +77,13 @@ ENT.lights = {
 function ENT:CustomOnRangeAttack_BeforeStartTimer()
 	ParticleEffectAttach("hcea_hunter_ab_charge",PATTACH_POINT_FOLLOW,self,1)
 	timer.Simple(0.8,function() if self:IsValid() then 
-		self:EmitSound("hunter/hunter_cannon/hunter_cannon_loop/hunter_cannon/in.wav", 80, 100, 1) 
+		self:EmitSound("hunter/hunter_cannon/hunter_cannon_loop/hunter_cannon/in.ogg", 80, 100, 1) 
 		end 
 	end)
-	self:EmitSound("hunter/hunter_cannon/hunter_charge.wav", 80, 100, 1)
+	self:EmitSound("hunter/hunter_cannon/hunter_charge.ogg", 80, 100, 1)
 	timer.Simple(1.8,function() if self:IsValid() then 
 		self:StopParticles() 
-		self:EmitSound("hunter/hunter_cannon/hunter_cannon_loop/hunter_cannon/out.wav", 80, 100, 1) 
+		self:EmitSound("hunter/hunter_cannon/hunter_cannon_loop/hunter_cannon/out.ogg", 80, 100, 1) 
 		end 
 	end)
 end
@@ -161,7 +161,7 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 		dmginfo:SetDamageBonus(0)
 	elseif (hitgroup != 4) then
 		dmginfo:ScaleDamage(0)
-		self:EmitSound("hunter/hard_metal_thick_cov_hunter/hard_metal_thick_cov_hunter"..math.random(1,4)..".wav", 80, 100, 1)
+		self:EmitSound("hunter/hard_metal_thick_cov_hunter/hard_metal_thick_cov_hunter"..math.random(1,4)..".ogg", 80, 100, 1)
 	end
 	if (dmginfo:GetDamage() >= self:Health()) then
 		if (dmginfo:GetDamageType()==DMG_BLAST) then
@@ -205,24 +205,24 @@ function ENT:Berserk()
 end
 ---------------------------------------------------------------------------------------------------------------------------------------------
 ENT.SoundTbl_Alert = {
-"hunter/seefoe/warn1.wav",
-"hunter/seefoe/warn2.wav",
-"hunter/seefoe/warn3.wav",
-"hunter/seefoe/warn4.wav",
-"hunter/seefoe/warn5.wav",
-"hunter/seefoe/warn6.wav",
-"hunter/seefoe/warn7.wav",
-"hunter/seefoe/warn8.wav",
-"hunter/seefoe/warn9.wav"
+"hunter/seefoe/warn1.ogg",
+"hunter/seefoe/warn2.ogg",
+"hunter/seefoe/warn3.ogg",
+"hunter/seefoe/warn4.ogg",
+"hunter/seefoe/warn5.ogg",
+"hunter/seefoe/warn6.ogg",
+"hunter/seefoe/warn7.ogg",
+"hunter/seefoe/warn8.ogg",
+"hunter/seefoe/warn9.ogg"
 }
 
 ENT.SoundTbl_MeleeAttack = {
-"hunter/hunter_melee_hits/hunter_melee_hit1.wav",
-"hunter/hunter_melee_hits/hunter_melee_hit2.wav",
-"hunter/hunter_melee_hits/hunter_melee_hit3.wav",
-"hunter/hunter_melee_hits/hunter_melee_hit4.wav",
-"hunter/hunter_melee_hits/hunter_melee_hit5.wav",
-"hunter/hunter_melee_hits/hunter_melee_hit6.wav"
+"hunter/hunter_melee_hits/hunter_melee_hit1.ogg",
+"hunter/hunter_melee_hits/hunter_melee_hit2.ogg",
+"hunter/hunter_melee_hits/hunter_melee_hit3.ogg",
+"hunter/hunter_melee_hits/hunter_melee_hit4.ogg",
+"hunter/hunter_melee_hits/hunter_melee_hit5.ogg",
+"hunter/hunter_melee_hits/hunter_melee_hit6.ogg"
 }
 ---------------------------------------------------------------------------------------------------------------------------------------------
 function ENT:RangeAttackCode_GetShootPos(TheProjectile)
@@ -231,11 +231,11 @@ end
 ---------------------------------------------------------------------------------------------------------------------------------------------
 function ENT:CustomOnAcceptInput(key,activator,caller,data)
 	if key == "Step" then
-		self:EmitSound("hunter/run/walk"..math.random(1,6)..".wav", 80, 90, 1)
+		self:EmitSound("hunter/run/walk"..math.random(1,6)..".ogg", 80, 90, 1)
 	
 	elseif key == "Melee1" then
-		self:EmitSound("hunter/unarmed_melee/hunter_shield_swing_"..math.random(1,3)..".wav", 80, 100, 1)
-		self:EmitSound("hunter/melee/melee"..math.random(5,28)..".wav", 80, 100, 1)
+		self:EmitSound("hunter/unarmed_melee/hunter_shield_swing_"..math.random(1,3)..".ogg", 80, 100, 1)
+		self:EmitSound("hunter/melee/melee"..math.random(5,28)..".ogg", 80, 100, 1)
 		
 	elseif key == "Hit" then
 		self:MeleeAttackCode()

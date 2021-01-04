@@ -28,15 +28,15 @@ PrintMessage(3, "-------------------")
 ---------------------------------------------------------------------------]]
 ENT.soundTable = {
 	engineSoundObject = "",
-	engineSound = "npc_vj_sent_sentinel/sent_eng1loop.wav",
+	engineSound = "npc_vj_sent_sentinel/sent_eng1loop.ogg",
 	enginePitch = 100,
 	engineVolume = 0.4,
 	firingSoundObject = "",
-	firingSound = "npc_vj_sent_sentinel/sentinel_gun/sentGunLoop1.wav",
+	firingSound = "npc_vj_sent_sentinel/sentinel_gun/sentGunLoop1.ogg",
 	firingPitch = 100,
 	firingVolume = 1,
-	firingIn = "npc_vj_sent_sentinel/sentinel_gun/in.wav",
-	firingOut = "npc_vj_sent_sentinel/sentinel_gun/out.wav"
+	firingIn = "npc_vj_sent_sentinel/sentinel_gun/in.ogg",
+	firingOut = "npc_vj_sent_sentinel/sentinel_gun/out.ogg"
 }
 ENT.defensiveStats = {
 	shieldMax = 50,
@@ -116,7 +116,7 @@ ENT.HasDeathRagdoll = true -- If set to false, it will not spawn the regular rag
 ENT.DeathCorpseModel = {""} -- The corpse model that it will spawn when it dies | Leave empty to use the NPC's model | Put as many models as desired, the base will pick a random one.
 ENT.BecomeEnemyToPlayer = true
 ENT.BecomeEnemyToPlayerLevel = 4 -- How many times does the player have to hit the SNPC for it to become enemy?
-ENT.SoundTbl_Death = {"npc_vj_sent_sentinel/sentinel_death/expl_1.wav","npc_vj_sent_sentinel/sentinel_death/expl_2.wav","npc_vj_sent_sentinel/sentinel_death/expl_3.wav","npc_vj_sent_sentinel/sentinel_death/expl_4.wav","npc_vj_sent_sentinel/sentinel_death/expl_5.wav","npc_vj_sent_sentinel/sentinel_death/expl_6.wav","npc_vj_sent_sentinel/sentinel_death/expl_7.wav","npc_vj_sent_sentinel/sentinel_death/expl_8.wav","npc_vj_sent_sentinel/sentinel_death/expl_9.wav","npc_vj_sent_sentinel/sentinel_death/expl_10.wav","npc_vj_sent_sentinel/sentinel_death/expl_11.wav","npc_vj_sent_sentinel/sentinel_death/expl_12.wav","npc_vj_sent_sentinel/sentinel_death/expl_13.wav","npc_vj_sent_sentinel/sentinel_death/expl_14.wav","npc_vj_sent_sentinel/sentinel_death/expl_15.wav","npc_vj_sent_sentinel/sentinel_death/expl_16.wav","npc_vj_sent_sentinel/sentinel_death/expl_17.wav","npc_vj_sent_sentinel/sentinel_death/expl_18.wav"}
+ENT.SoundTbl_Death = {"npc_vj_sent_sentinel/sentinel_death/expl_1.ogg","npc_vj_sent_sentinel/sentinel_death/expl_2.ogg","npc_vj_sent_sentinel/sentinel_death/expl_3.ogg","npc_vj_sent_sentinel/sentinel_death/expl_4.ogg","npc_vj_sent_sentinel/sentinel_death/expl_5.ogg","npc_vj_sent_sentinel/sentinel_death/expl_6.ogg","npc_vj_sent_sentinel/sentinel_death/expl_7.ogg","npc_vj_sent_sentinel/sentinel_death/expl_8.ogg","npc_vj_sent_sentinel/sentinel_death/expl_9.ogg","npc_vj_sent_sentinel/sentinel_death/expl_10.ogg","npc_vj_sent_sentinel/sentinel_death/expl_11.ogg","npc_vj_sent_sentinel/sentinel_death/expl_12.ogg","npc_vj_sent_sentinel/sentinel_death/expl_13.ogg","npc_vj_sent_sentinel/sentinel_death/expl_14.ogg","npc_vj_sent_sentinel/sentinel_death/expl_15.ogg","npc_vj_sent_sentinel/sentinel_death/expl_16.ogg","npc_vj_sent_sentinel/sentinel_death/expl_17.ogg","npc_vj_sent_sentinel/sentinel_death/expl_18.ogg"}
 ENT.SoundTbl_PreDeath = {""}
 ENT.HasItemDropsOnDeath = false -- Should it drop items on death?
 ENT.AnimTbl_Death = {""}
@@ -212,7 +212,7 @@ end
 
 local TravelTime = 0
 function ENT:InitializeSound() 
-	self:EmitSound("npc_vj_sent_sentinel/sentinel_gun/impact.wav",0,0,0)
+	self:EmitSound("npc_vj_sent_sentinel/sentinel_gun/impact.ogg",0,0,0)
 	TravelTime = math.random(self.flyVars["minTravelTime"], self.flyVars["maxTravelTime"])
 	self.soundTable["firingSoundObject"] = CreateSound(self, self.soundTable["firingSound"])
 	self.soundTable["engineSoundObject"] = CreateSound(self, self.soundTable["engineSound"])
@@ -380,7 +380,7 @@ function ENT:CustomRangeAttackCode()
 	})
 	util.Decal("FadingScorch", self.fireTrace.HitPos, self.fireTrace.HitPos + self:GetAimVector()*50)
 	self:SetNWVector("SentinelBeam1",self.fireTrace.HitPos) --used to draw a beam from current pos to enemy pos in cl_init.lua
-	sound.Play("npc_vj_sent_sentinel/sentinel_gun/impact.wav", self.fireTrace.HitPos, 60, 100, 1)
+	sound.Play("npc_vj_sent_sentinel/sentinel_gun/impact.ogg", self.fireTrace.HitPos, 60, 100, 1)
 	-- if IsValid(self.currentEnemy) && !self.currentEnemy:Visible(self) then
 	-- 	return false
 	-- end
@@ -712,13 +712,13 @@ function ENT:CreateCustomCorpse()
 	corpse:GetPhysicsObject():SetVelocity(self.vAlive)
 	-- corpse.RenderGroup = RENDERGROUP_BOTH
 	corpse.ignite = self.ignite
-	local sparks = CreateSound(corpse, "npc_vj_sent_sentinel/sentinel_death/spark_loop.wav")
+	local sparks = CreateSound(corpse, "npc_vj_sent_sentinel/sentinel_death/spark_loop.ogg")
 	sparks:Play()
 	sparks:ChangeVolume(0.3)
 	local effect = EffectData()
 	effect:SetOrigin(corpse:GetPos())
 	timer.Create("FireFallFXCorpse"..self.uniqueId, .15, 3000, function() if (IsValid(corpse)) then effect:SetOrigin(corpse:GetPos()) util.Effect("fireFallFX", effect) end end)
-	timer.Create("corpseSparks"..self.uniqueId,2.5,16,function () if (IsValid(corpse)) then effect:SetOrigin(corpse:GetPos())  util.Effect("cball_explode",effect) end corpse:EmitSound(Sound("npc_vj_sent_sentinel/sentinel_welder_impact/weld13.wav")) end)
+	timer.Create("corpseSparks"..self.uniqueId,2.5,16,function () if (IsValid(corpse)) then effect:SetOrigin(corpse:GetPos())  util.Effect("cball_explode",effect) end corpse:EmitSound(Sound("npc_vj_sent_sentinel/sentinel_welder_impact/weld13.ogg")) end)
 	timer.Simple(2.5,function() if (IsValid(corpse) && corpse.ignite) then corpse:Ignite()  end end)
 	timer.Simple(40, function () if (IsValid(corpse)) then  corpse:Remove() sparks:Stop() end end)
 end
@@ -749,7 +749,7 @@ function ENT:FallDeath() //Make NPC limp and fall to their death
 					self:GetPhysicsObject():AddVelocity(Vector(math.random(-25 - moreVelocity, 25 + moreVelocity), math.random(-25- moreVelocity, 25 + moreVelocity), math.random(-25- moreVelocity, 25 + moreVelocity)))
 				end
 				end) end end)
-				timer.Create("preDeath"..self.uniqueId, self.timeToDie - 3, 1, function() if (IsValid(self)) then self:EmitSound("npc_vj_sent_sentinel/sentinel_death/SentinelPreDestroyed.wav") end end)
+				timer.Create("preDeath"..self.uniqueId, self.timeToDie - 3, 1, function() if (IsValid(self)) then self:EmitSound("npc_vj_sent_sentinel/sentinel_death/SentinelPreDestroyed.ogg") end end)
 				timer.Create("destroy"..self.uniqueId,self.timeToDie,1,function() if (IsValid(self)) then self:TakeDamage(99999, attacker) util.ScreenShake( self:GetPos(), 50, 500, 1.2, 500 ) end end)
 			end
 		end end)

@@ -40,7 +40,7 @@ ENT.RadiusDamageUseRealisticRadius = true -- Should the damage decrease the fart
 ENT.RadiusDamageType = DMG_BLAST -- Damage type
 ENT.RadiusDamageForce = 0 -- Put the force amount it should apply | false = Don't apply any force
 ENT.DecalTbl_DeathDecals = {"Scorch"}
-ENT.SoundTbl_Death = {"weapons/needler/super/superneedleboom.wav",}
+ENT.SoundTbl_Death = {"weapons/needler/super/superneedleboom.ogg",}
 -- Custom
 ENT.FussTime = 0
 ENT.TimeSinceSpawn = 0
@@ -161,7 +161,7 @@ function ENT:NeedleExplode()
 			end
 		end
 	end
-	self:EmitSound("weapons/needler/super/superneedleboom.wav")
+	self:EmitSound("weapons/needler/super/superneedleboom.ogg")
 	local BlastInfo = DamageInfo()
 	BlastInfo:SetDamageType(DMG_BLAST)
 	if (IsValid(self:GetOwner())) then

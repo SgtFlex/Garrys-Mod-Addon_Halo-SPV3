@@ -154,7 +154,7 @@ function ENT:CustomOnTakeDamage_AfterDamage(dmginfo,hitgroup)
 		timer.Create("ShieldDelay"..self:GetCreationID(), self.ShieldDelay, 1, function() 
 			if (IsValid(self)) then
 				self:StopParticles()
-				self:EmitSound(Sound("ambient/energy/whiteflash.wav"),80,115)
+				self:EmitSound(Sound("ambient/energy/whiteflash.ogg"),80,115)
 				ParticleEffectAttach("hcea_shield_recharged",PATTACH_POINT_FOLLOW,self,self:LookupAttachment("origin"))
 				self.ShieldActivated = true
 				self.ShieldCurrentHealth = self.ShieldHealth
@@ -168,7 +168,7 @@ end
 function ENT:CustomOnTakeDamage_ShieldsDestroyed(dmginfo)
 	if self.ShieldActivated == false then return end
 	self:VJ_TASK_COVER_FROM_ENEMY("TASK_RUN_PATH")
-	self:EmitSound(Sound("ambient/energy/weld" .. math.random(1,2) .. ".wav"),80,100)
+	self:EmitSound(Sound("ambient/energy/weld" .. math.random(1,2) .. ".ogg"),80,100)
 	self:StopParticles()
 	ParticleEffectAttach("hcea_shield_disperse",PATTACH_POINT_FOLLOW,self,self:LookupAttachment("origin"))
 	ParticleEffectAttach("hcea_shield_enabled",PATTACH_POINT_FOLLOW,self,self:LookupAttachment("origin"))

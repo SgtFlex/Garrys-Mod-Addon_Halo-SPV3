@@ -87,22 +87,22 @@ self.SoundTbl_AllyDeath = {
 	"marine/ally_death/ally_death.ogg",
 }
 self.SoundTbl_Stuck = {
-	"marine/stuck/stuck (1).wav",
-	"marine/stuck/stuck (2).wav",
-	"marine/stuck/stuck (3).wav",
-	"marine/stuck/stuck (4).wav",
-	"marine/stuck/stuck (5).wav",
-	"marine/stuck/stuck (6).wav",
+	"marine/stuck/stuck (1).ogg",
+	"marine/stuck/stuck (2).ogg",
+	"marine/stuck/stuck (3).ogg",
+	"marine/stuck/stuck (4).ogg",
+	"marine/stuck/stuck (5).ogg",
+	"marine/stuck/stuck (6).ogg",
 }
 
 self.SoundTbl_Transform = {
-	"marine/transform/transform (1).wav",
-	"marine/transform/transform (2).wav",
-	"marine/transform/transform (3).wav",
-	"marine/transform/transform (4).wav",
-	"marine/transform/transform (5).wav",
-	"marine/transform/transform (6).wav",
-	"marine/transform/transform (7).wav",
+	"marine/transform/transform (1).ogg",
+	"marine/transform/transform (2).ogg",
+	"marine/transform/transform (3).ogg",
+	"marine/transform/transform (4).ogg",
+	"marine/transform/transform (5).ogg",
+	"marine/transform/transform (6).ogg",
+	"marine/transform/transform (7).ogg",
 }
 self.SoundTbl_Suppressing = {
 	"crewman/firing/firing (1).ogg",

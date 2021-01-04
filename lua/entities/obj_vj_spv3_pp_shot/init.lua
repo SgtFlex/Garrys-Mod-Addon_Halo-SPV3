@@ -14,7 +14,7 @@ ENT.RadiusDamageType = DMG_SLASH -- Damage type
 ENT.ShakeWorldOnDeath = false -- Should the world shake when the projectile hits something?
 ENT.DecalTbl_DeathDecals = {"FadingScorch"}
 ENT.SoundTbl_Idle = {""}
-ENT.SoundTbl_OnCollide = {"weapons/plasmarifle/plasmahit/plasma_hit1.wav", "weapons/plasmarifle/plasmahit/plasma_hit2.wav", "weapons/plasmarifle/plasmahit/plasma_hit3.wav", "weapons/plasmarifle/plasmahit/plasma_hit4.wav", "weapons/plasmarifle/plasmahit/plasma_hit5.wav"}
+ENT.SoundTbl_OnCollide = {"weapons/plasmarifle/plasmahit/plasma_hit1.ogg", "weapons/plasmarifle/plasmahit/plasma_hit2.ogg", "weapons/plasmarifle/plasmahit/plasma_hit3.ogg", "weapons/plasmarifle/plasmahit/plasma_hit4.ogg", "weapons/plasmarifle/plasmahit/plasma_hit5.ogg"}
 ---------------------------------------------------------------------------------------------------------------------------------------------
 function ENT:CustomOnInitialize()
 	self.RadiusDamage = self.RadiusDamage * GetConVarNumber("vj_spv3_damageModifier") -- How much damage should it deal? Remember this is a radius damage, therefore it will do less damage the farther away the entity is from its enemy

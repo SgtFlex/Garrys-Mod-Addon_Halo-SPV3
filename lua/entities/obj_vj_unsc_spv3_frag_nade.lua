@@ -40,8 +40,8 @@ ENT.RadiusDamageUseRealisticRadius = true -- Should the damage decrease the fart
 ENT.RadiusDamageType = DMG_BLAST -- Damage type
 ENT.RadiusDamageForce = 140 -- Put the force amount it should apply | false = Don't apply any force
 ENT.DecalTbl_DeathDecals = {"Scorch"}
-ENT.SoundTbl_OnCollide = {"grenades/frag nade/impact/impact.wav"}
-ENT.SoundTbl_Death = {"grenades/frag nade/explode/explode (1).wav","grenades/frag nade/explode/explode (2).wav"}
+ENT.SoundTbl_OnCollide = {"grenades/frag nade/impact/impact.ogg"}
+ENT.SoundTbl_Death = {"grenades/frag nade/explode/explode (1).ogg","grenades/frag nade/explode/explode (2).ogg"}
 
 
 -- Custom
@@ -63,7 +63,7 @@ function ENT:CustomOnInitialize()
 	local effect = EffectData()
 	effect:SetOrigin(self:GetPos())
 	util.SpriteTrail(self, 0, Color(150,150,150), true, 10, 0, 0.25, 0.1, "trails/smoke")
-	self.trailSound = CreateSound(self, "grenades/frag nade/trail/armed.wav")
+	self.trailSound = CreateSound(self, "grenades/frag nade/trail/armed.ogg")
 	self.trailSound:Play()
 	//if self:GetOwner():IsValid() && (self:GetOwner().GrenadeAttackFussTime) then
 	//timer.Simple(self:GetOwner().GrenadeAttackFussTime,function() if IsValid(self) then self:DeathEffects() end end) else

@@ -38,7 +38,7 @@ ENT.ConstantlyFaceEnemy = true
 ENT.ConstantlyFaceEnemy_IfAttacking = true -- Should it face the enemy when attacking?
 ENT.RangeAttackAnimationFaceEnemy = false
 function ENT:CustomRangeAttackCode_BeforeProjectileSpawn(TheProjectile) 
-	self:EmitSound("phantom/turret_shade.wav", 105)
+	self:EmitSound("phantom/turret_shade.ogg", 105)
 	TheProjectile:SetOwner(self)
 	ParticleEffectAttach("hcea_hunter_plasma_rifle_fire", PATTACH_POINT_FOLLOW, self, 1)
 end -- This is ran before Spawn() is called

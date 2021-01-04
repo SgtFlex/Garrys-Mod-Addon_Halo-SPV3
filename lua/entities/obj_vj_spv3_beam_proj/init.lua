@@ -16,8 +16,8 @@ ENT.RadiusDamageForceTowardsPhysics = 3000 -- How much force should it deal to p
 ENT.RadiusDamageForceTowardsRagdolls = 3000 -- How much force should it deal to ragdolls?
 ENT.ShakeWorldOnDeath = false -- Should the world shake when the projectile hits something?
 ENT.DecalTbl_DeathDecals = {"Scorch"}
-ENT.SoundTbl_Idle = {"hunter/hunter_cannon/hunter_cannon_loop/hunter_cannon/loop.wav"}
-ENT.SoundTbl_OnCollide = {"weapons/fuel rod gun/explosion/fuelrod_explo1.wav", "weapons/fuel rod gun/explosion/fuelrod_explo2.wav", "weapons/fuel rod gun/explosion/fuelrod_explo3.wav"}
+ENT.SoundTbl_Idle = {"hunter/hunter_cannon/hunter_cannon_loop/hunter_cannon/loop.ogg"}
+ENT.SoundTbl_OnCollide = {"weapons/fuel rod gun/explosion/fuelrod_explo1.ogg", "weapons/fuel rod gun/explosion/fuelrod_explo2.ogg", "weapons/fuel rod gun/explosion/fuelrod_explo3.ogg"}
 ENT.OnCollideSoundLevel = 50
 ---------------------------------------------------------------------------------------------------------------------------------------------
 function ENT:CustomOnInitialize()

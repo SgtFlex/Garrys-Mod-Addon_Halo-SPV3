@@ -40,21 +40,21 @@ ENT.RadiusDamageUseRealisticRadius = true -- Should the damage decrease the fart
 ENT.RadiusDamageType = DMG_BLAST -- Damage type
 ENT.RadiusDamageForce = 120 -- Put the force amount it should apply | false = Don't apply any force
 ENT.DecalTbl_DeathDecals = {"Scorch"}
-ENT.SoundTbl_Death = {"grenades/plasma nade/Explode/Explode (1).wav","grenades/plasma nade/Explode/Explode (2).wav"}
-ENT.SoundTbl_preExplode = {"grenades/plasma nade/preExplode/preExplode (1).wav","grenades/plasma nade/preExplode/preExplode (2).wav","grenades/plasma nade/preExplode/preExplode (3).wav"}
+ENT.SoundTbl_Death = {"grenades/plasma nade/Explode/Explode (1).ogg","grenades/plasma nade/Explode/Explode (2).ogg"}
+ENT.SoundTbl_preExplode = {"grenades/plasma nade/preExplode/preExplode (1).ogg","grenades/plasma nade/preExplode/preExplode (2).ogg","grenades/plasma nade/preExplode/preExplode (3).ogg"}
 -- Custom
 ENT.FussTime = 0
 ENT.TimeSinceSpawn = 0
 
 ENT.SoundTbl_StickTo = {
-	"grenades/plasma nade/stick/stick (1).wav",
-	"grenades/plasma nade/stick/stick (2).wav",
-	"grenades/plasma nade/stick/stick (3).wav",
+	"grenades/plasma nade/stick/stick (1).ogg",
+	"grenades/plasma nade/stick/stick (2).ogg",
+	"grenades/plasma nade/stick/stick (3).ogg",
 }
 ENT.SoundTbl_Settle = {
-	"grenades/plasma nade/settle/settle (1).wav",
-	"grenades/plasma nade/settle/settle (2).wav",
-	"grenades/plasma nade/settle/settle (3).wav",
+	"grenades/plasma nade/settle/settle (1).ogg",
+	"grenades/plasma nade/settle/settle (2).ogg",
+	"grenades/plasma nade/settle/settle (3).ogg",
 }
 ---------------------------------------------------------------------------------------------------------------------------------------------
 function ENT:CustomPhysicsObjectOnInitialize(phys)
@@ -69,7 +69,7 @@ function ENT:CustomOnInitialize()
 	if (self:GetOwner():IsNPC()) then
 		self.RadiusDamage=self.RadiusDamage * GetConVarNumber("vj_spv3_damageModifier")
 	end
-	self.trailSound = CreateSound(self, "grenades/plasma nade/trail/trail.wav")
+	self.trailSound = CreateSound(self, "grenades/plasma nade/trail/trail.ogg")
 	self.trailSound:Play()
 	self.trailSound:ChangeVolume(0.35)
 

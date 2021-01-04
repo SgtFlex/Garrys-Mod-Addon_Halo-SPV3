@@ -173,173 +173,173 @@ function ENT:FindSeq(seq)
 end
 
 ENT.SoundTbl_OnKilledEnemy = {
-	"brute/killEnemy/killEnemy (1).wav",
-	"brute/killEnemy/killEnemy (2).wav",
-	"brute/killEnemy/killEnemy (3).wav",
-	"brute/killEnemy/killEnemy (4).wav",
-	"brute/killEnemy/killEnemy (5).wav",
-	"brute/killEnemy/killEnemy (6).wav",
-	"brute/killEnemy/killEnemy (7).wav",
-	"brute/killEnemy/killEnemy (8).wav",
-	"brute/killEnemy/killEnemy (9).wav",
-	"brute/killEnemy/killEnemy (10).wav",
-	"brute/killEnemy/killEnemy (11).wav",
-	"brute/killEnemy/killEnemy (12).wav",
-	"brute/killEnemy/killEnemy (13).wav",
+	"brute/killEnemy/killEnemy (1).ogg",
+	"brute/killEnemy/killEnemy (2).ogg",
+	"brute/killEnemy/killEnemy (3).ogg",
+	"brute/killEnemy/killEnemy (4).ogg",
+	"brute/killEnemy/killEnemy (5).ogg",
+	"brute/killEnemy/killEnemy (6).ogg",
+	"brute/killEnemy/killEnemy (7).ogg",
+	"brute/killEnemy/killEnemy (8).ogg",
+	"brute/killEnemy/killEnemy (9).ogg",
+	"brute/killEnemy/killEnemy (10).ogg",
+	"brute/killEnemy/killEnemy (11).ogg",
+	"brute/killEnemy/killEnemy (12).ogg",
+	"brute/killEnemy/killEnemy (13).ogg",
 }
 ENT.SoundTbl_Alert = {
-	"brute/sightPlayer/seefoe (1).wav",
-	"brute/sightPlayer/seefoe (2).wav",
-	"brute/sightPlayer/seefoe (3).wav",
-	"brute/sightPlayer/seefoe (4).wav",
-	"brute/sightPlayer/seefoe (5).wav",
-	"brute/sightPlayer/seefoe (6).wav",
-	"brute/sightPlayer/seefoe (7).wav",
-	"brute/sightPlayer/seefoe (8).wav",
-	"brute/sightPlayer/seefoe (9).wav",
-	"brute/sightPlayer/seefoe (10).wav",
-	"brute/sightPlayer/seefoe (11).wav",
-	"brute/sightPlayer/seefoe (12).wav",
-	"brute/sightPlayer/seefoe (13).wav",
+	"brute/sightPlayer/seefoe (1).ogg",
+	"brute/sightPlayer/seefoe (2).ogg",
+	"brute/sightPlayer/seefoe (3).ogg",
+	"brute/sightPlayer/seefoe (4).ogg",
+	"brute/sightPlayer/seefoe (5).ogg",
+	"brute/sightPlayer/seefoe (6).ogg",
+	"brute/sightPlayer/seefoe (7).ogg",
+	"brute/sightPlayer/seefoe (8).ogg",
+	"brute/sightPlayer/seefoe (9).ogg",
+	"brute/sightPlayer/seefoe (10).ogg",
+	"brute/sightPlayer/seefoe (11).ogg",
+	"brute/sightPlayer/seefoe (12).ogg",
+	"brute/sightPlayer/seefoe (13).ogg",
 }
 ENT.SoundTbl_Pain = {
-	"brute/pain/pain (1).wav",
-	"brute/pain/pain (2).wav",
-	"brute/pain/pain (3).wav",
-	"brute/pain/pain (4).wav",
-	"brute/pain/pain (5).wav",
+	"brute/pain/pain (1).ogg",
+	"brute/pain/pain (2).ogg",
+	"brute/pain/pain (3).ogg",
+	"brute/pain/pain (4).ogg",
+	"brute/pain/pain (5).ogg",
 }
 ENT.SoundTbl_CallForHelp = {
 
 }
 ENT.SoundTbl_Death = {
-	"brute/selfDeath/selfDeath (1).wav",
-	"brute/selfDeath/selfDeath (2).wav",
-	"brute/selfDeath/selfDeath (3).wav",
-	"brute/selfDeath/selfDeath (4).wav",
-	"brute/selfDeath/selfDeath (5).wav",
-	"brute/selfDeath/selfDeath (6).wav",
-	"brute/selfDeath/selfDeath (7).wav",
+	"brute/selfDeath/selfDeath (1).ogg",
+	"brute/selfDeath/selfDeath (2).ogg",
+	"brute/selfDeath/selfDeath (3).ogg",
+	"brute/selfDeath/selfDeath (4).ogg",
+	"brute/selfDeath/selfDeath (5).ogg",
+	"brute/selfDeath/selfDeath (6).ogg",
+	"brute/selfDeath/selfDeath (7).ogg",
 }
 ENT.SoundTbl_OnGrenadeSight = {
-	"brute/sightGrenade/sightGrenade (1).wav",
-	"brute/sightGrenade/sightGrenade (2).wav",
-	"brute/sightGrenade/sightGrenade (3).wav",
-	"brute/sightGrenade/sightGrenade (4).wav",
-	"brute/sightGrenade/sightGrenade (5).wav",
-	"brute/sightGrenade/sightGrenade (6).wav",
-	"brute/sightGrenade/sightGrenade (7).wav",
-	"brute/sightGrenade/sightGrenade (8).wav",
-	"brute/sightGrenade/sightGrenade (9).wav",
-	"brute/sightGrenade/sightGrenade (10).wav",
-	"brute/sightGrenade/sightGrenade (11).wav",
-	"brute/sightGrenade/sightGrenade (12).wav",
-	"brute/sightGrenade/sightGrenade (13).wav",
-	"brute/sightGrenade/sightGrenade (14).wav",
-	"brute/sightGrenade/sightGrenade (15).wav",
+	"brute/sightGrenade/sightGrenade (1).ogg",
+	"brute/sightGrenade/sightGrenade (2).ogg",
+	"brute/sightGrenade/sightGrenade (3).ogg",
+	"brute/sightGrenade/sightGrenade (4).ogg",
+	"brute/sightGrenade/sightGrenade (5).ogg",
+	"brute/sightGrenade/sightGrenade (6).ogg",
+	"brute/sightGrenade/sightGrenade (7).ogg",
+	"brute/sightGrenade/sightGrenade (8).ogg",
+	"brute/sightGrenade/sightGrenade (9).ogg",
+	"brute/sightGrenade/sightGrenade (10).ogg",
+	"brute/sightGrenade/sightGrenade (11).ogg",
+	"brute/sightGrenade/sightGrenade (12).ogg",
+	"brute/sightGrenade/sightGrenade (13).ogg",
+	"brute/sightGrenade/sightGrenade (14).ogg",
+	"brute/sightGrenade/sightGrenade (15).ogg",
 }
 ENT.SoundTbl_Fall = {
-	"brute/fall/fall (1).wav",
-	"brute/fall/fall (2).wav",
-	"brute/fall/fall (3).wav",
-	"brute/fall/fall (4).wav",
+	"brute/fall/fall (1).ogg",
+	"brute/fall/fall (2).ogg",
+	"brute/fall/fall (3).ogg",
+	"brute/fall/fall (4).ogg",
 }
 ENT.SoundTbl_GrenadeAttack = {
-	"brute/throwGrenade/throwGrenade (1).wav",
-	"brute/throwGrenade/throwGrenade (2).wav",
-	"brute/throwGrenade/throwGrenade (3).wav",
-	"brute/throwGrenade/throwGrenade (4).wav",
-	"brute/throwGrenade/throwGrenade (5).wav",
-	"brute/throwGrenade/throwGrenade (6).wav",
-	"brute/throwGrenade/throwGrenade (7).wav",
-	"brute/throwGrenade/throwGrenade (8).wav",
+	"brute/throwGrenade/throwGrenade (1).ogg",
+	"brute/throwGrenade/throwGrenade (2).ogg",
+	"brute/throwGrenade/throwGrenade (3).ogg",
+	"brute/throwGrenade/throwGrenade (4).ogg",
+	"brute/throwGrenade/throwGrenade (5).ogg",
+	"brute/throwGrenade/throwGrenade (6).ogg",
+	"brute/throwGrenade/throwGrenade (7).ogg",
+	"brute/throwGrenade/throwGrenade (8).ogg",
 }
 ENT.SoundTbl_BeforeMeleeAttack = {
-	"brute/meleeGrunt/melee (1).wav",
-	"brute/meleeGrunt/melee (2).wav",
-	"brute/meleeGrunt/melee (3).wav",
-	"brute/meleeGrunt/melee (4).wav",
-	"brute/meleeGrunt/melee (5).wav",
-	"brute/meleeGrunt/melee (6).wav",
-	"brute/meleeGrunt/melee (7).wav",
-	"brute/meleeGrunt/melee (8).wav",
-	"brute/meleeGrunt/melee (9).wav",
-	"brute/meleeGrunt/melee (10).wav",
-	"brute/meleeGrunt/melee (11).wav",
+	"brute/meleeGrunt/melee (1).ogg",
+	"brute/meleeGrunt/melee (2).ogg",
+	"brute/meleeGrunt/melee (3).ogg",
+	"brute/meleeGrunt/melee (4).ogg",
+	"brute/meleeGrunt/melee (5).ogg",
+	"brute/meleeGrunt/melee (6).ogg",
+	"brute/meleeGrunt/melee (7).ogg",
+	"brute/meleeGrunt/melee (8).ogg",
+	"brute/meleeGrunt/melee (9).ogg",
+	"brute/meleeGrunt/melee (10).ogg",
+	"brute/meleeGrunt/melee (11).ogg",
 }
 ENT.SoundTbl_LostEnemy = {
-	"brute/lostEnemy/taunt (1).wav",
-	"brute/lostEnemy/taunt (2).wav",
-	"brute/lostEnemy/taunt (3).wav",
-	"brute/lostEnemy/taunt (4).wav",
-	"brute/lostEnemy/taunt (5).wav",
-	"brute/lostEnemy/taunt (6).wav",
-	"brute/lostEnemy/taunt (7).wav",
-	"brute/lostEnemy/taunt (8).wav",
-	"brute/lostEnemy/taunt (9).wav",
-	"brute/lostEnemy/taunt (10).wav",
-	"brute/lostEnemy/taunt (11).wav",
-	"brute/lostEnemy/taunt (12).wav",
-	"brute/lostEnemy/taunt (13).wav",
-	"brute/lostEnemy/taunt (14).wav",
-	"brute/lostEnemy/taunt (15).wav",
+	"brute/lostEnemy/taunt (1).ogg",
+	"brute/lostEnemy/taunt (2).ogg",
+	"brute/lostEnemy/taunt (3).ogg",
+	"brute/lostEnemy/taunt (4).ogg",
+	"brute/lostEnemy/taunt (5).ogg",
+	"brute/lostEnemy/taunt (6).ogg",
+	"brute/lostEnemy/taunt (7).ogg",
+	"brute/lostEnemy/taunt (8).ogg",
+	"brute/lostEnemy/taunt (9).ogg",
+	"brute/lostEnemy/taunt (10).ogg",
+	"brute/lostEnemy/taunt (11).ogg",
+	"brute/lostEnemy/taunt (12).ogg",
+	"brute/lostEnemy/taunt (13).ogg",
+	"brute/lostEnemy/taunt (14).ogg",
+	"brute/lostEnemy/taunt (15).ogg",
 }
 ENT.SoundTbl_Investigate = {
-	"brute/investigate/investigate (1).wav",
-	"brute/investigate/investigate (2).wav",
-	"brute/investigate/investigate (3).wav",
-	"brute/investigate/investigate (4).wav",
-	"brute/investigate/investigate (5).wav",
-	"brute/investigate/investigate (6).wav",
+	"brute/investigate/investigate (1).ogg",
+	"brute/investigate/investigate (2).ogg",
+	"brute/investigate/investigate (3).ogg",
+	"brute/investigate/investigate (4).ogg",
+	"brute/investigate/investigate (5).ogg",
+	"brute/investigate/investigate (6).ogg",
 }
 ENT.SoundTbl_OnReceiveOrder = {
-	"brute/orderRe/orderRe (1).wav",
-	"brute/orderRe/orderRe (2).wav",
-	"brute/orderRe/orderRe (3).wav",
-	"brute/orderRe/orderRe (4).wav",
-	"brute/orderRe/orderRe (5).wav",
-	"brute/orderRe/orderRe (6).wav",
+	"brute/orderRe/orderRe (1).ogg",
+	"brute/orderRe/orderRe (2).ogg",
+	"brute/orderRe/orderRe (3).ogg",
+	"brute/orderRe/orderRe (4).ogg",
+	"brute/orderRe/orderRe (5).ogg",
+	"brute/orderRe/orderRe (6).ogg",
 }
 ENT.SoundTbl_WeaponReload = {
-	"brute/reload/reload (1).wav",
-	"brute/reload/reload (2).wav",
-	"brute/reload/reload (3).wav",
-	"brute/reload/reload (4).wav",
-	"brute/reload/reload (5).wav",
+	"brute/reload/reload (1).ogg",
+	"brute/reload/reload (2).ogg",
+	"brute/reload/reload (3).ogg",
+	"brute/reload/reload (4).ogg",
+	"brute/reload/reload (5).ogg",
 
 }
 ENT.SoundTbl_AllyDeath = {
-	"brute/allyDeath/allyDeath (1).wav",
-	"brute/allyDeath/allyDeath (2).wav",
-	"brute/allyDeath/allyDeath (3).wav",
-	"brute/allyDeath/allyDeath (4).wav",
-	"brute/allyDeath/allyDeath (5).wav",
-	"brute/allyDeath/allyDeath (6).wav",
-	"brute/allyDeath/allyDeath (7).wav",
+	"brute/allyDeath/allyDeath (1).ogg",
+	"brute/allyDeath/allyDeath (2).ogg",
+	"brute/allyDeath/allyDeath (3).ogg",
+	"brute/allyDeath/allyDeath (4).ogg",
+	"brute/allyDeath/allyDeath (5).ogg",
+	"brute/allyDeath/allyDeath (6).ogg",
+	"brute/allyDeath/allyDeath (7).ogg",
 }
 ENT.SoundTbl_Berserk = {
-	"brute/berserk/berserk (1).wav",
-	"brute/berserk/berserk (2).wav",
-	"brute/berserk/berserk (3).wav",
+	"brute/berserk/berserk (1).ogg",
+	"brute/berserk/berserk (2).ogg",
+	"brute/berserk/berserk (3).ogg",
 }
 ENT.SoundTbl_Stuck = {
-	"brute/stuck/stuck (1).wav",
-	"brute/stuck/stuck (2).wav",
-	"brute/stuck/stuck (3).wav",
-	"brute/stuck/stuck (4).wav",
-	"brute/stuck/stuck (5).wav",
-	"brute/stuck/stuck (6).wav",
-	"brute/stuck/stuck (7).wav",
-	"brute/stuck/stuck (8).wav",
-	"brute/stuck/stuck (9).wav",
-	"brute/stuck/stuck (10).wav",
-	"brute/stuck/stuck (11).wav",
-	"brute/stuck/stuck (12).wav",
+	"brute/stuck/stuck (1).ogg",
+	"brute/stuck/stuck (2).ogg",
+	"brute/stuck/stuck (3).ogg",
+	"brute/stuck/stuck (4).ogg",
+	"brute/stuck/stuck (5).ogg",
+	"brute/stuck/stuck (6).ogg",
+	"brute/stuck/stuck (7).ogg",
+	"brute/stuck/stuck (8).ogg",
+	"brute/stuck/stuck (9).ogg",
+	"brute/stuck/stuck (10).ogg",
+	"brute/stuck/stuck (11).ogg",
+	"brute/stuck/stuck (12).ogg",
 }
 ENT.SoundTbl_Transform = {
-	"brute/transform/transform (1).wav",
-	"brute/transform/transform (2).wav",
-	"brute/transform/transform (3).wav",
+	"brute/transform/transform (1).ogg",
+	"brute/transform/transform (2).ogg",
+	"brute/transform/transform (3).ogg",
 }
 
 ENT.bodyParts = {
@@ -350,19 +350,19 @@ function ENT:CustomOnAcceptInput(key,activator,caller,data)
 	if key == "Step" then
 		self:EmitSound("brute/footstep/footstep ("..math.random(1,2)..").ogg", 80, math.random(50,125), 0.5)
 	elseif key == "Melee1" then
-		self:EmitSound("elite/stand_pistol_melee/stand_pistol_melee"..math.random(1,2)..".wav", 80, 100, 1)
-		self:EmitSound("elite/melee/melee"..math.random(1,12)..".wav", 80, 100, 1)
+		self:EmitSound("elite/stand_pistol_melee/stand_pistol_melee"..math.random(1,2)..".ogg", 80, 100, 1)
+		self:EmitSound("elite/melee/melee"..math.random(1,12)..".ogg", 80, 100, 1)
 		
 	elseif key == "Hit" then
 		self:MeleeAttackCode()
 	
 	elseif key == "EvadeR" then
-		self:EmitSound("elite/stand_pistol_evade_right/stand_pistol_evade_right.wav", 80, 100, 1)
-		self:EmitSound("elite/dodge/dodge"..math.random(1,6)..".wav", 80, 100, 1)
+		self:EmitSound("elite/stand_pistol_evade_right/stand_pistol_evade_right.ogg", 80, 100, 1)
+		self:EmitSound("elite/dodge/dodge"..math.random(1,6)..".ogg", 80, 100, 1)
 	
 	elseif key == "EvadeL" then
-		self:EmitSound("elite/stand_pistol_evade_left/stand_pistol_evade_left.wav", 80, 100, 1)
-		self:EmitSound("elite/dodge/dodge"..math.random(1,6)..".wav", 80, 100, 1)
+		self:EmitSound("elite/stand_pistol_evade_left/stand_pistol_evade_left.ogg", 80, 100, 1)
+		self:EmitSound("elite/dodge/dodge"..math.random(1,6)..".ogg", 80, 100, 1)
 	
 	end
 end

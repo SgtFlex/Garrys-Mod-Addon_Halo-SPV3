@@ -112,10 +112,10 @@ function ENT:CustomOnInitialize()
 	self:SetNoDraw(true)
 	self:VJ_ACT_PLAYACTIVITY(self.SpawnAnim,true,self:SequenceDuration(self:LookupSequence(self.SpawnAnim)),false)	
 	self:SetCollisionBounds(Vector(-500, -300, -50), Vector(500, 300, 400))
-	self.engineSound = CreateSound(self, "phantom/engine_hover.wav")
-	self.movingSound = CreateSound(self, "phantom/engine_moving.wav")
-	self.hoverSound = CreateSound(self, "phantom/hover (2).wav")
-	self.gravSound = CreateSound(self, "phantom/grav_lift.wav")
+	self.engineSound = CreateSound(self, "phantom/engine_hover.ogg")
+	self.movingSound = CreateSound(self, "phantom/engine_moving.ogg")
+	self.hoverSound = CreateSound(self, "phantom/hover (2).ogg")
+	self.gravSound = CreateSound(self, "phantom/grav_lift.ogg")
 	self.engineSound:SetSoundLevel(105)
 	self.hoverSound:SetSoundLevel(100)
 	self.gravSound:SetSoundLevel(85)
@@ -406,7 +406,7 @@ function ENT:SetUpGibesOnDeath(dmginfo, hitgroup)
 	return true
 end
 function ENT:CustomGibOnDeathSounds(dmginfo,hitgroup) 
-	self:EmitSound("phantom/phantom_destroyed.wav", 130)
+	self:EmitSound("phantom/phantom_destroyed.ogg", 130)
 	return false
 end -- returning false will make the default gibbing sounds not play
 
@@ -436,7 +436,7 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 	if ((dmginfo:GetDamage() >= self:Health()) and (self.IsDead==false)) then
 		self.IsDead = true
 		self:SetHealth(9999)
-		self:EmitSound("phantom/phantom_windup.wav", 130)
+		self:EmitSound("phantom/phantom_windup.ogg", 130)
 		local effect = EffectData()
 		effect:SetEntity(self)
 		effect:SetOrigin(self:GetPos() + (self:GetForward()*math.random(-350, 350)) + (self:GetRight()*math.random(-200, 200)) + Vector(0,0,math.random(250, 300)))

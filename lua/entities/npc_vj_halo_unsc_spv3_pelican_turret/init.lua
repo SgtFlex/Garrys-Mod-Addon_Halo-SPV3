@@ -37,12 +37,12 @@ ENT.RangeToMeleeDistance = 0 -- How close does it have to be until it uses melee
 ENT.RangeAttackAngleRadius = 180 -- What is the attack angle radius? | 100 = In front of the SNPC | 180 = All around the SNPC
 ENT.DisableDefaultRangeAttackCode = true -- When true, it won't spawn the range attack entity, allowing you to make your own
 ENT.RangeAttackSound = {
-	"warthog/chain_fire (1).wav",
-	"warthog/chain_fire (2).wav",
-	"warthog/chain_fire (3).wav",
-	"warthog/chain_fire (4).wav",
-	"warthog/chain_fire (5).wav",
-	"warthog/chain_fire (6).wav",
+	"warthog/chain_fire (1).ogg",
+	"warthog/chain_fire (2).ogg",
+	"warthog/chain_fire (3).ogg",
+	"warthog/chain_fire (4).ogg",
+	"warthog/chain_fire (5).ogg",
+	"warthog/chain_fire (6).ogg",
 }
 ENT.ConstantlyFaceEnemy = true
 ENT.ConstantlyFaceEnemy_IfAttacking = true -- Should it face the enemy when attacking?

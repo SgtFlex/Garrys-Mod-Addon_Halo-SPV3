@@ -52,7 +52,7 @@ function ENT:CustomOnCollideWithoutRemove(data,phys)
 			self:SetCollisionGroup(20)
 		end
 	end
-	timer.Simple(10, function() if (IsValid(self)) then self:Remove() self:EmitSound("weapons/needler/expire/1.wav") end end)
+	timer.Simple(10, function() if (IsValid(self)) then self:Remove() self:EmitSound("weapons/needler/expire/1.ogg") end end)
 	self.stopTracking=true
 	self:GetPhysicsObject():SetVelocity(self:GetForward()*1000)
 end

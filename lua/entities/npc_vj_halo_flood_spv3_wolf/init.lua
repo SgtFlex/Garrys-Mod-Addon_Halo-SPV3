@@ -74,7 +74,7 @@ function ENT:CustomDeathAnimationCode(dmginfo,hitgroup)
 		return
 	end
 	self.infFormCount = math.Round(self.infFormCount*(GetConVarNumber("vj_spv3_infModifier")))
-	self:EmitSound("carrier/hkillbackgut/hkillbackgut.wav")
+	self:EmitSound("carrier/hkillbackgut/hkillbackgut.ogg")
 	timer.Simple(0.5,function() if self:IsValid() then
 	local BlastInfo = DamageInfo()
 	BlastInfo:SetDamageType(DMG_BLAST)
@@ -149,35 +149,35 @@ function ENT:RangeAttackCode_OverrideProjectilePos(TheProjectile) -- return othe
 end
 
 function ENT:CustomRangeAttackCode_BeforeProjectileSpawn(TheProjectile) 
-	self:EmitSound("infested_wolf/fireGun/fireGun.wav")
+	self:EmitSound("infested_wolf/fireGun/fireGun.ogg")
 end -- This is ran before Spawn() is called
 
 ENT.SoundTbl_Idle = {
-"infested_wolf/idle/idle (1).wav",
-"infested_wolf/idle/idle (2).wav",
-"infested_wolf/idle/idle (3).wav",
-"infested_wolf/idle/idle (4).wav",
-"infested_wolf/idle/idle (5).wav",
-"infested_wolf/idle/idle (6).wav",
+"infested_wolf/idle/idle (1).ogg",
+"infested_wolf/idle/idle (2).ogg",
+"infested_wolf/idle/idle (3).ogg",
+"infested_wolf/idle/idle (4).ogg",
+"infested_wolf/idle/idle (5).ogg",
+"infested_wolf/idle/idle (6).ogg",
 }
 
 ENT.SoundTbl_Alert = {
-	"infested_wolf/spot/spot (1).wav",
-	"infested_wolf/spot/spot (2).wav",
-	"infested_wolf/spot/spot (3).wav",
-	"infested_wolf/spot/spot (4).wav",
-	"infested_wolf/spot/spot (5).wav",
+	"infested_wolf/spot/spot (1).ogg",
+	"infested_wolf/spot/spot (2).ogg",
+	"infested_wolf/spot/spot (3).ogg",
+	"infested_wolf/spot/spot (4).ogg",
+	"infested_wolf/spot/spot (5).ogg",
 }
 
 ENT.SoundTbl_OnKilledEnemy = {
-	"infested_wolf/celebrate/celebrate (1).wav",
-	"infested_wolf/celebrate/celebrate (2).wav",
+	"infested_wolf/celebrate/celebrate (1).ogg",
+	"infested_wolf/celebrate/celebrate (2).ogg",
 }
 
 ENT.SoundTbl_CombatIdle = ENT.SoundTbl_Idle
 
 function ENT:CustomOnAcceptInput(key,activator,caller,data)
 	if key == "Step" then
-		self:EmitSound("infested_shared/walk/walk"..math.random(1,6)..".wav", 70, 100, 1)
+		self:EmitSound("infested_shared/walk/walk"..math.random(1,6)..".ogg", 70, 100, 1)
 	end
 end

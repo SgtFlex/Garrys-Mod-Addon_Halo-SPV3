@@ -45,70 +45,70 @@ ENT.DeathAnimationTime = 2
 ENT.AnimTbl_Death = {"Melee_1"}
 
 ENT.SoundTbl_Idle = {
-"infection_form/infector_sound/infector/loop/infector_sound1.wav",
-"infection_form/infector_sound/infector/loop/infector_sound2.wav",
-"infection_form/infector_sound/infector/loop/infector_sound3.wav",
-"infection_form/infector_sound/infector/loop/infector_sound4.wav",
-"infection_form/infector_sound/infector/loop/infector_sound5.wav",
-"infection_form/infector_sound/infector/loop/infector_sound6.wav",
-"infection_form/infector_sound/infector/loop/infector_sound7.wav",
-"infection_form/infector_sound/infector/loop/infector_sound8.wav",
-"infection_form/infector_sound/infector/loop/infector_sound9.wav",
-"infection_form/infector_sound/infector/loop/infector_sound10.wav",
-"infection_form/infector_sound/infector/loop/infector_sound11.wav",
-"infection_form/infector_sound/infector/loop/infector_sound12.wav",
-"infection_form/infector_sound/infector/loop/infector_sound13.wav",
-"infection_form/infector_sound/infector/loop/infector_sound14.wav",
-"infection_form/infector_sound/infector/loop/infector_sound15.wav",
-"infection_form/infector_sound/infector/loop/infector_sound16.wav",
-"infection_form/infector_sound/infector/loop/infector_sound17.wav",
-"infection_form/infector_sound/infector/loop/infector_sound18.wav",
-"infection_form/infector_sound/infector/loop/infector_sound19.wav",
-"infection_form/infector_sound/infector/loop/infector_sound20.wav",
-"infection_form/infector_sound/infector/loop/infector_sound21.wav",
-"infection_form/infector_sound/infector/loop/infector_sound22.wav",
-"infection_form/infector_sound/infector/loop/infector_sound23.wav",
-"infection_form/infector_sound/infector/loop/infector_sound24.wav",
-"infection_form/infector_sound/infector/loop/infector_sound25.wav",
-"infection_form/infector_sound/infector/loop/infector_sound26.wav",
-"infection_form/infector_sound/infector/loop/infector_sound27.wav",
-"infection_form/infector_sound/infector/loop/infector_sound28.wav",
-"infection_form/infector_sound/infector/loop/infector_sound29.wav",
-"infection_form/infector_sound/infector/loop/infector_sound30.wav"
+"infection_form/infector_sound/infector/loop/infector_sound1.ogg",
+"infection_form/infector_sound/infector/loop/infector_sound2.ogg",
+"infection_form/infector_sound/infector/loop/infector_sound3.ogg",
+"infection_form/infector_sound/infector/loop/infector_sound4.ogg",
+"infection_form/infector_sound/infector/loop/infector_sound5.ogg",
+"infection_form/infector_sound/infector/loop/infector_sound6.ogg",
+"infection_form/infector_sound/infector/loop/infector_sound7.ogg",
+"infection_form/infector_sound/infector/loop/infector_sound8.ogg",
+"infection_form/infector_sound/infector/loop/infector_sound9.ogg",
+"infection_form/infector_sound/infector/loop/infector_sound10.ogg",
+"infection_form/infector_sound/infector/loop/infector_sound11.ogg",
+"infection_form/infector_sound/infector/loop/infector_sound12.ogg",
+"infection_form/infector_sound/infector/loop/infector_sound13.ogg",
+"infection_form/infector_sound/infector/loop/infector_sound14.ogg",
+"infection_form/infector_sound/infector/loop/infector_sound15.ogg",
+"infection_form/infector_sound/infector/loop/infector_sound16.ogg",
+"infection_form/infector_sound/infector/loop/infector_sound17.ogg",
+"infection_form/infector_sound/infector/loop/infector_sound18.ogg",
+"infection_form/infector_sound/infector/loop/infector_sound19.ogg",
+"infection_form/infector_sound/infector/loop/infector_sound20.ogg",
+"infection_form/infector_sound/infector/loop/infector_sound21.ogg",
+"infection_form/infector_sound/infector/loop/infector_sound22.ogg",
+"infection_form/infector_sound/infector/loop/infector_sound23.ogg",
+"infection_form/infector_sound/infector/loop/infector_sound24.ogg",
+"infection_form/infector_sound/infector/loop/infector_sound25.ogg",
+"infection_form/infector_sound/infector/loop/infector_sound26.ogg",
+"infection_form/infector_sound/infector/loop/infector_sound27.ogg",
+"infection_form/infector_sound/infector/loop/infector_sound28.ogg",
+"infection_form/infector_sound/infector/loop/infector_sound29.ogg",
+"infection_form/infector_sound/infector/loop/infector_sound30.ogg"
 }
 
 ENT.SoundTbl_LeapAttackDamage = {
-"infection_form/infector_bite/infector_bite1.wav",
-"infection_form/infector_bite/infector_bite2.wav",
-"infection_form/infector_bite/infector_bite3.wav",
-"infection_form/infector_bite/infector_bite4.wav",
-"infection_form/infector_bite/infector_bite5.wav",
-"infection_form/infector_bite/infector_bite6.wav",
-"infection_form/infector_bite/infector_bite7.wav",
-"infection_form/infector_bite/infector_bite8.wav",
-"infection_form/infector_bite/infector_bite9.wav",
-"infection_form/infector_bite/infector_bite10.wav",
-"infection_form/infector_bite/infector_bite11.wav"
+"infection_form/infector_bite/infector_bite1.ogg",
+"infection_form/infector_bite/infector_bite2.ogg",
+"infection_form/infector_bite/infector_bite3.ogg",
+"infection_form/infector_bite/infector_bite4.ogg",
+"infection_form/infector_bite/infector_bite5.ogg",
+"infection_form/infector_bite/infector_bite6.ogg",
+"infection_form/infector_bite/infector_bite7.ogg",
+"infection_form/infector_bite/infector_bite8.ogg",
+"infection_form/infector_bite/infector_bite9.ogg",
+"infection_form/infector_bite/infector_bite10.ogg",
+"infection_form/infector_bite/infector_bite11.ogg"
 }
 ENT.LeapAttackDamageSoundLevel = 30
 
 ENT.SoundTbl_Death = {
-"infection_form/infection_pop/pop1.wav",
-"infection_form/infection_pop/pop2.wav",
-"infection_form/infection_pop/pop3.wav",
-"infection_form/infection_pop/pop4.wav",
-"infection_form/infection_pop/pop5.wav",
-"infection_form/infection_pop/pop6.wav",
-"infection_form/infection_pop/pop7.wav",
-"infection_form/infection_pop/pop8.wav",
-"infection_form/infection_pop/pop9.wav",
-"infection_form/infection_pop/pop10.wav"
+"infection_form/infection_pop/pop1.ogg",
+"infection_form/infection_pop/pop2.ogg",
+"infection_form/infection_pop/pop3.ogg",
+"infection_form/infection_pop/pop4.ogg",
+"infection_form/infection_pop/pop5.ogg",
+"infection_form/infection_pop/pop6.ogg",
+"infection_form/infection_pop/pop7.ogg",
+"infection_form/infection_pop/pop8.ogg",
+"infection_form/infection_pop/pop9.ogg",
+"infection_form/infection_pop/pop10.ogg"
 }
 ENT.NextSoundTime_Idle1 = 1
 ENT.NextSoundTime_Idle2 = 2
 ---------------------------------------------------------------------------------------------------------------------------------------------
 function ENT:CustomOnInitialize()
-	self.MovingSound = CreateSound(self, "infection_form/infector_sound/infector/move/move"..math.random(1,3)..".wav")
+	self.MovingSound = CreateSound(self, "infection_form/infector_sound/infector/move/move"..math.random(1,3)..".ogg")
 	timer.Simple(0.1, function() 
 		if (IsValid(self)) then
 			self:SetGravity(0.5)

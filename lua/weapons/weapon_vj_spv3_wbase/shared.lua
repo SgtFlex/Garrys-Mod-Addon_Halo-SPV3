@@ -22,7 +22,7 @@ SWEP.Primary.Recoil				= 0.6 -- How much recoil does the player get?
 SWEP.Primary.Burst				= false -- Is it a burst weapon?
 SWEP.Primary.Automatic			= true -- Is it automatic?
 SWEP.Primary.Ammo				= "AR2" -- Ammo type
-SWEP.Primary.Sound				= {"weapons/smg/fire/fire1.wav", "weapons/smg/fire/fire2.wav", "weapons/smg/fire/fire3.wav"}
+SWEP.Primary.Sound				= {"weapons/smg/fire/fire1.ogg", "weapons/smg/fire/fire2.ogg", "weapons/smg/fire/fire3.ogg"}
 SWEP.Primary.HasDistantSound	= false -- Does it have a distant sound when the gun is shot?
 SWEP.Primary.DisableBulletCode	= false -- The bullet won't spawn, this can be used when creating a projectile-based weapon
 SWEP.Primary.Projectile = "obj_vj_spv3_pr_shot"
@@ -33,7 +33,7 @@ SWEP.PrimaryEffects_SpawnShells = false
 SWEP.PrimaryEffects_DynamicLightColor = Color(14, 171, 255)
 SWEP.Primary.Projectile = "obj_vj_spv3_pr_shot"
 SWEP.Primary.ProjectileSpeed = 4000
-SWEP.ReloadSound = {"weapons/smg/reload/reload_full_1.wav", "weapons/smg/reload/reload_full_2.wav"}
+SWEP.ReloadSound = {"weapons/smg/reload/reload_full_1.ogg", "weapons/smg/reload/reload_full_2.ogg"}
 SWEP.NPC_ReloadSound = SWEP.ReloadSound -- Sounds it plays when the base detects the SNPC playing a reload animation
 
 SWEP.NPC_NextPrimaryFire = 2 -- Next time it can use primary fire

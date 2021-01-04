@@ -63,58 +63,58 @@ ENT.NextLeapAttackTime = 2.5 -- How much time until it can use a leap attack?
 	-- ====== Sound File Paths ====== --
 -- Leave blank if you don't want any sounds to play
 ENT.SoundTbl_Idle = {
-"infested_shared/pstcmbt/idle1.wav",
-"infested_shared/pstcmbt/idle2.wav",
-"infested_shared/pstcmbt/idle3.wav",
-"infested_shared/pstcmbt/idle4.wav",
-"infested_shared/pstcmbt/idle5.wav",
-"infested_shared/pstcmbt/idle6.wav",
-"infested_shared/pstcmbt/idle7.wav",
-"infested_shared/pstcmbt/idle8.wav",
-"infested_shared/pstcmbt/idle9.wav",
-"infested_shared/pstcmbt/idle10.wav",
-"infested_shared/pstcmbt/idle11.wav",
-"infested_shared/pstcmbt/idle12.wav",
-"infested_shared/pstcmbt/idle13.wav",
-"infested_shared/pstcmbt/idle14.wav",
-"infested_shared/pstcmbt/idle15.wav",
-"infested_shared/pstcmbt/idle16.wav",
-"infested_shared/pstcmbt/idle17.wav"
+"infested_shared/pstcmbt/idle1.ogg",
+"infested_shared/pstcmbt/idle2.ogg",
+"infested_shared/pstcmbt/idle3.ogg",
+"infested_shared/pstcmbt/idle4.ogg",
+"infested_shared/pstcmbt/idle5.ogg",
+"infested_shared/pstcmbt/idle6.ogg",
+"infested_shared/pstcmbt/idle7.ogg",
+"infested_shared/pstcmbt/idle8.ogg",
+"infested_shared/pstcmbt/idle9.ogg",
+"infested_shared/pstcmbt/idle10.ogg",
+"infested_shared/pstcmbt/idle11.ogg",
+"infested_shared/pstcmbt/idle12.ogg",
+"infested_shared/pstcmbt/idle13.ogg",
+"infested_shared/pstcmbt/idle14.ogg",
+"infested_shared/pstcmbt/idle15.ogg",
+"infested_shared/pstcmbt/idle16.ogg",
+"infested_shared/pstcmbt/idle17.ogg"
 }
 
 ENT.SoundTbl_Pain = {
-"infested_shared/pain/pain1.wav",
-"infested_shared/pain/pain2.wav",
-"infested_shared/pain/pain3.wav",
-"infested_shared/pain/pain4.wav",
-"infested_shared/pain/pain5.wav",
-"infested_shared/pain/pain6.wav",
-"infested_shared/pain/pain7.wav",
-"infested_shared/pain/pain8.wav",
-"infested_shared/pain/pain9.wav",
-"infested_shared/pain/pain10.wav",
-"infested_shared/pain/pain11.wav",
-"infested_shared/pain/pain12.wav",
-"infested_shared/pain/pain13.wav",
-"infested_shared/pain/pain14.wav",
-"infested_shared/pain/pain15.wav",
-"infested_shared/pain/pain16.wav",
-"infested_shared/pain/pain17.wav",
-"infested_shared/pain/pain18.wav"
+"infested_shared/pain/pain1.ogg",
+"infested_shared/pain/pain2.ogg",
+"infested_shared/pain/pain3.ogg",
+"infested_shared/pain/pain4.ogg",
+"infested_shared/pain/pain5.ogg",
+"infested_shared/pain/pain6.ogg",
+"infested_shared/pain/pain7.ogg",
+"infested_shared/pain/pain8.ogg",
+"infested_shared/pain/pain9.ogg",
+"infested_shared/pain/pain10.ogg",
+"infested_shared/pain/pain11.ogg",
+"infested_shared/pain/pain12.ogg",
+"infested_shared/pain/pain13.ogg",
+"infested_shared/pain/pain14.ogg",
+"infested_shared/pain/pain15.ogg",
+"infested_shared/pain/pain16.ogg",
+"infested_shared/pain/pain17.ogg",
+"infested_shared/pain/pain18.ogg"
 }
 
 ENT.SoundTbl_Impact = {
-"infested_shared/hit/floodflesh_hit_small1.wav",
-"infested_shared/hit/floodflesh_hit_small2.wav",
-"infested_shared/hit/floodflesh_hit_small3.wav",
-"infested_shared/hit/floodflesh_hit_small4.wav",
-"infested_shared/hit/floodflesh_hit_small5.wav",
-"infested_shared/hit/floodflesh_hit_small6.wav",
-"infested_shared/hit/floodflesh_hit_small7.wav",
-"infested_shared/hit/floodflesh_hit_small8.wav",
-"infested_shared/hit/floodflesh_hit_small9.wav",
-"infested_shared/hit/floodflesh_hit_small10.wav",
-"infested_shared/hit/floodflesh_hit_small11.wav"
+"infested_shared/hit/floodflesh_hit_small1.ogg",
+"infested_shared/hit/floodflesh_hit_small2.ogg",
+"infested_shared/hit/floodflesh_hit_small3.ogg",
+"infested_shared/hit/floodflesh_hit_small4.ogg",
+"infested_shared/hit/floodflesh_hit_small5.ogg",
+"infested_shared/hit/floodflesh_hit_small6.ogg",
+"infested_shared/hit/floodflesh_hit_small7.ogg",
+"infested_shared/hit/floodflesh_hit_small8.ogg",
+"infested_shared/hit/floodflesh_hit_small9.ogg",
+"infested_shared/hit/floodflesh_hit_small10.ogg",
+"infested_shared/hit/floodflesh_hit_small11.ogg"
 }
 ENT.WeaponSpread = 0
 ENT.Weapon_ShotsSinceLastReload = 0
@@ -198,15 +198,15 @@ end
 ---------------------------------------------------------------------------------------------------------------------------------------------
 function ENT:CustomOnAcceptInput(key,activator,caller,data)
 	if key == "Step" then
-		self:EmitSound("infested_shared/walk/walk"..math.random(1,6)..".wav", 70, 100, 1)
+		self:EmitSound("infested_shared/walk/walk"..math.random(1,6)..".ogg", 70, 100, 1)
 	
 	elseif key == "Melee1" then
-		self:EmitSound("infested_elite/stand_pistol_melee_1/stand_pistol_melee_1.wav", 70, 100, 1)
-		self:EmitSound("infested_shared/melee/melee"..math.random(1,6)..".wav", 70, 100, 1)
+		self:EmitSound("infested_elite/stand_pistol_melee_1/stand_pistol_melee_1.ogg", 70, 100, 1)
+		self:EmitSound("infested_shared/melee/melee"..math.random(1,6)..".ogg", 70, 100, 1)
 	
 	elseif key == "Melee2" then
-		self:EmitSound("infested_elite/stand_pistol_melee_2/stand_pistol_melee_2.wav", 70, 100, 1)
-		self:EmitSound("infested_shared/melee/melee"..math.random(1,6)..".wav", 70, 100, 1)	
+		self:EmitSound("infested_elite/stand_pistol_melee_2/stand_pistol_melee_2.ogg", 70, 100, 1)
+		self:EmitSound("infested_shared/melee/melee"..math.random(1,6)..".ogg", 70, 100, 1)	
 		
 	elseif key == "Hit" then
 		self:MeleeAttackCode()
@@ -274,7 +274,7 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 				self.bodyParts["Inf_Form"]["Removed"]=true
 				self:RemoveAllDecals()
 				self:SetBodygroup(self:FindBodygroupByName(self.bodyParts["Inf_Form"]["Bodygroup"]), 1)
-				self:EmitSound("infection_form/infection_pop/pop1.wav")
+				self:EmitSound("infection_form/infection_pop/pop1.ogg")
 				ParticleEffect("hcea_flood_infected_death", self:LocalToWorld(Vector(0,0,50)), self:GetAngles() + Angle(90,0,0), nil)
 				self:TakeDamage(1000)
 			end
@@ -315,7 +315,7 @@ function ENT:CustomOnTakeDamage_AfterDamage(dmginfo,hitgroup)
 		timer.Create("ShieldDelay"..self:GetCreationID(), self.ShieldDelay, 1, function() 
 			if (IsValid(self)) then
 				self:StopParticles()
-				self:EmitSound(Sound("ambient/energy/whiteflash.wav"),80,115)
+				self:EmitSound(Sound("ambient/energy/whiteflash.ogg"),80,115)
 				ParticleEffectAttach("hcea_shield_recharged",PATTACH_POINT_FOLLOW,self,self:LookupAttachment("origin"))
 				self.ShieldActivated = true
 				self.ShieldCurrentHealth = self.ShieldHealth
@@ -330,7 +330,7 @@ function ENT:CustomOnTakeDamage_ShieldsDestroyed(dmginfo)
 	if self.ShieldActivated == false then return end
 	self:VJ_TASK_COVER_FROM_ENEMY("TASK_RUN_PATH")
 	self.NextChaseTime = CurTime() + 6
-	self:EmitSound(Sound("ambient/energy/weld" .. math.random(1,2) .. ".wav"),80,100)
+	self:EmitSound(Sound("ambient/energy/weld" .. math.random(1,2) .. ".ogg"),80,100)
 	self:StopParticles()
 	ParticleEffectAttach("hcea_shield_disperse",PATTACH_POINT_FOLLOW,self,self:LookupAttachment("origin"))
 	ParticleEffectAttach("hcea_shield_enabled",PATTACH_POINT_FOLLOW,self,self:LookupAttachment("origin"))

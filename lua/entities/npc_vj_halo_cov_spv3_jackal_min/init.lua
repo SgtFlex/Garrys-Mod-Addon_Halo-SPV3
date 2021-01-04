@@ -152,47 +152,47 @@ end
 ---------------------------------------------------------------------------------------------------------------------------------------------
 
 ENT.SoundTbl_OnKilledEnemy = {
-"jackal/tnt/tnt9.wav",
-"jackal/tnt/tnt10.wav",
-"jackal/tnt/tnt11.wav",
-"jackal/tnt/tnt12.wav",
-"jackal/tnt/tnt13.wav",
-"jackal/tnt/tnt14.wav"
+"jackal/tnt/tnt9.ogg",
+"jackal/tnt/tnt10.ogg",
+"jackal/tnt/tnt11.ogg",
+"jackal/tnt/tnt12.ogg",
+"jackal/tnt/tnt13.ogg",
+"jackal/tnt/tnt14.ogg"
 }
 
 ENT.SoundTbl_Alert = {
-"jackal/seefoe/seefoe1.wav",
-"jackal/seefoe/seefoe2.wav",
-"jackal/seefoe/seefoe3.wav",
-"jackal/seefoe/seefoe4.wav",
-"jackal/seefoe/seefoe5.wav",
-"jackal/seefoe/seefoe6.wav",
-"jackal/seefoe/seefoe7.wav",
-"jackal/seefoe/seefoe8.wav",
-"jackal/seefoe/seefoe9.wav"
+"jackal/seefoe/seefoe1.ogg",
+"jackal/seefoe/seefoe2.ogg",
+"jackal/seefoe/seefoe3.ogg",
+"jackal/seefoe/seefoe4.ogg",
+"jackal/seefoe/seefoe5.ogg",
+"jackal/seefoe/seefoe6.ogg",
+"jackal/seefoe/seefoe7.ogg",
+"jackal/seefoe/seefoe8.ogg",
+"jackal/seefoe/seefoe9.ogg"
 }
 
 ENT.SoundTbl_Pain = {
-"jackal/pain/pain1.wav",
-"jackal/pain/pain2.wav",
-"jackal/pain/pain3.wav",
-"jackal/pain/pain4.wav",
-"jackal/pain/pain5.wav",
-"jackal/pain/pain6.wav",
-"jackal/pain/pain7.wav",
-"jackal/pain/pain8.wav",
-"jackal/pain/pain9.wav",
-"jackal/pain/pain10.wav",
-"jackal/pain/pain11.wav",
-"jackal/pain/pain12.wav",
-"jackal/pain/pain13.wav",
-"jackal/pain/pain14.wav",
-"jackal/pain/pain15.wav",
-"jackal/pain/pain16.wav",
-"jackal/pain/pain17.wav",
-"jackal/pain/pain18.wav",
-"jackal/pain/pain19.wav",
-"jackal/pain/pain20.wav"
+"jackal/pain/pain1.ogg",
+"jackal/pain/pain2.ogg",
+"jackal/pain/pain3.ogg",
+"jackal/pain/pain4.ogg",
+"jackal/pain/pain5.ogg",
+"jackal/pain/pain6.ogg",
+"jackal/pain/pain7.ogg",
+"jackal/pain/pain8.ogg",
+"jackal/pain/pain9.ogg",
+"jackal/pain/pain10.ogg",
+"jackal/pain/pain11.ogg",
+"jackal/pain/pain12.ogg",
+"jackal/pain/pain13.ogg",
+"jackal/pain/pain14.ogg",
+"jackal/pain/pain15.ogg",
+"jackal/pain/pain16.ogg",
+"jackal/pain/pain17.ogg",
+"jackal/pain/pain18.ogg",
+"jackal/pain/pain19.ogg",
+"jackal/pain/pain20.ogg"
 }
 
 ENT.SoundTbl_CallForHelp = {
@@ -200,26 +200,26 @@ ENT.SoundTbl_CallForHelp = {
 }
 
 ENT.SoundTbl_Death = {
-"jackal/dth/dth1.wav",
-"jackal/dth/dth2.wav",
-"jackal/dth/dth3.wav",
-"jackal/dth/dth4.wav",
-"jackal/dth/dth5.wav",
-"jackal/dth/dth6.wav",
-"jackal/dth/dth7.wav",
-"jackal/dth/dth8.wav",
-"jackal/dth/dth9.wav",
-"jackal/dth/dth10.wav",
-"jackal/dth/dth11.wav",
-"jackal/dth/dth12.wav",
-"jackal/dth/dth13.wav",
-"jackal/dth/dth14.wav",
-"jackal/dth/dth15.wav"
+"jackal/dth/dth1.ogg",
+"jackal/dth/dth2.ogg",
+"jackal/dth/dth3.ogg",
+"jackal/dth/dth4.ogg",
+"jackal/dth/dth5.ogg",
+"jackal/dth/dth6.ogg",
+"jackal/dth/dth7.ogg",
+"jackal/dth/dth8.ogg",
+"jackal/dth/dth9.ogg",
+"jackal/dth/dth10.ogg",
+"jackal/dth/dth11.ogg",
+"jackal/dth/dth12.ogg",
+"jackal/dth/dth13.ogg",
+"jackal/dth/dth14.ogg",
+"jackal/dth/dth15.ogg"
 }
 ---------------------------------------------------------------------------------------------------------------------------------------------
 function ENT:CustomOnAcceptInput(key,activator,caller,data)
 	if key == "Step" then
-		self:EmitSound("elite/shared/walk/walk ("..math.random(1,6)..").wav", 80, 100, 1)
+		self:EmitSound("elite/shared/walk/walk ("..math.random(1,6)..").ogg", 80, 100, 1)
 	elseif key == "Pain" then
 		self:EmitSound(VJ_PICKRANDOMTABLE(self.SoundTbl_Pain))
 	end

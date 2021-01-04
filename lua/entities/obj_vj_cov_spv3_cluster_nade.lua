@@ -40,7 +40,7 @@ ENT.RadiusDamageUseRealisticRadius = true -- Should the damage decrease the fart
 ENT.RadiusDamageType = DMG_BLAST -- Damage type
 ENT.RadiusDamageForce = 100 -- Put the force amount it should apply | false = Don't apply any force
 ENT.DecalTbl_DeathDecals = {"Scorch"}
-ENT.SoundTbl_Death = {"grenades/cluster nade/explode/explode (1).wav","grenades/cluster nade/explode/explode (2).wav"}
+ENT.SoundTbl_Death = {"grenades/cluster nade/explode/explode (1).ogg","grenades/cluster nade/explode/explode (2).ogg"}
 -- Custom
 ENT.FussTime = 3
 ENT.TimeSinceSpawn = 0

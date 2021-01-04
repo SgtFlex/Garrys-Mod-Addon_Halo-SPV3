@@ -2,7 +2,7 @@ if (!file.Exists("autorun/vj_base_autorun.lua","LUA")) then return end
 include('weapons/weapon_vj_spv3_wbase/shared.lua')
 
 SWEP.WorldModel					= "models/hce/spv3/weapons/cov/shredder.mdl"
-SWEP.Primary.Sound				= {"weapons/shredder/fire/Shredder_shot_1.wav","weapons/shredder/fire/Shredder_shot_2.wav","weapons/shredder/fire/Shredder_shot_3.wav"}
+SWEP.Primary.Sound				= {"weapons/shredder/fire/Shredder_shot_1.ogg","weapons/shredder/fire/Shredder_shot_2.ogg","weapons/shredder/fire/Shredder_shot_3.ogg"}
 SWEP.ReloadSound = {"weapons/shredder/reload/fp_needlerifle_ready01.ogg"}
 SWEP.NPC_ReloadSound = SWEP.ReloadSound -- Sounds it plays when the base detects the SNPC playing a reload animation
 SWEP.Primary.TracerType 		= "AirboatGunHeavyTracer" -- Tracer type (Examples: AR2)

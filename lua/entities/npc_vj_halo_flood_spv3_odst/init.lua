@@ -29,7 +29,7 @@ function ENT:CustomDeathAnimationCode(dmginfo,hitgroup)
 		return
 	end
 	self.infFormCount = math.Round(self.infFormCount*(GetConVarNumber("vj_spv3_infModifier")))
-	self:EmitSound("carrier/hkillbackgut/hkillbackgut.wav")
+	self:EmitSound("carrier/hkillbackgut/hkillbackgut.ogg")
 	timer.Simple(1.3,function() if self:IsValid() then
 	local BlastInfo = DamageInfo()
 	BlastInfo:SetDamageType(DMG_BLAST)

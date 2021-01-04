@@ -14,7 +14,7 @@ ENT.RadiusDamageType = DMG_SLASH -- Damage type
 ENT.ShakeWorldOnDeath = false -- Should the world shake when the projectile hits something?
 ENT.DecalTbl_DeathDecals = {"FadingScorch"}
 ENT.SoundTbl_Idle = {""}
-ENT.SoundTbl_OnCollide = {"weapons/needler/impact/whistle1.wav","weapons/needler/impact/whistle2.wav","weapons/needler/impact/whistle3.wav","weapons/needler/impact/whistle4.wav","weapons/needler/impact/whistle5.wav","weapons/needler/impact/whistle6.wav",}
+ENT.SoundTbl_OnCollide = {"weapons/needler/impact/whistle1.ogg","weapons/needler/impact/whistle2.ogg","weapons/needler/impact/whistle3.ogg","weapons/needler/impact/whistle4.ogg","weapons/needler/impact/whistle5.ogg","weapons/needler/impact/whistle6.ogg",}
 ENT.RemoveOnHit = false -- Should it remove itself when it touches something? | It will run the hit sound, place a decal, etc.
 ENT.CollideCodeWithoutRemoving = true -- If RemoveOnHit is set to false, you can still make the projectile deal damage, place a decal, etc.
 
@@ -57,7 +57,7 @@ function ENT:CustomOnCollideWithoutRemove(data,phys)
 		end
 	end
 	if (self.needles >= 7) then
-		self:EmitSound("weapons/needler/super/superneedleboom.wav")
+		self:EmitSound("weapons/needler/super/superneedleboom.ogg")
 		local BlastInfo = DamageInfo()
 		BlastInfo:SetDamageType(DMG_BLAST)
 		BlastInfo:SetDamage(40 * GetConVarNumber("vj_spv3_damageModifier"))
@@ -78,7 +78,7 @@ function ENT:CustomOnCollideWithoutRemove(data,phys)
 	timer.Simple(6, function() 
 		if (IsValid(self)) then 
 			self:Remove() 
-			self:EmitSound("weapons/needler/expire/1.wav") 
+			self:EmitSound("weapons/needler/expire/1.ogg") 
 			ParticleEffect("hcea_hunter_needler_pistol_impact", self:LocalToWorld(Vector(0,0,0)), self:GetAngles(), nil)
 		end 
 	end)

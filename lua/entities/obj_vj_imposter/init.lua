@@ -79,7 +79,7 @@ local spreadRadius = 175
 		self:Remove()
 	else
 		self:SetNoDraw(true)
-		self:EmitSound("carrier/hkillbackgut/hkillbackgut.wav")
+		self:EmitSound("carrier/hkillbackgut/hkillbackgut.ogg")
 		timer.Simple(1, function()
 			if (GetConVarNumber("vj_spv3_bonusInfForms")==0) then
 				self.HasDeathRagdoll = true 

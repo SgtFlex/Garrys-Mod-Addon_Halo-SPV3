@@ -3,7 +3,7 @@ include('weapons/weapon_vj_spv3_wbase/shared.lua')
 
 SWEP.WorldModel					= "models/hce/spv3/weapons/cov/focusrifle.mdl"
 SWEP.Primary.Sound				= {}
-SWEP.ReloadSound = {"weapons/brute shot/reload/reload_full_1.wav", "weapons/brute shot/reload/reload_full_2.wav"}
+SWEP.ReloadSound = {"weapons/brute shot/reload/reload_full_1.ogg", "weapons/brute shot/reload/reload_full_2.ogg"}
 SWEP.NPC_ReloadSound = SWEP.ReloadSound -- Sounds it plays when the base detects the SNPC playing a reload animation
 SWEP.Primary.TracerType 		= "ToolTracer" -- Tracer type (Examples: AR2)
 SWEP.Primary.Damage				= 1
@@ -16,7 +16,7 @@ SWEP.NPC_HasReload = false
 SWEP.PrintName					= "Focus Rifle"
 
 function SWEP:CustomOnPrimaryAttack_BeforeShoot()
-	self.firingSound = CreateSound(self, "weapons/focus rifle/fire/OMG_LAZOR_2.wav")
+	self.firingSound = CreateSound(self, "weapons/focus rifle/fire/OMG_LAZOR_2.ogg")
 	self.firingSound:Play()
 	if (!timer.Exists("currentFiring"..self:GetCreationID())) then
 		timer.Create("currentFiring"..self:GetCreationID(), 0.051, 1, function() if (IsValid(self)) then self.firingSound:Stop() end end)

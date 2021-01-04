@@ -55,7 +55,7 @@ ENT.NextLeapAttackTime = 0 -- How much time until it can use a leap attack?
 
 function ENT:CustomOnAcceptInput(key,activator,caller,data)
 	if key == "Step" then
-		self:EmitSound("infested_shared/walk/walk"..math.random(1,6)..".wav", 70, 100, 1)
+		self:EmitSound("infested_shared/walk/walk"..math.random(1,6)..".ogg", 70, 100, 1)
 	elseif key == "Pain" then
 		self:EmitSound((self.SoundTbl_Pain[math.random(1, #(self.SoundTbl_Pain))]))
 	end
@@ -67,20 +67,20 @@ end
 -----------------------------------------------*/
 
 ENT.SoundTbl_Idle = {
-"blindwolf/idle/idle (1).wav",
-"blindwolf/idle/idle (2).wav",
-"blindwolf/idle/idle (3).wav",
+"blindwolf/idle/idle (1).ogg",
+"blindwolf/idle/idle (2).ogg",
+"blindwolf/idle/idle (3).ogg",
 }
 
 ENT.SoundTbl_MeleeAttack = {
-	"blindwolf/melee/melee (1).wav",
-	"blindwolf/melee/melee (2).wav",
-	"blindwolf/melee/melee (3).wav",
+	"blindwolf/melee/melee (1).ogg",
+	"blindwolf/melee/melee (2).ogg",
+	"blindwolf/melee/melee (3).ogg",
 }
 
 ENT.SoundTbl_Death = {
-	"blindwolf/death/death (1).wav",
-	"blindwolf/death/death (2).wav",
-	"blindwolf/death/death (3).wav",
+	"blindwolf/death/death (1).ogg",
+	"blindwolf/death/death (2).ogg",
+	"blindwolf/death/death (3).ogg",
 
 }

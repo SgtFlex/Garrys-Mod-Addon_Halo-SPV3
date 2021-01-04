@@ -45,30 +45,30 @@ ENT.MeleeAttackDamageType = DMG_SLASH
 	-- ====== Sound File Paths ====== --
 -- Leave blank if you don't want any sounds to play
 ENT.SoundTbl_Idle = {
-"carrier/idle/caridle70_1.wav",
-"carrier/idle/caridle70_2.wav",
-"carrier/idle/caridle70_3.wav",
-"carrier/idle/caridle70_4.wav",
-"carrier/idle/caridle70_5.wav",
-"carrier/idle_27/caridle27_1.wav",
-"carrier/idle_27/caridle27_2.wav",
-"carrier/idle_27/caridle27_3.wav",
-"carrier/idle_27/caridle27_4.wav",
-"carrier/idle_27/caridle27_5.wav"
+"carrier/idle/caridle70_1.ogg",
+"carrier/idle/caridle70_2.ogg",
+"carrier/idle/caridle70_3.ogg",
+"carrier/idle/caridle70_4.ogg",
+"carrier/idle/caridle70_5.ogg",
+"carrier/idle_27/caridle27_1.ogg",
+"carrier/idle_27/caridle27_2.ogg",
+"carrier/idle_27/caridle27_3.ogg",
+"carrier/idle_27/caridle27_4.ogg",
+"carrier/idle_27/caridle27_5.ogg"
 }
 
 ENT.SoundTbl_Impact = {
-"infested_shared/hit/floodflesh_hit_small1.wav",
-"infested_shared/hit/floodflesh_hit_small2.wav",
-"infested_shared/hit/floodflesh_hit_small3.wav",
-"infested_shared/hit/floodflesh_hit_small4.wav",
-"infested_shared/hit/floodflesh_hit_small5.wav",
-"infested_shared/hit/floodflesh_hit_small6.wav",
-"infested_shared/hit/floodflesh_hit_small7.wav",
-"infested_shared/hit/floodflesh_hit_small8.wav",
-"infested_shared/hit/floodflesh_hit_small9.wav",
-"infested_shared/hit/floodflesh_hit_small10.wav",
-"infested_shared/hit/floodflesh_hit_small11.wav"
+"infested_shared/hit/floodflesh_hit_small1.ogg",
+"infested_shared/hit/floodflesh_hit_small2.ogg",
+"infested_shared/hit/floodflesh_hit_small3.ogg",
+"infested_shared/hit/floodflesh_hit_small4.ogg",
+"infested_shared/hit/floodflesh_hit_small5.ogg",
+"infested_shared/hit/floodflesh_hit_small6.ogg",
+"infested_shared/hit/floodflesh_hit_small7.ogg",
+"infested_shared/hit/floodflesh_hit_small8.ogg",
+"infested_shared/hit/floodflesh_hit_small9.ogg",
+"infested_shared/hit/floodflesh_hit_small10.ogg",
+"infested_shared/hit/floodflesh_hit_small11.ogg"
 }
 
 function ENT:CustomOnMeleeAttack_BeforeChecks()
@@ -96,7 +96,7 @@ function ENT:CustomDeathAnimationCode(dmginfo,hitgroup)
 		return
 	end
 	self.infFormCount = math.Round(self.infFormCount*(GetConVarNumber("vj_spv3_infModifier")))
-	self:EmitSound("carrier/hkillbackgut/hkillbackgut.wav")
+	self:EmitSound("carrier/hkillbackgut/hkillbackgut.ogg")
 	timer.Simple(1.3,function() if self:IsValid() then
 	local BlastInfo = DamageInfo()
 	BlastInfo:SetDamageType(DMG_BLAST)
@@ -169,10 +169,10 @@ end
 ---------------------------------------------------------------------------------------------------------------------------------------------
 function ENT:CustomOnAcceptInput(key,activator,caller,data)
 	if key == "Step" then
-		self:EmitSound("carrier/carrier_move/carrier_form_move/carrier_walk"..math.random(1,10)..".wav", 60, 100, 1)
+		self:EmitSound("carrier/carrier_move/carrier_form_move/carrier_walk"..math.random(1,10)..".ogg", 60, 100, 1)
 	
 	elseif key == "Melee" then
-		self:EmitSound("carrier/hkillbackgut/hkillbackgut.wav", 70, 100, 1)
+		self:EmitSound("carrier/hkillbackgut/hkillbackgut.ogg", 70, 100, 1)
 		
 	elseif key == "Hit" then
 		self:MeleeAttackCode()

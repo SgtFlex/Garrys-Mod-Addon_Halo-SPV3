@@ -38,9 +38,9 @@ ENT.ConstantlyFaceEnemy = true
 ENT.ConstantlyFaceEnemy_IfAttacking = true -- Should it face the enemy when attacking?
 ENT.RangeAttackAnimationFaceEnemy = false
 ENT.RangeAttackSound = {
-	"weapons/rocket launcher/fire/fire_1.wav",
-	"weapons/rocket launcher/fire/fire_2.wav",
-	"weapons/rocket launcher/fire/fire_3.wav"
+	"weapons/rocket launcher/fire/fire_1.ogg",
+	"weapons/rocket launcher/fire/fire_2.ogg",
+	"weapons/rocket launcher/fire/fire_3.ogg"
 }
 function ENT:CustomRangeAttackCode_BeforeProjectileSpawn(TheProjectile) 
 	self:EmitSound(VJ_PICK(self.RangeAttackSound), 105)

@@ -24,7 +24,7 @@ function ENT:CustomDeathAnimationCode(dmginfo,hitgroup)
 		return
 	end
 	self.infFormCount = math.Round(self.infFormCount*(GetConVarNumber("vj_spv3_infModifier")))
-	self:EmitSound("carrier/hkillbackgut/hkillbackgut.wav")
+	self:EmitSound("carrier/hkillbackgut/hkillbackgut.ogg")
 	timer.Simple(1.3,function() if self:IsValid() then
 	local BlastInfo = DamageInfo()
 	BlastInfo:SetDamageType(DMG_BLAST)
@@ -97,7 +97,7 @@ end
 function ENT:CustomOnTakeDamage_ShieldsDestroyed(dmginfo)
 	if self.ShieldActivated == false then return end
 	self.NextChaseTime = CurTime() + 6
-	self:EmitSound(Sound("ambient/energy/weld" .. math.random(1,2) .. ".wav"),80,100)
+	self:EmitSound(Sound("ambient/energy/weld" .. math.random(1,2) .. ".ogg"),80,100)
 	self:StopParticles()
 	ParticleEffectAttach("hcea_shield_disperse",PATTACH_POINT_FOLLOW,self,self:LookupAttachment("origin"))
 	ParticleEffectAttach("hcea_shield_enabled",PATTACH_POINT_FOLLOW,self,self:LookupAttachment("origin"))

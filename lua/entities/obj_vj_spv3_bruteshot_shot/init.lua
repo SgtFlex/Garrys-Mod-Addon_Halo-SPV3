@@ -16,7 +16,7 @@ ENT.RadiusDamageForce = 50 -- Put the force amount it should apply | false = Don
 ENT.ShakeWorldOnDeath = false -- Should the world shake when the projectile hits something?
 ENT.DecalTbl_DeathDecals = {"FadingScorch"}
 ENT.SoundTbl_Idle = {""}
-ENT.SoundTbl_OnCollide = {"weapons/brute shot/impact/brute_round_expl_emp1.wav", "weapons/brute shot/impact/brute_round_expl_emp2.wav"}
+ENT.SoundTbl_OnCollide = {"weapons/brute shot/impact/brute_round_expl_emp1.ogg", "weapons/brute shot/impact/brute_round_expl_emp2.ogg"}
 ---------------------------------------------------------------------------------------------------------------------------------------------
 
 function ENT:CustomOnInitialize()
@@ -24,7 +24,7 @@ function ENT:CustomOnInitialize()
 	self:SetNoDraw(true)
 	ParticleEffectAttach("grenade_hornet_trail", PATTACH_ABSORIGIN_FOLLOW, self, 0)
 	ParticleEffectAttach("grenade_hornet_trail_glow", PATTACH_ABSORIGIN_FOLLOW, self, 0)
-	self.soundTrail = CreateSound(self, "weapons/brute shot/trail/loop_1.wav")
+	self.soundTrail = CreateSound(self, "weapons/brute shot/trail/loop_1.ogg")
 	self.soundTrail:Play()
 end
 ---------------------------------------------------------------------------------------------------------------------------------------------

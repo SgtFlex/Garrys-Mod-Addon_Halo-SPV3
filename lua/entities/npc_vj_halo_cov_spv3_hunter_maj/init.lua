@@ -35,7 +35,7 @@ ENT.lights = {
 function ENT:CustomOnRangeAttack_BeforeStartTimer()
 	ParticleEffectAttach("hcea_hunter_frg_charge",PATTACH_POINT_FOLLOW,self,1)
 	timer.Simple(0.8,function() if self:IsValid() then self:StopParticles() end end)
-	self:EmitSound("hunter/hunter_cannon/hunter_charge.wav", 80, 100, 1)
+	self:EmitSound("hunter/hunter_cannon/hunter_charge.ogg", 80, 100, 1)
 end
 ---------------------------------------------------------------------------------------------------------------------------------------------
 function ENT:CustomInitialize()
@@ -55,7 +55,7 @@ end
 ---------------------------------------------------------------------------------------------------------------------------------------------
 function ENT:CustomRangeAttackCode_AfterProjectileSpawn(TheProjectile)
 	util.ScreenShake(self:GetPos(),16,100,0.8,700)
-	self:EmitSound("weapons/fuel rod gun/fire/flak_fire_handheld_"..math.random(1,5)..".wav", 80, 100, 1)
+	self:EmitSound("weapons/fuel rod gun/fire/flak_fire_handheld_"..math.random(1,5)..".ogg", 80, 100, 1)
 	ParticleEffectAttach("hcea_hunter_frg_muzzle",PATTACH_POINT_FOLLOW,self,1)
 end
 ---------------------------------------------------------------------------------------------------------------------------------------------

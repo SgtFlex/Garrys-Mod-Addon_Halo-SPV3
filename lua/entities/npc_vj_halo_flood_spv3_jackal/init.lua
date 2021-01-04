@@ -55,61 +55,61 @@ ENT.NextLeapAttackTime = 0 -- How much time until it can use a leap attack?
 	-- ====== Sound File Paths ====== --
 -- Leave blank if you don't want any sounds to play
 ENT.SoundTbl_Idle = {
-"infected_jackal/idle/idle 1.wav",
-"infected_jackal/idle/idle 2.wav",
-"infected_jackal/idle/idle 3.wav",
+"infected_jackal/idle/idle 1.ogg",
+"infected_jackal/idle/idle 2.ogg",
+"infected_jackal/idle/idle 3.ogg",
 }
 ENT.IdleSoundChance = 5
 ENT.SoundTbl_Impact = {
-"infested_shared/hit/floodflesh_hit_small1.wav",
-"infested_shared/hit/floodflesh_hit_small2.wav",
-"infested_shared/hit/floodflesh_hit_small3.wav",
-"infested_shared/hit/floodflesh_hit_small4.wav",
-"infested_shared/hit/floodflesh_hit_small5.wav",
-"infested_shared/hit/floodflesh_hit_small6.wav",
-"infested_shared/hit/floodflesh_hit_small7.wav",
-"infested_shared/hit/floodflesh_hit_small8.wav",
-"infested_shared/hit/floodflesh_hit_small9.wav",
-"infested_shared/hit/floodflesh_hit_small10.wav",
-"infested_shared/hit/floodflesh_hit_small11.wav"
+"infested_shared/hit/floodflesh_hit_small1.ogg",
+"infested_shared/hit/floodflesh_hit_small2.ogg",
+"infested_shared/hit/floodflesh_hit_small3.ogg",
+"infested_shared/hit/floodflesh_hit_small4.ogg",
+"infested_shared/hit/floodflesh_hit_small5.ogg",
+"infested_shared/hit/floodflesh_hit_small6.ogg",
+"infested_shared/hit/floodflesh_hit_small7.ogg",
+"infested_shared/hit/floodflesh_hit_small8.ogg",
+"infested_shared/hit/floodflesh_hit_small9.ogg",
+"infested_shared/hit/floodflesh_hit_small10.ogg",
+"infested_shared/hit/floodflesh_hit_small11.ogg"
 }
 ENT.SoundTbl_Alert = {
-	"infected_jackal/spot/spot enemy 1.wav",
-	"infected_jackal/spot/spot enemy 2.wav",
-	"infected_jackal/spot/spot enemy 3.wav",
+	"infected_jackal/spot/spot enemy 1.ogg",
+	"infected_jackal/spot/spot enemy 2.ogg",
+	"infected_jackal/spot/spot enemy 3.ogg",
 }
 ENT.SoundTbl_Pain = {
-	"infected_jackal/ping_soft/hurt 1.wav",
-	"infected_jackal/ping_soft/hurt 2.wav",
-	"infected_jackal/ping_soft/hurt 3.wav",
-	"infected_jackal/ping_soft/hurt 4.wav",
+	"infected_jackal/ping_soft/hurt 1.ogg",
+	"infected_jackal/ping_soft/hurt 2.ogg",
+	"infected_jackal/ping_soft/hurt 3.ogg",
+	"infected_jackal/ping_soft/hurt 4.ogg",
 }
 ENT.SoundTbl_OnKilledEnemy = 
 {
-	"infected_jackal/celebrate/killed player 1.wav",
-	"infected_jackal/celebrate/killed player 2.wav",
+	"infected_jackal/celebrate/killed player 1.ogg",
+	"infected_jackal/celebrate/killed player 2.ogg",
 }
 ENT.SoundTbl_MeleeAttack = {
-	"infected_jackal/melee/attack 1.wav",
-	"infected_jackal/melee/attack 2.wav",
-	"infected_jackal/melee/attack 3.wav",
-	"infected_jackal/melee/attack 4.wav",
+	"infected_jackal/melee/attack 1.ogg",
+	"infected_jackal/melee/attack 2.ogg",
+	"infected_jackal/melee/attack 3.ogg",
+	"infected_jackal/melee/attack 4.ogg",
 }
 ENT.SoundTbl_Death = {
-	"infected_jackal/ping_hard/death 1.wav",
-	"infected_jackal/ping_hard/death 2.wav",
-	"infected_jackal/ping_hard/death 3.wav",
-	"infected_jackal/ping_hard/death 4.wav",
+	"infected_jackal/ping_hard/death 1.ogg",
+	"infected_jackal/ping_hard/death 2.ogg",
+	"infected_jackal/ping_hard/death 3.ogg",
+	"infected_jackal/ping_hard/death 4.ogg",
 }
 
 ENT.SoundTbl_LeapAttackJump = {
-	"infected_jackal/leap/leap attack 1.wav",
-	"infected_jackal/leap/leap attack 2.wav",
+	"infected_jackal/leap/leap attack 1.ogg",
+	"infected_jackal/leap/leap attack 2.ogg",
 }
 ENT.SoundTbl_Expl = {
-	"infected_jackal/explode/mutilation_1.wav",
-	"infected_jackal/explode/mutilation_2.wav",
-	"infected_jackal/explode/mutilation_3.wav",
+	"infected_jackal/explode/mutilation_1.ogg",
+	"infected_jackal/explode/mutilation_2.ogg",
+	"infected_jackal/explode/mutilation_3.ogg",
 }
 
 ---------------------------------------------------------------------------------------------------------------------------------------------
@@ -208,7 +208,7 @@ end
 ---------------------------------------------------------------------------------------------------------------------------------------------
 function ENT:CustomOnAcceptInput(key,activator,caller,data)
 	if key == "Step" then
-		self:EmitSound("infested_shared/walk/walk"..math.random(1,6)..".wav", 70, 100, 1)
+		self:EmitSound("infested_shared/walk/walk"..math.random(1,6)..".ogg", 70, 100, 1)
 	elseif key == "Pain" then
 		self:EmitSound((self.SoundTbl_Pain[math.random(1, #(self.SoundTbl_Pain))]))
 	end
