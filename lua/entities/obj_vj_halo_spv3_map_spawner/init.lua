@@ -145,6 +145,11 @@ ENT.nav = nil
 ENT.spv3Npcs = {}
 ENT.spv3NpcCount = 0
 function ENT:Initialize()
+	self.EntitiesToSpawn = {
+	{EntityName = "Phantom", SpawnPosition = {vForward=0, vRight=0, vUp=0}, Entities = {"npc_vj_halo_cov_spv3_phantom"}, Weight = GetConVar("vj_spv3_mapCov"):GetFloat()},
+	{EntityName = "Pelican", SpawnPosition = {vForward=0, vRight=0, vUp=0}, Entities = {"npc_vj_halo_unsc_spv3_pelican"}, Weight = GetConVar("vj_spv3_mapUNSC"):GetFloat()},
+	{EntityName = "Biomass", SpawnPosition = {vForward=0, vRight=0, vUp=0}, Entities = {"sent_vj_flood_spv3_biomass"}, Weight = GetConVar("vj_spv3_mapFlood"):GetFloat()},
+	}
 	self:SetPos(Vector(0,0,0))
 	self.nav = navmesh.Find(self:GetPos(), 50, 10, 10)[1]
 	if self:GetModel() == "models/error.mdl" then

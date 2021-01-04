@@ -11,7 +11,7 @@
 	"$phongexponent"				"15"
 	"$phongboost"					"10"
 	"$phongfresnelranges"			"[3 5 7]"
-	"$phongtint" "[0.1 0.5 0.1]"
+	"$phongtint" "[0.1 0.25 0.1]"
 	"$phongalbedotint" 1
 	"$phongexponenttexture" "models\Dark_Souls\shared\souls_green"
 	"$phongwarptexture" "models\Dark_Souls\shared\testwarp2"

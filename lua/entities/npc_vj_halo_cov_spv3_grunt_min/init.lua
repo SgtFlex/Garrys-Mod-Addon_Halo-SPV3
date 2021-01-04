@@ -259,7 +259,7 @@ end
 ---------------------------------------------------------------------------------------------------------------------------------------------
 function ENT:CustomOnAcceptInput(key,activator,caller,data)
 	if key == "Step" then
-		self:EmitSound("grunt/walk/walk"..math.random(1,6)..".ogg", 80, 100, 1)
+		self:EmitSound("grunt/shared/walk/walk"..math.random(1,6)..".ogg", 80, 100, 1)
 	end
 end
 

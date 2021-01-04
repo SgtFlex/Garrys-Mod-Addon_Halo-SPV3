@@ -93,6 +93,18 @@ ENT.Skins = {
 }
 ENT.ColorRange = {Vector (255,255,255), Vector(255,255,255)}
 ---------------------------------------------------------------------------------------------------------------------------------------------
+function ENT:CustomOnSetupWeaponHoldTypeAnims(htype)
+    if (htype == "pistol" and !string.find(tostring(self:GetActiveWeapon()), "cov")) then
+        self.WeaponAnimTranslations[ACT_IDLE_ANGRY]                 = ACT_IDLE_PISTOL
+    	self.WeaponAnimTranslations[ACT_RUN]						= ACT_RUN_PISTOL
+    	self.WeaponAnimTranslations[ACT_IDLE_AGITATED]				= ACT_IDLE_PISTOL
+    end
+	return true
+end
+
+
+
+
 function ENT:CustomOnPreInitialize()
 	self.voicePermutation = tostring(math.random(1,9))
 	self.SoundTbl_OnKilledEnemy = {
@@ -270,12 +282,6 @@ function ENT:CustomOnInitialize()
 				"weapon_vj_cov_spv3_cluster_nade",
 				"weapon_vj_unsc_spv3_frag_nade",
 			}
-		end
-		if (self:GetActiveWeapon().HoldType=="pistol" and !string.find(tostring(self:GetActiveWeapon()), "cov")) then
-			self.AnimTbl_WeaponAttack = {ACT_IDLE_PISTOL} -- Animation played when the SNPC does weapon attack
-			self.AnimTbl_ShootWhileMovingRun = {ACT_RUN_PISTOL} -- Animations it will play when shooting while running | NOTE: Weapon may translate the animation that they see fit!
-			self.AnimTbl_ShootWhileMovingWalk = {ACT_RUN_PISTOL} -- Animations it will play when shooting while walking | NOTE: Weapon may translate the animation that they see fit!
-			self.AnimTbl_Run = {ACT_RUN_PISTOL}
 		end
 		self.GrenadeAttackEntity = VJ_PICKRANDOMTABLE(self.GrenadeTypes)
 	end)

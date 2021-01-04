@@ -71,6 +71,8 @@ if VJExists == true then
 	VJ.AddNPC_HUMAN("[Cov] Jackal MKM. Minor","npc_vj_halo_cov_spv3_jackal_mkm_min",{"weapon_vj_cov_spv3_particleCarbine"},vCat)
 	VJ.AddNPC_HUMAN("[Cov] Jackal MKM. Major","npc_vj_halo_cov_spv3_jackal_mkm_maj",{"weapon_vj_cov_spv3_focusrifle"},vCat)
 	VJ.AddNPC_HUMAN("[Cov] Jackal MKM. Ultra","npc_vj_halo_cov_spv3_jackal_mkm_ult",{"weapon_vj_cov_spv3_particleCarbine", "weapon_vj_cov_spv3_focusrifle"},vCat)
+	VJ.AddNPC_HUMAN("[Cov] Skirmisher Minor","npc_vj_halo_cov_spv3_skirm_min",{"weapon_vj_cov_spv3_particleCarbine","weapon_vj_cov_spv3_needler","weapon_vj_cov_spv3_plasmapistol"},vCat)
+	VJ.AddNPC_HUMAN("[Cov] Skirmisher Major","npc_vj_halo_cov_spv3_skirm_maj",{"weapon_vj_cov_spv3_focusrifle","weapon_vj_cov_spv3_particleCarbine"},vCat)
 
 	VJ.AddNPC_HUMAN("[UNSC] ODST","npc_vj_halo_unsc_spv3_odst",{"weapon_vj_unsc_spv3_br", "weapon_vj_unsc_spv3_dmr", "weapon_vj_unsc_spv3_sr", "weapon_vj_unsc_spv3_smgsd", "weapon_vj_unsc_spv3_rl"},vCat)
 	VJ.AddNPC_HUMAN("[UNSC] Marine","npc_vj_halo_unsc_spv3_marine",{"weapon_vj_unsc_spv3_ar", "weapon_vj_unsc_spv3_sg", "weapon_vj_unsc_spv3_br", "weapon_vj_unsc_spv3_smg"},vCat)

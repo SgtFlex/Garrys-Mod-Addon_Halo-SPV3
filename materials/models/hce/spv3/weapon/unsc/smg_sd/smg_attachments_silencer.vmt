@@ -1,7 +1,7 @@
 "VertexlitGeneric"
 {
-	"$basetexture" "models/hce/spv3/weapon/unsc/smg_sd/smg_body_diff"
-	"$bumpmap" "models/hce/spv3/weapon/unsc/smg_sd/smg_body_nrml"
+	"$basetexture" "models/hce/spv3/weapon/unsc/smg_sd/smg_attachments_diffuse"
+	"$bumpmap" "models/hce/spv3/weapon/unsc/smg_sd/smg_attachments_normal"
 
 	"$color2"		"[0.87 0.87 0.87]"
 	

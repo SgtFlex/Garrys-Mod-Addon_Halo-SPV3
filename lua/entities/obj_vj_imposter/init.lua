@@ -19,7 +19,7 @@ ENT.IsCarrier = false
 
 function ENT:Initialize()
 	self:SetSolid(SOLID_OBB)
-	self:PhysicsInitBox(Vector(-25, -25, -12), Vector(25, 25, 12))
+	self:PhysicsInitBox(Vector(-25, -25, 60), Vector(25, 25, 12)) //Was -25 -25 -12 before, but this seems to fix bodies getting stuck in roofs
 	self:SetMoveType( MOVETYPE_VPHYSICS )
 	self:SetSolid( SOLID_VPHYSICS )
 	self:SetCollisionGroup(1)

@@ -2,11 +2,10 @@
 {
   	"$basetexture" 			"\models\hce\spv3\flood\brute\FloodBrute_Diffuse"
     	"$bumpmap" 			"\models\hce\spv3\flood\brute\FloodBrute_Normal"
-	"$phong" "0"
-	"$phongboost" "0.5"
-	"$PhongExponent" "0"
-	"$phongalbedotint" "1"
-	"$phongfresnelranges" "[3 5 7]"
+	"$phong" "1"
+	"$phongexponent"		"5"
+	"$phongboost"		"3"
+	"$phongfresnelranges"	"[0.1 0.5 5]"
 	"$blendtintbybasealpha" "1"
 }
 

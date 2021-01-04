@@ -96,7 +96,6 @@ function ENT:CustomOnPreInitialize()
 			end
 		end
 	end
-	PrintTable(self.TableSpawns)
 end
 
 function ENT:CustomOnInitialize()
@@ -225,19 +224,23 @@ ENT.leaving = false
 
 function ENT:SpawnCovies()
 	local k = 1
+	local nc = nil
 	timer.Create("Spawn"..self:GetCreationID(), 2, #self.TableSpawns, function()
 		if (IsValid(self)) then
 			local covie = ents.Create("npc_vj_halo_cov_spv3_"..self.TableSpawns[k]["Name"])
 			covie:SetPos(self:GetAttachment(self:LookupAttachment("Spawn"))["Pos"] + Vector(0,0,50))
 			covie:SetAngles(self:GetAngles())
 			covie:Spawn()
+			nc = constraint.NoCollide(self, covie, 0, 0)
 			timer.Simple(1, function()
 				if (IsValid(self) and IsValid(covie)) then
 					covie:SetVelocity(Vector(math.random(-150, 150),math.random(-150, 150), 0))
+					nc:Remove()
 				end
 			end)	
-			timer.Simple(2, function() if (IsValid(self) and IsValid(covie)) then covie:VJ_TASK_COVER_FROM_ENEMY() end end)
-			constraint.NoCollide(self, covie, 0, 0)
+			
+			timer.Simple(2, function() if (IsValid(self) and IsValid(covie)) then covie:VJ_TASK_COVER_FROM_ENEMY()  end end)
+			
 			if (list.Get("NPC")[covie:GetClass()].Weapons != nil) then
 				covie:Give(VJ_PICK(list.Get("NPC")[covie:GetClass()].Weapons))
 			end

@@ -1,7 +1,7 @@
 "VertexlitGeneric"
 {
-	"$basetexture" "models/hce/spv3/weapon/unsc/sniper_rifle/sniperrifle_diffuse"
-	"$bumpmap" "models/hce/spv3/weapon/unsc/sniper_rifle/sniperrifle_normal"
+	"$basetexture" "models/hce/spv3/weapon/unsc/sniper_rifle/sniperrifle_scope_diffuse"
+	"$bumpmap" "models/hce/spv3/weapon/unsc/sniper_rifle/sniperrifle_scope_normal"
 	"$phong" "1"
 	"$phongexponent"		"10"
 	"$phongboost"		"5"

@@ -151,6 +151,7 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 	if (dmginfo:GetDamageType()==DMG_BLAST) then
 		dmginfo:ScaleDamage(3.5)
 	end
+	
 	if (dmginfo:GetAttacker():IsNPC()) then
 		dmginfo:ScaleDamage(GetConVarNumber("vj_spv3_NPCTakeDamageModifier"))
 	end
@@ -166,6 +167,9 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 		if (dmginfo:GetDamageType()==DMG_BLAST) then
 			self:FlyingDeath(dmginfo)
 		end
+	end
+	if (dmginfo:GetDamageType()!=DMG_BLAST and dmginfo:GetDamageForce():Length()>=5000) then
+		dmginfo:SetDamage(5)
 	end
 end
 

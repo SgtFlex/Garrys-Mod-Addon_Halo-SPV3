@@ -1,12 +1,25 @@
 "VertexlitGeneric"
 {
 	"$basetexture" "models/hce/spv3/weapon/cov/needler/needler_needles_base"
-	"$translucent" 1
+	"$color2" "[200 10 200]"
 
 	"$detail" "models/hce/spv3/weapon/cov/needler/needler_needle_glow_gradient"
 	$detailscale 1
 	$detailblendmode 8
 	$detailblendfactor 0.5
+
+	"$blendtintbybasealpha" "1"
+	"$blendtintcoloroverbase" "0"
+
+	"Proxies"
+	{
+	"TextureScroll"
+		{
+		"textureScrollVar"	"$detailtexturetransform"
+		"textureScrollRate"		"3"
+		"textureScrollAngle"		"70"
+		}
+	}
 
 	"$blendtintbybasealpha" "1"
 	"$blendtintcoloroverbase" "0"

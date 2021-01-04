@@ -1,9 +1,6 @@
 "VertexlitGeneric"
 {
-	"$basetexture" "models/hce/spv3/weapon/unsc/rocket_launcher/rocketlauncher_diffuse"
-	"$bumpmap" "models/hce/spv3/weapon/unsc/rocket_launcher/rocketlauncher_diffuse"
-	"$phong" "1"
-	"$phongexponent"		"10"
-	"$phongboost"		"5"
-	"$phongfresnelranges"	"[0.3 0.7 1.5]"
+	"$basetexture" "models/hce/spv3/weapon/unsc/rocket_launcher/rocketlauncher_decal_diffuse"
+	"$alphatest" "1"
+	"$color2" "[1 1 1]"
 }

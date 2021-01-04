@@ -157,10 +157,18 @@ function ENT:DoDeath()
 			//self.infForm:SetPos(self:GetPos() + self:GetUp()*60)
 			self.infForm:SetOwner(self)
 			self.infForm:Spawn()
-			for k, v in pairs(self.SpawnedNPCs) do
-				constraint.NoCollide(self.infForm, self.SpawnedNPCs[k], 0, 0)
-				self.infForm:SetPos(self:GetPos() + self:GetUp()*self.SpawnedNPCs[k]:OBBMaxs().z)
+			self.infForm.constraints = {}
+			if (k!=1) then
+				for k, v in pairs(self.SpawnedNPCs) do
+					self.infForm.constraints[k] = constraint.NoCollide(self.infForm, self.SpawnedNPCs[k], 0, 0)
+					timer.Simple(1, function()
+						if (IsValid(self) and self.infForm.constraints[k]) then
+							self.infForm.constraints[k]:Remove()
+						end
+					end)
+				end
 			end
+			self.infForm:SetPos(self:GetPos() + self:GetUp()*self.SpawnedNPCs[k]:OBBMaxs().z)
 			local velocity = Vector(math.random(-spreadRadius, spreadRadius),math.random(-spreadRadius, spreadRadius),math.random(100, 300))
 			self.infForm:SetVelocity(velocity)
 			self.infForm:SetAngles(Angle(self.infForm:GetAngles().x, velocity:Angle().y, self.infForm:GetAngles().z))
