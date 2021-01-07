@@ -112,10 +112,10 @@ function ENT:CustomOnInitialize()
 	self:SetNoDraw(true)
 	self:VJ_ACT_PLAYACTIVITY(self.SpawnAnim,true,self:SequenceDuration(self:LookupSequence(self.SpawnAnim)),false)	
 	self:SetCollisionBounds(Vector(-500, -300, -50), Vector(500, 300, 400))
-	self.engineSound = CreateSound(self, "phantom/engine_hover.ogg")
-	self.movingSound = CreateSound(self, "phantom/engine_moving.ogg")
-	self.hoverSound = CreateSound(self, "phantom/hover (2).ogg")
-	self.gravSound = CreateSound(self, "phantom/grav_lift.ogg")
+	self.engineSound = CreateSound(self, "phantom/engine_hover.wav")
+	self.movingSound = CreateSound(self, "phantom/engine_moving.wav")
+	self.hoverSound = CreateSound(self, "phantom/hover (2).wav")
+	self.gravSound = CreateSound(self, "phantom/grav_lift.wav")
 	self.engineSound:SetSoundLevel(105)
 	self.hoverSound:SetSoundLevel(100)
 	self.gravSound:SetSoundLevel(85)
@@ -443,25 +443,27 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 		util.Effect("phantomFXBurst", effect) 
 
 		timer.Create("miniexplosions"..self:GetCreationID(), 0.25, 2, function()
-			local effect = EffectData()
-			local explosionLoc = self:GetPos() + (self:GetForward()*math.random(-350, 350)) + (self:GetRight()*math.random(-200, 200)) + Vector(0,0,math.random(250, 300))
-			effect:SetEntity(self)
-			effect:SetOrigin(explosionLoc)
-			util.Effect("phantomFXBurst", effect) 
-			for k=1, 5 do
-				local ent = {}
-				ent[k] = self:CreateGibEntity("obj_vj_sent_gib",self.gibTable[k])
-				constraint.NoCollide(ent[k], self, 0, 0)
-				ent[k]:SetPos(explosionLoc)
-				ent[k]:GetPhysicsObject():AddAngleVelocity(Vector(math.random(-100, 100),math.random(-100, 100), math.random(75, 250)))
-				ent[k]:GetPhysicsObject():AddVelocity(Vector(math.random(-1000, 1000),math.random(-1000, 1000), math.random(-100, 300)))
-				local effect=EffectData()
-				if (GetConVarNumber("vj_sent_useParticles")==1) then timer.Create("FireFallFXSmall"..self:GetCreationID()..math.random(0,100)..k, 0.03, math.random(75, 150), function() 
-					if (IsValid(ent[k])) then 
-						effect:SetOrigin(ent[k]:GetPos()) 
-						util.Effect("fireFallFXSmall", effect)
-						end 
-					end) 
+			if (IsValid(self)) then
+				local effect = EffectData()
+				local explosionLoc = self:GetPos() + (self:GetForward()*math.random(-350, 350)) + (self:GetRight()*math.random(-200, 200)) + Vector(0,0,math.random(250, 300))
+				effect:SetEntity(self)
+				effect:SetOrigin(explosionLoc)
+				util.Effect("phantomFXBurst", effect) 
+				for k=1, 5 do
+					local ent = {}
+					ent[k] = self:CreateGibEntity("obj_vj_sent_gib",self.gibTable[k])
+					constraint.NoCollide(ent[k], self, 0, 0)
+					ent[k]:SetPos(explosionLoc)
+					ent[k]:GetPhysicsObject():AddAngleVelocity(Vector(math.random(-100, 100),math.random(-100, 100), math.random(75, 250)))
+					ent[k]:GetPhysicsObject():AddVelocity(Vector(math.random(-1000, 1000),math.random(-1000, 1000), math.random(-100, 300)))
+					local effect=EffectData()
+					if (GetConVarNumber("vj_sent_useParticles")==1) then timer.Create("FireFallFXSmall"..self:GetCreationID()..math.random(0,100)..k, 0.03, math.random(75, 150), function() 
+						if (IsValid(ent[k])) then 
+							effect:SetOrigin(ent[k]:GetPos()) 
+							util.Effect("fireFallFXSmall", effect)
+							end 
+						end) 
+					end
 				end
 			end
 		end)
@@ -470,7 +472,9 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 			self:GetPhysicsObject():Wake()
 		end
 		timer.Simple(1.2, function()
-			self:TakeDamage(9999)
+			if (IsValid(self)) then
+				self:TakeDamage(9999)
+			end
 		end)
 	end
 end

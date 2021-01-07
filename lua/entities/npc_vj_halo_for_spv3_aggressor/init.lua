@@ -28,11 +28,11 @@ PrintMessage(3, "-------------------")
 ---------------------------------------------------------------------------]]
 ENT.soundTable = {
 	engineSoundObject = "",
-	engineSound = "npc_vj_sent_sentinel/sent_eng1loop.ogg",
+	engineSound = "npc_vj_sent_sentinel/sent_eng1loop.wav",
 	enginePitch = 100,
 	engineVolume = 0.4,
 	firingSoundObject = "",
-	firingSound = "npc_vj_sent_sentinel/sentinel_gun/sentGunLoop1.ogg",
+	firingSound = "npc_vj_sent_sentinel/sentinel_gun/sentGunLoop1.wav",
 	firingPitch = 100,
 	firingVolume = 1,
 	firingIn = "npc_vj_sent_sentinel/sentinel_gun/in.ogg",
@@ -712,7 +712,7 @@ function ENT:CreateCustomCorpse()
 	corpse:GetPhysicsObject():SetVelocity(self.vAlive)
 	-- corpse.RenderGroup = RENDERGROUP_BOTH
 	corpse.ignite = self.ignite
-	local sparks = CreateSound(corpse, "npc_vj_sent_sentinel/sentinel_death/spark_loop.ogg")
+	local sparks = CreateSound(corpse, "npc_vj_sent_sentinel/sentinel_death/spark_loop.wav")
 	sparks:Play()
 	sparks:ChangeVolume(0.3)
 	local effect = EffectData()

@@ -63,7 +63,7 @@ function ENT:CustomOnInitialize()
 	local effect = EffectData()
 	effect:SetOrigin(self:GetPos())
 	util.SpriteTrail(self, 0, Color(150,150,150), true, 10, 0, 0.25, 0.1, "trails/smoke")
-	self.trailSound = CreateSound(self, "grenades/frag nade/trail/armed.ogg")
+	self.trailSound = CreateSound(self, "grenades/frag nade/trail/armed.wav")
 	self.trailSound:Play()
 	//if self:GetOwner():IsValid() && (self:GetOwner().GrenadeAttackFussTime) then
 	//timer.Simple(self:GetOwner().GrenadeAttackFussTime,function() if IsValid(self) then self:DeathEffects() end end) else

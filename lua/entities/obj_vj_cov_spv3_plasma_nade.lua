@@ -69,7 +69,7 @@ function ENT:CustomOnInitialize()
 	if (self:GetOwner():IsNPC()) then
 		self.RadiusDamage=self.RadiusDamage * GetConVarNumber("vj_spv3_damageModifier")
 	end
-	self.trailSound = CreateSound(self, "grenades/plasma nade/trail/trail.ogg")
+	self.trailSound = CreateSound(self, "grenades/plasma nade/trail/trail.wav")
 	self.trailSound:Play()
 	self.trailSound:ChangeVolume(0.35)
 

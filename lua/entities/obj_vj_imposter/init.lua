@@ -46,6 +46,8 @@ function ENT:CustomOnInitialize()
 	self:SetAngles(self.Angle)
 end
 
+
+
 ENT.FirstCollision = true
 ENT.infFormCount = 6
 local spreadRadius = 175
@@ -58,6 +60,9 @@ local spreadRadius = 175
 	self.ragdoll:SetAngles(self:GetAngles())
 	self.ragdoll:Spawn()
 	self.ragdoll:SetSkin(self:GetSkin())
+	self.ragdoll:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
+	hook.Call("VJ_CreateSNPCCorpse", nil, self.ragdoll, self.ragdoll)
+	self.ragdoll.IsVJBaseCorpse = true
 	local bodygroups = self:GetBodyGroups()
 	for k, v in pairs(bodygroups) do
 		self.ragdoll:SetBodygroup(bodygroups[k]["id"], self:GetBodygroup(bodygroups[k]["id"]))

@@ -477,7 +477,6 @@ function ENT:CustomOnTakeDamage_AfterDamage(dmginfo,hitgroup)
 		timer.Create("ShieldDelay"..self:GetCreationID(), self.ShieldDelay, 1, function() 
 			if (IsValid(self)) then
 				self:StopParticles()
-				self:EmitSound(Sound("ambient/energy/whiteflash.ogg"),80,115)
 				ParticleEffectAttach("hcea_shield_recharged",PATTACH_POINT_FOLLOW,self,self:LookupAttachment("origin"))
 				self.ShieldActivated = true
 				self.CanFlinch = 0
@@ -496,7 +495,7 @@ function ENT:CustomOnTakeDamage_ShieldsDestroyed(dmginfo)
 	elseif (self.Berserked==false) then
 		self:VJ_TASK_COVER_FROM_ENEMY("TASK_RUN_PATH")
 	end
-	self:EmitSound(Sound("ambient/energy/weld" .. math.random(1,2) .. ".ogg"),80,100)
+	-- self:EmitSound(Sound("ambient/energy/weld" .. math.random(1,2) .. ".ogg"),80,100)
 	self:StopParticles()
 	ParticleEffectAttach("hcea_shield_disperse",PATTACH_POINT_FOLLOW,self,self:LookupAttachment("origin"))
 	ParticleEffectAttach("hcea_shield_enabled",PATTACH_POINT_FOLLOW,self,self:LookupAttachment("origin"))
@@ -532,7 +531,7 @@ function ENT:CustomOnAcceptInput(key,activator,caller,data)
 		self:EmitSound("elite/shared/walk/walk ("..math.random(1,6)..").ogg", 80, 100, 1)
 	elseif key == "Melee1" then
 		self:EmitSound("elite/shared/stand_pistol_melee/stand_pistol_melee"..math.random(1,2)..".ogg", 80, 100, 1)
-		self:EmitSound("elite/elite0"..self.voicePermutation.."melee/melee ("..math.random(1,5)..").ogg", 80, 100, 1)
+		self:EmitSound("elite/elite0"..self.voicePermutation.."/melee/melee ("..math.random(1,5)..").ogg", 80, 100, 1)
 	elseif key == "Hit" then
 		self:MeleeAttackCode()
 	elseif key == "EvadeR" then

@@ -24,7 +24,7 @@ function ENT:CustomOnInitialize()
 	self:SetNoDraw(true)
 	ParticleEffectAttach("grenade_hornet_trail", PATTACH_ABSORIGIN_FOLLOW, self, 0)
 	ParticleEffectAttach("grenade_hornet_trail_glow", PATTACH_ABSORIGIN_FOLLOW, self, 0)
-	self.soundTrail = CreateSound(self, "weapons/brute shot/trail/loop_1.ogg")
+	self.soundTrail = CreateSound(self, "weapons/brute shot/trail/loop_3.wav")
 	self.soundTrail:Play()
 end
 ---------------------------------------------------------------------------------------------------------------------------------------------

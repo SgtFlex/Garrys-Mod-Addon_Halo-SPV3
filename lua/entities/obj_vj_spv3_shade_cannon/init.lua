@@ -16,8 +16,8 @@ ENT.RadiusDamageForceTowardsPhysics = 3000 -- How much force should it deal to p
 ENT.RadiusDamageForceTowardsRagdolls = 3000 -- How much force should it deal to ragdolls?
 ENT.ShakeWorldOnDeath = false -- Should the world shake when the projectile hits something?
 ENT.DecalTbl_DeathDecals = {"Scorch"}
-ENT.SoundTbl_Idle = {"phantom/turret_shade_flyby.ogg"}
-ENT.SoundTbl_OnCollide = {"phantom/turret_shade_explode.ogg"}
+ENT.SoundTbl_Idle = {"weapons/shadeturret/turret_shade_flyby.wav"}
+ENT.SoundTbl_OnCollide = {"weapons/shadeturret/turret_shade_explode.ogg"}
 ---------------------------------------------------------------------------------------------------------------------------------------------
 function ENT:CustomOnInitialize()
 	if (self:GetOwner()!=nil and self:GetOwner():GetOwner()!=nil) then
