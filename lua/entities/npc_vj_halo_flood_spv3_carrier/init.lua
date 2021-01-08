@@ -97,7 +97,17 @@ function ENT:CustomDeathAnimationCode(dmginfo,hitgroup)
 	end
 	self.infFormCount = math.Round(self.infFormCount*(GetConVarNumber("vj_spv3_infModifier")))
 	self:EmitSound("carrier/hkillbackgut/hkillbackgut.ogg")
+	local inflation = Vector(1,1,1)
+	timer.Create("bonescale"..self:GetCreationID(), 0.05, 0, function()
+		inflation = inflation + Vector(0.13,0.13,0.13)
+		if (IsValid(self)) then
+			self:ManipulateBoneScale(self:LookupBone("frame sack center"), inflation)
+			self:ManipulateBoneScale(self:LookupBone("frame sack left"), inflation)
+			self:ManipulateBoneScale(self:LookupBone("frame sack right"), inflation)
+		end
+	end)
 	timer.Simple(1.3,function() if self:IsValid() then
+		
 	local BlastInfo = DamageInfo()
 	BlastInfo:SetDamageType(DMG_BLAST)
 	BlastInfo:SetDamage(60 * GetConVarNumber("vj_spv3_damageModifier"))
