@@ -151,7 +151,7 @@ ENT.SpawnedFromInf=false
 function ENT:CustomOnInitialize()
 	self:SetSkin(self.Skin)
 	timer.Simple(0.01, function() 
-		if (GetConVarNumber("vj_spv3_floodWeps")==1 and math.random(0,1)==1) then
+		if (math.random(0,100) <= GetConVarNumber("vj_spv3_floodWeps")) then
 			self:Give(VJ_PICKRANDOMTABLE(self.WeaponTable))
 		end
 	end)
@@ -161,15 +161,19 @@ function ENT:CustomOnInitialize()
 	end
 	self.MeleeAttackDamage = self.MeleeAttackDamage * GetConVarNumber("vj_spv3_damageModifier")
 	self:CapabilitiesAdd(bit.bor(CAP_MOVE_CLIMB))
-	self:SetCollisionBounds(Vector(30, 30, 80), Vector(-30, -30, 0))
+	self:SetCollisionBounds(Vector(-16, -16, 0), Vector(16, 16, 80))
 	-- Shields --
 	if (self.SpawnedFromInf==false) then
-		self.StartHealth = self.StartHealth * GetConVarNumber("vj_spv3_HealthModifier")
+		if (math.random(0,100) >= GetConVarNumber("vj_spv3_floodEliteShield")) then
 		self.ShieldHealth = self.ShieldHealth * GetConVarNumber("vj_spv3_ShieldModifier")
+		self.ShieldActivated = true
+	else
+		self.ShieldHealth = 0
+		self.ShieldActivated = false
+	end
 	end
 	self.ShieldCurrentHealth = self.ShieldHealth
 	self.CurrentHealth = self.StartHealth
-	self.ShieldActivated = true
 	self:SetHealth(self.ShieldHealth + self.StartHealth)
 end
 ---------------------------------------------------------------------------------------------------------------------------------------------
@@ -380,6 +384,17 @@ end
 ENT.WeaponSpread = 1
 function ENT:WeaponAimPoseParameters(ResetPoses)
 end
+
+function ENT:CustomOnThink() 
+	if (IsValid(self:GetEnemy()) and IsValid(self:GetActiveWeapon()) and self:GetActiveWeapon():Clip1()>0 and self:GetPos():DistToSqr(self:GetEnemy():GetPos())> 100) then
+		self.AnimTbl_Run = {ACT_WALK}
+	else
+		self.AnimTbl_Run = {ACT_RUN}
+	end
+end
+
+
+
 /*-----------------------------------------------
 	*** Copyright (c) 2012-2016 by DrVrej, All rights reserved. ***
 	No parts of this code or any of its contents may be reproduced, copied, modified or adapted,

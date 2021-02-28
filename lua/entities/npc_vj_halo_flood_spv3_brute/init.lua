@@ -134,6 +134,7 @@ function ENT:CustomOnInitialize()
 			self:Give(VJ_PICKRANDOMTABLE(self.WeaponTable))
 		end
 	end)
+	self:SetCollisionBounds(Vector(30, 17, 75), Vector(-17, -17, 0))
 	self:CapabilitiesAdd(bit.bor(CAP_MOVE_CLIMB))
 	self:SetColor(self.modelColor)
 	self:SetBodygroup(0, self.bodyGroup)

@@ -5,7 +5,7 @@ include("shared.lua")
 	No parts of this code or any of its contents may be reproduced, copied, modified or adapted,
 	without the prior written consent of the author, unless otherwise indicated for stand-alone materials.
 -----------------------------------------------*/
-ENT.Model = {"models/weapons/w_missile_closed.mdl"} -- The models it should spawn with | Picks a random one from the table
+ENT.Model = {"models/hce/spv3/misc/needle.mdl"} -- The models it should spawn with | Picks a random one from the table
 ENT.DoesRadiusDamage = true -- Should it do a blast damage when it hits something?
 ENT.RadiusDamageRadius = 1 -- How far the damage go? The farther away it's from its enemy, the less damage it will do | Counted in world units
 ENT.RadiusDamage = 3 -- How much damage should it deal? Remember this is a radius damage, therefore it will do less damage the farther away the entity is from its enemy
@@ -22,8 +22,21 @@ ENT.CollideCodeWithoutRemoving = true -- If RemoveOnHit is set to false, you can
 ---------------------------------------------------------------------------------------------------------------------------------------------
 function ENT:CustomOnInitialize()
 	self.RadiusDamage = self.RadiusDamage * GetConVarNumber("vj_spv3_damageModifier") -- How much damage should it deal? Remember this is a radius damage, therefore it will do less damage the farther away the entity is from its enemy
-	self:SetNoDraw(true)
-	ParticleEffectAttach("hcea_hunter_needler_proj", PATTACH_ABSORIGIN_FOLLOW, self, 0)
+	//ParticleEffectAttach("hcea_hunter_needler_proj", PATTACH_ABSORIGIN_FOLLOW, self, 0)
+	util.SpriteTrail(self, 0, Color(255,50,0), true, 5, 0, 0.35, 0.1, "trails/plasma")
+	self:SetColor(Color(255,50,0))
+	self.glow = ents.Create("env_sprite")
+	self.glow:SetKeyValue("rendermode", "9")
+	self.glow:SetKeyValue("renderamt", "255")
+	self.glow:SetKeyValue("model","blueflare1_noz.vmt")
+	self.glow:SetKeyValue("GlowProxySize","1")
+	self.glow:SetKeyValue("rendercolor", "150 0 0")
+	self.glow:SetKeyValue("scale","1")
+	self.glow:SetPos(self:GetPos())
+	self.glow:SetParent(self)
+	self.glow:Spawn()
+	self.glow:Activate()
+	self:DeleteOnRemove(self.glow)
 end
 ---------------------------------------------------------------------------------------------------------------------------------------------
 function ENT:DeathEffects(data,phys)
@@ -45,12 +58,38 @@ ENT.needles = 0
 function ENT:CustomOnCollideWithoutRemove(data,phys) 
 	for k,v in pairs(ents.FindInSphere(self:GetPos(), 100)) do
 		if (v:IsNPC() or v:IsPlayer()) then
-			if (v.ShieldCurrentHealth and v.ShieldCurrentHealth<=0) then
-				self:SetParent(v)
-				self:SetMoveType(8)
-			elseif !(v.ShieldCurrentHealth) then
-				self:SetParent(v)
-				self:SetMoveType(8)
+			if (v.ShieldCurrentHealth==nil or v.ShieldCurrentHealth<=0) then
+				if (v:GetBoneCount()>4) then
+					self:SetMoveType(8)
+					self:SetCollisionGroup(0)
+					self:SetNotSolid(true)
+					local closestBone = 0
+					local boneDistance = 1000
+					self.BonePos, self.BoneAng = v:GetBonePosition(1)
+					for i=1, v:GetBoneCount()-1 do
+						if (v:GetBonePosition(i):Distance(self:GetPos()) < boneDistance) then
+							boneDistance = v:GetBonePosition(i):Distance(self:GetPos())
+							closestBone = i
+							self.BonePos, self.BoneAng = v:GetBonePosition(closestBone)
+						end
+					end
+					self:SetMoveType(MOVETYPE_NONE)
+					self:SetCollisionGroup(0)
+					self:SetNotSolid(true)
+					if ((closestBone > 1) or (closestBone < v:GetBoneCount()-1)) then
+						self.BoneToFollow = closestBone + math.random(-1,1)
+					else
+						self.BoneToFollow = closestBone
+					end
+					self.BonePos, self.BoneAng = v:GetBonePosition(self.BoneToFollow)
+					self:FollowBone(v, self.BoneToFollow)
+					self:SetPos(self.BonePos)
+					self:SetAngles(self.BoneAng + Angle(90, 0, 0))
+					self:SetVelocity(Vector(0,0,0))
+				else
+					self:SetParent(v)
+					self:SetMoveType(8)
+				end
 			end
 		elseif (v:GetClass()=="obj_vj_spv3_shredder_shot" and IsValid(self:GetParent()) and v:GetParent()==self:GetParent()) then
 			self.needles = self.needles + 1

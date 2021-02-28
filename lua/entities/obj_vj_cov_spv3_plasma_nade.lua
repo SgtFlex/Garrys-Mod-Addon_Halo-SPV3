@@ -118,8 +118,37 @@ function ENT:CustomOnPhysicsCollide(data,phys)
 		self:EmitSound(VJ_PICKRANDOMTABLE(self.SoundTbl_Settle))
 	end
 	if !(data.HitEntity:IsWorld()) then
-		self:SetParent(data.HitEntity)
-		self:SetMoveType(0)
+		if (data.HitEntity:GetBoneCount()>4) then
+			self:SetMoveType(8)
+			self:SetCollisionGroup(0)
+			self:SetNotSolid(true)
+			local closestBone = 0
+			local boneDistance = 1000
+			self.BonePos, self.BoneAng = data.HitEntity:GetBonePosition(1)
+			for i=1, data.HitEntity:GetBoneCount()-1 do
+				if (data.HitEntity:GetBonePosition(i):Distance(self:GetPos()) < boneDistance) then
+					boneDistance = data.HitEntity:GetBonePosition(i):Distance(self:GetPos())
+					closestBone = i
+					self.BonePos, self.BoneAng = data.HitEntity:GetBonePosition(closestBone)
+				end
+			end
+			self:SetMoveType(MOVETYPE_NONE)
+			self:SetCollisionGroup(0)
+			self:SetNotSolid(true)
+			if ((closestBone > 1) or (closestBone < data.HitEntity:GetBoneCount()-1)) then
+				self.BoneToFollow = closestBone + math.random(-1,1)
+			else
+				self.BoneToFollow = closestBone
+			end
+			self.BonePos, self.BoneAng = data.HitEntity:GetBonePosition(self.BoneToFollow)
+			self:FollowBone(data.HitEntity, self.BoneToFollow)
+			self:SetPos(self.BonePos)
+			self:SetAngles(self.BoneAng + Angle(90, 0, 0))
+			self:SetVelocity(Vector(0,0,0))
+		else
+			self:SetParent(v)
+			self:SetMoveType(8)
+		end
 		self.Settled=true
 		self:EmitSound(VJ_PICKRANDOMTABLE(self.SoundTbl_StickTo))
 		self:SetSolid(0)

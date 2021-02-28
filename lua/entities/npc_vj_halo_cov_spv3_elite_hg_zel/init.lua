@@ -1,6 +1,6 @@
 AddCSLuaFile("shared.lua")
 include('shared.lua')
-include('entities/npc_vj_halo_cov_spv3_elite_min/init.lua')
+include('entities/npc_vj_halo_cov_spv3_elite_hg_min/init.lua')
 /*-----------------------------------------------
 	*** Copyright (c) 2012-2016 by DrVrej, All rights reserved. ***
 	No parts of this code or any of its contents may be reproduced, copied, modified or adapted,
@@ -15,6 +15,7 @@ ENT.bodyGroupTable = {
 }
 ENT.StartHealth = 80
 ENT.ShieldHealth = 165
-ENT.ExtraShotCount = 3
+ENT.ExtraShotCount = 4
+ENT.WeaponProfficiency = 100
 ENT.Skin = 3
 ENT.HasSword = true

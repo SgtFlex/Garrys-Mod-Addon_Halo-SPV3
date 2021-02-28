@@ -108,7 +108,8 @@ ENT.NextSoundTime_Idle1 = 1
 ENT.NextSoundTime_Idle2 = 2
 ---------------------------------------------------------------------------------------------------------------------------------------------
 function ENT:CustomOnInitialize()
-	self.MovingSound = CreateSound(self, "infection_form/infector_sound/infector/move/move"..math.random(1,3)..".ogg")
+	self:SetCollisionGroup(15)
+	self.MovingSound = CreateSound(self, "infection_form/infector_sound/infector/move/move"..math.random(1,3)..".wav")
 	timer.Simple(0.1, function() 
 		if (IsValid(self)) then
 			self:SetGravity(0.5)
@@ -118,6 +119,7 @@ function ENT:CustomOnInitialize()
 	
 	self:CapabilitiesAdd(bit.bor(CAP_MOVE_CLIMB))
 	self.StartHealth = self.StartHealth * GetConVarNumber("vj_spv3_HealthModifier")
+	if (self.StartHealth < 1) then self.StartHealth = 1 end
 	self:SetHealth(self.StartHealth)
 	self.LeapAttackDamage = self.LeapAttackDamage * GetConVarNumber("vj_spv3_damageModifier")
 end
@@ -347,7 +349,7 @@ ENT.AttachedTo = ""
 
 
 function ENT:CustomOnLeapAttack_AfterChecks(TheHitEntity) 
-	if (TheHitEntity.ShieldCurrentHealth && TheHitEntity.ShieldCurrentHealth > 0) then
+	if ((TheHitEntity.ShieldCurrentHealth && TheHitEntity.ShieldCurrentHealth > 0) || (TheHitEntity:IsPlayer() && TheHitEntity:Armor() > 0)) then
 		if (GetConVarNumber("vj_spv3_InfFormsExplode")==0) then
 			TheHitEntity:TakeDamage(self.LeapAttackDamage, self, self)
 		end

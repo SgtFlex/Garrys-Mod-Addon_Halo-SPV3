@@ -125,7 +125,7 @@ ENT.SpawnedFromInf=false
 function ENT:CustomOnInitialize()
 	self.MeleeAttackDamage = self.MeleeAttackDamage * GetConVarNumber("vj_spv3_damageModifier")
 	timer.Simple(0.1, function() 
-		if (GetConVarNumber("vj_spv3_floodWeps")==1 and math.random(0,1)==1 and #self.WeaponTable>0) then
+		if (math.random(0,100) <= GetConVarNumber("vj_spv3_floodWeps")) then
 			self:Give(VJ_PICKRANDOMTABLE(self.WeaponTable))
 		end
 	end)
@@ -266,6 +266,14 @@ function ENT:CustomOnInitialKilled(dmginfo,hitgroup)
 	if IsValid(phys) then
 		phys:SetMass(60)
 		phys:ApplyForceCenter(dmginfo:GetDamageForce()*.01)
+	end
+end
+
+function ENT:CustomOnThink() 
+	if (IsValid(self:GetEnemy()) and IsValid(self:GetActiveWeapon()) and self:GetActiveWeapon():Clip1()>0 and self:GetPos():DistToSqr(self:GetEnemy():GetPos())> 100) then
+		self.AnimTbl_Run = {ACT_WALK}
+	else
+		self.AnimTbl_Run = {ACT_RUN}
 	end
 end
 

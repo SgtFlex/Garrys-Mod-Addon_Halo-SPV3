@@ -1,5 +1,6 @@
 AddCSLuaFile("shared.lua")
 include('shared.lua')
+include('entities/npc_vj_halo_shared_spv3/init.lua')
 /*-----------------------------------------------
 	*** Copyright (c) 2012-2016 by DrVrej, All rights reserved. ***
 	No parts of this code or any of its contents may be reproduced, copied, modified or adapted,
@@ -60,21 +61,34 @@ ENT.UNSCWeps = {
 }
 ENT.EntitiesToRunFrom = {obj_spore=true,obj_vj_grenade=true,obj_grenade=true,obj_handgrenade=true,npc_grenade_frag=true,doom3_grenade=true,fas2_thrown_m67=true,cw_grenade_thrown=true,obj_cpt_grenade=true,cw_flash_thrown=true,ent_hl1_grenade=true, obj_vj_unsc_spv3_frag_nade=true,obj_vj_cov_spv3_plasma_nade=true,obj_vj_cov_spv3_gravity_nade=true,obj_vj_cov_spv3_cluster_nade=true,obj_vj_cov_spv3_needler_nade=true, npc_vj_halo_flood_spv3_carrier=true}
 ENT.Color = Color(100,100,140)
+ENT.WeaponProfficiency = 50
+ENT.ExtraShotCount = 0
 ---------------------------------------------------------------------------------------------------------------------------------------------
+function ENT:CustomOnSetupWeaponHoldTypeAnims(htype)
+    if (htype == "pistol") then
+    	self.WeaponAnimTranslations[ACT_RUN]						= ACT_RUN
+    	self.WeaponAnimTranslations[ACT_IDLE_AGITATED]				= ACT_IDLE_AGITATED
+    elseif (htype == "ar2") then
+    	self.WeaponAnimTranslations[ACT_RUN]						= ACT_RUN_RIFLE
+    	self.WeaponAnimTranslations[ACT_IDLE_AGITATED]				= ACT_IDLE_RIFLE
+    end
+	return true
+end
 
 function ENT:CustomOnInitialize()
+	self:RandomizeTraits()
 	for i=1, #self.bodyGroupTable do
 		self:SetBodygroup(i, self.bodyGroupTable[i])
 	end
 
-	timer.Simple(0.1, function()
-	if (self:GetActiveWeapon().HoldType=="ar2") then
-		self.AnimTbl_WeaponAttack = {ACT_IDLE_RIFLE} -- Animation played when the SNPC does weapon attack
-		self.AnimTbl_ShootWhileMovingRun = {ACT_RUN_RIFLE} -- Animations it will play when shooting while running | NOTE: Weapon may translate the animation that they see fit!
-		self.AnimTbl_ShootWhileMovingWalk = {ACT_RUN_RIFLE} -- Animations it will play when shooting while walking | NOTE: Weapon may translate the animation that they see fit!
-		self.AnimTbl_Run = {ACT_RUN_RIFLE}
-	end
-end)
+-- 	timer.Simple(0.1, function()
+-- 	if (self:GetActiveWeapon().HoldType=="ar2") then
+-- 		self.AnimTbl_WeaponAttack = {ACT_IDLE_RIFLE} -- Animation played when the SNPC does weapon attack
+-- 		self.AnimTbl_ShootWhileMovingRun = {ACT_RUN_RIFLE} -- Animations it will play when shooting while running | NOTE: Weapon may translate the animation that they see fit!
+-- 		self.AnimTbl_ShootWhileMovingWalk = {ACT_RUN_RIFLE} -- Animations it will play when shooting while walking | NOTE: Weapon may translate the animation that they see fit!
+-- 		self.AnimTbl_Run = {ACT_RUN_RIFLE}
+-- 	end
+-- end)
 
 	self.StartHealth = self.StartHealth * GetConVarNumber("vj_spv3_HealthModifier")
 	self:SetHealth(self.StartHealth)
@@ -225,37 +239,6 @@ function ENT:CustomOnAcceptInput(key,activator,caller,data)
 	end
 end
 
-function ENT:CheckForGrenades()
-	if self.CanDetectGrenades == false or self.ThrowingGrenade == true or self.HasSeenGrenade == true or self.VJ_IsBeingControlled == true then return end
-	local FindNearbyGrenades = ents.FindInSphere(self:GetPos(),self.RunFromGrenadeDistance)
-	for _,v in pairs(FindNearbyGrenades) do
-		local IsFriendlyGrenade = false
-		if self.EntitiesToRunFrom[v:GetClass()] && self:Visible(v) then
-			if IsValid(v:GetOwner()) && v:GetOwner().IsVJBaseSNPC == true && (self:Disposition(v:GetOwner()) == D_LI or self:Disposition(v:GetOwner()) == D_NU) then
-				IsFriendlyGrenade = true
-			end
-			if IsFriendlyGrenade == false then
-				self.HasSeenGrenade = true
-				self.TakingCoverT = CurTime() + 4
-				if /*IsValid(self:GetEnemy()) &&*/v.VJHumanNoPickup != true && v.VJHumanTossingAway != true && self.CanThrowBackDetectedGrenades == true && self.HasGrenadeAttack == true && v:GetVelocity():Length() < 400 && self:VJ_GetNearestPointToEntityDistance(v) < 100 && self.EntitiesToThrowBack[v:GetClass()] then
-					self.NextGrenadeAttackSoundT = CurTime() + 3
-					self:ThrowGrenadeCode(v,true)
-					v.VJHumanTossingAway = true
-					//v:Remove()
-				end
-				//if self.VJ_PlayingSequence == false then self:VJ_SetSchedule(SCHED_RUN_FROM_ENEMY) end
-				self:SetAngles(Angle(self:GetAngles().x, (self:GetPos()-v:GetPos()):Angle().y,self:GetAngles().z))
-				self:VJ_ACT_PLAYACTIVITY(ACT_SIGNAL3, true, 2, false)
-				self:VJ_TASK_COVER_FROM_ENEMY("TASK_RUN_PATH",function(x) x.CanShootWhenMoving = true x.ConstantlyFaceEnemy = true end)
-				timer.Simple(4,function() if IsValid(self) then self.HasSeenGrenade = false end end)
-				break;
-				//else
-				//self.HasSeenGrenade = false
-				//return
-			end
-		end
-	end
-end
 ENT.HasProtector=false
 function ENT:CustomOnAllyDeath(argent) 
 	if ((string.find(tostring(argent), "elite")) or (string.find(tostring(argent), "brute"))) and (argent:GetPos():DistToSqr(self:GetPos()) <= 700000) then

@@ -108,51 +108,83 @@ function ENT:CustomOnInitialize()
 	if (trace.Hit) then
 		self:SetPos(trace.HitPos + Vector(0,0,math.random(400, 700)))
 	end
-	self.turret = ents.Create("npc_vj_halo_unsc_spv3_pelican_turret")
-	self.turret:SetParent(self, 2)
-	self.turret:SetPos(self:GetAttachment(self:LookupAttachment("Turret_Main"))["Pos"])
-	self.turret:SetAngles(self:GetAngles())
-	self.turret:SetOwner(self)
-	self.turret:Spawn()
-	self.turret:SetNoDraw(true)
+	local random=math.random(0,1)
+	if (random==0) then
+		self.turret = ents.Create("npc_vj_halo_unsc_spv3_pelican_turret")
+		self.turret:SetParent(self, 2)
+		self.turret:SetPos(self:GetAttachment(self:LookupAttachment("Turret_Main"))["Pos"])
+		self.turret:SetAngles(self:GetAngles())
+		self.turret:SetOwner(self)
+		self.turret:Spawn()
+		self.turret:SetNoDraw(true)
+	end
+	random=math.random(0,1)
+	if (random==0) then
+		self.turret2 = ents.Create("npc_vj_halo_unsc_spv3_pelican_turret")
+		self.turret2.RangeAttackAngleRadius = 90
+		self.turret2:SetParent(self, 2)
+		self.turret2:SetPos(self:GetAttachment(self:LookupAttachment("Turret_Back"))["Pos"])
+		self.turret2:SetAngles(self:GetAngles() + Angle(0,180,0))
+		self.turret2:SetOwner(self)
+		self.turret2:Spawn()
+		self.turret2:SetNoDraw(true)
+	end
+	local random=math.random(0,2)
+	if (random==0) then
+		self.turret3 = ents.Create("npc_vj_halo_unsc_spv3_rocket_pod")
+		self.turret3.RangeAttackAngleRadius = 90
+		self.turret3:SetParent(self, 2)
+		self.turret3:SetPos(self:GetAttachment(self:LookupAttachment("Rocket_Right"))["Pos"])
+		self.turret3:SetAngles(self:GetAngles())
+		self.turret3:SetOwner(self)
+		self.turret3:Spawn()
+		self.turret3:SetNoDraw(true)
 
-	self.turret2 = ents.Create("npc_vj_halo_unsc_spv3_pelican_turret")
-	self.turret2.RangeAttackAngleRadius = 90
-	self.turret2:SetParent(self, 2)
-	self.turret2:SetPos(self:GetAttachment(self:LookupAttachment("Turret_Back"))["Pos"])
-	self.turret2:SetAngles(self:GetAngles() + Angle(0,180,0))
-	self.turret2:SetOwner(self)
-	self.turret2:Spawn()
-	self.turret2:SetNoDraw(true)
+		self.turret4 = ents.Create("npc_vj_halo_unsc_spv3_rocket_pod")
+		self.turret4.RangeAttackAngleRadius = 90
+		self.turret4:SetParent(self, 2)
+		self.turret4:SetPos(self:GetAttachment(self:LookupAttachment("Rocket_Left"))["Pos"])
+		self.turret4:SetAngles(self:GetAngles())
+		self.turret4:SetOwner(self)
+		self.turret4:Spawn()
+		self.turret4:SetNoDraw(true)
+	elseif (random==1) then
+		self.turret3 = ents.Create("npc_vj_halo_unsc_spv3_pelican_turret")
+		self.turret3.RangeAttackAngleRadius = 90
+		self.turret3:SetParent(self, 2)
+		self.turret3:SetPos(self:GetAttachment(self:LookupAttachment("Rocket_Right"))["Pos"])
+		self.turret3:SetAngles(self:GetAngles())
+		self.turret3:SetOwner(self)
+		self.turret3:Spawn()
+		self.turret3:SetNoDraw(true)
 
-	self.turret3 = ents.Create("npc_vj_halo_unsc_spv3_rocket_pod")
-	self.turret3.RangeAttackAngleRadius = 90
-	self.turret3:SetParent(self, 2)
-	self.turret3:SetPos(self:GetAttachment(self:LookupAttachment("Rocket_Right"))["Pos"])
-	self.turret3:SetAngles(self:GetAngles())
-	self.turret3:SetOwner(self)
-	self.turret3:Spawn()
-	self.turret3:SetNoDraw(true)
+		self.turret4 = ents.Create("npc_vj_halo_unsc_spv3_pelican_turret")
+		self.turret4.RangeAttackAngleRadius = 90
+		self.turret4:SetParent(self, 2)
+		self.turret4:SetPos(self:GetAttachment(self:LookupAttachment("Rocket_Left"))["Pos"])
+		self.turret4:SetAngles(self:GetAngles())
+		self.turret4:SetOwner(self)
+		self.turret4:Spawn()
+		self.turret4:SetNoDraw(true)
+	end
 
-	self.turret4 = ents.Create("npc_vj_halo_unsc_spv3_rocket_pod")
-	self.turret4.RangeAttackAngleRadius = 90
-	self.turret4:SetParent(self, 2)
-	self.turret4:SetPos(self:GetAttachment(self:LookupAttachment("Rocket_Left"))["Pos"])
-	self.turret4:SetAngles(self:GetAngles())
-	self.turret4:SetOwner(self)
-	self.turret4:Spawn()
-	self.turret4:SetNoDraw(true)
-	
 	self:VJ_ACT_PLAYACTIVITY(self.SpawnAnim,true,self:SequenceDuration(self:LookupSequence(self.SpawnAnim)),false)	
 	self:SetNoDraw(true)
 	timer.Simple(0.3, function()
 		if (IsValid(self)) then
 			self:SetNoDraw(false)
-			self.turret:SetNoDraw(false)
-			self.turret2:SetNoDraw(false)
-			self.turret2:SetCollisionGroup(1)
-			self.turret3:SetNoDraw(false)
-			self.turret4:SetNoDraw(false)
+			if IsValid(self.turret) then
+				self.turret:SetNoDraw(false)
+			end
+			if IsValid(self.turret2) then
+				self.turret2:SetNoDraw(false)
+			end
+			if IsValid(self.turret3) then
+				self.turret3:SetNoDraw(false)
+			end
+			if IsValid(self.turret4) then
+				self.turret4:SetNoDraw(false)
+			end
 			
 		end
 	end)

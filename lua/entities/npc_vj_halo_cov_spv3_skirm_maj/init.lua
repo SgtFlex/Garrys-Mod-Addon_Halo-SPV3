@@ -12,6 +12,8 @@ ENT.LightColor = Color(0, 255, 0)
 ENT.UNSCWeps = {
 	"weapon_vj_unsc_spv3_ar"
 }
+ENT.WeaponProfficiency = 100
+ENT.ExtraShotCount = 2
 
 function ENT:CustomOnInitialize()
 	self:SetHitboxSet("shielded")

@@ -97,8 +97,38 @@ function ENT:CustomOnPhysicsCollide(data,phys)
 	self.FirstCollide=true
 	self.HitNormal = data.HitNormal
 	if (!(data.HitEntity:IsWorld()) and (data.HitEntity:IsPlayer() or data.HitEntity:IsNPC())) then
-		self:SetParent(data.HitEntity)
 		self:SetSolid(0)
+		if (data.HitEntity:GetBoneCount()>4) then
+			self:SetMoveType(8)
+			self:SetCollisionGroup(0)
+			self:SetNotSolid(true)
+			local closestBone = 0
+			local boneDistance = 1000
+			self.BonePos, self.BoneAng = data.HitEntity:GetBonePosition(1)
+			for i=1, data.HitEntity:GetBoneCount()-1 do
+				if (data.HitEntity:GetBonePosition(i):Distance(self:GetPos()) < boneDistance) then
+					boneDistance = data.HitEntity:GetBonePosition(i):Distance(self:GetPos())
+					closestBone = i
+					self.BonePos, self.BoneAng = data.HitEntity:GetBonePosition(closestBone)
+				end
+			end
+			self:SetMoveType(MOVETYPE_NONE)
+			self:SetCollisionGroup(0)
+			self:SetNotSolid(true)
+			if ((closestBone > 1) or (closestBone < data.HitEntity:GetBoneCount()-1)) then
+				self.BoneToFollow = closestBone + math.random(-1,1)
+			else
+				self.BoneToFollow = closestBone
+			end
+			self.BonePos, self.BoneAng = data.HitEntity:GetBonePosition(self.BoneToFollow)
+			self:FollowBone(data.HitEntity, self.BoneToFollow)
+			self:SetPos(self.BonePos)
+			self:SetAngles(self.BoneAng + Angle(90, 0, 0))
+			self:SetVelocity(Vector(0,0,0))
+		else
+			self:SetParent(v)
+			self:SetMoveType(8)
+		end
 		data.HitEntity:TakeDamage(1, self:GetOwner(), self)
 		self.StuckTo=true
 		if (data.HitEntity.SoundTbl_Stuck) then

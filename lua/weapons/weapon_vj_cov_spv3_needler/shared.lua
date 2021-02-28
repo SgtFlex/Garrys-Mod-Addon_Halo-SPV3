@@ -9,7 +9,7 @@ SWEP.Primary.TracerType 		= "AirboatGunHeavyTracer" -- Tracer type (Examples: AR
 SWEP.Primary.Damage				= 3
 SWEP.Primary.ClipSize			= 20 -- Max amount of bullets per clip
 SWEP.NPC_NextPrimaryFire 		= 1.65 -- Next time it can use primary fire
-SWEP.NPC_ExtraShotsPerFire		= 5
+SWEP.NPC_ExtraShotsPerFire		= 1
 SWEP.NPC_CustomSpread 			= 0.05 -- This is added on top of the custom spread that's set inside the SNPC! | Starting from 1: Closer to 0 = better accuracy, Farther than 1 = worse accuracy
 SWEP.NPC_TimeUntilFire 			= 0.12 -- How much time until the bullet/projectile is fired?
 SWEP.Primary.DisableBulletCode	= true -- The bullet won't spawn, this can be used when creating a projectile-based weapon

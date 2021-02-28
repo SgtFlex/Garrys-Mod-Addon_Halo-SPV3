@@ -56,8 +56,11 @@ ENT.AnimTbl_MeleeAttack = {ACT_MELEE_ATTACK1}
 	-- ====== Sound File Paths ====== --
 -- Leave blank if you don't want any sounds to play
 ENT.RangeAttackEntityToSpawn = "obj_vj_spv3_floodwolf_shot" -- The entity that is spawned when range attacking
-ENT.RangeAttackExtraTimers = {0.15,0.3,0.45,0.6,0.75,0.9,1.05} -- Extra range attack timers | it will run the projectile code after the given amount of seconds
-ENT.TimeUntilRangeAttackProjectileRelease = 0 -- How much time until the projectile code is ran?
+ENT.TimeUntilRangeAttackProjectileRelease = .15 -- How much time until the projectile code is ran?
+ENT.RangeAttackReps = 10
+ENT.NextAnyAttackTime_Range = 3
+ENT.NextRangeAttackTime = 0
+ENT.NextRangeAttackTime_DoRand = 4 -- False = Don't use random time | Number = Picks a random number between the regular timer and this timer
 ENT.HasDeathRagdoll = false
 function ENT:CustomOnInitialize()
 	self:SetBodygroup(1, 1)

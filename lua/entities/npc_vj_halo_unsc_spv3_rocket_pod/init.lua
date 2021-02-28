@@ -59,7 +59,17 @@ end
 
 function ENT:CustomOnInitialize()
 	self:SetCollisionBounds(self:GetModelBounds())
-
+	self.eyeLight = ents.Create("env_sprite")
+	self.eyeLight:SetParent(self,self:LookupAttachment("Light"))
+	self.eyeLight:SetPos(self:GetAttachment(self:LookupAttachment("light"))["Pos"])
+	self.eyeLight:SetKeyValue("rendermode", "9")
+	self.eyeLight:SetKeyValue("renderamt", "255")
+	self.eyeLight:SetKeyValue("model","blueflare1_noz.vmt")
+	self.eyeLight:SetKeyValue("GlowProxySize","3")
+	self.eyeLight:SetKeyValue("rendercolor",tostring("0 255 50"))
+	self.eyeLight:SetKeyValue("scale", "0.3")
+	self.eyeLight:Spawn()
+	self.eyeLight:Activate()
 end
 
 function ENT:RangeAttackCode_OverrideProjectilePos(TheProjectile) 

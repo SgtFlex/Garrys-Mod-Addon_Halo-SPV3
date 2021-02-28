@@ -95,10 +95,16 @@ function ENT:SpawnAnEntity(keys, values, initspawn)
 	if (v.EntityName == "Phantom") then
 		local navArea = nil
 		local pos = nil
+		local trace = nil
 		repeat
 			navArea = self.TableNavAreas[math.random(1, #self.TableNavAreas)]
 			pos = navArea:GetRandomPoint()
-		until (!navArea:IsUnderwater() and navArea:GetSizeX()>= 250 and navArea:GetSizeY()>= 250)
+			local trace = util.TraceLine({
+				start = pos + Vector(0, 0, 5),
+				endpos = pos + Vector(0, 0, 1000),
+				filter = self,
+			})
+		until (!navArea:IsUnderwater() and navArea:GetSizeX()>= 250 and navArea:GetSizeY()>= 250 and !trace.Hit)
 		getthename:SetPos(pos)
 	elseif (v.EntityName == "Pelican") then
 		local navArea = nil
@@ -106,7 +112,12 @@ function ENT:SpawnAnEntity(keys, values, initspawn)
 		repeat
 			navArea = self.TableNavAreas[math.random(1, #self.TableNavAreas)]
 			pos = navArea:GetRandomPoint()
-		until (!navArea:IsUnderwater() and navArea:GetSizeX()>= 250 and navArea:GetSizeY()>= 250)
+			local trace = util.TraceLine({
+					start = pos + Vector(0, 0, 5),
+					endpos = pos + Vector(0, 0, 1000),
+					filter = self,
+				})
+		until (!navArea:IsUnderwater() and navArea:GetSizeX()>= 250 and navArea:GetSizeY()>= 250 and !trace.Hit)
 		getthename:SetPos(pos)
 		
 	elseif (v.EntityName == "Biomass") then

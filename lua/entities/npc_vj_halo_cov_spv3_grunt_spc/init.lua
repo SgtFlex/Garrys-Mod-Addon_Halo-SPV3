@@ -14,7 +14,8 @@ ENT.bodyGroupTable = {
 }
 ENT.StartHealth = 70
 -- ENT.ShieldHealth = 0
-ENT.ExtraShotCount = 3
+ENT.ExtraShotCount = 2
+ENT.WeaponProfficiency = 50
 
 ENT.UNSCWeps = {
 	"weapon_vj_unsc_spv3_magnum",

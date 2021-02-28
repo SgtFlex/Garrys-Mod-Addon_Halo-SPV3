@@ -45,11 +45,16 @@ function ENT:CustomOnInitialize()
 	-- Shields --
 	if (self.SpawnedFromInf==false) then
 		self.StartHealth = self.StartHealth * GetConVarNumber("vj_spv3_HealthModifier")
+			if (math.random(0,100) >= GetConVarNumber("vj_spv3_floodEliteShield")) then
 		self.ShieldHealth = self.ShieldHealth * GetConVarNumber("vj_spv3_ShieldModifier")
+		self.ShieldActivated = true
+	else
+		self.ShieldHealth = 0
+		self.ShieldActivated = false
+	end
 	end
 	self.ShieldCurrentHealth = self.ShieldHealth
 	self.CurrentHealth = self.StartHealth
-	self.ShieldActivated = true
 	self:SetHealth(self.ShieldHealth + self.StartHealth)
 
 	self.PlasmaNade1 = ents.Create("weapon_vj_cov_spv3_plasma_nade")

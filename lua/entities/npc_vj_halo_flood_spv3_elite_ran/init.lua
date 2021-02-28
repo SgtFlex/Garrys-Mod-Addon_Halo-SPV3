@@ -152,7 +152,7 @@ ENT.Variants = {
 function ENT:CustomOnInitialize()
 	self.variantSelector = math.random(1, #self.Variants)
 	timer.Simple(0.01, function() 
-		if (GetConVarNumber("vj_spv3_floodWeps")==1 and math.random(0,1)==1) then
+		if (math.random(0,100) <= GetConVarNumber("vj_spv3_floodWeps")) then
 			self:Give(VJ_PICKRANDOMTABLE(self.WeaponTable))
 		end
 	end)
@@ -174,13 +174,18 @@ function ENT:CustomOnInitialize()
 	self:SetSkin(self.Variants[self.variantSelector]["Skin"])
 	self.MeleeAttackDamage = self.MeleeAttackDamage * GetConVarNumber("vj_spv3_damageModifier")
 	self:CapabilitiesAdd(bit.bor(CAP_MOVE_CLIMB))
-	self:SetCollisionBounds(Vector(30, 30, 80), Vector(-30, -30, 0))
+	self:SetCollisionBounds(Vector(-16, -16, 0), Vector(16, 16, 80))
 	-- Shields --
 	self.StartHealth = self.Variants[self.variantSelector]["Health"] * GetConVarNumber("vj_spv3_HealthModifier")
-	self.ShieldHealth = self.Variants[self.variantSelector]["Shields"] * GetConVarNumber("vj_spv3_ShieldModifier")
+	if (math.random(0,100) >= GetConVarNumber("vj_spv3_floodEliteShield")) then
+		self.ShieldHealth = self.Variants[self.variantSelector]["Shields"] * GetConVarNumber("vj_spv3_ShieldModifier")
+		self.ShieldActivated = true
+	else
+		self.ShieldHealth = 0
+		self.ShieldActivated = false
+	end
 	self.ShieldCurrentHealth = self.ShieldHealth
 	self.CurrentHealth = self.StartHealth
-	self.ShieldActivated = true
 	self:SetHealth(self.ShieldHealth + self.StartHealth)
 end
 ---------------------------------------------------------------------------------------------------------------------------------------------
@@ -276,6 +281,7 @@ function ENT:FlyingDeath(dmginfo)
 	self.HasDeathRagdoll = false
 	self.HasDeathAnimation = false
 	self.imposter = ents.Create("obj_vj_imposter")
+	self.imposter.IsCarrier = (self.Variants[self.variantSelector]["Name"]=="Runner")
 	self.imposter:SetOwner(self)
 	self.imposter.Sequence = "Die_Airborne"
 	local velocity = dmginfo:GetDamageForce():GetNormalized() * 1500
@@ -398,6 +404,15 @@ function ENT:CustomOnInitialKilled(dmginfo,hitgroup)
 		phys:ApplyForceCenter(dmginfo:GetDamageForce()*.01)
 	end
 end
+
+function ENT:CustomOnThink() 
+	if (IsValid(self:GetEnemy()) and IsValid(self:GetActiveWeapon()) and self:GetActiveWeapon():Clip1()>0 and self:GetPos():DistToSqr(self:GetEnemy():GetPos())> 100) then
+		self.AnimTbl_Run = {ACT_WALK}
+	else
+		self.AnimTbl_Run = {ACT_RUN}
+	end
+end
+
 /*-----------------------------------------------
 	*** Copyright (c) 2012-2016 by DrVrej, All rights reserved. ***
 	No parts of this code or any of its contents may be reproduced, copied, modified or adapted,

@@ -8,8 +8,8 @@
 	"$phong" "1"
 	"$phongexponent"				"15"
 	"$phongboost"					"5"
-	"$phongfresnelranges"			"[0.3 0.7 1.5]"
-
+	"$phongfresnelranges"			"[0.67 1.5 1]"
+	"$phongwarptexture" "models/hce/spv3/cov/phantom/untitled"
 	"$blendtintbybasealpha" "1"
 	"$blendtintcoloroverbase" "0"
 }

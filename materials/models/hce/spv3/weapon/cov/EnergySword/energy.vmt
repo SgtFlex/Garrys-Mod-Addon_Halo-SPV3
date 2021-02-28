@@ -1,8 +1,8 @@
-"UnlitGeneric"
+"VertexlitGeneric"
 {
 	"$basetexture" "models/hce/spv3/weapon/cov/energysword/energy_diff_new"
-	$translucent 1
-	$selfillum 1
+	$additive 1
+	$nocull 1
 	$color2 "[0.7 0.9 0.9]"
 
 "Proxies"

@@ -18,7 +18,7 @@ function ENT:CustomOnInitialize()
 	self:SetMaterial("models/props_c17/frostedglass_01a")
 	self:AddFlags(FL_NOTARGET)
 		timer.Simple(0.01, function() 
-		if (GetConVarNumber("vj_spv3_covUNSCWeps")==1 and math.random(0,1)==1) then
+		if (math.random(0,100) <= GetConVarNumber("vj_spv3_floodWeps")) then
 			self:Give(VJ_PICKRANDOMTABLE(self.WeaponTable))
 		end
 	end)
@@ -26,6 +26,12 @@ function ENT:CustomOnInitialize()
 		if (IsValid(self:GetActiveWeapon())) then
 			self.weaponMaterial = self:GetActiveWeapon():GetMaterial()
 			self:GetActiveWeapon():SetMaterial("models/props_c17/frostedglass_01a")
+		end
+	end)
+	self:SetSkin(self.Skin)
+	timer.Simple(0.01, function() 
+		if (GetConVarNumber("vj_spv3_floodWeps")==1 and math.random(0,1)==1) then
+			self:Give(VJ_PICKRANDOMTABLE(self.WeaponTable))
 		end
 	end)
 	self:SetColor(self.modelColor)

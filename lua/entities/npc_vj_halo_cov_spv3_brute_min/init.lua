@@ -1,5 +1,6 @@
 AddCSLuaFile("shared.lua")
 include('shared.lua')
+include('entities/npc_vj_halo_shared_spv3/init.lua')
 /*-----------------------------------------------
 	*** Copyright (c) 2012-2016 by DrVrej, All rights reserved. ***
 	No parts of this code or any of its contents may be reproduced, copied, modified or adapted,
@@ -25,7 +26,8 @@ ENT.StartHealth = 160
 ENT.CurrentHealth = ENT.StartHealth
 ENT.ShieldHealth = 0
 ENT.ShieldCurrentHealth = ENT.ShieldHealth
-ENT.ExtraShotCount = 0
+ENT.ExtraShotCount = 3
+ENT.WeaponProfficiency = 60
 	-- ====== Blood-Related Variables ====== --
 ENT.Bleeds = true -- Does the SNPC bleed? (Blood decal, particle, etc.)
 ENT.BloodColor = "Red" -- The blood type, this will determine what it should use (decal, particle, etc.)
@@ -105,7 +107,9 @@ ENT.CanFlinch = 1
 ENT.EntitiesToRunFrom = {obj_spore=true,obj_vj_grenade=true,obj_grenade=true,obj_handgrenade=true,npc_grenade_frag=true,doom3_grenade=true,fas2_thrown_m67=true,cw_grenade_thrown=true,obj_cpt_grenade=true,cw_flash_thrown=true,ent_hl1_grenade=true, obj_vj_unsc_spv3_frag_nade=true,obj_vj_cov_spv3_plasma_nade=true,obj_vj_cov_spv3_gravity_nade=true,obj_vj_cov_spv3_cluster_nade=true,obj_vj_cov_spv3_needler_nade=true, npc_vj_halo_flood_spv3_carrier=true}
 
 function ENT:CustomOnInitialize()
+	self:RandomizeTraits()
 	self:SetSkin(self.Skin)
+
 	timer.Simple(0.01, function() 
 		if (GetConVarNumber("vj_spv3_covUNSCWeps")==1 and math.random(0,1)==1) then
 			self:GetActiveWeapon():Remove()
@@ -149,7 +153,7 @@ function ENT:CustomOnInitialize()
 	for i=1, #self.bodyGroupTable do
 		self:SetBodygroup(i, self.bodyGroupTable[i])
 	end
-	self:SetCollisionBounds(Vector(30, 30, 85), Vector(-30, -30, 0))
+	self:SetCollisionBounds(Vector(-20, -20, 0), Vector(20, 20, 80))
 	self.MeleeAttackDamage = self.MeleeAttackDamage * GetConVarNumber("vj_spv3_damageModifier")
 	-- Shields & Health --
 	self.StartHealth = self.StartHealth * GetConVarNumber("vj_spv3_HealthModifier")
@@ -371,43 +375,6 @@ end
 	No parts of this code or any of its contents may be reproduced, copied, modified or adapted,
 	without the prior written consent of the author, unless otherwise indicated for stand-alone materials.
 -----------------------------------------------*/
-function ENT:CustomOnGrenadeAttack_BeforeThrowTime() 
-	self.GrenadeAttackEntity = VJ_PICKRANDOMTABLE(self.GrenadeTypes)
-end
-
-
-function ENT:CheckForGrenades()
-	if self.CanDetectGrenades == false or self.ThrowingGrenade == true or self.HasSeenGrenade == true or self.VJ_IsBeingControlled == true then return end
-	local FindNearbyGrenades = ents.FindInSphere(self:GetPos(),self.RunFromGrenadeDistance)
-	for _,v in pairs(FindNearbyGrenades) do
-		local IsFriendlyGrenade = false
-		if self.EntitiesToRunFrom[v:GetClass()] && self:Visible(v) then
-			if IsValid(v:GetOwner()) && v:GetOwner().IsVJBaseSNPC == true && (self:Disposition(v:GetOwner()) == D_LI or self:Disposition(v:GetOwner()) == D_NU) then
-				IsFriendlyGrenade = true
-			end
-			if IsFriendlyGrenade == false then
-				self.HasSeenGrenade = true
-				self.TakingCoverT = CurTime() + 4
-				if /*IsValid(self:GetEnemy()) &&*/v.VJHumanNoPickup != true && v.VJHumanTossingAway != true && self.CanThrowBackDetectedGrenades == true && self.HasGrenadeAttack == true && v:GetVelocity():Length() < 400 && self:VJ_GetNearestPointToEntityDistance(v) < 100 && self.EntitiesToThrowBack[v:GetClass()] then
-					self.NextGrenadeAttackSoundT = CurTime() + 3
-					self:ThrowGrenadeCode(v,true)
-					v.VJHumanTossingAway = true
-					//v:Remove()
-				end
-				//if self.VJ_PlayingSequence == false then self:VJ_SetSchedule(SCHED_RUN_FROM_ENEMY) end
-				self:SetAngles(Angle(self:GetAngles().x, (self:GetPos()-v:GetPos()):Angle().y,self:GetAngles().z))
-				self:VJ_ACT_PLAYACTIVITY(ACT_SIGNAL_FORWARD, true, 2, false)
-				self:VJ_TASK_COVER_FROM_ENEMY("TASK_RUN_PATH",function(x) x.CanShootWhenMoving = true x.ConstantlyFaceEnemy = true end)
-				timer.Simple(4,function() if IsValid(self) then self.HasSeenGrenade = false end end)
-				break;
-				//else
-				//self.HasSeenGrenade = false
-				//return
-			end
-		end
-	end
-end
-
 ENT.Berserked = false
 ENT.EvadeCooldown = 0
 function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
@@ -504,162 +471,4 @@ end
 
 function ENT:CustomOnPriorToKilled(dmginfo,hitgroup) 
 	self.BerserkSound:Stop()
-end
-
-function ENT:RunItemDropsOnDeathCode(dmginfo,hitgroup)
-	if self.HasItemDropsOnDeath == false then return end
-	for i=1, math.random(1,4) do
-		self.ThingsToDrop[i] = self.GrenadeWeps[math.random(1,5)]
-	end
-	if math.random(1,self.ItemDropsOnDeathChance) == 1 then
-		self:CustomRareDropsOnDeathCode(dmginfo,hitgroup)
-		for k,v in pairs(self.ThingsToDrop) do
-			local entlist = self.ThingsToDrop[k]
-			if entlist != false then
-				local randdrop = ents.Create(entlist)
-				randdrop:SetPos(self:GetPos() + self:OBBCenter())
-				randdrop:SetAngles(self:GetAngles())
-				randdrop:Spawn()
-				randdrop:Activate()
-				local phys = randdrop:GetPhysicsObject()
-				if IsValid(phys) then
-					phys:SetMass(60)
-					phys:ApplyForceCenter(dmginfo:GetDamageForce()*.01)
-				end
-			end
-		end
-	end
-end
-
-ENT.GrenadeAttackVelForward1 = 300 -- Grenade attack velocity up | The first # in math.random
-
-function ENT:ThrowGrenadeCode(CustomEnt, NoOwner)
-	if self.Dead == true or self.Flinching == true or self.MeleeAttacking == true /*or (IsValid(self:GetEnemy()) && !self:Visible(self:GetEnemy()))*/ then return end
-	//if self:VJ_ForwardIsHidingZone(self:NearestPoint(self:GetPos() +self:OBBCenter()),self:GetEnemy():EyePos()) == true then return end
-	NoOwner = NoOwner or false
-	local getIsCustom = false
-	local gerModel = self.GrenadeAttackModel
-	local gerClass = self.GrenadeAttackEntity
-	local gerFussTime = self.GrenadeAttackFussTime
-	
-	if IsValid(self:GetEnemy()) && !self:Visible(self:GetEnemy()) then
-		if self:VisibleVec(self.LatestVisibleEnemyPosition) && self:GetEnemy():GetPos():Distance(self.LatestVisibleEnemyPosition) <= 600 then
-			self:FaceCertainPosition(self.LatestVisibleEnemyPosition)
-		else
-			return
-		end
-	end
-	
-	local getSpawnPos = self.GrenadeAttackAttachment
-	local getSpawnAngle;
-	if getSpawnPos == false then
-		getSpawnPos = self:GetPos() + self.GrenadeAttackSpawnPosition
-		getSpawnAngle = getSpawnPos:Angle()
-	else
-		getSpawnPos = self:GetAttachment(self:LookupAttachment(self.GrenadeAttackAttachment)).Pos
-		getSpawnAngle = self:GetAttachment(self:LookupAttachment(self.GrenadeAttackAttachment)).Ang
-	end
-	
-	if self.DisableGrenadeAttackAnimation == false then
-		self.CurrentAttackAnimation = VJ_PICK(self.AnimTbl_GrenadeAttack)
-		self.CurrentAttackAnimationDuration = self:DecideAnimationLength(self.CurrentAttackAnimation, false, 0.2)
-		self.PlayingAttackAnimation = true
-		timer.Create("timer_act_playingattack"..self:EntIndex(), self.CurrentAttackAnimationDuration, 1, function() self.PlayingAttackAnimation = false end)
-		self:VJ_ACT_PLAYACTIVITY(self.CurrentAttackAnimation, self.GrenadeAttackAnimationStopAttacks, self:DecideAnimationLength(self.CurrentAttackAnimation, self.GrenadeAttackAnimationStopAttacksTime), true, self.GrenadeAttackAnimationDelay, {PlayBackRateCalculated=true})
-	end
-
-	if IsValid(CustomEnt) then -- Custom nernagner gamal nernagner vor yete bidi nede
-		getIsCustom = true
-		gerModel = CustomEnt:GetModel()
-		gerClass = CustomEnt:GetClass()
-		CustomEnt:SetMoveType(MOVETYPE_NONE)
-		CustomEnt:SetParent(self)
-		if self.GrenadeAttackAttachment == false then
-			CustomEnt:SetPos(getSpawnPos)
-		else
-			CustomEnt:Fire("SetParentAttachment",self.GrenadeAttackAttachment)
-		end
-		CustomEnt:SetAngles(getSpawnAngle)
-		if gerClass == "obj_vj_grenade" then
-			gerFussTime = math.abs(CustomEnt.FussTime - CustomEnt.TimeSinceSpawn)
-		elseif gerClass == "obj_handgrenade" or gerClass == "obj_spore" then
-			gerFussTime = 1
-		elseif gerClass == "npc_grenade_frag" or gerClass == "doom3_grenade" or gerClass == "fas2_thrown_m67" or gerClass == "cw_grenade_thrown" or gerClass == "cw_flash_thrown" or gerClass == "cw_smoke_thrown" then
-			gerFussTime = 1.5
-		elseif gerClass == "obj_cpt_grenade" then
-			gerFussTime = 2
-		end
-	end
-
-	if !IsValid(self:GetEnemy()) then
-		local iamarmo = self:VJ_CheckAllFourSides()
-		local facepos = false
-		if iamarmo.Forward then facepos = self:GetPos() + self:GetForward()*200; doit = true;
-		elseif iamarmo.Right then facepos = self:GetPos() + self:GetRight()*200;  doit = true;
-		elseif iamarmo.Left then facepos = self:GetPos() + self:GetRight()*-200;  doit = true;
-		elseif iamarmo.Backward then facepos = self:GetPos() + self:GetForward()*-200;  doit = true;
-		end
-		if facepos != false then
-			self:FaceCertainPosition(facepos, self.CurrentAttackAnimationDuration or 1.5)
-		end
-	end
-
-	self.ThrowingGrenade = true
-	self:CustomOnGrenadeAttack_BeforeThrowTime()
-	self:PlaySoundSystem("GrenadeAttack")
-
-	timer.Simple(self.TimeUntilGrenadeIsReleased, function()
-		if getIsCustom == true && !IsValid(CustomEnt) then return end
-		if IsValid(CustomEnt) then CustomEnt.VJHumanTossingAway = false CustomEnt:Remove() end
-		if IsValid(self) && self.Dead == false /*&& IsValid(self:GetEnemy())*/ then -- Yete SNPC ter artoon e...
-			local gerThrowPos = self:GetPos() + self:GetForward()*200
-			if IsValid(self:GetEnemy()) then
-				if !self:Visible(self:GetEnemy()) && self:VisibleVec(self.LatestVisibleEnemyPosition) && self:GetEnemy():GetPos():Distance(self.LatestVisibleEnemyPosition) <= 600 then
-					gerThrowPos = self.LatestVisibleEnemyPosition
-					self:FaceCertainPosition(gerThrowPos, self.CurrentAttackAnimationDuration - self.TimeUntilGrenadeIsReleased)
-				else
-					gerThrowPos = self:GetEnemy():GetPos()
-				end
-			else -- Yete teshnami chooni, nede amenan lav goghme
-				local iamarmo = self:VJ_CheckAllFourSides()
-				if iamarmo.Forward then gerThrowPos = self:GetPos() + self:GetForward()*200; self:FaceCertainPosition(gerThrowPos, self.CurrentAttackAnimationDuration - self.TimeUntilGrenadeIsReleased)
-				elseif iamarmo.Right then gerThrowPos = self:GetPos() + self:GetRight()*200; self:FaceCertainPosition(gerThrowPos, self.CurrentAttackAnimationDuration - self.TimeUntilGrenadeIsReleased)
-				elseif iamarmo.Left then gerThrowPos = self:GetPos() + self:GetRight()*-200; self:FaceCertainPosition(gerThrowPos, self.CurrentAttackAnimationDuration - self.TimeUntilGrenadeIsReleased)
-				elseif iamarmo.Backward then gerThrowPos = self:GetPos() + self:GetForward()*-200; self:FaceCertainPosition(gerThrowPos, self.CurrentAttackAnimationDuration - self.TimeUntilGrenadeIsReleased)
-				end
-			end
-			local gent = ents.Create(gerClass)
-			local getThrowVel = (gerThrowPos - getSpawnPos) + (self:GetUp()*(getSpawnPos:Distance(gerThrowPos)/3) + self:GetForward()*self.GrenadeAttackVelForward1 + self:GetRight()*self.GrenadeAttackVelRight1)
-			if NoOwner == false then gent:SetOwner(self) end
-			gent:SetPos(getSpawnPos)
-			gent:SetAngles(getSpawnAngle)
-			gent:SetModel(Model(gerModel))
-			-- Set the timers for all the different grenade entities
-				if gerClass == "obj_vj_grenade" then
-					gent.FussTime = gerFussTime
-				elseif gerClass == "obj_cpt_grenade" then
-					gent:SetTimer(gerFussTime)
-				elseif gerClass == "obj_spore" then
-					gent:SetGrenade(true)
-				elseif gerClass == "ent_hl1_grenade" then
-					gent:ShootTimed(CustomEnt, getThrowVel, gerFussTime)
-				elseif gerClass == "doom3_grenade" or gerClass == "obj_handgrenade" then
-					gent:SetExplodeDelay(gerFussTime)
-				elseif gerClass == "cw_grenade_thrown" or gerClass == "cw_flash_thrown" or gerClass == "cw_smoke_thrown" then
-					gent:SetOwner(self)
-					gent:Fuse(gerFussTime)
-				end
-			gent:Spawn()
-			gent:Activate()
-			if gerClass == "npc_grenade_frag" then gent:Input("SetTimer",self:GetOwner(),self:GetOwner(),gerFussTime) end
-			local phys = gent:GetPhysicsObject()
-			if IsValid(phys) then
-				phys:Wake()
-				phys:AddAngleVelocity(Vector(math.Rand(500,500),math.Rand(500,500),math.Rand(500,500)))
-				phys:SetVelocity(getThrowVel)
-			end
-			self:CustomOnGrenadeAttack_OnThrow(gent)
-		end
-		self.ThrowingGrenade = false
-	end)
 end

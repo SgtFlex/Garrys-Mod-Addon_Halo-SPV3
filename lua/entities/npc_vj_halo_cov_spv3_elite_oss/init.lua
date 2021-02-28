@@ -24,12 +24,8 @@ ENT.ExtraShotCount = 0
 ENT.Skin=0
 ENT.HasSword = true
 ---------------------------------------------------------------------------------------------------------------------------------------------
+
 function ENT:CustomOnInitialize()
-	-- local matEnt = ents.Create("material_modify_control")
-	-- matEnt:Spawn()
-	-- matEnt:SetKeyValue("MaterialName", "models/hce/spv3/cov/elite/elite_main_diff_blue")
-	-- matEnt:SetKeyValue("MaterialVar", "$color2")
-	-- matEnt:SetKeyValue("MaterialVarValue", "[5 1 1]")
 	self.material = self:GetMaterial()
 	timer.Simple(0.01, function()
 		self.weaponMaterial = self:GetActiveWeapon():GetMaterial()
@@ -39,24 +35,32 @@ function ENT:CustomOnInitialize()
 	self:SetMaterial("models/props_c17/frostedglass_01a")
 	self:AddFlags(FL_NOTARGET)
 	self:SetSkin(self.Skin)
-	timer.Simple(0.1, function()
-	if (self:GetActiveWeapon().HoldType=="ar2") then
-		self.AnimTbl_WeaponAttack = {ACT_IDLE_RIFLE} -- Animation played when the SNPC does weapon attack
-		self.AnimTbl_ShootWhileMovingRun = {ACT_RUN_RIFLE} -- Animations it will play when shooting while running | NOTE: Weapon may translate the animation that they see fit!
-		self.AnimTbl_ShootWhileMovingWalk = {ACT_RUN_RIFLE} -- Animations it will play when shooting while walking | NOTE: Weapon may translate the animation that they see fit!
-		self.AnimTbl_Run = {ACT_RUN_RIFLE}
-		self.AnimTbl_TakingCover = {ACT_COVER_MED}
-		self.AnimTbl_WeaponAttackCrouch = {ACT_COVER_MED}
-	elseif (self:GetActiveWeapon().HoldType == "melee") then
-		self.MeleeAttackDamage = 300 * GetConVarNumber("vj_spv3_damageModifier")
-		self.AnimTbl_ShootWhileMovingRun = {ACT_MP_RUN_MELEE} -- Animations it will play when shooting while running | NOTE: Weapon may translate the animation that they see fit!
-		self.AnimTbl_ShootWhileMovingWalk = {ACT_MP_RUN_MELEE} -- Animations it will play when shooting while walking | NOTE: Weapon may translate the animation that they see fit!
-		self.AnimTbl_Run = {ACT_MP_RUN_MELEE}
-		self.AnimTbl_IdleStand = {ACT_IDLE_MELEE}
-		self.AnimTbl_WeaponAttack = {ACT_MELEE_ATTACK2} -- Melee Attack Animations
-		self.Berserked = true
-	end
-end)
+	self:RandomizeTraits()
+	-- local matEnt = ents.Create("material_modify_control")
+	-- matEnt:Spawn()
+	-- matEnt:SetKeyValue("MaterialName", "models/hce/spv3/cov/elite/elite_main_diff_blue")
+	-- matEnt:SetKeyValue("MaterialVar", "$color2")
+	-- matEnt:SetKeyValue("MaterialVarValue", "[5 1 1]")
+	self:SetSkin(self.Skin)
+-- 	timer.Simple(0.1, function()
+-- 	if (self:GetActiveWeapon().HoldType=="ar2") then
+-- 		self.AnimTbl_WeaponAttack = {ACT_IDLE_RIFLE} -- Animation played when the SNPC does weapon attack
+-- 		self.AnimTbl_ShootWhileMovingRun = {ACT_RUN_RIFLE} -- Animations it will play when shooting while running | NOTE: Weapon may translate the animation that they see fit!
+-- 		self.AnimTbl_ShootWhileMovingWalk = {ACT_RUN_RIFLE} -- Animations it will play when shooting while walking | NOTE: Weapon may translate the animation that they see fit!
+-- 		self.AnimTbl_Run = {ACT_RUN_RIFLE}
+-- 		self.AnimTbl_TakingCover = {ACT_COVER_MED}
+-- 		self.AnimTbl_WeaponAttackCrouch = {ACT_COVER_MED}
+-- 	elseif (self:GetActiveWeapon().HoldType == "melee") then
+-- 		self.MeleeAttackDamage = 300 * GetConVarNumber("vj_spv3_damageModifier")
+-- 		self.AnimTbl_ShootWhileMovingRun = {ACT_MP_RUN_MELEE} -- Animations it will play when shooting while running | NOTE: Weapon may translate the animation that they see fit!
+-- 		self.AnimTbl_ShootWhileMovingWalk = {ACT_MP_RUN_MELEE} -- Animations it will play when shooting while walking | NOTE: Weapon may translate the animation that they see fit!
+-- 		self.AnimTbl_Run = {ACT_MP_RUN_MELEE}
+-- 		self.AnimTbl_IdleStand = {ACT_IDLE_MELEE}
+-- 		self.AnimTbl_WeaponAttack = {ACT_MELEE_ATTACK2} -- Melee Attack Animations
+
+-- 		self.Berserked = true
+-- 	end
+-- end)
 	self.GrenadeAttackEntity = VJ_PICKRANDOMTABLE(self.GrenadeTypes)
 	self.NextMoveTime = 0
 	self.NextDodgeTime = 0

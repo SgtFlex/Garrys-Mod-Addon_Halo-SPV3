@@ -54,15 +54,19 @@ function SWEP:CustomOnInitialize()
 	self:SetColor(self.Color)
 	self:GetOwner().HasWeaponReload = self.NPC_HasReload
 	local Owner = self:GetOwner()
-	for i=1,(self.NPC_ExtraShotsPerFire) do
-		table.insert(self.NPC_TimeUntilFireExtraTimers, self.NPC_TimeUntilFire*(1+#self.NPC_TimeUntilFireExtraTimers))
-	end
 	if (self.Primary.Burst ==false) then
 		if Owner.ExtraShotCount then
+			self.NPC_TimeUntilFire = self.NPC_TimeUntilFire * (1 * (100/Owner.WeaponProfficiency))
 			for i=1,(Owner.ExtraShotCount) do
 				table.insert(self.NPC_TimeUntilFireExtraTimers, self.NPC_TimeUntilFire*(1+#self.NPC_TimeUntilFireExtraTimers))
 			end
 		end
+	end
+	for i=1,(self.NPC_ExtraShotsPerFire) do
+		table.insert(self.NPC_TimeUntilFireExtraTimers, self.NPC_TimeUntilFire*(1+#self.NPC_TimeUntilFireExtraTimers))
+	end
+	if Owner.ExtraShotCount then
+		self.NPC_NextPrimaryFire = self.NPC_NextPrimaryFire + (self.NPC_TimeUntilFire * #self.NPC_TimeUntilFireExtraTimers)
 	end
 end
 

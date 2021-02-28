@@ -21,6 +21,10 @@
 	"$blendtintbybasealpha" "0"
 	"$blendtintcoloroverbase" "1"
 	$avar 0
+
+	"$selfillum" 1
+	$selfillummask "models/hce/spv3/flood/infector/infection_form_g"
+	$selfillumtint "[1 1 0]"
 	Proxies
 	{
 		EntityRandom
@@ -30,10 +34,10 @@
 		}
 		Sine
 		{
-			resultVar "$color2[1]"
+			resultVar "$selfillumtint[1]"
 			sineperiod 1
-			sinemin 0.87
-			sinemax 1.2
+			sinemin 1
+			sinemax 2
 			timeoffset "$avar"
 		}
 	}

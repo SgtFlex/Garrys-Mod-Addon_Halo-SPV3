@@ -122,7 +122,7 @@ end
 	self:SetHealth(self.StartHealth)
 	self:CapabilitiesAdd(bit.bor(CAP_MOVE_CLIMB))
 	self:SetColor(self.modelColor)
-	self:SetCollisionBounds(Vector(25, 25, 75), Vector(-25, -25, 0))
+	self:SetCollisionBounds(Vector(-16, -16, 0), Vector(16, 16, 25))
 	self:SetAngles(self:GetAngles() + Angle(0, 180, 0))
 end
 

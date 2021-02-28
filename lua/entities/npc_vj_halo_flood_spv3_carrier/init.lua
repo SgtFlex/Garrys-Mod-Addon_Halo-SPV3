@@ -84,7 +84,7 @@ function ENT:CustomOnInitialize()
 	self:SetHealth(self.StartHealth)
 	self:CapabilitiesAdd(bit.bor(CAP_MOVE_CLIMB))
 	self:SetColor(self.modelColor)
-	self:SetCollisionBounds(Vector(25, 25, 75), Vector(-25, -25, 0))
+	self:SetCollisionBounds(Vector(17, 17, 75), Vector(-17, -17, 0))
 end
 ---------------------------------------------------------------------------------------------------------------------------------------------
 ENT.infFormCount = 10

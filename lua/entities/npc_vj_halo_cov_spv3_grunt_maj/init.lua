@@ -8,10 +8,12 @@ include('entities/npc_vj_halo_cov_spv3_grunt_min/init.lua')
 -----------------------------------------------*/
 ENT.Model = {"models/hce/spv3/cov/grunt/grunt.mdl"} -- The game will pick a random model from the table when the SNPC is spawned | Add as many as you want
 ENT.modelColor = Color(127,63,63)
+
 ENT.bodyGroupTable = {
 	1,
 	0,
 }
 ENT.StartHealth = 40
 -- ENT.ShieldHealth = 0
-ENT.ExtraShotCount = 2
+ENT.ExtraShotCount = 1
+ENT.WeaponProfficiency = 40

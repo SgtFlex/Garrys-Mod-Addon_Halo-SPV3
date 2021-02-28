@@ -14,3 +14,6 @@ ENT.bodyGroupTable = {
 }
 
 ENT.Color = Color(110,45,45)
+
+ENT.WeaponProfficiency = 65
+ENT.ExtraShotCount = 1

@@ -3,13 +3,14 @@
 	"$basetexture" "models/hce/spv3/weapon/cov/plasma_rifle/plasma_rifle_diffuse"
 	"$bumpmap" "models/hce/spv3/weapon/cov/plasma_rifle/plasma_rifle_normal"
 
-	"$color2"		"[0.3 0.35 0.75]"
+	"$color2"		"[0.25 0.25 1]"
 	
 	"$phong" "1"
-	"$phongexponent"				"10"
+	"$phongexponent"				"5"
 	"$phongboost"					"5"
-	"$phongfresnelranges"			"[0.3 0.7 1.5]"
-	
+	"$phongfresnelranges"			"[0.67 1.5 1]"
+	"$phongwarptexture" "models/hce/spv3/cov/phantom/untitled"
+	"$phongtint" "[0.1 0.5 1.5]"
 	"$phongalbedotint" 1
 	"$phongexponenttexture" "models\Dark_Souls\shared\souls_green"
 

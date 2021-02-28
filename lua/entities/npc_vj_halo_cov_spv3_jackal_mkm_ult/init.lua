@@ -13,3 +13,6 @@ ENT.LightColor = Color(255, 0, 0)
 ENT.UNSCWeps = {
 	"weapon_vj_unsc_spv3_sr"
 }
+
+ENT.WeaponProfficiency = 80
+ENT.ExtraShotCount = 2
