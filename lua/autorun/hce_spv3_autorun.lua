@@ -134,6 +134,12 @@ if VJExists == true then
 	VJ.AddConVar("vj_spv3_mapFlood", 100, FCVAR_ARCHIVE)
 	VJ.AddConVar("vj_spv3_mapLimit", 80, FCVAR_ARCHIVE)
 
+	
+	concommand.Add("spv3_settings", function( ply )
+		util.AddNetworkString("vj_spv3_open_menu")
+		net.Start("vj_spv3_open_menu")
+		net.Send(ply)
+	end)
 
 	local function VJ_SPV3_MAIN(Panel)
 		local reset = vgui.Create("DButton")
@@ -152,8 +158,6 @@ if VJExists == true then
 			Frame:SetDraggable( false ) 
 			Frame:ShowCloseButton( true ) 
 			Frame:MakePopup()
-
-			
 
 			local label = vgui.Create("DLabel", Frame)
 			label:SetText("\"Reinforcement Strength\" is the accumulative strength of all the units\n that the phantom drops off. You can randomize this amount with the\n Min and Max Sliders. Having a low Max Unit strength means\n that the phantom will drop off more lower-tier units, while having a high\n Min Unit strength means the phantom will drop less, but more\n powerful high-tier units.")

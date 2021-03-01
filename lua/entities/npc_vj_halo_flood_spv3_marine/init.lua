@@ -190,7 +190,7 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 			self:SetBodygroup(self:FindBodygroupByName(self.bodyParts["Inf_Form"]["Bodygroup"]), 2)
 			self:EmitSound("infection_form/infection_pop/pop1.ogg")
 			ParticleEffect("hcea_flood_infected_death", self:LocalToWorld(Vector(0,0,50)), self:GetAngles() + Angle(90,0,0), nil)
-			self:TakeDamage(1000)
+			self:TakeDamage(1000, dmginfo:GetAttacker(), dmginfo:GetInflictor())
 		end
 	end
 end
