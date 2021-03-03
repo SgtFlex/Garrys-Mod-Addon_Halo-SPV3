@@ -51,8 +51,14 @@ function ENT:CustomOnEntitySpawn(EntityName, SpawnPosition, Entities, TheEntity)
 	
 end
 ---------------------------------------------------------------------------------------------------------------------------------------------
+ENT.CanFunction = true
 function ENT:CustomOnInitialize_BeforeNPCSpawn() 
 	self.TableNavAreas = navmesh.GetAllNavAreas()
+	if (self.TableNavAreas[1] == nil) then
+		PrintMessage(3, "Map spawner requires Navmesh to function. Map has no navmesh!")
+		self.CanFunction = false
+		self:Remove()
+	end
 end
 ---------------------------------------------------------------------------------------------------------------------------------------------
 function ENT:CustomOnInitialize_AfterNPCSpawn() end
@@ -64,6 +70,7 @@ function ENT:CustomOnThink_AfterAliveChecks() end
 function ENT:CustomOnRemove() end
 ---------------------------------------------------------------------------------------------------------------------------------------------
 function ENT:SpawnAnEntity(keys, values, initspawn)
+	if (self.CanFunction == false) then return end
 	self.LastSpawnTime = CurTime()
 	self.TimedSpawn_Time = math.random(20, 80)
 	local k = keys
