@@ -20,23 +20,11 @@
 	"$envmaptint""[0.000125 0.000124 0.000115]"
 	"$envmapfresnel""1"
 	
-	"$detail" "models/hce/spv3/cov/elite/shieldoverlay" //Used to be elite_main_glow
-	$detailscale 2
-	$detailblendmode 7
+	"$detail" "models/hce/spv3/cov/elite/elite_main_glow"
+	$detailscale 1
+	$detailblendmode 5
 	$detailblendfactor 1
 
 	"$blendtintbybasealpha" "1"
 	"$blendtintcoloroverbase" "0"
-	"Proxies"
-	{
-		"TextureScroll"
-			{
-			"textureScrollVar" "$detailtexturetransform"
-			"textureScrollRate" "0.2"
-			"textureScrollAngle" "45"
-			}
-		"MaterialModify"
-		{
-		}
-	}
 }
