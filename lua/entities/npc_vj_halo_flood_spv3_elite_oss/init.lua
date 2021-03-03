@@ -73,6 +73,64 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 			end
 		end
 	end)
+	if (self.ShieldCurrentHealth <= 0) then
+		if (hitgroup==502 and self.bodyParts["Right_Arm"]["Removed"]==false) then
+			self.bodyParts["Right_Arm"]["Health"] = self.bodyParts["Right_Arm"]["Health"] - dmginfo:GetDamage()
+			if (self.bodyParts["Right_Arm"]["Health"] <= 0) then
+				self.bodyParts["Right_Arm"]["Removed"]=true
+				local pos, ang = self:GetBonePosition(29)
+				self:CreateGibEntity("obj_vj_gib", "models/hce/spv3/flood/elite/floodElite_leftArm.mdl", {Pos = pos, Ang = ang, Vel = dmginfo:GetDamageForce()*0.3, BloodType = "Yellow"})
+				self:CreateGibEntity("obj_vj_gib", {"models/hce/spv3/flood/human/floodskin_xl.mdl", "models/hce/spv3/flood/human/floodskin_lg.mdl", "models/hce/spv3/flood/human/floodskin_md.mdl", "models/hce/spv3/flood/human/floodskin_sm.mdl"}, {Pos = pos, Ang = ang, Vel = dmginfo:GetDamageForce()*0.3, BloodType = "Yellow"})
+				self:CreateGibEntity("obj_vj_gib", {"models/hce/spv3/flood/human/floodinnard_bone.mdl", "models/hce/spv3/flood/human/floodinnard_large.mdl", "models/hce/spv3/flood/human/floodinnard_largest.mdl"}, {Pos = pos, Ang = ang, Vel = dmginfo:GetDamageForce()*0.3, BloodType = "Yellow"})
+				self:RemoveAllDecals()
+				self:SetBodygroup(self:FindBodygroupByName(self.bodyParts["Right_Arm"]["Bodygroup"]), 3)
+				if (IsValid(self:GetActiveWeapon())) then
+					local wep = ents.Create(self:GetActiveWeapon():GetClass())
+					wep:SetPos(self:GetActiveWeapon():GetPos())
+					wep:SetAngles(self:GetActiveWeapon():GetAngles())
+					wep:Spawn()
+					wep:GetPhysicsObject():SetVelocity(dmginfo:GetDamageForce()*0.3)
+					self:GetActiveWeapon():Remove()
+				end
+			end
+		elseif (hitgroup==503 and self.bodyParts["Left_Arm"]["Removed"]==false) then
+			self.bodyParts["Left_Arm"]["Health"] = self.bodyParts["Left_Arm"]["Health"] - dmginfo:GetDamage()
+			if (self.bodyParts["Left_Arm"]["Health"] <= 0) then
+				self.bodyParts["Left_Arm"]["Removed"]=true
+				local pos, ang = self:GetBonePosition(13)
+				self:CreateGibEntity("obj_vj_gib", "models/hce/spv3/flood/elite/floodElite_rightArm.mdl", {Pos = pos, Ang = ang, Vel = dmginfo:GetDamageForce()*0.3, BloodType = "Yellow"})
+				self:CreateGibEntity("obj_vj_gib", {"models/hce/spv3/flood/human/floodskin_xl.mdl", "models/hce/spv3/flood/human/floodskin_lg.mdl", "models/hce/spv3/flood/human/floodskin_md.mdl", "models/hce/spv3/flood/human/floodskin_sm.mdl"}, {Pos = pos, Ang = ang, Vel = dmginfo:GetDamageForce()*0.3, BloodType = "Yellow"})
+				self:CreateGibEntity("obj_vj_gib", {"models/hce/spv3/flood/human/floodinnard_bone.mdl", "models/hce/spv3/flood/human/floodinnard_large.mdl", "models/hce/spv3/flood/human/floodinnard_largest.mdl"}, {Pos = pos, Ang = ang, Vel = dmginfo:GetDamageForce()*0.3, BloodType = "Yellow"})
+				self:RemoveAllDecals()
+				self:SetBodygroup(self:FindBodygroupByName(self.bodyParts["Left_Arm"]["Bodygroup"]), 3)
+				self.HasMeleeAttack = false
+			end
+		elseif (hitgroup==500 and self.bodyParts["Head"]["Removed"]==false) then
+			self.bodyParts["Head"]["Health"] = self.bodyParts["Head"]["Health"] - dmginfo:GetDamage()
+			if (self.bodyParts["Head"]["Health"] <= 0) then
+
+				self.bodyParts["Head"]["Removed"]=true
+				local pos, ang = self:GetBonePosition(26)
+				self:CreateGibEntity("obj_vj_gib", "models/hce/spv3/flood/elite/floodElite_head.mdl", {Pos = pos, Ang = ang, Vel = dmginfo:GetDamageForce()*0.3, BloodType = "Yellow"})
+				self:CreateGibEntity("obj_vj_gib", {"models/hce/spv3/flood/human/floodskin_xl.mdl", "models/hce/spv3/flood/human/floodskin_lg.mdl", "models/hce/spv3/flood/human/floodskin_md.mdl", "models/hce/spv3/flood/human/floodskin_sm.mdl"}, {Pos = pos, Ang = ang, Vel = dmginfo:GetDamageForce()*0.3, BloodType = "Yellow"})
+				self:CreateGibEntity("obj_vj_gib", {"models/hce/spv3/flood/human/floodinnard_bone.mdl", "models/hce/spv3/flood/human/floodinnard_large.mdl", "models/hce/spv3/flood/human/floodinnard_largest.mdl"}, {Pos = pos, Ang = ang, Vel = dmginfo:GetDamageForce()*0.3, BloodType = "Yellow"})
+				self:RemoveAllDecals()
+				self:SetBodygroup(self:FindBodygroupByName(self.bodyParts["Head"]["Bodygroup"]), 1)
+			end
+		elseif (hitgroup==501 and self.bodyParts["Inf_Form"]["Removed"]==false) then
+			self.bodyParts["Inf_Form"]["Health"] = self.bodyParts["Inf_Form"]["Health"] - dmginfo:GetDamage()
+			if (self.bodyParts["Inf_Form"]["Health"] <= 0) then
+				self.bodyParts["Inf_Form"]["Removed"]=true
+				self:CreateGibEntity("obj_vj_gib", {"models/hce/spv3/flood/human/floodskin_xl.mdl", "models/hce/spv3/flood/human/floodskin_lg.mdl", "models/hce/spv3/flood/human/floodskin_md.mdl", "models/hce/spv3/flood/human/floodskin_sm.mdl"}, {Pos = pos, Ang = ang, Vel = dmginfo:GetDamageForce()*0.3, BloodType = "Yellow"})
+				self:CreateGibEntity("obj_vj_gib", {"models/hce/spv3/flood/human/floodinnard_bone.mdl", "models/hce/spv3/flood/human/floodinnard_large.mdl", "models/hce/spv3/flood/human/floodinnard_largest.mdl"}, {Pos = pos, Ang = ang, Vel = dmginfo:GetDamageForce()*0.3, BloodType = "Yellow"})
+				self:RemoveAllDecals()
+				self:SetBodygroup(self:FindBodygroupByName(self.bodyParts["Inf_Form"]["Bodygroup"]), 1)
+				self:EmitSound("infection_form/infection_pop/pop1.ogg")
+				ParticleEffect("hcea_flood_infected_death", self:LocalToWorld(Vector(0,0,50)), self:GetAngles() + Angle(90,0,0), nil)
+				self:TakeDamage(1000, dmginfo:GetAttacker(), dmginfo:GetInflictor())
+			end
+		end
+	end
 	if (dmginfo:GetDamage() >= self:Health()) then
 		if (dmginfo:GetDamageType()==DMG_BLAST or dmginfo:GetDamageType()==DMG_CLUB or dmginfo:GetDamageForce():Length()>=10000) then
 			self:FlyingDeath(dmginfo)

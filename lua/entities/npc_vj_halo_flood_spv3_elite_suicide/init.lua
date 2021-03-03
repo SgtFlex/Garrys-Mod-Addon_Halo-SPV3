@@ -8,7 +8,7 @@ include('entities/npc_vj_halo_flood_spv3_elite/init.lua')
 -----------------------------------------------*/
 ENT.Model = {"models/hce/spv3/flood/elite/floodelite.mdl"} -- The game will pick a random model from the table when the SNPC is spawned | Add as many as you want
 ENT.modelColor = Color(127,0,0)
-ENT.bodyGroupTable = {0, 0, 0, 0, 0}
+ENT.bodyGroupTable = {0, 1, 1, 1, 1}
 ENT.HasRangeAttack = true -- Should the SNPC have a range attack?
 ENT.RangeDistance = 500 -- This is how far away it can shoot
 ENT.DisableRangeAttackAnimation = true -- if true, it will disable the animation code
@@ -17,23 +17,18 @@ ENT.RangeToMeleeDistance = 0 -- How close does it have to be until it uses melee
 ENT.RangeAttackAnimationStopMovement = false -- Should it stop moving when performing a range attack?
 ENT.AnimTbl_RangeAttack = {} -- Range Attack Animations
 ENT.NextRangeAttackTime = 0.5 -- How much time until it can use a range attack?
-
+ENT.HasDeathAnimation = false
 ENT.StartHealth = 50
 ENT.ShieldHealth = 120
 
 ENT.infFormCount = 6
 local spreadRadius = 175
 
-ENT.HasDeathRagdoll = true -- If set to false, it will not spawn the regular ragdoll of the SNPC
+ENT.HasDeathRagdoll = false -- If set to false, it will not spawn the regular ragdoll of the SNPC
 
 ENT.PlasmaNade1 = nil
 ENT.PlasmaNade2 = nil
 function ENT:CustomOnInitialize()
-	timer.Simple(0.01, function() 
-		if (GetConVarNumber("vj_spv3_floodWeps")==0 and math.random(0,1)==1) then
-			self:Give(VJ_PICKRANDOMTABLE(self.WeaponTable))
-		end
-	end)
 	self:SetColor(self.modelColor)
 	for i=0, #self.bodyGroupTable-1 do
 		self:SetBodygroup(i, self.bodyGroupTable[i+1])
@@ -109,7 +104,7 @@ function ENT:CustomRangeAttackCode()
 	end)
 end
 
-function ENT:CustomDeathAnimationCode(dmginfo,hitgroup)
+function ENT:CustomOnInitialKilled(dmginfo, hitgroup)
 	if (self.actualNade1!=nil) then
 		self.actualNade1:SetParent(nil)
 		self.actualNade2:SetParent(nil)
@@ -117,15 +112,27 @@ function ENT:CustomDeathAnimationCode(dmginfo,hitgroup)
 		self.PlasmaNade1:SetParent(nil)
 		self.PlasmaNade2:SetParent(nil)
 	end
-
-end
-
-function ENT:CustomOnTakeDamage_ShieldsDestroyed(dmginfo)
-	if self.ShieldActivated == false then return end
-	self.NextChaseTime = CurTime() + 6
-	self:EmitSound(Sound("ambient/energy/weld" .. math.random(1,2) .. ".ogg"),80,100)
-	self:StopParticles()
-	ParticleEffectAttach("hcea_shield_disperse",PATTACH_POINT_FOLLOW,self,self:LookupAttachment("origin"))
-	ParticleEffectAttach("hcea_shield_enabled",PATTACH_POINT_FOLLOW,self,self:LookupAttachment("origin"))
-	self.ShieldActivated = false
+	for i=1, 4 do
+		self:CreateGibEntity("obj_vj_gib", {"models/hce/spv3/flood/human/floodskin_xl.mdl", "models/hce/spv3/flood/human/floodskin_lg.mdl", "models/hce/spv3/flood/human/floodskin_md.mdl", "models/hce/spv3/flood/human/floodskin_sm.mdl"}, {Pos = pos, Ang = ang, Vel = Vector(math.random(-150, 150), math.random(-150, 150), math.random(150, 1150)), BloodType = "Yellow"})
+		self:CreateGibEntity("obj_vj_gib", {"models/hce/spv3/flood/human/floodinnard_bone.mdl", "models/hce/spv3/flood/human/floodinnard_large.mdl", "models/hce/spv3/flood/human/floodinnard_largest.mdl"}, {Pos = pos, Ang = ang, Vel = Vector(math.random(-150, 150), math.random(-150, 150), math.random(150, 1150)), BloodType = "Yellow"})
+	end
+	if (self.bodyParts["Right_Arm"]["Removed"] == false) then
+		self:CreateGibEntity("obj_vj_gib", "models/hce/spv3/flood/elite/floodelite_rightarm.mdl", {Pos = pos, Ang = ang, Vel = Vector(math.random(-150, 150), math.random(-150, 150), math.random(150, 300)), BloodType = "Yellow"})
+		self:CreateGibEntity("obj_vj_gib", {"models/hce/spv3/flood/human/floodskin_xl.mdl", "models/hce/spv3/flood/human/floodskin_lg.mdl", "models/hce/spv3/flood/human/floodskin_md.mdl", "models/hce/spv3/flood/human/floodskin_sm.mdl"}, {Pos = pos, Ang = ang, Vel = Vector(math.random(-150, 150), math.random(-150, 150), math.random(150, 300)), BloodType = "Yellow"})
+		self:CreateGibEntity("obj_vj_gib", {"models/hce/spv3/flood/human/floodinnard_bone.mdl", "models/hce/spv3/flood/human/floodinnard_large.mdl", "models/hce/spv3/flood/human/floodinnard_largest.mdl"}, {Pos = pos, Ang = ang, Vel = Vector(math.random(-150, 150), math.random(-150, 150), math.random(150, 300)), BloodType = "Yellow"})
+	end
+	if (self.bodyParts["Left_Arm"]["Removed"] == false) then
+		self:CreateGibEntity("obj_vj_gib", "models/hce/spv3/flood/elite/floodelite_leftarm.mdl", {Pos = pos, Ang = ang, Vel = Vector(math.random(-150, 150), math.random(-150, 150), math.random(150, 300)), BloodType = "Yellow"})
+		self:CreateGibEntity("obj_vj_gib", {"models/hce/spv3/flood/human/floodskin_xl.mdl", "models/hce/spv3/flood/human/floodskin_lg.mdl", "models/hce/spv3/flood/human/floodskin_md.mdl", "models/hce/spv3/flood/human/floodskin_sm.mdl"}, {Pos = pos, Ang = ang, Vel = Vector(math.random(-150, 150), math.random(-150, 150), math.random(150, 300)), BloodType = "Yellow"})
+		self:CreateGibEntity("obj_vj_gib", {"models/hce/spv3/flood/human/floodinnard_bone.mdl", "models/hce/spv3/flood/human/floodinnard_large.mdl", "models/hce/spv3/flood/human/floodinnard_largest.mdl"}, {Pos = pos, Ang = ang, Vel = Vector(math.random(-150, 150), math.random(-150, 150), math.random(150, 300)), BloodType = "Yellow"})
+	end
+	if (self.bodyParts["Head"]["Removed"] == false) then
+		self:CreateGibEntity("obj_vj_gib", "models/hce/spv3/flood/elite/floodelite_head.mdl", {Pos = pos, Ang = ang, Vel = Vector(math.random(-150, 150), math.random(-150, 150), math.random(150, 300)), BloodType = "Yellow"})
+		self:CreateGibEntity("obj_vj_gib", {"models/hce/spv3/flood/human/floodskin_xl.mdl", "models/hce/spv3/flood/human/floodskin_lg.mdl", "models/hce/spv3/flood/human/floodskin_md.mdl", "models/hce/spv3/flood/human/floodskin_sm.mdl"}, {Pos = pos, Ang = ang, Vel = Vector(math.random(-150, 150), math.random(-150, 150), math.random(150, 300)), BloodType = "Yellow"})
+		self:CreateGibEntity("obj_vj_gib", {"models/hce/spv3/flood/human/floodinnard_bone.mdl", "models/hce/spv3/flood/human/floodinnard_large.mdl", "models/hce/spv3/flood/human/floodinnard_largest.mdl"}, {Pos = pos, Ang = ang, Vel = Vector(math.random(-150, 150), math.random(-150, 150), math.random(150, 300)), BloodType = "Yellow"})
+	end
+	if (self.bodyParts["Inf_Form"]["Removed"] == false) then
+		self:CreateGibEntity("obj_vj_gib", {"models/hce/spv3/flood/human/floodskin_xl.mdl", "models/hce/spv3/flood/human/floodskin_lg.mdl", "models/hce/spv3/flood/human/floodskin_md.mdl", "models/hce/spv3/flood/human/floodskin_sm.mdl"}, {Pos = pos, Ang = ang, Vel = Vector(math.random(-150, 150), math.random(-150, 150), math.random(150, 300)), BloodType = "Yellow"})
+		self:CreateGibEntity("obj_vj_gib", {"models/hce/spv3/flood/human/floodinnard_bone.mdl", "models/hce/spv3/flood/human/floodinnard_large.mdl", "models/hce/spv3/flood/human/floodinnard_largest.mdl"}, {Pos = pos, Ang = ang, Vel = Vector(math.random(-150, 150), math.random(-150, 150), math.random(150, 300)), BloodType = "Yellow"})
+	end
 end

@@ -8,7 +8,7 @@ include('entities/npc_vj_halo_flood_spv3_elite/init.lua')
 -----------------------------------------------*/
 ENT.Model = {"models/hce/spv3/flood/elite/floodelite.mdl"} -- The game will pick a random model from the table when the SNPC is spawned | Add as many as you want
 ENT.modelColor = Color(127,0,0)
-ENT.bodyGroupTable = {1, 1, 1, 0, 0}
+ENT.bodyGroupTable = {0, 1, 2, 2, 2}
 ENT.Skin = 2
 ENT.StartHealth = 75
 ENT.ShieldHealth = 75

@@ -91,88 +91,51 @@ ENT.infFormCount = 10
 ENT.infForm = nil
 local spreadRadius = 275
 function ENT:CustomDeathAnimationCode(dmginfo,hitgroup)
-	if (GetConVarNumber("vj_spv3_bonusInfForms")==0) then
-		self.HasDeathRagdoll = true
-		return
-	end
 	self.infFormCount = math.Round(self.infFormCount*(GetConVarNumber("vj_spv3_infModifier")))
-	self:EmitSound("carrier/hkillbackgut/hkillbackgut.ogg")
+
+	
 	local inflation = Vector(1,1,1)
+	local deathTime = 1.3
+	if (self.KilledBySelf == false) then
+		deathTime = 0.3
+		self.DeathAnimationTime = 0.3
+		self.AnimTbl_Death = {ACT_IDLE}
+	end
 	timer.Create("bonescale"..self:GetCreationID(), 0.05, 0, function()
-		inflation = inflation + Vector(0.13,0.13,0.13)
+		inflation = inflation + Vector(0.10 / deathTime,0.13 / deathTime,0.13 / deathTime)
 		if (IsValid(self)) then
 			self:ManipulateBoneScale(self:LookupBone("frame sack center"), inflation)
 			self:ManipulateBoneScale(self:LookupBone("frame sack left"), inflation)
 			self:ManipulateBoneScale(self:LookupBone("frame sack right"), inflation)
 		end
 	end)
-	timer.Simple(1.3,function() if self:IsValid() then
-		
-	local BlastInfo = DamageInfo()
-	BlastInfo:SetDamageType(DMG_BLAST)
-	BlastInfo:SetDamage(60 * GetConVarNumber("vj_spv3_damageModifier"))
-	BlastInfo:SetDamagePosition(self:GetPos())
-	BlastInfo:SetInflictor(self)
-	BlastInfo:SetReportedPosition(self:GetPos())
-	util.BlastDamageInfo(BlastInfo, self:GetPos(), 250)
-	util.ScreenShake(self:GetPos(),16,100,1,800)
-	ParticleEffect("hcea_flood_carrier_death", self:LocalToWorld(Vector(0,0,20)), self:GetAngles(), nil)
-	//ParticleEffectAttach("hcea_flood_inf_death",PATTACH_POINT_FOLLOW,self,0)
-	for k=1, self.infFormCount do
-		self.infForm = ents.Create("npc_vj_halo_flood_spv3_infection")
-		self.infForm:SetPos(self:GetPos())
-		self.infForm:SetOwner(self)
-		self.infForm:Spawn()
-		local velocity = Vector(math.random(-spreadRadius, spreadRadius),math.random(-spreadRadius, spreadRadius),math.random(100, 300))
-		self.infForm:SetVelocity(velocity)
-		self.infForm:SetAngles(Angle(self.infForm:GetAngles().x, velocity:Angle().y, self.infForm:GetAngles().z))
-		self.infForm:VJ_ACT_PLAYACTIVITY("Melee_1",true,1.3,false)		
-	end
 	
-	-- local posone = self:LocalToWorld(Vector(math.random(-20, 20),math.random(-20,20),0))
-	-- local infector1 = ents.Create("npc_vj_halo_flood_spv3_infection")
-	-- infector1:SetPos(posone)
-	-- infector1:SetAngles(self:GetAngles())
-	-- infector1:Spawn()
-	-- infector1:Activate()
-	-- infector1:SetOwner(self)
-	-- infector1:SetVelocity(Vector(math.random(-100,100), math.random(-100, 100), math.random(200, 500)))
-	
-	-- local postwo = self:LocalToWorld(Vector(math.random(-20, 20),math.random(-20,20),0))
-	-- local infector2 = ents.Create("npc_vj_halo_flood_spv3_infection")
-	-- infector2:SetPos(postwo)
-	-- infector2:SetAngles(self:GetAngles())
-	-- infector2:Spawn()
-	-- infector2:Activate()
-	-- infector2:SetOwner(self)
-	-- infector2:SetVelocity(Vector(math.random(-100,100), math.random(-100, 100), math.random(200, 500)))
-	
-	-- local posthree = self:LocalToWorld(Vector(math.random(-20, 20),math.random(-20,20),0))
-	-- local infector3 = ents.Create("npc_vj_halo_flood_spv3_infection")
-	-- infector3:SetPos(posthree)
-	-- infector3:SetAngles(self:GetAngles())
-	-- infector3:Spawn()
-	-- infector3:Activate()
-	-- infector3:SetOwner(self)
-	-- infector3:SetVelocity(Vector(math.random(-100,100), math.random(-100, 100), math.random(200, 500)))
-	
-	-- local posfour = self:LocalToWorld(Vector(math.random(-20, 20),math.random(-20,20),0))
-	-- local infector4 = ents.Create("npc_vj_halo_flood_spv3_infection")
-	-- infector4:SetPos(posfour)
-	-- infector4:SetAngles(self:GetAngles())
-	-- infector4:Spawn()
-	-- infector4:Activate()
-	-- infector4:SetOwner(self)
-	-- infector4:SetVelocity(Vector(math.random(-100,100), math.random(-100, 100), math.random(200, 500)))
-	
-	-- local posfive = self:LocalToWorld(Vector(math.random(-20, 20),math.random(-20,20),0))
-	-- local infector5 = ents.Create("npc_vj_halo_flood_spv3_infection")
-	-- infector5:SetPos(posfive)
-	-- infector5:SetAngles(self:GetAngles())
-	-- infector5:Spawn()
-	-- infector5:Activate()
-	-- infector5:SetOwner(self)
-	-- infector5:SetVelocity(Vector(math.random(-100,100), math.random(-100, 100), math.random(200, 500)))
+
+
+
+	timer.Simple(deathTime,function() 
+		if self:IsValid() then
+			local BlastInfo = DamageInfo()
+			self:EmitSound("carrier/kill_instant/kill_instant (1).ogg", nil, nil, nil, nil, 90)
+			BlastInfo:SetDamageType(DMG_BLAST)
+			BlastInfo:SetDamage(60 * GetConVarNumber("vj_spv3_damageModifier"))
+			BlastInfo:SetDamagePosition(self:GetPos())
+			BlastInfo:SetInflictor(self)
+			BlastInfo:SetReportedPosition(self:GetPos())
+			util.BlastDamageInfo(BlastInfo, self:GetPos(), 250)
+			util.ScreenShake(self:GetPos(),16,100,1,800)
+			ParticleEffect("hcea_flood_carrier_death", self:LocalToWorld(Vector(0,0,20)), self:GetAngles(), nil)
+			//ParticleEffectAttach("hcea_flood_inf_death",PATTACH_POINT_FOLLOW,self,0)
+			for k=1, self.infFormCount do
+				self.infForm = ents.Create("npc_vj_halo_flood_spv3_infection")
+				self.infForm:SetPos(self:GetPos())
+				self.infForm:SetOwner(self)
+				self.infForm:Spawn()
+				local velocity = Vector(math.random(-spreadRadius, spreadRadius),math.random(-spreadRadius, spreadRadius),math.random(100, 300))
+				self.infForm:SetVelocity(velocity)
+				self.infForm:SetAngles(Angle(self.infForm:GetAngles().x, velocity:Angle().y, self.infForm:GetAngles().z))
+				self.infForm:VJ_ACT_PLAYACTIVITY("Melee_1",true,1.3,false)		
+			end
 		end
 	end)
 end
@@ -198,6 +161,7 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 		dmginfo:ScaleDamage(GetConVarNumber("vj_spv3_NPCTakeDamageModifier"))
 	end
 	if (dmginfo:GetDamageType()==DMG_BLAST) then
+		self.KilledBySelf = true
 		dmginfo:SetDamage(0)
 		self:SetSchedule(73)
 		self:StopMoving()
@@ -207,6 +171,11 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 		 //end end)
 
 	end
+end
+
+ENT.KilledBySelf = false
+function ENT:CustomOnMeleeAttack_BeforeStartTimer(seed) 
+	self.KilledBySelf = true
 end
 /*-----------------------------------------------
 	*** Copyright (c) 2012-2016 by DrVrej, All rights reserved. ***

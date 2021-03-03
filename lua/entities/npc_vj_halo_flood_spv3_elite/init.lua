@@ -23,7 +23,7 @@ ENT.BloodColor = "Yellow" -- The blood type, this will determine what it should 
 ENT.HasBloodParticle = true -- Does it spawn a particle when damaged?
 ENT.Immune_Dissolve = true -- Immune to Dissolving | Example: Combine Ball
 ENT.Immune_AcidPoisonRadiation = true -- Immune to Acid, Poison and Radiation
-ENT.HasBloodPool = false -- Does it have a blood pool?
+ENT.HasBloodPool = true -- Does it have a blood pool?
 
 	-- Relationships ---------------------------------------------------------------------------------------------------------------------------------------------
 ENT.VJ_NPC_Class = {"CLASS_PARASITE"} -- NPCs with the same class with be allied to each other
@@ -145,7 +145,7 @@ ENT.bodyParts = {
 	Left_Arm = {Health = 15, Bodygroup = "Left Arm", Removed = false},
 	Inf_Form = {Health = 5, Bodygroup = "Inf Form", Removed = false},
 }
-ENT.bodyGroupTable = {0, 0, 0, 0, 0}
+ENT.bodyGroupTable = {0, 1, 1, 1, 1}
 ---------------------------------------------------------------------------------------------------------------------------------------------
 ENT.SpawnedFromInf=false
 function ENT:CustomOnInitialize()
@@ -164,7 +164,7 @@ function ENT:CustomOnInitialize()
 	self:SetCollisionBounds(Vector(-16, -16, 0), Vector(16, 16, 80))
 	-- Shields --
 	if (self.SpawnedFromInf==false) then
-		if (math.random(0,100) >= GetConVarNumber("vj_spv3_floodEliteShield")) then
+		if (math.random(0,100) < GetConVarNumber("vj_spv3_floodEliteShield")) then
 		self.ShieldHealth = self.ShieldHealth * GetConVarNumber("vj_spv3_ShieldModifier")
 		self.ShieldActivated = true
 	else
@@ -172,6 +172,7 @@ function ENT:CustomOnInitialize()
 		self.ShieldActivated = false
 	end
 	end
+	self.StartHealth = self.StartHealth * GetConVarNumber("vj_spv3_HealthModifier")
 	self.ShieldCurrentHealth = self.ShieldHealth
 	self.CurrentHealth = self.StartHealth
 	self:SetHealth(self.ShieldHealth + self.StartHealth)
@@ -247,6 +248,10 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 			self.bodyParts["Right_Arm"]["Health"] = self.bodyParts["Right_Arm"]["Health"] - dmginfo:GetDamage()
 			if (self.bodyParts["Right_Arm"]["Health"] <= 0) then
 				self.bodyParts["Right_Arm"]["Removed"]=true
+				local pos, ang = self:GetBonePosition(29)
+				self:CreateGibEntity("obj_vj_gib", "models/hce/spv3/flood/elite/floodElite_leftArm.mdl", {Pos = pos, Ang = ang, Vel = dmginfo:GetDamageForce()*0.3, BloodType = "Yellow"})
+				self:CreateGibEntity("obj_vj_gib", {"models/hce/spv3/flood/human/floodskin_xl.mdl", "models/hce/spv3/flood/human/floodskin_lg.mdl", "models/hce/spv3/flood/human/floodskin_md.mdl", "models/hce/spv3/flood/human/floodskin_sm.mdl"}, {Pos = pos, Ang = ang, Vel = dmginfo:GetDamageForce()*0.3, BloodType = "Yellow"})
+				self:CreateGibEntity("obj_vj_gib", {"models/hce/spv3/flood/human/floodinnard_bone.mdl", "models/hce/spv3/flood/human/floodinnard_large.mdl", "models/hce/spv3/flood/human/floodinnard_largest.mdl"}, {Pos = pos, Ang = ang, Vel = dmginfo:GetDamageForce()*0.3, BloodType = "Yellow"})
 				self:RemoveAllDecals()
 				self:SetBodygroup(self:FindBodygroupByName(self.bodyParts["Right_Arm"]["Bodygroup"]), 3)
 				if (IsValid(self:GetActiveWeapon())) then
@@ -254,6 +259,7 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 					wep:SetPos(self:GetActiveWeapon():GetPos())
 					wep:SetAngles(self:GetActiveWeapon():GetAngles())
 					wep:Spawn()
+					wep:GetPhysicsObject():SetVelocity(dmginfo:GetDamageForce()*0.3)
 					self:GetActiveWeapon():Remove()
 				end
 			end
@@ -261,6 +267,10 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 			self.bodyParts["Left_Arm"]["Health"] = self.bodyParts["Left_Arm"]["Health"] - dmginfo:GetDamage()
 			if (self.bodyParts["Left_Arm"]["Health"] <= 0) then
 				self.bodyParts["Left_Arm"]["Removed"]=true
+				local pos, ang = self:GetBonePosition(13)
+				self:CreateGibEntity("obj_vj_gib", "models/hce/spv3/flood/elite/floodElite_rightArm.mdl", {Pos = pos, Ang = ang, Vel = dmginfo:GetDamageForce()*0.3, BloodType = "Yellow"})
+				self:CreateGibEntity("obj_vj_gib", {"models/hce/spv3/flood/human/floodskin_xl.mdl", "models/hce/spv3/flood/human/floodskin_lg.mdl", "models/hce/spv3/flood/human/floodskin_md.mdl", "models/hce/spv3/flood/human/floodskin_sm.mdl"}, {Pos = pos, Ang = ang, Vel = dmginfo:GetDamageForce()*0.3, BloodType = "Yellow"})
+				self:CreateGibEntity("obj_vj_gib", {"models/hce/spv3/flood/human/floodinnard_bone.mdl", "models/hce/spv3/flood/human/floodinnard_large.mdl", "models/hce/spv3/flood/human/floodinnard_largest.mdl"}, {Pos = pos, Ang = ang, Vel = dmginfo:GetDamageForce()*0.3, BloodType = "Yellow"})
 				self:RemoveAllDecals()
 				self:SetBodygroup(self:FindBodygroupByName(self.bodyParts["Left_Arm"]["Bodygroup"]), 3)
 				self.HasMeleeAttack = false
@@ -268,7 +278,12 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 		elseif (hitgroup==500 and self.bodyParts["Head"]["Removed"]==false) then
 			self.bodyParts["Head"]["Health"] = self.bodyParts["Head"]["Health"] - dmginfo:GetDamage()
 			if (self.bodyParts["Head"]["Health"] <= 0) then
+
 				self.bodyParts["Head"]["Removed"]=true
+				local pos, ang = self:GetBonePosition(26)
+				self:CreateGibEntity("obj_vj_gib", "models/hce/spv3/flood/elite/floodElite_head.mdl", {Pos = pos, Ang = ang, Vel = dmginfo:GetDamageForce()*0.3, BloodType = "Yellow"})
+				self:CreateGibEntity("obj_vj_gib", {"models/hce/spv3/flood/human/floodskin_xl.mdl", "models/hce/spv3/flood/human/floodskin_lg.mdl", "models/hce/spv3/flood/human/floodskin_md.mdl", "models/hce/spv3/flood/human/floodskin_sm.mdl"}, {Pos = pos, Ang = ang, Vel = dmginfo:GetDamageForce()*0.3, BloodType = "Yellow"})
+				self:CreateGibEntity("obj_vj_gib", {"models/hce/spv3/flood/human/floodinnard_bone.mdl", "models/hce/spv3/flood/human/floodinnard_large.mdl", "models/hce/spv3/flood/human/floodinnard_largest.mdl"}, {Pos = pos, Ang = ang, Vel = dmginfo:GetDamageForce()*0.3, BloodType = "Yellow"})
 				self:RemoveAllDecals()
 				self:SetBodygroup(self:FindBodygroupByName(self.bodyParts["Head"]["Bodygroup"]), 1)
 			end
@@ -276,6 +291,8 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 			self.bodyParts["Inf_Form"]["Health"] = self.bodyParts["Inf_Form"]["Health"] - dmginfo:GetDamage()
 			if (self.bodyParts["Inf_Form"]["Health"] <= 0) then
 				self.bodyParts["Inf_Form"]["Removed"]=true
+				self:CreateGibEntity("obj_vj_gib", {"models/hce/spv3/flood/human/floodskin_xl.mdl", "models/hce/spv3/flood/human/floodskin_lg.mdl", "models/hce/spv3/flood/human/floodskin_md.mdl", "models/hce/spv3/flood/human/floodskin_sm.mdl"}, {Pos = pos, Ang = ang, Vel = dmginfo:GetDamageForce()*0.3, BloodType = "Yellow"})
+				self:CreateGibEntity("obj_vj_gib", {"models/hce/spv3/flood/human/floodinnard_bone.mdl", "models/hce/spv3/flood/human/floodinnard_large.mdl", "models/hce/spv3/flood/human/floodinnard_largest.mdl"}, {Pos = pos, Ang = ang, Vel = dmginfo:GetDamageForce()*0.3, BloodType = "Yellow"})
 				self:RemoveAllDecals()
 				self:SetBodygroup(self:FindBodygroupByName(self.bodyParts["Inf_Form"]["Bodygroup"]), 1)
 				self:EmitSound("infection_form/infection_pop/pop1.ogg")
@@ -283,12 +300,12 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 				self:TakeDamage(1000, dmginfo:GetAttacker(), dmginfo:GetInflictor())
 			end
 		end
+	end
 	if (dmginfo:GetDamage() >= self:Health()) then
 		if (dmginfo:GetDamageType()==DMG_BLAST or dmginfo:GetDamageType()==DMG_CLUB or dmginfo:GetDamageForce():Length()>=10000) then
 			self:FlyingDeath(dmginfo)
 		end
 	end
-end
 end
 
 function ENT:FlyingDeath(dmginfo)
@@ -342,7 +359,7 @@ function ENT:CustomOnTakeDamage_ShieldsDestroyed(dmginfo)
 end
 
 function ENT:RunItemDropsOnDeathCode(dmginfo,hitgroup)
-	if self.HasItemDropsOnDeath == false then return end
+	if self.HasItemDropsOnDeath == false || GetConVarNumber("vj_spv3_dropGrenades")==0 then return end
 	for i=1, math.random(1,4) do
 		self.ThingsToDrop[i] = self.GrenadeWeps[math.random(1,5)]
 	end
@@ -378,6 +395,7 @@ function ENT:CustomOnInitialKilled(dmginfo,hitgroup)
 		phys:SetMass(60)
 		phys:ApplyForceCenter(dmginfo:GetDamageForce()*.01)
 	end
+	self:GetActiveWeapon():Remove()
 end
 
 
@@ -386,11 +404,77 @@ function ENT:WeaponAimPoseParameters(ResetPoses)
 end
 
 function ENT:CustomOnThink() 
-	if (IsValid(self:GetEnemy()) and IsValid(self:GetActiveWeapon()) and self:GetActiveWeapon():Clip1()>0 and self:GetPos():DistToSqr(self:GetEnemy():GetPos())> 100) then
-		self.AnimTbl_Run = {ACT_WALK}
+	if (IsValid(self:GetEnemy()) and self:IsLineOfSightClear(self:GetEnemy():GetPos()) and IsValid(self:GetActiveWeapon()) and self:GetActiveWeapon():Clip1()>0 and self:GetPos():DistToSqr(self:GetEnemy():GetPos())> 100) then
+		self.AnimTbl_Run = {ACT_WALK_PISTOL}
+		self.HasLeapAttack = false
 	else
 		self.AnimTbl_Run = {ACT_RUN}
+		self.HasLeapAttack = true
 	end
+end
+
+//Brought over from sentinels addon, possibly old/outdated?
+function ENT:CreateGibEntity(Ent,Models,Tbl_Features,CustomCode)
+	// self:CreateGibEntity("prop_ragdoll","",{Pos=self:LocalToWorld(Vector(0,3,0)),Ang=self:GetAngles(),Vel=})
+	if self.AllowedToGib == false then return end
+	Ent = Ent or "prop_ragdoll"
+	if Models == "UseAlien_Small" then Models = {"models/gibs/xenians/sgib_01.mdl","models/gibs/xenians/sgib_02.mdl","models/gibs/xenians/sgib_03.mdl"} end
+	if Models == "UseAlien_Big" then Models = {"models/gibs/xenians/mgib_01.mdl","models/gibs/xenians/mgib_02.mdl","models/gibs/xenians/mgib_03.mdl","models/gibs/xenians/mgib_04.mdl","models/gibs/xenians/mgib_05.mdl","models/gibs/xenians/mgib_06.mdl","models/gibs/xenians/mgib_07.mdl"} end
+	if Models == "UseHuman_Small" then Models = {"models/gibs/humans/sgib_01.mdl","models/gibs/humans/sgib_02.mdl","models/gibs/humans/sgib_03.mdl"} end
+	if Models == "UseHuman_Big" then Models = {"models/gibs/humans/mgib_01.mdl","models/gibs/humans/mgib_02.mdl","models/gibs/humans/mgib_03.mdl","models/gibs/humans/mgib_04.mdl","models/gibs/humans/mgib_05.mdl","models/gibs/humans/mgib_06.mdl","models/gibs/humans/mgib_07.mdl"} end
+	Models = VJ_PICKRANDOMTABLE(Models)
+	local vTbl_BloodType = "Green"
+	if VJ_HasValue({"models/gibs/xenians/sgib_01.mdl","models/gibs/xenians/sgib_02.mdl","models/gibs/xenians/sgib_03.mdl","models/gibs/xenians/mgib_01.mdl","models/gibs/xenians/mgib_02.mdl","models/gibs/xenians/mgib_03.mdl","models/gibs/xenians/mgib_04.mdl","models/gibs/xenians/mgib_05.mdl","models/gibs/xenians/mgib_06.mdl","models/gibs/xenians/mgib_07.mdl"},Models) then
+		vTbl_BloodType = "Yellow"
+	end
+	vTbl_Features = Tbl_Features or {}
+	vTbl_Position = vTbl_Features.Pos or self:GetPos() +self:OBBCenter()
+	vTbl_Angle = vTbl_Features.Ang or Angle(math.Rand(-180,180),math.Rand(-180,180),math.Rand(-180,180)) //self:GetAngles()
+	vTbl_Velocity_NoDamageForce = vTbl_Features.Vel_NoDmgForce or false -- If set to true, it won't add the damage force to the given velocity
+	vTbl_Velocity = vTbl_Features.Vel or Vector(math.Rand(-100,100),math.Rand(-100,100),math.Rand(150,250)) -- Used to set the velocity | "UseDamageForce" = To use the damage's force only
+	if self.LatestDmgInfo != nil then
+		local dmgforce = self.LatestDmgInfo:GetDamageForce()/70
+		if vTbl_Velocity_NoDamageForce == false && vTbl_Features.Vel != "UseDamageForce" then
+			vTbl_Velocity = vTbl_Velocity + dmgforce
+		end
+		if vTbl_Features.Vel == "UseDamageForce" then
+			vTbl_Velocity = dmgforce
+		end
+	end
+	vTbl_AngleVelocity = vTbl_Features.AngVel or Vector(math.Rand(-200,200),math.Rand(-200,200),math.Rand(-200,200)) -- Angle velocity, how fast it rotates as it's flying
+	vTbl_BloodType = vTbl_Features.BloodType or vTbl_BloodType -- Certain entities such as the VJ Gib entity, you can use this to set its gib type
+	vTbl_BloodDecal = vTbl_Features.BloodDecal or "Default" -- The decal it spawns when it collides with something, leave empty to let the base decide
+	vTbl_NoFade = vTbl_Features.NoFade or false -- Should it fade away and delete?
+	vTbl_RemoveOnCorpseDelete = vTbl_Features.RemoveOnCorpseDelete or false -- Should the entity get removed if the corpse is removed?
+	local gib = ents.Create(Ent)
+	gib:SetModel(Models)
+	gib:SetPos(vTbl_Position)
+	gib:SetAngles(vTbl_Angle)
+	if gib:GetClass() == "obj_vj_gib" then
+		gib.BloodType = vTbl_BloodType
+		gib.Collide_Decal = vTbl_BloodDecal
+	end
+	gib:Spawn()
+	gib:Activate()
+	gib.IsVJBase_Gib = true
+	gib.RemoveOnCorpseDelete = vTbl_RemoveOnCorpseDelete
+	if GetConVarNumber("vj_npc_gibcollidable") == 0 then gib:SetCollisionGroup(1) end
+	local phys = gib:GetPhysicsObject()
+	if IsValid(phys) then
+		//phys:SetMass(60)
+		phys:AddVelocity(vTbl_Velocity)
+		phys:AddAngleVelocity(vTbl_AngleVelocity)
+	end
+	cleanup.ReplaceEntity(gib)
+	if GetConVarNumber("vj_npc_fadegibs") == 1 && vTbl_NoFade == false then
+		if gib:GetClass() == "prop_ragdoll" then gib:Fire("FadeAndRemove","",GetConVarNumber("vj_npc_fadegibstime")) end
+		if gib:GetClass() == "prop_physics" then gib:Fire("kill","",GetConVarNumber("vj_npc_fadegibstime")) end
+	end
+	if vTbl_RemoveOnCorpseDelete == true then//self.Corpse:DeleteOnRemove(extraent)
+		self.ExtraCorpsesToRemove_Transition[#self.ExtraCorpsesToRemove_Transition+1] = gib
+	end
+	if (CustomCode) then CustomCode(gib) end
+	return gib
 end
 
 

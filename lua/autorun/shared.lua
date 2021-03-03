@@ -424,7 +424,12 @@ if CLIENT then
 				print(result)
 			end
 
-			local x, y = dbox1:GetPos()
+			local check6 = vgui.Create("DCheckBoxLabel", Frame)
+			check6:SetPos(Frame:GetWide()*.05, 240)
+			check6:SetText("Units drop grenades")
+			check6:SetConVar("vj_spv3_dropGrenades")
+			local x, y = check6:GetPos()
+
 			Frame:SetSize(400, y + 30)
 			Frame:Center()
 		end

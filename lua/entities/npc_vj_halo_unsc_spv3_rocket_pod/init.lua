@@ -25,6 +25,7 @@ ENT.Behavior = VJ_BEHAVIOR_AGGRESSIVE
 ENT.HasRangeAttack = true -- Should the SNPC have a range attack?
 ENT.RangeAttackEntityToSpawn = "obj_vj_spv3_rp_shot" -- The entity that is spawned when range attacking
 ENT.RangeAttackReps = 4 -- How many times does it run the projectile code?
+ENT.NextAnyAttackTime_Range = 4
 ENT.TimeUntilRangeAttackProjectileRelease = 0.5 -- How much time until the projectile code is ran?
 ENT.RangeUseAttachmentForPos = true -- Should the projectile spawn on a attachment?
 ENT.RangeUseAttachmentForPosID = "muzzle" -- The attachment used on the range attack if RangeUseAttachmentForPos is set to true

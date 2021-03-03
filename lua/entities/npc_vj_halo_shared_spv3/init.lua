@@ -193,7 +193,7 @@ end
 
 
 function ENT:RunItemDropsOnDeathCode(dmginfo,hitgroup)
-	if self.HasItemDropsOnDeath == false then return end
+	if self.HasItemDropsOnDeath == false || GetConVarNumber("vj_spv3_dropGrenades")==0 then return end
 	for i=1, math.random(1,4) do
 		self.ThingsToDrop[i] = self.GrenadeWeps[math.random(1,5)]
 	end

@@ -9,15 +9,16 @@ ENT.HullType = HULL_MEDIUM
 
 ENT.Model = {"models/hce/spv3/flood/human/floodmarine.mdl"} -- The game will pick a random model from the table when the SNPC is spawned | Add as many as you want
 ENT.modelColor = Color(127,0,0)
-ENT.bodyGroups = {0,0,0}
+ENT.bodyGroups = {0,0,0,0,0}
 ENT.StartHealth = 113
+ENT.CanOpenDoors = true -- Can it open doors?
 ---------------------------------------------------------------------------------------------------------------------------------------------
 	-- ====== Blood-Related Variables ====== --
 ENT.Bleeds = true -- Does the SNPC bleed? (Blood decal, particle, etc.)
 ENT.BloodColor = "Yellow" -- The blood type, this will detemine what it should use (decal, particle, etc.)
 ENT.Immune_Dissolve = true -- Immune to Dissolving | Example: Combine Ball
 ENT.Immune_AcidPoisonRadiation = true -- Immune to Acid, Poison and Radiation
-ENT.HasBloodPool = false -- Does it have a blood pool?
+ENT.HasBloodPool = true -- Does it have a blood pool?
 ENT.HasDeathAnimation = true -- Does it play an animation when it dies?
 ENT.AnimTbl_Death = {"Die_1", "Die_2"} -- Death Animations
 	-- Relationships ---------------------------------------------------------------------------------------------------------------------------------------------
@@ -52,7 +53,7 @@ ENT.bodyParts = {
 	Head = {Health = 15, Bodygroup = "Head", Removed = false},
 	Right_Arm = {Health = 25, Bodygroup = "Right Arm", Removed = false},
 	Left_Arm = {Health = 25, Bodygroup = "Left Arm", Removed = false},
-	Inf_Form = {Health = 20, Bodygroup = "Inf Form", Removed = false},
+	Inf_Form = {Health = 20, Bodygroup = "Torso", Removed = false},
 }
 
 	-- ====== Sound File Paths ====== --
@@ -123,6 +124,7 @@ ENT.WeaponTable = {
 ---------------------------------------------------------------------------------------------------------------------------------------------
 ENT.SpawnedFromInf=false
 function ENT:CustomOnInitialize()
+	self:SetCollisionBounds(Vector(-15, -15, 0), Vector(15, 15, 75))
 	self.MeleeAttackDamage = self.MeleeAttackDamage * GetConVarNumber("vj_spv3_damageModifier")
 	timer.Simple(0.1, function() 
 		if (math.random(0,100) <= GetConVarNumber("vj_spv3_floodWeps")) then
@@ -133,7 +135,8 @@ function ENT:CustomOnInitialize()
 	self:SetColor(self.modelColor)
 	self:SetBodygroup(0, self.bodyGroups[1])
 	self:SetBodygroup(1, self.bodyGroups[2])
-	self:SetBodygroup(3, self.bodyGroups[3])
+	self:SetBodygroup(2, self.bodyGroups[3])
+	self:SetBodygroup(4, self.bodyGroups[3])
 		if (self.SpawnedFromInf==false) then
 			self.StartHealth = self.StartHealth * GetConVarNumber("vj_spv3_HealthModifier")
 		end
@@ -157,6 +160,10 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 		self.bodyParts["Right_Arm"]["Health"] = self.bodyParts["Right_Arm"]["Health"] - dmginfo:GetDamage()
 		if (self.bodyParts["Right_Arm"]["Health"] <= 0) then
 			self.bodyParts["Right_Arm"]["Removed"]=true
+			local pos, ang = self:GetBonePosition(27)
+			self:CreateGibEntity("obj_vj_gib", "models/hce/spv3/flood/human/floodHuman_rightArm.mdl", {Pos = pos, Ang = ang, Vel = dmginfo:GetDamageForce()*0.3, BloodType = "Yellow"})
+			self:CreateGibEntity("obj_vj_gib", {"models/hce/spv3/flood/human/floodskin_xl.mdl", "models/hce/spv3/flood/human/floodskin_lg.mdl", "models/hce/spv3/flood/human/floodskin_md.mdl", "models/hce/spv3/flood/human/floodskin_sm.mdl"}, {Pos = pos, Ang = ang, Vel = dmginfo:GetDamageForce()*0.3, BloodType = "Yellow"})
+			self:CreateGibEntity("obj_vj_gib", {"models/hce/spv3/flood/human/floodinnard_bone.mdl", "models/hce/spv3/flood/human/floodinnard_large.mdl", "models/hce/spv3/flood/human/floodinnard_largest.mdl"}, {Pos = pos, Ang = ang, Vel = dmginfo:GetDamageForce()*0.3, BloodType = "Yellow"})
 			self:RemoveAllDecals()
 			self:SetBodygroup(self:FindBodygroupByName(self.bodyParts["Right_Arm"]["Bodygroup"]), 2)
 			if (IsValid(self:GetActiveWeapon())) then
@@ -164,6 +171,7 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 				wep:SetPos(self:GetActiveWeapon():GetPos())
 				wep:SetAngles(self:GetActiveWeapon():GetAngles())
 				wep:Spawn()
+				wep:GetPhysicsObject():SetVelocity(dmginfo:GetDamageForce()*0.3)
 				self:GetActiveWeapon():Remove()
 			end
 		end
@@ -171,6 +179,11 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 		self.bodyParts["Left_Arm"]["Health"] = self.bodyParts["Left_Arm"]["Health"] - dmginfo:GetDamage()
 		if (self.bodyParts["Left_Arm"]["Health"] <= 0) then
 			self.bodyParts["Left_Arm"]["Removed"]=true
+			
+			local pos, ang = self:GetBonePosition(11)
+			self:CreateGibEntity("obj_vj_gib", "models/hce/spv3/flood/human/floodHuman_leftArm.mdl", {Pos = pos, Ang = ang, Vel = dmginfo:GetDamageForce()*0.3, BloodType = "Yellow"})
+			self:CreateGibEntity("obj_vj_gib", {"models/hce/spv3/flood/human/floodskin_xl.mdl", "models/hce/spv3/flood/human/floodskin_lg.mdl", "models/hce/spv3/flood/human/floodskin_md.mdl", "models/hce/spv3/flood/human/floodskin_sm.mdl"}, {Pos = pos, Ang = ang, Vel = dmginfo:GetDamageForce()*0.3, BloodType = "Yellow"})
+			self:CreateGibEntity("obj_vj_gib", {"models/hce/spv3/flood/human/floodinnard_bone.mdl", "models/hce/spv3/flood/human/floodinnard_large.mdl", "models/hce/spv3/flood/human/floodinnard_largest.mdl"}, {Pos = pos, Ang = ang, Vel = dmginfo:GetDamageForce()*0.3, BloodType = "Yellow"})
 			self:RemoveAllDecals()
 			self:SetBodygroup(self:FindBodygroupByName(self.bodyParts["Left_Arm"]["Bodygroup"]), 1)
 			self.HasMeleeAttack = false
@@ -179,6 +192,8 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 		self.bodyParts["Head"]["Health"] = self.bodyParts["Head"]["Health"] - dmginfo:GetDamage()
 		if (self.bodyParts["Head"]["Health"] <= 0) then
 			self.bodyParts["Head"]["Removed"]=true
+			self:CreateGibEntity("obj_vj_gib", {"models/hce/spv3/flood/human/floodskin_xl.mdl", "models/hce/spv3/flood/human/floodskin_lg.mdl", "models/hce/spv3/flood/human/floodskin_md.mdl", "models/hce/spv3/flood/human/floodskin_sm.mdl"}, {Pos = pos, Ang = ang, Vel = dmginfo:GetDamageForce()*0.3, BloodType = "Yellow"})
+			self:CreateGibEntity("obj_vj_gib", {"models/hce/spv3/flood/human/floodinnard_bone.mdl", "models/hce/spv3/flood/human/floodinnard_large.mdl", "models/hce/spv3/flood/human/floodinnard_largest.mdl"}, {Pos = pos, Ang = ang, Vel = dmginfo:GetDamageForce()*0.3, BloodType = "Yellow"})
 			self:RemoveAllDecals()
 			self:SetBodygroup(self:FindBodygroupByName(self.bodyParts["Head"]["Bodygroup"]), 2)
 		end
@@ -186,6 +201,8 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 		self.bodyParts["Inf_Form"]["Health"] = self.bodyParts["Inf_Form"]["Health"] - dmginfo:GetDamage()
 		if (self.bodyParts["Inf_Form"]["Health"] <= 0) then
 			self.bodyParts["Inf_Form"]["Removed"]=true
+			self:CreateGibEntity("obj_vj_gib", {"models/hce/spv3/flood/human/floodskin_xl.mdl", "models/hce/spv3/flood/human/floodskin_lg.mdl", "models/hce/spv3/flood/human/floodskin_md.mdl", "models/hce/spv3/flood/human/floodskin_sm.mdl"}, {Pos = pos, Ang = ang, Vel = dmginfo:GetDamageForce()*0.3, BloodType = "Yellow"})
+			self:CreateGibEntity("obj_vj_gib", {"models/hce/spv3/flood/human/floodinnard_bone.mdl", "models/hce/spv3/flood/human/floodinnard_large.mdl", "models/hce/spv3/flood/human/floodinnard_largest.mdl"}, {Pos = pos, Ang = ang, Vel = dmginfo:GetDamageForce()*0.3, BloodType = "Yellow"})
 			self:RemoveAllDecals()
 			self:SetBodygroup(self:FindBodygroupByName(self.bodyParts["Inf_Form"]["Bodygroup"]), 2)
 			self:EmitSound("infection_form/infection_pop/pop1.ogg")
@@ -231,7 +248,7 @@ function ENT:CustomOnAcceptInput(key,activator,caller,data)
 end
 
 function ENT:RunItemDropsOnDeathCode(dmginfo,hitgroup)
-	if self.HasItemDropsOnDeath == false then return end
+	if self.HasItemDropsOnDeath == false || GetConVarNumber("vj_spv3_dropGrenades")==0 then return end
 	for i=1, math.random(1,4) do
 		self.ThingsToDrop[i] = self.GrenadeWeps[math.random(1,5)]
 	end
@@ -267,16 +284,18 @@ function ENT:CustomOnInitialKilled(dmginfo,hitgroup)
 		phys:SetMass(60)
 		phys:ApplyForceCenter(dmginfo:GetDamageForce()*.01)
 	end
+	self:GetActiveWeapon():Remove()
 end
 
 function ENT:CustomOnThink() 
-	if (IsValid(self:GetEnemy()) and IsValid(self:GetActiveWeapon()) and self:GetActiveWeapon():Clip1()>0 and self:GetPos():DistToSqr(self:GetEnemy():GetPos())> 100) then
+	if (IsValid(self:GetEnemy()) and self:IsLineOfSightClear(self:GetEnemy():GetPos()) and IsValid(self:GetActiveWeapon()) and self:GetActiveWeapon():Clip1()>0 and self:GetPos():DistToSqr(self:GetEnemy():GetPos())> 100) then
 		self.AnimTbl_Run = {ACT_WALK}
+		self.HasLeapAttack = false
 	else
 		self.AnimTbl_Run = {ACT_RUN}
+		self.HasLeapAttack = true
 	end
 end
-
 
 /*-----------------------------------------------
 	*** Copyright (c) 2012-2016 by DrVrej, All rights reserved. ***

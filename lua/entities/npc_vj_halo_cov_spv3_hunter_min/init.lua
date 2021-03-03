@@ -48,8 +48,8 @@ ENT.RangeDistance = 2000
 ENT.AnimTbl_RangeAttack = {""} -- Range Attack Animations
 ENT.RangeAttackEntityToSpawn = "obj_vj_spv3_beam_proj" -- The entity that is spawned when range attacking
 ENT.TimeUntilRangeAttackProjectileRelease = 0.8 -- How much time until the projectile code is ran?
-ENT.NextAnyAttackTime_Range = 0 -- How much time until it can use a range attack?
-ENT.NextRangeAttackTime = 3 -- How much time until it can use a range attack?
+ENT.NextAnyAttackTime_Range = 3 -- How much time until it can use a range attack?
+ENT.NextRangeAttackTime = 0 -- How much time until it can use a range attack?
 ENT.NextRangeAttackTime_DoRand = 5 -- False = Don't use random time | Number = Picks a random number between the regular timer and this timer
 ENT.RangeAttackAnimationStopMovement = false -- Should it stop moving when performing a range attack?
 ENT.RangeUseAttachmentForPos = true -- Should the projectile spawn on a attachment?
