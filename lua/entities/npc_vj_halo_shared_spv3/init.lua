@@ -137,7 +137,6 @@ function ENT:RandomizeTraits()
 	self.CanThrowBackDetectedGrenades = false
 	self.CanDetectGrenades = (math.random(0,1) >= 0.2)
 	self.WaitForEnemyToComeOutTime = VJ_Set(0,7)
-	self.HasGrenadeAttack = (math.random(0,1) >= 0.35)
 	self.NextThrowGrenadeTime = VJ_Set(7, 60) -- Time until it can throw a grenade again
 	self.ThrowGrenadeChance = math.Rand(2, 7) -- Chance that it will throw the grenade | Set to 1 to throw all the time
 	self.GrenadeAttackThrowDistance = math.Rand(1000, 6500) -- How far it can throw grenades

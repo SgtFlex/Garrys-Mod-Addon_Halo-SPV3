@@ -159,6 +159,9 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 		dmginfo:SetMaxDamage(10)
 		dmginfo:SetDamage(10)
 		dmginfo:SetDamageBonus(0)
+		if (dmginfo:GetDamage() >= 10) then
+			dmginfo:SetDamage(self:Health())
+		end
 	elseif (hitgroup != 4) then
 		dmginfo:ScaleDamage(0)
 		self:EmitSound("hunter/hard_metal_thick_cov_hunter/hard_metal_thick_cov_hunter"..math.random(1,4)..".ogg", 80, 100, 1)

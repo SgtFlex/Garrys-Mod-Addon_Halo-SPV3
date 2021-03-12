@@ -1,0 +1,7 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/hce/spv3/unsc/marine/marine_stencils_diff"
+	$translucent 1
+	"$nocull" 1
+
+}

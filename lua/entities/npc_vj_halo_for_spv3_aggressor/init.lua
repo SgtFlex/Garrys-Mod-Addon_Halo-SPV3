@@ -919,7 +919,7 @@ function ENT:CreateGibEntity(Ent,Models,Tbl_Features,CustomCode)
 end
 
 ENT.velocity = Vector(0, 0, 0)
-function ENT:AAMove_ChaseEnemy(ShouldPlayAnim,UseCalmVariables)
+function ENT:AA_ChaseEnemy(ShouldPlayAnim,UseCalmVariables)
 	if self.Dead == true or (self.NextChaseTime > CurTime()) or !IsValid(self:GetEnemy()) then return end
 	local ShouldPlayAnim = ShouldPlayAnim or false
 	local UseCalmVariables = UseCalmVariables or false
@@ -1038,25 +1038,31 @@ function ENT:AAMove_ChaseEnemy(ShouldPlayAnim,UseCalmVariables)
 end
 
 
-function ENT:AAMove_Wander(ShouldPlayAnim,NoFace)
-	local calmspeed = self.Aerial_FlyingSpeed_Calm
-	local ForceDown = ForceDown or false
+function ENT:AA_IdleWander(ShouldPlayAnim,NoFace)
+	local moveSpeed = self.Aerial_FlyingSpeed_Calm
+	local forceDown = forceDown or false
 	if self.MovementType == VJ_MOVETYPE_AQUATIC then
-		if self:WaterLevel() < 3 then self:AAMove_Stop() ForceDown = true end
-		calmspeed = self.Aquatic_SwimmingSpeed_Calm
+		if self:WaterLevel() < 3 then
+			self:AA_StopMoving()
+			forceDown = true
+			if self:WaterLevel() == 0 then
+				return
+			end
+		end
+		moveSpeed = self.Aquatic_SwimmingSpeed_Calm
 	end
 	
-	local Debug = self.AA_EnableDebug
-	ShouldPlayAnim = ShouldPlayAnim or false
-	NoFace = NoFace or false
+	local debug = self.AA_EnableDebug
+	playAnim = playAnim or false
+	noFace = noFace or false
 
-	if ShouldPlayAnim == true then
+	if playAnim == true then
 		self.AA_CanPlayMoveAnimation = true
 		self.AA_CurrentMoveAnimationType = "Calm"
 	else
 		self.AA_CanPlayMoveAnimation = false
 	end
-	//if NoFace == false then self:SetLocalAngularVelocity(Angle(0,math.random(0,360),0)) end
+	//if noFace == false then self:SetLocalAngularVelocity(Angle(0,math.random(0,360),0)) end
 	local x_neg = 1
 	local y_neg = 1
 	local z_neg = 1
@@ -1065,7 +1071,7 @@ function ENT:AAMove_Wander(ShouldPlayAnim,NoFace)
 	if math.random(1,2) == 1 then z_neg = -1 end
 	local tr_startpos = self:GetPos()
 	local tr_endpos = tr_startpos + self:GetForward()*((self:OBBMaxs().x + math.random(100,200))*x_neg) + self:GetRight()*((self:OBBMaxs().y + math.random(100,200))*y_neg) + self:GetUp()*((self:OBBMaxs().z + math.random(100,200))*z_neg)
-	if ForceDown == true then
+	if forceDown == true then
 		tr_endpos = tr_startpos + self:GetUp()*((self:OBBMaxs().z + math.random(100,150))*-1)
 	end
 	/*local tr_for = math.random(-300,300)
@@ -1074,8 +1080,9 @@ function ENT:AAMove_Wander(ShouldPlayAnim,NoFace)
 	local tr = util.TraceLine({start = tr_startpos, endpos = tr_startpos+self:GetForward()*tr_for+self:GetRight()*tr_up+self:GetUp()*tr_right, filter = self})*/
 	local tr = util.TraceLine({start = tr_startpos, endpos = tr_endpos, filter = self})
 	local finalpos = tr.HitPos
-	if ForceDown == false && self.MovementType == VJ_MOVETYPE_AERIAL then -- Yete ches estibergor vor var yerta YEV loghatsough SNPC che, sharnage...
-		local tr_check = util.TraceLine({start = finalpos, endpos = finalpos + Vector(0,0,-100), filter = self})
+	//PrintTable(tr)
+	if forceDown == false && self.MovementType == VJ_MOVETYPE_AERIAL then -- Yete ches estibergor vor var yerta YEV loghatsough SNPC che, sharnage...
+		local tr_check = util.TraceLine({start = finalpos, endpos = finalpos + Vector(0, 0, -100), filter = self})
 		if tr_check.HitWorld == true then -- Yete askharin zargav, ere vor shad var chishne
 			finalpos = finalpos + self:GetUp()*(100 - tr_check.HitPos:Distance(finalpos))
 		end
@@ -1083,106 +1090,31 @@ function ENT:AAMove_Wander(ShouldPlayAnim,NoFace)
 	//self.AA_TargetPos = finalpos
 	
 	-- Angle time test (PHYSICS)
-	/*local test1 = math.AngleDifference(tr.StartPos:Angle().y, self:VJ_ReturnAngle((finalpos-tr.StartPos):Angle()).y)
-	local test2 = (math.rad(test1) / math.rad(self:VJ_ReturnAngle((finalpos-tr.StartPos):Angle()).y)) * 20
+	/*local test1 = math.AngleDifference(tr.StartPos:Angle().y, self:GetFaceAngle((finalpos-tr.StartPos):Angle()).y)
+	local test2 = (math.rad(test1) / math.rad(self:GetFaceAngle((finalpos-tr.StartPos):Angle()).y)) * 20
 	self.yep = CurTime() + math.abs(test2)
-	self.yep2 = self:VJ_ReturnAngle((finalpos-tr.StartPos):Angle())*/
+	self.yep2 = self:GetFaceAngle((finalpos-tr.StartPos):Angle())*/
 	
-	if NoFace == false then self.CurrentTurningAngle = self:VJ_ReturnAngle((finalpos-tr.StartPos):Angle()) end //self:SetLocalAngularVelocity(self:VJ_ReturnAngle((finalpos-tr.StartPos):Angle())) end
-	if Debug == true then
-		VJ_CreateTestObject(finalpos,self:GetAngles(),Color(0,255,255),5)
-		util.ParticleTracerEx("Weapon_Combine_Ion_Cannon_Beam",tr.StartPos,finalpos,false,self:EntIndex(),0)
+	if noFace == false then self.AA_CurrentTurnAng = self:GetFaceAngle((finalpos-tr.StartPos):Angle()) end //self:SetLocalAngularVelocity(self:GetFaceAngle((finalpos-tr.StartPos):Angle())) end
+	if debug == true then
+		VJ_CreateTestObject(finalpos, self:GetAngles(), Color(0,255,255), 5)
+		util.ParticleTracerEx("Weapon_Combine_Ion_Cannon_Beam", tr.StartPos, finalpos, false, self:EntIndex(), 0)
 	end
 
 	-- Set the velocity
 	//local myvel = self:GetVelocity()
-	if (self.FollowingPlayer==true) then
-		finalpos = self.playerToFollow:GetPos() + self.TargetOffsetVector
-	end
-	local vel_set = (finalpos-self:GetPos()):GetNormal()*calmspeed
-
-	self.velocity = Vector(vel_set.x, vel_set.y, vel_set.z * 0.3)
+	local vel_set = (finalpos-self:GetPos()):GetNormal()*moveSpeed
 	local vel_len = CurTime() + (finalpos:Distance(tr_startpos) / vel_set:Length())
 	self.AA_MoveLength_Chase = 0
 	if vel_len == vel_len then -- Check for NaN
 		self.AA_MoveLength_Wander = vel_len
 		self.NextIdleTime = vel_len
 	end
-	self:Accelerate()
-	if Debug == true then ParticleEffect("vj_impact1_centaurspit", finalpos, Angle(0,0,0), self) end
+	self:SetLocalVelocity(vel_set)
+	if debug == true then ParticleEffect("vj_impact1_centaurspit", finalpos, Angle(0,0,0), self) end
 end
 
-function ENT:AAMove_Wander(ShouldPlayAnim,NoFace)
-	local calmspeed = self.Aerial_FlyingSpeed_Calm
-	local ForceDown = ForceDown or false
-	if self.MovementType == VJ_MOVETYPE_AQUATIC then
-		if self:WaterLevel() < 3 then self:AAMove_Stop() ForceDown = true end
-		calmspeed = self.Aquatic_SwimmingSpeed_Calm
-	end
-	
-	local Debug = self.AA_EnableDebug
-	ShouldPlayAnim = ShouldPlayAnim or false
-	NoFace = NoFace or false
-
-	if ShouldPlayAnim == true then
-		self.AA_CanPlayMoveAnimation = true
-		self.AA_CurrentMoveAnimationType = "Calm"
-	else
-		self.AA_CanPlayMoveAnimation = false
-	end
-	//if NoFace == false then self:SetLocalAngularVelocity(Angle(0,math.random(0,360),0)) end
-	local x_neg = 1
-	local y_neg = 1
-	local z_neg = 1
-	if math.random(1,2) == 1 then x_neg = -1 end
-	if math.random(1,2) == 1 then y_neg = -1 end
-	if math.random(1,2) == 1 then z_neg = -1 end
-	local tr_startpos = self:GetPos()
-	local tr_endpos = tr_startpos + self:GetForward()*((self:OBBMaxs().x + math.random(100,200))*x_neg) + self:GetRight()*((self:OBBMaxs().y + math.random(100,200))*y_neg) + self:GetUp()*((self:OBBMaxs().z + math.random(100,200))*z_neg)
-	if ForceDown == true then
-		tr_endpos = tr_startpos + self:GetUp()*((self:OBBMaxs().z + math.random(100,150))*-1)
-	end
-	/*local tr_for = math.random(-300,300)
-	local tr_up = math.random(-300,300)
-	local tr_right = math.random(-300,300)
-	local tr = util.TraceLine({start = tr_startpos, endpos = tr_startpos+self:GetForward()*tr_for+self:GetRight()*tr_up+self:GetUp()*tr_right, filter = self})*/
-	local tr = util.TraceLine({start = tr_startpos, endpos = tr_endpos, filter = self})
-	local finalpos = tr.HitPos
-	if ForceDown == false && self.MovementType == VJ_MOVETYPE_AERIAL then -- Yete ches estibergor vor var yerta YEV loghatsough SNPC che, sharnage...
-		local tr_check = util.TraceLine({start = finalpos, endpos = finalpos + Vector(0,0,-100), filter = self})
-		if tr_check.HitWorld == true then -- Yete askharin zargav, ere vor shad var chishne
-			finalpos = finalpos + self:GetUp()*(100 - tr_check.HitPos:Distance(finalpos))
-		end
-	end
-	//self.AA_TargetPos = finalpos
-	
-	-- Angle time test (PHYSICS)
-	/*local test1 = math.AngleDifference(tr.StartPos:Angle().y, self:VJ_ReturnAngle((finalpos-tr.StartPos):Angle()).y)
-	local test2 = (math.rad(test1) / math.rad(self:VJ_ReturnAngle((finalpos-tr.StartPos):Angle()).y)) * 20
-	self.yep = CurTime() + math.abs(test2)
-	self.yep2 = self:VJ_ReturnAngle((finalpos-tr.StartPos):Angle())*/
-	
-	if NoFace == false then self.AA_CurrentTurnAng = self:VJ_ReturnAngle((finalpos-tr.StartPos):Angle()) end //self:SetLocalAngularVelocity(self:VJ_ReturnAngle((finalpos-tr.StartPos):Angle())) end
-	if Debug == true then
-		VJ_CreateTestObject(finalpos,self:GetAngles(),Color(0,255,255),5)
-		util.ParticleTracerEx("Weapon_Combine_Ion_Cannon_Beam",tr.StartPos,finalpos,false,self:EntIndex(),0)
-	end
-
-	-- Set the velocity
-	//local myvel = self:GetVelocity()
-	local vel_set = (finalpos-self:GetPos()):GetNormal()*calmspeed
-	local vel_len = CurTime() + (finalpos:Distance(tr_startpos) / vel_set:Length())
-	self.AA_MoveLength_Chase = 0
-	if vel_len == vel_len then -- Check for NaN
-		self.AA_MoveLength_Wander = vel_len
-		self.NextIdleTime = vel_len
-	end
-	self.velocity = vel_set
-	self:Accelerate()
-	if Debug == true then ParticleEffect("vj_impact1_centaurspit", finalpos, Angle(0,0,0), self) end
-end
-
-function ENT:AAMove_Stop()
+function ENT:AAStop()
 	if self.MovementType != VJ_MOVETYPE_AERIAL && self.MovementType != VJ_MOVETYPE_AQUATIC then return end
 	if self:GetVelocity():Length() > 0 then
 		self:Decelerate()

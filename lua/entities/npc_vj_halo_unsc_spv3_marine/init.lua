@@ -82,9 +82,10 @@ ENT.EntitiesToRunFrom = {obj_spore=true,obj_vj_grenade=true,obj_grenade=true,obj
 ENT.BGs = {
 	1,
 	1,
+	1,
+	1,
 }
 ENT.Skins = {
-	0,
 	1,
 	2,
 	4,
@@ -92,6 +93,14 @@ ENT.Skins = {
 	6,
 }
 ENT.ColorRange = {Vector (255,255,255), Vector(255,255,255)}
+ENT.SoundTbl_Step = {
+	"marine/shared/step/step (1).ogg",
+	"marine/shared/step/step (2).ogg",
+	"marine/shared/step/step (3).ogg",
+	"marine/shared/step/step (4).ogg",
+	"marine/shared/step/step (5).ogg",
+	"marine/shared/step/step (6).ogg",
+}
 ---------------------------------------------------------------------------------------------------------------------------------------------
 function ENT:CustomOnSetupWeaponHoldTypeAnims(htype)
     if (htype == "pistol" and !string.find(tostring(self:GetActiveWeapon()), "cov")) then
@@ -106,6 +115,12 @@ end
 
 
 function ENT:CustomOnPreInitialize()
+	self.BGs = {
+		math.random(0,23),
+		math.random(0,2),
+		math.random(0,6),
+		math.random(0,1),
+	}
 	self.voicePermutation = tostring(math.random(1,9))
 	self.SoundTbl_OnKilledEnemy = {
 	"marine/marine0"..self.voicePermutation.."/killed_enemy/killed_enemy (1).ogg",
@@ -262,6 +277,7 @@ end
 
 
 function ENT:CustomOnInitialize()
+	
 	self:RandomizeTraits()
 	timer.Simple(0.01, function() 
 		if (GetConVarNumber("vj_spv3_UNSCCovWeps")==1 and math.random(0,1)==1) then
@@ -290,12 +306,14 @@ function ENT:CustomOnInitialize()
 		self.BecomeEnemyToPlayer = false -- Should the friendly SNPC become enemy towards the player if it's damaged by a player?
 	end
 	self:SetSkin(VJ_PICKRANDOMTABLE(self.Skins))
-	self:SetCollisionBounds(Vector(20, 20, 75), Vector(-20, -20, 0))
+	self:SetCollisionBounds(Vector(15, 15, 70), Vector(-15, -15, 0))
 	self:SetColor(Color(math.random(self.ColorRange[1].x, self.ColorRange[2].x),math.random(self.ColorRange[1].y, self.ColorRange[2].y) ,math.random(self.ColorRange[1].z, self.ColorRange[2].z)))
 	self.StartHealth = self.StartHealth * GetConVarNumber("vj_spv3_HealthModifier")
 	self:SetHealth(self.StartHealth)
-	self:SetBodygroup(0, self.BGs[1])
-	self:SetBodygroup(1, self.BGs[2])
+	local i
+	for i = 0, #self.BGs-1 do
+		self:SetBodygroup(i, self.BGs[i+1])
+	end
 	self.NextMoveTime = 0
 	self.NextDodgeTime = 0
 	self.NextMoveAroundTime = 0
@@ -308,8 +326,8 @@ end
 ---------------------------------------------------------------------------------------------------------------------------------------------
 function ENT:CustomOnAcceptInput(key,activator,caller,data)
 	if key == "Step" then
-		self:EmitSound("npc/footsteps/hardboot_generic"..math.random(1,6)..".ogg", 60, 100, 1)
-		
+		self:EmitSound(VJ_PICK(self.SoundTbl_Step), 60, 100, 1)
+		print("hello")
 	end
 end
 
@@ -328,6 +346,9 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 			end
 			self.EvadeCooldown = CurTime() + 4
 		end
+	end
+	if (hitgroup == 504 and dmginfo:GetDamage() >= 10) then
+		dmginfo:SetDamage(self:Health())
 	end
 	if (dmginfo:GetDamageType()==DMG_BLAST) then
 		dmginfo:ScaleDamage(3.5)

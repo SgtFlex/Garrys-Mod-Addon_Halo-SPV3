@@ -98,6 +98,38 @@ ENT.SoundTbl_Pain = {
 "infested_shared/pain/pain17.ogg",
 "infested_shared/pain/pain18.ogg"
 }
+ENT.SoundTbl_Impact = {
+"infested_shared/hit/floodflesh_hit_small1.ogg",
+"infested_shared/hit/floodflesh_hit_small2.ogg",
+"infested_shared/hit/floodflesh_hit_small3.ogg",
+"infested_shared/hit/floodflesh_hit_small4.ogg",
+"infested_shared/hit/floodflesh_hit_small5.ogg",
+"infested_shared/hit/floodflesh_hit_small6.ogg",
+"infested_shared/hit/floodflesh_hit_small7.ogg",
+"infested_shared/hit/floodflesh_hit_small8.ogg",
+"infested_shared/hit/floodflesh_hit_small9.ogg",
+"infested_shared/hit/floodflesh_hit_small10.ogg",
+"infested_shared/hit/floodflesh_hit_small11.ogg"
+}
+ENT.SoundTbl_Fall = {
+	"infested_shared/dth/death8.ogg",
+	"infested_shared/dth/death_mjr1.ogg",
+	"infested_shared/dth/death_mjr2.ogg",
+}
+ENT.SoundTbl_Death = {
+	"infested_shared/dth/death1.ogg",
+	"infested_shared/dth/death2.ogg",
+	"infested_shared/dth/death3.ogg",
+	"infested_shared/dth/death4.ogg",
+	"infested_shared/dth/death5.ogg",
+	"infested_shared/dth/death6.ogg",
+	"infested_shared/dth/death7.ogg",
+	"infested_shared/dth/death8.ogg",
+	"infested_shared/dth/death9.ogg",
+	"infested_shared/dth/death10.ogg",
+	"infested_shared/dth/death11.ogg",
+	"infested_shared/dth/death12.ogg",
+}
 ENT.WeaponSpread = 0
 ENT.Weapon_ShotsSinceLastReload = 0
 ENT.WeaponTable = {
@@ -207,7 +239,7 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 			self:SetBodygroup(self:FindBodygroupByName(self.bodyParts["Inf_Form"]["Bodygroup"]), 2)
 			self:EmitSound("infection_form/infection_pop/pop1.ogg")
 			ParticleEffect("hcea_flood_infected_death", self:LocalToWorld(Vector(0,0,50)), self:GetAngles() + Angle(90,0,0), nil)
-			self:TakeDamage(1000, dmginfo:GetAttacker(), dmginfo:GetInflictor())
+			dmginfo:SetDamage(self:Health())
 		end
 	end
 end

@@ -116,6 +116,25 @@ ENT.SoundTbl_Impact = {
 "infested_shared/hit/floodflesh_hit_small10.ogg",
 "infested_shared/hit/floodflesh_hit_small11.ogg"
 }
+ENT.SoundTbl_Fall = {
+	"infested_shared/dth/death8.ogg",
+	"infested_shared/dth/death_mjr1.ogg",
+	"infested_shared/dth/death_mjr2.ogg",
+}
+ENT.SoundTbl_Death = {
+	"infested_shared/dth/death1.ogg",
+	"infested_shared/dth/death2.ogg",
+	"infested_shared/dth/death3.ogg",
+	"infested_shared/dth/death4.ogg",
+	"infested_shared/dth/death5.ogg",
+	"infested_shared/dth/death6.ogg",
+	"infested_shared/dth/death7.ogg",
+	"infested_shared/dth/death8.ogg",
+	"infested_shared/dth/death9.ogg",
+	"infested_shared/dth/death10.ogg",
+	"infested_shared/dth/death11.ogg",
+	"infested_shared/dth/death12.ogg",
+}
 ENT.WeaponSpread = 0
 ENT.Weapon_ShotsSinceLastReload = 0
 ENT.WeaponTable = {
@@ -219,15 +238,6 @@ function ENT:CustomOnAcceptInput(key,activator,caller,data)
 	end
 end
 ---------------------------------------------------------------------------------------------------------------------------------------------
-function ENT:CustomOnThink_AIEnabled()
-	-- Shields --
-	if self.ShieldActivated == true then
-		self.Bleeds = false
-	else
-		self.Bleeds = true
-	end
-end
----------------------------------------------------------------------------------------------------------------------------------------------
 ENT.ShieldDelay = 6
 function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 	if (dmginfo:GetDamageType()==DMG_BLAST) then
@@ -278,7 +288,6 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 		elseif (hitgroup==500 and self.bodyParts["Head"]["Removed"]==false) then
 			self.bodyParts["Head"]["Health"] = self.bodyParts["Head"]["Health"] - dmginfo:GetDamage()
 			if (self.bodyParts["Head"]["Health"] <= 0) then
-
 				self.bodyParts["Head"]["Removed"]=true
 				local pos, ang = self:GetBonePosition(26)
 				self:CreateGibEntity("obj_vj_gib", "models/hce/spv3/flood/elite/floodElite_head.mdl", {Pos = pos, Ang = ang, Vel = dmginfo:GetDamageForce()*0.3, BloodType = "Yellow"})
@@ -297,7 +306,7 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 				self:SetBodygroup(self:FindBodygroupByName(self.bodyParts["Inf_Form"]["Bodygroup"]), 1)
 				self:EmitSound("infection_form/infection_pop/pop1.ogg")
 				ParticleEffect("hcea_flood_infected_death", self:LocalToWorld(Vector(0,0,50)), self:GetAngles() + Angle(90,0,0), nil)
-				self:TakeDamage(1000, dmginfo:GetAttacker(), dmginfo:GetInflictor())
+				self:TakeDamage(self:Health(), dmginfo:GetAttacker(), dmginfo:GetInflictor())
 			end
 		end
 	end

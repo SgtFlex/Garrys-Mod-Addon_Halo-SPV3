@@ -27,6 +27,12 @@ ENT.CovWeps = {
 ENT.ColorRange = {Vector (255,255,255), Vector(255,255,255)}
 
 function ENT:CustomOnPreInitialize()
+		self.BGs = {
+		24,
+		4,
+		8,
+		3,
+	}
 self.SoundTbl_OnKilledEnemy = {
 
 }

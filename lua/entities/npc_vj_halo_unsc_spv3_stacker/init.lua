@@ -7,10 +7,6 @@ include('entities/npc_vj_halo_unsc_spv3_marine/init.lua')
 	without the prior written consent of the author, unless otherwise indicated for stand-alone materials.
 -----------------------------------------------*/
 ENT.StartHealth = 200
-ENT.BGs = {
-	1,
-	2,
-}
 ENT.Skins = {
 	3
 }
@@ -26,6 +22,12 @@ ENT.CovWeps = {
 ENT.ColorRange = {Vector (255,255,255), Vector(255,255,255)}
 
 function ENT:CustomOnPreInitialize()
+	self.BGs = {
+	10,
+	1,
+	5,
+	1,
+	}
 self.SoundTbl_OnKilledEnemy = {
 	"stacker/end_combat/end_combat (1).ogg",
 	"stacker/end_combat/end_combat (2).ogg",

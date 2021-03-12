@@ -59,7 +59,7 @@ end
 
 
 function ENT:CustomOnInitialize()
-	self:SetCollisionBounds(self:GetModelBounds())
+	self:SetCollisionBounds(Vector(-20, -20, 5), Vector(20, 20, -30))
 	self.eyeLight = ents.Create("env_sprite")
 	self.eyeLight:SetParent(self,self:LookupAttachment("Light"))
 	self.eyeLight:SetPos(self:GetAttachment(self:LookupAttachment("light"))["Pos"])
@@ -71,6 +71,19 @@ function ENT:CustomOnInitialize()
 	self.eyeLight:SetKeyValue("scale", "0.3")
 	self.eyeLight:Spawn()
 	self.eyeLight:Activate()
+	timer.Simple(0.01, function()
+		if (!IsValid(self:GetParent())) then
+			local trace = util.TraceLine({
+			start = self:GetPos() + Vector(0,0,30),
+			endpos = self:GetPos() + self:GetUp()*1000,
+			filter = self,
+			ignoreworld = false,
+			})
+			if (trace.Hit) then
+				self:SetPos(trace.HitPos + Vector(0,0,-5))
+			end
+		end
+	end)
 end
 
 function ENT:RangeAttackCode_OverrideProjectilePos(TheProjectile) 

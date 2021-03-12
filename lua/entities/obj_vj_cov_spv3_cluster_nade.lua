@@ -35,7 +35,7 @@ ENT.SolidType = SOLID_VPHYSICS -- Solid type, recommended to keep it as it is
 ENT.RemoveOnHit = false -- Should it remove itself when it touches something? | It will run the hit sound, place a decal, etc.
 ENT.DoesRadiusDamage = true -- Should it do a blast damage when it hits something?
 ENT.RadiusDamageRadius = 150 -- How far the damage go? The farther away it's from its enemy, the less damage it will do | Counted in world units
-ENT.RadiusDamage = 30 -- How much damage should it deal? Remember this is a radius damage, therefore it will do less damage the farther away the entity is from its enemy
+ENT.RadiusDamage = 15 -- How much damage should it deal? Remember this is a radius damage, therefore it will do less damage the farther away the entity is from its enemy
 ENT.RadiusDamageUseRealisticRadius = true -- Should the damage decrease the farther away the enemy is from the position that the projectile hit?
 ENT.RadiusDamageType = DMG_BLAST -- Damage type
 ENT.RadiusDamageForce = 100 -- Put the force amount it should apply | false = Don't apply any force
@@ -95,21 +95,9 @@ end
 
 ENT.DaddyNade = true
 ENT.FirstCollide = false
-
-
-
-
-
-
-
-
-
-
+ENT.FuseTime = 0.01
 
 function ENT:CustomOnPhysicsCollide(data,phys)
-
-
-
 	if (self.FirstCollide==true) then return end
 	self.FirstCollide=true
 	getvelocity = phys:GetVelocity()
@@ -124,18 +112,19 @@ function ENT:CustomOnPhysicsCollide(data,phys)
 	self:SetMoveType(0)
 	self:SetAngles(Angle(0,self:GetAngles().y,self:GetAngles().z))
 
-	timer.Simple(0.5, function()
+	timer.Simple(self.FuseTime, function()
 		if (IsValid(self)) then
 			self:DeathEffects()
 			if (self.DaddyNade==true) then
-				for i=1,4 do
+				for i=1,5 do
 					local nadeSplit = ents.Create("obj_vj_cov_spv3_cluster_nade")
 					nadeSplit.DaddyNade=false
+					nadeSplit.FuseTime = 1
 					nadeSplit:Spawn()
 					if (IsValid(self:GetOwner())) then nadeSplit:SetOwner(self:GetOwner()) end
 					nadeSplit:SetPos(data.HitPos + Vector(0,0,1))
 					nadeSplit:SetAngles(data.HitNormal:Angle())
-					nadeSplit:GetPhysicsObject():SetVelocity((-data.HitNormal + Vector(math.Rand(-1,1),math.Rand(-1,1),math.Rand(-1,1))):GetNormalized()*500)
+					nadeSplit:GetPhysicsObject():SetVelocity((-data.HitNormal + Vector(math.Rand(-1,1),math.Rand(-1,1),math.Rand(-1,1))):GetNormalized()*350)
 				end
 			end
 			

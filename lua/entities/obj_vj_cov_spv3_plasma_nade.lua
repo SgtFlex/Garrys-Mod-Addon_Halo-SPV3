@@ -153,10 +153,14 @@ function ENT:CustomOnPhysicsCollide(data,phys)
 		self:EmitSound(VJ_PICKRANDOMTABLE(self.SoundTbl_StickTo))
 		self:SetSolid(0)
 		data.HitEntity:TakeDamage(1, self:GetOwner(), self)
-		if (data.HitEntity.SoundTbl_Stuck) then
-			data.HitEntity:EmitSound(VJ_PICKRANDOMTABLE(data.HitEntity.SoundTbl_Stuck))
-			if (data.HitEntity:LookupSequence("Transform")!=-1) then
-				data.HitEntity:VJ_ACT_PLAYACTIVITY("Transform", true, 4, false)
+		if (data.HitEntity.Berserked!=nil and data.HitEntity.Berserked!=true and math.random(0, 1)==1) then
+			data.HitEntity:Berserk()
+		else
+			if (data.HitEntity.SoundTbl_Stuck) then
+				data.HitEntity:EmitSound(VJ_PICKRANDOMTABLE(data.HitEntity.SoundTbl_Stuck))
+				if (data.HitEntity:LookupSequence("Transform")!=-1) then
+					data.HitEntity:VJ_ACT_PLAYACTIVITY("Transform", true, 4, false)
+				end
 			end
 		end
 	end

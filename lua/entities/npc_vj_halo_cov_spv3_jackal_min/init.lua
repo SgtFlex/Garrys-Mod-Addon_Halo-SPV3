@@ -8,11 +8,13 @@ include('entities/npc_vj_halo_shared_spv3/init.lua')
 -----------------------------------------------*/
 ENT.Model = {"models/hce/spv3/cov/jackal/jackal.mdl"} -- The game will pick a random model from the table when the SNPC is spawned | Add as many as you want
 ENT.StartHealth = 50
-ENT.HullType = HULL_LARGE
+ENT.HullType = HULL_MEDIUM
 ENT.bodyGroupTable = {
 	1,
 	0,
 }
+ENT.NextThrowGrenadeTime = 0 -- Time until it can throw a grenade again
+ENT.ThrowGrenadeChance = 0 -- Chance that it will throw the grenade | Set to 1 to throw all the time
 	-- ====== Blood-Related Variables ====== --
 ENT.Bleeds = true -- Does the SNPC bleed? (Blood decal, particle, etc.)
 ENT.BloodColor = "Purple" -- The blood type, this will determine what it should use (decal, particle, etc.)
@@ -141,6 +143,9 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 	if hitgroup == 11 then
 		dmginfo:ScaleDamage(0)
 		ParticleEffect("hcea_shield_impact", dmginfo:GetDamagePosition(), dmginfo:GetDamageForce():Angle(), self)
+	end
+	if (hitgroup == 506 and dmginfo:GetDamage() >= 10) then
+		dmginfo:SetDamage(self:Health())
 	end
 	if (dmginfo:GetDamage() >= self:Health()) then
 		if (dmginfo:GetDamageType()==DMG_BLAST or dmginfo:GetDamageType()==DMG_CLUB or dmginfo:GetDamageForce():Length()>=10000) then
@@ -272,6 +277,10 @@ function ENT:CustomOnAllyDeath(argent)
 			end
 	end)
 end
+end
+
+function ENT:CustomOnInitialKilled(dmginfo, hitgroup)
+	self:SetBodygroup(1, 0)
 end
 /*-----------------------------------------------
 	*** Copyright (c) 2012-2016 by DrVrej, All rights reserved. ***

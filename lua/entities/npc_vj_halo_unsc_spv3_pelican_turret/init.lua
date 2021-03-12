@@ -5,7 +5,7 @@ include('shared.lua')
 	No parts of this code or any of its contents may be reproduced, copied, modified or adapted,
 	without the prior written consent of the author, unless otherwise indicated for stand-alone materials.
 -----------------------------------------------*/
-ENT.HullType = HULL_MEDIUM
+ENT.HullType = HULL_MEDIUM_TALL
 	-- ====Variant Variables==== --
 ENT.Model = {"models/hce/spv3/unsc/pelican/pelicanturret.mdl"} -- The game will pick a random model from the table when the SNPC is spawned | Add as many as you want
 ENT.StartHealth = 1000
@@ -49,7 +49,8 @@ ENT.ConstantlyFaceEnemy = true
 ENT.ConstantlyFaceEnemy_IfAttacking = true -- Should it face the enemy when attacking?
 ENT.RangeAttackAnimationFaceEnemy = false
 function ENT:CustomOnInitialize()
-	self:SetCollisionBounds(self:GetModelBounds())
+	self:SetCollisionBounds(Vector(30,30,15), Vector(-30, -30, -50))
+	self:SetHullSizeNormal()
 	self.eyeLight = ents.Create("env_sprite")
 	self.eyeLight:SetParent(self,self:LookupAttachment("Light"))
 	self.eyeLight:SetPos(self:GetAttachment(self:LookupAttachment("Light"))["Pos"])
@@ -61,6 +62,20 @@ function ENT:CustomOnInitialize()
 	self.eyeLight:SetKeyValue("scale", "0.3")
 	self.eyeLight:Spawn()
 	self.eyeLight:Activate()
+	timer.Simple(0.01, function() //Need a small delay or wont work
+	if (!IsValid(self:GetParent())) then
+		local trace = util.TraceLine({
+		start = self:GetPos() + Vector(0,0,30),
+		endpos = self:GetPos() + self:GetUp()*1000,
+		filter = self,
+		ignoreworld = false,
+		})
+		if (trace.Hit) then
+			self:SetPos(trace.HitPos + Vector(0,0,-15))
+		end
+	end
+end)
+	
 end
 
 function ENT:CustomOn_PoseParameterLookingCode(pitch,yaw,roll) 

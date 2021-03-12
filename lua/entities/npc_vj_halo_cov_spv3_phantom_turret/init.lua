@@ -65,3 +65,9 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 		dmginfo:ScaleDamage(3.5)
 	end
 end
+
+function ENT:CustomOnKilled(dmginfo, hitgroup) 
+	if (IsValid(self:GetOwner()) and self:GetOwner():GetClass()=="npc_vj_halo_cov_spv3_phantom" and self:GetOwner().SpawnedUnits==(#self:GetOwner().TableSpawns + 1)) then
+		self:GetOwner():Leave()
+	end
+end

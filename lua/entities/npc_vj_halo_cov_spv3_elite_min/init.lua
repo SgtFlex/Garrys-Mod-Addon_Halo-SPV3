@@ -74,7 +74,7 @@ ENT.HasItemDropsOnDeath = true -- Should it drop items on death?
 ENT.ItemDropsOnDeathChance = 3 -- If set to 1, it will always drop it
 ENT.ThingsToDrop = {}
 ENT.CanFlinch = 0 -- 0 = Don't flinch | 1 = Flinch at any damage | 2 = Flinch only from certain damages
-ENT.FlinchChance = 5
+ENT.FlinchChance = 1
 ENT.NextFlinchTime = 1.35 -- How much time until it can flinch again?
 ENT.HasHitGroupFlinching = true
 ENT.HitGroupFlinching_Values = {
@@ -277,6 +277,7 @@ function ENT:CustomOnSetupWeaponHoldTypeAnims(htype)
 end
 
 function ENT:CustomOnInitialize()
+	self:SetArrivalSpeed(500)
 	self:RandomizeTraits()
 	self:SetSkin(self.Skin)
 -- 	timer.Simple(0.1, function()
@@ -395,6 +396,7 @@ end
 ---------------------------------------------------------------------------------------------------------------------------------------------
 ENT.HasStuck=false
 function ENT:Berserk()
+	if self.Berserked==true then return end
 	self.BerserkSound = CreateSound(self, VJ_PICKRANDOMTABLE(self.SoundTbl_Berserk))
 	if (self.HasSword == true) then
 		self.MeleeAttackDamage = 300 * GetConVarNumber("vj_spv3_damageModifier")
@@ -405,7 +407,7 @@ function ENT:Berserk()
 		self.AnimTbl_WeaponAttack = {ACT_MELEE_ATTACK2} -- Melee Attack Animations
 
 		timer.Simple(0.5, function() 
-			if (IsValid(self) and IsValid(self:GetActiveWeapon())) then
+			if (IsValid(self) and IsValid(self:GetActiveWeapon()) and self:GetActiveWeapon():GetClass()!="weapon_vj_cov_spv3_energysword") then
 				local wep = ents.Create(self:GetActiveWeapon():GetClass())
 				wep:SetPos(self:GetAttachment(self:LookupAttachment("Cannon"))["Pos"])
 				wep:SetAngles(self:GetActiveWeapon():GetAngles())
@@ -415,7 +417,7 @@ function ENT:Berserk()
 			end
 		end)
 	end
-	if (self.Berserked==true or self.HasStuck==true) then return end
+	-- if (self.Berserked==true or self.HasStuck==true) then return end
 	self.BerserkSound:Play()
 	self.Berserked=true
 	self.MoveRandomlyWhenShooting = false
@@ -445,6 +447,9 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 	if (dmginfo:GetAttacker():IsNPC()) then
 		dmginfo:ScaleDamage(GetConVarNumber("vj_spv3_NPCTakeDamageModifier"))
 	end
+	if (self.ShieldCurrentHealth <= 0 and hitgroup==507 and dmginfo:GetDamage() >= 10) then
+		dmginfo:SetDamage(self:Health())
+	end
 	if self.ShieldActivated == true then
 		self.Bleeds=false
 		ParticleEffect("hcea_shield_impact", dmginfo:GetDamagePosition(), dmginfo:GetDamageForce():Angle(), self)
@@ -452,6 +457,7 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 	else
 		self.CurrentHealth = self.CurrentHealth - dmginfo:GetDamage()
 	end
+
 	if (dmginfo:GetDamage() >= self:Health()) then
 		if (dmginfo:GetDamageType()==DMG_BLAST or dmginfo:GetDamageType()==DMG_CLUB) then
 			self:FlyingDeath(dmginfo)
@@ -480,10 +486,13 @@ ENT.Berserked=false
 function ENT:CustomOnTakeDamage_AfterDamage(dmginfo,hitgroup)
 	self:SetHealth((self.ShieldCurrentHealth + self.CurrentHealth))
 	if (self.ShieldCurrentHealth<=0) then
-		self:CustomOnTakeDamage_ShieldsDestroyed(dmginfo)
+		if (math.random(1,8) == 1) then
+			self:Berserk()
+		end
+		
+		self:CustomOnTakeDamage_ShieldsDestroyed(dmginfo, hitgroup)
 		self.ShieldActivated=false
 		self.Bleeds=true
-		self.CanFlinch = 1
 	end
 	if (timer.Exists("ShieldDelay"..self:GetCreationID())) then
 		timer.Adjust("ShieldDelay"..self:GetCreationID(), self.ShieldDelay, 1)
@@ -493,7 +502,6 @@ function ENT:CustomOnTakeDamage_AfterDamage(dmginfo,hitgroup)
 				self:StopParticles()
 				ParticleEffectAttach("hcea_shield_recharged",PATTACH_POINT_FOLLOW,self,self:LookupAttachment("origin"))
 				self.ShieldActivated = true
-				self.CanFlinch = 0
 				self.ShieldCurrentHealth = self.ShieldHealth
 				self:SetHealth(self.CurrentHealth + self.ShieldCurrentHealth)
 				self.Bleeds=false
@@ -502,17 +510,18 @@ function ENT:CustomOnTakeDamage_AfterDamage(dmginfo,hitgroup)
 	end
 end
 ---------------------------------------------------------------------------------------------------------------------------------------------
-function ENT:CustomOnTakeDamage_ShieldsDestroyed(dmginfo)
+function ENT:CustomOnTakeDamage_ShieldsDestroyed(dmginfo, hitgroup)
 	if self.ShieldActivated == false then return end
-	if (math.random(0,1)==0) and (self.Berserked==false) and (self:Health() > dmginfo:GetDamage()) then
-		self:Berserk()
-	elseif (self.Berserked==false) then
+	if (self.Berserked==false) then
 		self:VJ_TASK_COVER_FROM_ENEMY("TASK_RUN_PATH")
 	end
 	-- self:EmitSound(Sound("ambient/energy/weld" .. math.random(1,2) .. ".ogg"),80,100)
 	self:StopParticles()
 	ParticleEffectAttach("hcea_shield_disperse",PATTACH_POINT_FOLLOW,self,self:LookupAttachment("origin"))
 	ParticleEffectAttach("hcea_shield_enabled",PATTACH_POINT_FOLLOW,self,self:LookupAttachment("origin"))
+	self.CanFlinch = 1
+	self:DoFlinch(dmginfo, hitgroup)
+	self.CanFlinch = 0
 	self.ShieldActivated = false
 end
 ---------------------------------------------------------------------------------------------------------------------------------------------
@@ -560,12 +569,13 @@ function ENT:CustomOnAcceptInput(key,activator,caller,data)
 	end
 end
 
+function ENT:CustomOnAlert(ent) 
+	if (self:GetActiveWeapon():GetClass()=="weapon_vj_cov_spv3_energysword") then
+		self:Berserk()
+	end
+end
 
 ENT.GrenadeAttackVelForward1 = 300 -- Grenade attack velocity up | The first # in math.random
-
-
-
-
 /*-----------------------------------------------
 	*** Copyright (c) 2012-2016 by DrVrej, All rights reserved. ***
 	No parts of this code or any of its contents may be reproduced, copied, modified or adapted,

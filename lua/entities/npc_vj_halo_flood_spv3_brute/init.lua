@@ -5,7 +5,7 @@ include('shared.lua')
 	No parts of this code or any of its contents may be reproduced, copied, modified or adapted,
 	without the prior written consent of the author, unless otherwise indicated for stand-alone materials.
 -----------------------------------------------*/
-ENT.HullType = HULL_LARGE
+ENT.HullType = HULL_MEDIUM
 
 ENT.Model = {"models/hce/spv3/flood/brute/floodbrute.mdl"} -- The game will pick a random model from the table when the SNPC is spawned | Add as many as you want
 ENT.modelColor = Color(255,255,255)
@@ -134,7 +134,7 @@ function ENT:CustomOnInitialize()
 			self:Give(VJ_PICKRANDOMTABLE(self.WeaponTable))
 		end
 	end)
-	self:SetCollisionBounds(Vector(-20, -15, 0), Vector(20, 15, 75))
+	self:SetCollisionBounds(Vector(-20, -20, 0), Vector(20, 20, 75))
 	self:CapabilitiesAdd(bit.bor(CAP_MOVE_CLIMB))
 	self:SetColor(self.modelColor)
 	self:SetBodygroup(0, self.bodyGroup)
@@ -205,7 +205,7 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 			self:SetBodygroup(self:FindBodygroupByName(self.bodyParts["Inf_Form"]["Bodygroup"]), 1)
 			self:EmitSound("infection_form/infection_pop/pop1.ogg")
 			ParticleEffect("hcea_flood_infected_death", self:LocalToWorld(Vector(0,0,50)), self:GetAngles() + Angle(90,0,0), nil)
-			self:TakeDamage(1000, dmginfo:GetAttacker(), dmginfo:GetInflictor())
+			dmginfo:SetDamage(self:Health())
 		end
 	end
 end
