@@ -19,3 +19,11 @@ SWEP.Primary.ProjectileSpeed = 4000
 SWEP.Color = Color(255, 30, 30, 0)
 SWEP.PrintName					= "Brute Plasma Pistol"
 SWEP.HoldType 					= "pistol"
+SWEP.NPC_HasSecondaryFire = true -- Can the weapon have a secondary fire?
+SWEP.NPC_SecondaryFireEnt = "obj_vj_spv3_bpp_charged" -- The entity to fire, this only applies if self:NPC_SecondaryFire() has NOT been overridden!
+SWEP.NPC_SecondaryFireChance = 3 -- Chance that the secondary fire is used | 1 = always
+SWEP.NPC_SecondaryFireNext = VJ_Set(12, 15) -- How much time until the secondary fire can be used again?
+SWEP.NPC_SecondaryFireDistance = 2500 -- How close does the owner's enemy have to be for it to fire?
+SWEP.NPC_HasSecondaryFireSound = true -- Can the secondary fire sound be played?
+SWEP.NPC_SecondaryFireSound = {"weapons/plasma pistol/charged fire/charged fire.ogg"} -- The sound it plays when the secondary fire is used
+SWEP.NPC_SecondaryFireSoundLevel = 90 -- The sound level to use for the secondary firing sound

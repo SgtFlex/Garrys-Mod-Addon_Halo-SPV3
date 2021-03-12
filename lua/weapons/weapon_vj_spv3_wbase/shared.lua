@@ -33,6 +33,7 @@ SWEP.PrimaryEffects_SpawnShells = false
 SWEP.PrimaryEffects_DynamicLightColor = Color(14, 171, 255)
 SWEP.Primary.Projectile = "obj_vj_spv3_pr_shot"
 SWEP.Primary.ProjectileSpeed = 4000
+SWEP.Secondary.ProjectileSpeed = 1000
 SWEP.ReloadSound = {"weapons/smg/reload/reload_full_1.ogg", "weapons/smg/reload/reload_full_2.ogg"}
 SWEP.NPC_ReloadSound = SWEP.ReloadSound -- Sounds it plays when the base detects the SNPC playing a reload animation
 
@@ -99,5 +100,22 @@ function SWEP:PredictPos(entity, multiplier)
 		return  (self:GetOwner():GetEnemy():GetGroundSpeedVelocity()*multiplier)
 	else
 		return (self:GetOwner():GetEnemy():GetVehicle():GetParent():GetVelocity()*multiplier)
+	end
+end
+
+function SWEP:NPC_SecondaryFire()
+	-- Override this function if you want to make your own secondary attack!
+	local owner = self:GetOwner()
+	local pos = self:GetNW2Vector("VJ_CurBulletPos")
+	local proj = ents.Create(self.NPC_SecondaryFireEnt)
+	proj:SetPos(pos)
+	proj:SetAngles(owner:GetAngles())
+	proj:SetOwner(owner)
+	proj:Spawn()
+	proj:Activate()
+	local phys = proj:GetPhysicsObject()
+	if IsValid(phys) then
+		phys:Wake()
+		phys:ApplyForceCenter(((self.Owner:GetEnemy():GetPos() + self.Owner:GetEnemy():OBBCenter() - self:GetAttachment(self:LookupAttachment("muzzle"))["Pos"]):GetNormalized()*self.Secondary.ProjectileSpeed  + self:PredictPos(self.Owner:GetEnemy(), 1) + Vector(math.random(-self.NPC_CustomSpread,self.NPC_CustomSpread),math.random(-self.NPC_CustomSpread,self.NPC_CustomSpread),math.random(-self.NPC_CustomSpread,self.NPC_CustomSpread))*50))
 	end
 end
