@@ -29,7 +29,7 @@ end
 function ENT:CustomOnPreInitialize()
 	local headsOnly = {1, 12, 17}
 	self.BGs = {
-		math.random(0, #headsOnly),
+		headsOnly[math.random(1, #headsOnly)],
 		3,
 		7,
 		2,

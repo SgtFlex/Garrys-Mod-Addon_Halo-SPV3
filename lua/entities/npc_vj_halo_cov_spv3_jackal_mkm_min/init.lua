@@ -20,6 +20,7 @@ ENT.AnimTbl_IdleStand = {ACT_IDLE}
 ENT.Color = Color(80,80,80)
 ENT.eyeLight = ""
 function ENT:CustomOnInitialize()
+	self:SetHitboxSet("noShield")
 	for i=1, #self.bodyGroupTable do
 		self:SetBodygroup(i, self.bodyGroupTable[i])
 	end
