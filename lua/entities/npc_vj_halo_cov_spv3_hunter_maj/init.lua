@@ -45,7 +45,7 @@ function ENT:CustomInitialize()
 	self:SetBodygroup(2, 0)
 	self:SetBodygroup(3, 1)
 	self:SetSkin(0)
-	self:SetCollisionBounds(Vector(45, 45, 115), Vector(-45, -45, 0))	
+	self:SetCollisionBounds(Vector(35, 35, 100), Vector(-35, -35, 0))
 end
 ---------------------------------------------------------------------------------------------------------------------------------------------
 

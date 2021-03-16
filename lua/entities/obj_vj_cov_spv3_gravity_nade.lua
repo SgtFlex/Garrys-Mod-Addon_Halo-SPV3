@@ -56,6 +56,7 @@ end
 ---------------------------------------------------------------------------------------------------------------------------------------------
 ENT.glow = ""
 function ENT:CustomOnInitialize()
+	self:SetOwner(nil)
 	if (self:GetOwner():IsNPC()) then
 		self.RadiusDamage=self.RadiusDamage * GetConVarNumber("vj_spv3_damageModifier")
 	end

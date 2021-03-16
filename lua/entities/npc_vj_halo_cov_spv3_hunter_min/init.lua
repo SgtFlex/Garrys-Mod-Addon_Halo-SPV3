@@ -94,7 +94,7 @@ end
 ---------------------------------------------------------------------------------------------------------------------------------------------
 function ENT:CustomOnThink_AIEnabled()
 	if self:GetEnemy() != nil && self.VJ_IsBeingControlled == false then	
-		if self:GetPos():Distance(self:GetEnemy():GetPos()) < 300 && self.VJ_IsBeingControlled == false then
+		if self:GetPos():Distance(self:GetEnemy():GetPos()) < 300 && self.VJ_IsBeingControlled == false && self.Berserked==false then
 			self.HUNTER_BlockWalking = true
 			self.ConstantlyFaceEnemy = false
 			self.FootStepSoundLevel = 60
@@ -123,7 +123,7 @@ function ENT:CustomInitialize()
 	self:SetBodygroup(2, 1)
 	self:SetBodygroup(3, 0)
 	self:SetSkin(self.Skin)
-	self:SetCollisionBounds(Vector(45, 45, 115), Vector(-45, -45, 0))
+	self:SetCollisionBounds(Vector(35, 35, 100), Vector(-35, -35, 0))
 end
 
 function ENT:SpawnLights() //Spawn any light sprites around the sentinel

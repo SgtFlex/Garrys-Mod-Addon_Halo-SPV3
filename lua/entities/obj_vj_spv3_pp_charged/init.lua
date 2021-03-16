@@ -53,6 +53,12 @@ function ENT:DeathEffects(data,phys)
 	self.ExplosionLight1:Fire("TurnOn", "", 0)
 	self:DeleteOnRemove(self.ExplosionLight1)
 end
+
+function ENT:CustomOnPhysicsCollide(data, phys) 
+	if data.HitEntity:IsPlayer() and data.HitEntity:Armor() > 0 then
+		self.RadiusDamage = data.HitEntity:Armor()
+	end
+end
 /*-----------------------------------------------
 	*** Copyright (c) 2012-2016 by DrVrej, All rights reserved. ***
 	No parts of this code or any of its contents may be reproduced, copied, modified or adapted,

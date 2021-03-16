@@ -137,11 +137,11 @@ function ENT:CustomOnCollideWithoutRemove(data,phys)
 		end
 	end
 	self.stopTracking=true
-	if (data.OurOldVelocity:Dot(data.HitNormal) < 900) then phys:SetVelocity((1 * (-2*(data.OurOldVelocity:Dot(data.HitNormal))*data.HitNormal + data.OurOldVelocity)):GetNormalized()*1000) else self:SetMoveType(0) end
+	if (data.OurOldVelocity:Dot(data.HitNormal) >= 900) then self:SetMoveType(0) end
 end
 
 
-function ENT:CustomOnThink() 
+function ENT:CustomOnThink()
 	self:GetPhysicsObject():SetVelocity(self:GetVelocity():GetNormalized()*1000)	
 	if (!IsValid(self:GetParent()) and self:GetMoveType()!=0) then self:SetAngles(self:GetVelocity():Angle()) end
 	if (!IsValid(self.targetedEnemy)) then return end

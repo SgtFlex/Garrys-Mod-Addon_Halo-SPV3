@@ -55,6 +55,7 @@ end
 ENT.glow = ""
 function ENT:CustomOnInitialize()
 	if (self:GetOwner():IsNPC()) then
+		self:SetOwner(nil)
 		self.RadiusDamage=self.RadiusDamage * GetConVarNumber("vj_spv3_damageModifier")
 	end
 	ParticleEffectAttach("hcea_hunter_shade_cannon_proj", PATTACH_ABSORIGIN_FOLLOW, self, 0)

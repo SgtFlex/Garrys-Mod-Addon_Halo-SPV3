@@ -67,6 +67,7 @@ end
 ENT.glow = ""
 function ENT:CustomOnInitialize()
 	if (self:GetOwner():IsNPC()) then
+		self:SetOwner(nil)
 		self.RadiusDamage=self.RadiusDamage * GetConVarNumber("vj_spv3_damageModifier")
 	end
 	self.trailSound = CreateSound(self, "grenades/plasma nade/trail/trail.wav")
