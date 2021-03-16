@@ -327,7 +327,6 @@ end
 function ENT:CustomOnAcceptInput(key,activator,caller,data)
 	if key == "Step" then
 		self:EmitSound(VJ_PICK(self.SoundTbl_Step), 60, 100, 1)
-		print("hello")
 	end
 end
 
