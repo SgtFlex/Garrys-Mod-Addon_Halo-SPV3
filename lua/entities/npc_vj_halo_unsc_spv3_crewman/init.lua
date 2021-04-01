@@ -20,7 +20,7 @@ ENT.ColorRange = {Vector (0,0,0), Vector(255,255,255)}
 ENT.Cooldown = 0
 function ENT:CustomOnThink()
 	self.Cooldown = self.Cooldown + 0.1
-	if (math.random(1,25)==1 and self.Cooldown>=2 and self:GetEnemy()) then
+	if (math.random(1,25)==1 and self.Cooldown>=2 and self:GetEnemy() and self.KeyesBuff!=true) then
 		self:VJ_ACT_PLAYACTIVITY("Cower_idle",true,1,false)
 		self:EmitSound(VJ_PICKRANDOMTABLE(self.SoundTbl_Cower))
 		self.Cooldown = 0

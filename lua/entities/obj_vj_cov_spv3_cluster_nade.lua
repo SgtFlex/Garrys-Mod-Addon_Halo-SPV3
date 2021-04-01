@@ -120,7 +120,7 @@ function ENT:CustomOnPhysicsCollide(data,phys)
 				for i=1,5 do
 					local nadeSplit = ents.Create("obj_vj_cov_spv3_cluster_nade")
 					nadeSplit.DaddyNade=false
-					nadeSplit.FuseTime = 1
+					nadeSplit.FuseTime = 0.5
 					nadeSplit:Spawn()
 					if (IsValid(self:GetOwner())) then nadeSplit:SetOwner(self:GetOwner()) end
 					nadeSplit:SetPos(data.HitPos + Vector(0,0,1))

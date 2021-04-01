@@ -25,6 +25,40 @@ ENT.CovWeps = {
 	"weapon_vj_cov_spv3_needler",
 }
 ENT.ColorRange = {Vector (255,255,255), Vector(255,255,255)}
+ENT.Cooldown = 0
+function ENT:CustomOnThink()
+	self.Cooldown = self.Cooldown + 0.1
+	if (self.Cooldown>=5) then
+		self.Cooldown = 0
+		local allies = ents.FindInSphere(self:GetPos(), 3000)
+		for k, v in pairs(allies) do
+			if (v!=self and v:IsNPC() and string.find(tostring(v:GetClass()), "unsc")) then
+				if (v.KeyesBuff == nil or v.KeyesBuff == false) then
+					v.KeyesBuff = true
+					v:SetHealth(v:Health() + v:GetMaxHealth()*0.35)
+				end
+				timer.Create("HealthReset"..v:GetCreationID(), 20, 1, function()
+					if (IsValid(self) and IsValid(v)) then
+						v:SetHealth(v:Health() - v:GetMaxHealth()*0.35)
+						v.KeyesBuff = false
+					end
+				end)
+			end
+
+		end
+		
+	end
+end
+
+function ENT:CustomOnInitialKilled(dmginfo, hitgroup)
+	local allies = ents.FindInSphere(self:GetPos(), 3000)
+	for k, v in pairs(allies) do
+		if (string.find(tostring(v:GetClass()), "unsc") and v.KeyesBuff == true) then
+			v:SetHealth(v:Health() - v:GetMaxHealth()*0.35)
+			v.KeyesBuff = false
+		end
+	end
+end
 
 function ENT:CustomOnPreInitialize()
 		self.BGs = {

@@ -92,9 +92,10 @@ function ENT:CustomRangeAttackCode_AfterProjectileSpawn(TheProjectile)
 	ParticleEffectAttach("hcea_hunter_ab_muzzle",PATTACH_POINT_FOLLOW,self,1)
 end
 ---------------------------------------------------------------------------------------------------------------------------------------------
+ENT.Berserked=false
 function ENT:CustomOnThink_AIEnabled()
 	if self:GetEnemy() != nil && self.VJ_IsBeingControlled == false then	
-		if self:GetPos():Distance(self:GetEnemy():GetPos()) < 300 && self.VJ_IsBeingControlled == false && self.Berserked==false then
+		if self.Berserked==true or (self:GetPos():Distance(self:GetEnemy():GetPos()) < 300 && self.VJ_IsBeingControlled == false) then
 			self.HUNTER_BlockWalking = true
 			self.ConstantlyFaceEnemy = false
 			self.FootStepSoundLevel = 60
@@ -192,7 +193,7 @@ function ENT:FlyingDeath(dmginfo)
 	self.imposter:Spawn()
 end
 
-ENT.Berserked=false
+
 function ENT:CustomOnTakeDamage_AfterDamage(dmginfo,hitgroup)
 	if (self:Health()<= self:GetMaxHealth()*.4) then
 		self:Berserk()
@@ -202,9 +203,10 @@ end
 function ENT:Berserk()
 	if (self.Berserked==true or self.HasStuck==true) then return end
 	self.Berserked=true
+	self.NoChaseAfterCertainRange_CloseDistance = 4000 -- Should the SNPC not be able to chase when it's between number x and y?
 	self.WaitForEnemyToComeOut = false
-	self.NoWeapon_UseScaredBehavior = false
 	self:VJ_ACT_PLAYACTIVITY("Berserk", true, 2, false)
+	self:EmitSound("hunter/melee/melee12.ogg")
 end
 ---------------------------------------------------------------------------------------------------------------------------------------------
 ENT.SoundTbl_Alert = {
@@ -227,6 +229,59 @@ ENT.SoundTbl_MeleeAttack = {
 "hunter/hunter_melee_hits/hunter_melee_hit5.ogg",
 "hunter/hunter_melee_hits/hunter_melee_hit6.ogg"
 }
+
+ENT.SoundTbl_Death = {
+"hunter/dth/death1.ogg",
+"hunter/dth/death2.ogg",
+"hunter/dth/death3.ogg",
+"hunter/dth/death4.ogg",
+"hunter/dth/death5.ogg",
+"hunter/dth/death6.ogg",
+"hunter/dth/death7.ogg",
+"hunter/dth/death8.ogg",
+"hunter/dth/death9.ogg",
+"hunter/dth/death10.ogg",
+"hunter/dth/death11.ogg",
+"hunter/dth/death12.ogg",
+"hunter/dth/death13.ogg",
+"hunter/dth/death14.ogg",
+"hunter/dth/death15.ogg",
+"hunter/dth/death16.ogg",
+"hunter/dth/death17.ogg",
+"hunter/dth/death18.ogg",
+}
+
+ENT.SoundTbl_Pain = {
+	"hunter/pain/16.ogg",
+	"hunter/pain/dth1.ogg",
+	"hunter/pain/dth13.ogg",
+	"hunter/pain/dth2.ogg",
+	"hunter/pain/dth_mjr11.ogg",
+	"hunter/pain/dth_mjr20.ogg",
+	"hunter/pain/lift1.ogg",
+	"hunter/pain/lift2.ogg",
+	"hunter/pain/meleeleap1.ogg",
+	"hunter/pain/meleeleap12.ogg",
+	"hunter/pain/pain1.ogg",
+	"hunter/pain/pain2.ogg",
+	"hunter/pain/pain4.ogg",
+	"hunter/pain/pain5.ogg",
+	"hunter/pain/pain7.ogg",
+	"hunter/pain/pain8.ogg",
+	"hunter/pain/pain9.ogg",
+}
+
+ENT.SoundTbl_Investigate = {
+	"hunter/tnt/dwn11.ogg",
+	"hunter/tnt/dwn12.ogg",
+	"hunter/tnt/pain_mdm10.ogg",
+	"hunter/tnt/pain_mjr1.ogg",
+	"hunter/tnt/rmd23.ogg",
+	"hunter/tnt/rmd25.ogg",
+	"hunter/tnt/rmd34.ogg",
+	"hunter/tnt/rmd35.ogg",
+	"hunter/tnt/rmd5.ogg",
+}
 ---------------------------------------------------------------------------------------------------------------------------------------------
 function ENT:RangeAttackCode_GetShootPos(TheProjectile)
 	return (self:GetEnemy():GetPos()+self:GetEnemy():OBBCenter()-self:GetAttachment(self:LookupAttachment(self.RangeUseAttachmentForPosID)).Pos):GetNormal()*1500
@@ -243,6 +298,25 @@ function ENT:CustomOnAcceptInput(key,activator,caller,data)
 	elseif key == "Hit" then
 		self:MeleeAttackCode()
 	
+	end
+end
+ENT.HunterBro = nil
+function ENT:CustomOnInitialize()
+	local allies = ents.FindInSphere(self:GetPos(), 3000)
+	for k, v in pairs(allies) do
+		if (v != self and v:IsNPC() and string.find(tostring(v:GetClass()), "hunter") and v.HunterBro == nil) then
+			PrintMessage(3, tostring(v))
+			self.HunterBro = v
+			v.HunterBro = self
+			return
+		end
+	end
+end
+
+
+function ENT:CustomOnInitialKilled(dmginfo, hitgroup)
+	if (IsValid(self.HunterBro)) then
+		self.HunterBro:Berserk()
 	end
 end
 

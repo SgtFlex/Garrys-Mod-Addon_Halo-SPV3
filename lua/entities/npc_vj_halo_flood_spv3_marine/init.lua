@@ -8,7 +8,7 @@ include('shared.lua')
 ENT.HullType = HULL_MEDIUM
 
 ENT.Model = {"models/hce/spv3/flood/human/floodmarine.mdl"} -- The game will pick a random model from the table when the SNPC is spawned | Add as many as you want
-ENT.modelColor = Color(127,0,0)
+ENT.modelColor = Color(255,255,255)
 ENT.bodyGroups = {0,0,0,0,0}
 ENT.StartHealth = 113
 ENT.CanOpenDoors = true -- Can it open doors?

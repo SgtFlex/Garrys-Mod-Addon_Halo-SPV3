@@ -208,11 +208,11 @@ function ENT:CustomOnDoKilledEnemy(argent,attacker,inflictor)
 			self.enemyShields = self:GetEnemy().ShieldHealth
 		elseif (string.find(tostring(argent), "elite")) then
 			local random = math.random(0,100)
-			if (random > 75) then
+			if (random > 90) then
 				self.combatForm = ents.Create("npc_vj_halo_flood_spv3_elite_runner")
 				self.enemyHealth = self:GetEnemy().StartHealth * 1.25
 				self.enemyShields = self:GetEnemy().ShieldHealth
-			elseif (random <=75 and random >= 50) then
+			elseif (random <=90 and random >= 75) then
 				self.combatForm = ents.Create("npc_vj_halo_flood_spv3_elite_suicide")
 				self.enemyHealth = self:GetEnemy().StartHealth * 1.25
 				self.enemyShields = self:GetEnemy().ShieldHealth
@@ -226,7 +226,7 @@ function ENT:CustomOnDoKilledEnemy(argent,attacker,inflictor)
 		elseif (string.find(tostring(argent), "grunt")) then
 			self.combatForm = ents.Create("npc_vj_halo_flood_spv3_carrier")
 			self.enemyHealth = self:GetEnemy().StartHealth * .35
-		elseif (string.find(tostring(argent), "jackal")) then
+		elseif (string.find(tostring(argent), "jackal") or string.find(tostring(argent), "skirm")) then
 			self.combatForm = ents.Create("npc_vj_halo_flood_spv3_jackal")
 			self.enemyHealth = self:GetEnemy().StartHealth * .35
 		elseif (string.find(tostring(argent), "brute")) then
