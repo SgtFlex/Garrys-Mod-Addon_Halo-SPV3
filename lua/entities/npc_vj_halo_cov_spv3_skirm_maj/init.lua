@@ -16,6 +16,7 @@ ENT.WeaponProfficiency = 100
 ENT.ExtraShotCount = 2
 
 function ENT:CustomOnInitialize()
+	self:SetHitboxSet("shielded")
 	self:SetBodygroup(1, 1)
 	self:SetBodygroup(2, 1)
 	timer.Simple(0.1, function()
