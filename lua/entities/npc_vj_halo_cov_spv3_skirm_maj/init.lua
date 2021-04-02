@@ -16,7 +16,6 @@ ENT.WeaponProfficiency = 100
 ENT.ExtraShotCount = 2
 
 function ENT:CustomOnInitialize()
-	self:SetHitboxSet("shielded")
 	self:SetBodygroup(1, 1)
 	self:SetBodygroup(2, 1)
 	timer.Simple(0.1, function()
@@ -54,7 +53,7 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 	if (dmginfo:GetAttacker():IsNPC()) then
 		dmginfo:ScaleDamage(GetConVarNumber("vj_spv3_NPCTakeDamageModifier"))
 	end
-	if hitgroup == 0 then
+	if hitgroup == 509 then
 		dmginfo:ScaleDamage(0)
 		ParticleEffect("hcea_shield_impact", dmginfo:GetDamagePosition(), dmginfo:GetDamageForce():Angle(), self)
 	end

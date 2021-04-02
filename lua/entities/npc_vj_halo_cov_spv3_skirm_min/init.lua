@@ -15,3 +15,25 @@ ENT.UNSCWeps = {
 ENT.AnimTbl_IdleStand = {ACT_IDLE}
 ENT.WeaponProfficiency = 70
 ENT.ExtraShotCount = 1
+
+function ENT:CustomOnInitialize()
+	self:SetColor(255,255,255)
+	self:SetBodygroup(1, 0)
+	self:SetBodygroup(2, 0)
+	timer.Simple(0.1, function()
+	if (self:GetActiveWeapon().HoldType=="ar2") then
+		self.AnimTbl_WeaponAttack = {ACT_IDLE_RIFLE} -- Animation played when the SNPC does weapon attack
+		self.AnimTbl_ShootWhileMovingRun = {ACT_RUN_RIFLE} -- Animations it will play when shooting while running | NOTE: Weapon may translate the animation that they see fit!
+		self.AnimTbl_ShootWhileMovingWalk = {ACT_RUN_RIFLE} -- Animations it will play when shooting while walking | NOTE: Weapon may translate the animation that they see fit!
+		self.AnimTbl_Run = {ACT_RUN_RIFLE}
+		self.AnimTbl_IdleStand = {ACT_IDLE} -- The idle animation when AI is enabled
+	end
+end)
+	timer.Simple(0.01, function() 
+		if (GetConVarNumber("vj_spv3_covUNSCWeps")==1 and math.random(0,1)==1) then
+			self:GetActiveWeapon():Remove()
+			self:Give(VJ_PICKRANDOMTABLE(self.UNSCWeps))
+		end
+	end)
+	self:SetCollisionBounds(Vector(20, 20, 75), Vector(-20, -20, 0))
+end

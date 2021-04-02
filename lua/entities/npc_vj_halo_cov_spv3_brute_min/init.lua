@@ -176,6 +176,13 @@ function ENT:FindSeq(seq)
 	return self:GetSequenceActivity(self:LookupSequence(seq))
 end
 
+function ENT:CustomOnMeleeAttack_AfterChecks(hitEnt)
+	if (hitEnt.MeleeAttacking==true) then
+		hitEnt:SetAngles(hitEnt:GetAngles() + Angle(0,180,0))
+	end
+	return false 
+end -- return true to disable the attack and move onto the next entity!
+
 ENT.SoundTbl_OnKilledEnemy = {
 	"brute/killEnemy/killEnemy (1).ogg",
 	"brute/killEnemy/killEnemy (2).ogg",

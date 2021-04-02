@@ -134,6 +134,13 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 		dmginfo:ScaleDamage(GetConVarNumber("vj_spv3_NPCTakeDamageModifier"))
 	end
 end
+
+function ENT:CustomOnMeleeAttack_AfterChecks(hitEnt)
+	if (hitEnt.MeleeAttacking==true) then
+		hitEnt:SetAngles(hitEnt:GetAngles() + Angle(0,180,0))
+	end
+	return false 
+end -- return true to disable the attack and move onto the next entity!
 ---------------------------------------------------------------------------------------------------------------------------------------------
 ENT.infFormCount = 10
 local spreadRadius = 200

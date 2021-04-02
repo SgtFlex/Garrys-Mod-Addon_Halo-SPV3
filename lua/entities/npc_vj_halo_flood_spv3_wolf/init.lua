@@ -156,6 +156,13 @@ function ENT:CustomDeathAnimationCode(dmginfo,hitgroup)
 	end)
 end
 
+function ENT:CustomOnMeleeAttack_AfterChecks(hitEnt)
+	if (hitEnt.MeleeAttacking==true) then
+		hitEnt:SetAngles(hitEnt:GetAngles() + Angle(0,180,0))
+	end
+	return false 
+end -- return true to disable the attack and move onto the next entity!
+
 function ENT:RangeAttackCode_OverrideProjectilePos(TheProjectile) -- return other value then 0 to override the projectile's position
 	return self:GetPos() + Vector(0,0,50) + self:GetRight()*math.random(-10,10) + self:GetUp()*math.random(-10,10)
 end

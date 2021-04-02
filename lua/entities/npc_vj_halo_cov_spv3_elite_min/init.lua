@@ -52,6 +52,8 @@ ENT.GrenadeAttackThrowDistance = 5000 -- How far it can throw grenades
 
 ENT.HasDeathAnimation = true -- Does it play an animation when it dies?
 ENT.AnimTbl_Death = {"Die_1", "Die_2", "Die_3", "Kill_F_Gut"} -- Death Animations
+ENT.MaxJumpLegalDistance = VJ_Set(400,550) -- The max distance the NPC can jump (Usually from one node to another) | ( UP, DOWN )
+
 	-- Melee Attack ---------------------------------------------------------------------------------------------------------------------------------------------
 ENT.HasMeleeAttack = true -- Should the SNPC have a melee attack?
 ENT.MeleeAttackDamage = 70
@@ -321,6 +323,13 @@ function ENT:CustomOnInitialize()
 	self:SetHealth(self.ShieldHealth + self.StartHealth)
 
 end
+
+function ENT:CustomOnMeleeAttack_AfterChecks(hitEnt)
+	if (hitEnt.MeleeAttacking==true) then
+		hitEnt:SetAngles(hitEnt:GetAngles() + Angle(0,180,0))
+	end
+	return false 
+end -- return true to disable the attack and move onto the next entity!
 ---------------------------------------------------------------------------------------------------------------------------------------------
 -- function ENT:CustomOnThink_AIEnabled()
 -- 	-- Shields --
@@ -584,6 +593,53 @@ function ENT:CustomOnAlert(ent)
 	if (self:GetActiveWeapon():GetClass()=="weapon_vj_cov_spv3_energysword") then
 		self:Berserk()
 	end
+end
+
+function ENT:MeleeAttackCode() //Setting melee damage type to DMG_CLUB
+	if self.Dead == true or self.vACT_StopAttacks == true or self.Flinching == true or self.ThrowingGrenade == true then return end
+	if self.StopMeleeAttackAfterFirstHit == true && self.AlreadyDoneMeleeAttackFirstHit == true then return end
+	if /*self.VJ_IsBeingControlled == false &&*/ self.MeleeAttackAnimationFaceEnemy == true then self:FaceCertainEntity(self:GetEnemy(),true) end
+	//self.MeleeAttacking = true
+	local FindEnts = ents.FindInSphere(self:SetMeleeAttackDamagePosition(),self.MeleeAttackDamageDistance)
+	local hitentity = false
+	local HasHitNonPropEnt = false
+	if FindEnts != nil then
+		for _,v in pairs(FindEnts) do
+			if (self.VJ_IsBeingControlled == true && self.VJ_TheControllerBullseye == v) or (v:IsPlayer() && v.IsControlingNPC == true) then continue end
+			if (v:IsNPC() or (v:IsPlayer() && v:Alive() && GetConVar("ai_ignoreplayers"):GetInt() == 0)) && (self:Disposition(v) != D_LI) && (v != self) && (v:GetClass() != self:GetClass()) or (v:GetClass() == "prop_physics") or v:GetClass() == "func_breakable_surf" or v:GetClass() == "func_breakable" && (self:GetSightDirection():Dot((v:GetPos() -self:GetPos()):GetNormalized()) > math.cos(math.rad(self.MeleeAttackDamageAngleRadius))) then
+				local doactualdmg = DamageInfo()
+				doactualdmg:SetDamage(self:VJ_GetDifficultyValue(self.MeleeAttackDamage))
+				if v:IsNPC() or v:IsPlayer() then doactualdmg:SetDamageForce(self:GetForward()*((doactualdmg:GetDamage()+100)*70)) end
+				doactualdmg:SetInflictor(self)
+				doactualdmg:SetDamageType(DMG_CLUB)
+				doactualdmg:SetAttacker(self)
+				v:TakeDamageInfo(doactualdmg, self)
+				if v:IsPlayer() then
+					v:ViewPunch(Angle(math.random(-1,1)*10,math.random(-1,1)*10,math.random(-1,1)*10))
+				end
+				VJ_DestroyCombineTurret(self,v)
+				if v:GetClass() != "prop_physics" then HasHitNonPropEnt = true end
+				if v:GetClass() == "prop_physics" && HasHitNonPropEnt == false then
+					//if VJ_HasValue(self.EntitiesToDestoryModel,v:GetModel()) or VJ_HasValue(self.EntitiesToPushModel,v:GetModel()) then
+					//hitentity = true else hitentity = false end
+					hitentity = false
+				else
+					hitentity = true
+				end
+			end
+		end
+	end
+	if hitentity == true then
+		self:PlaySoundSystem("MeleeAttack")
+		if self.StopMeleeAttackAfterFirstHit == true then self.AlreadyDoneMeleeAttackFirstHit = true /*self:StopMoving()*/ end
+	else
+		self:CustomOnMeleeAttack_Miss()
+		self:PlaySoundSystem("MeleeAttackMiss", {}, VJ_EmitSound)
+	end
+	if self.AlreadyDoneFirstMeleeAttack == false && self.TimeUntilMeleeAttackDamage != false then
+		self:MeleeAttackCode_DoFinishTimers()
+	end
+	self.AlreadyDoneFirstMeleeAttack = true
 end
 
 ENT.GrenadeAttackVelForward1 = 300 -- Grenade attack velocity up | The first # in math.random

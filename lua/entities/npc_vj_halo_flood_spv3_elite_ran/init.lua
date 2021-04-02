@@ -341,6 +341,13 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 	end
 end
 
+function ENT:CustomOnMeleeAttack_AfterChecks(hitEnt)
+	if (hitEnt.MeleeAttacking==true) then
+		hitEnt:SetAngles(hitEnt:GetAngles() + Angle(0,180,0))
+	end
+	return false 
+end -- return true to disable the attack and move onto the next entity!
+
 function ENT:FlyingDeath(dmginfo)
 	self.HasDeathRagdoll = false
 	self.HasDeathAnimation = false

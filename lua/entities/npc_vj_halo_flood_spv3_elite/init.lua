@@ -416,6 +416,13 @@ ENT.WeaponSpread = 1
 function ENT:WeaponAimPoseParameters(ResetPoses)
 end
 
+function ENT:CustomOnMeleeAttack_AfterChecks(hitEnt)
+	if (hitEnt.MeleeAttacking==true) then
+		hitEnt:SetAngles(hitEnt:GetAngles() + Angle(0,180,0))
+	end
+	return false 
+end -- return true to disable the attack and move onto the next entity!
+
 function ENT:CustomOnThink() 
 	if (IsValid(self:GetEnemy()) and self:IsLineOfSightClear(self:GetEnemy():GetPos()) and IsValid(self:GetActiveWeapon()) and self:GetActiveWeapon():Clip1()>0 and self:GetPos():DistToSqr(self:GetEnemy():GetPos())> 100) then
 		self.AnimTbl_Run = {ACT_WALK_PISTOL}
