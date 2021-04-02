@@ -25,7 +25,6 @@ ENT.VJ_NPC_Class = {"CLASS_PARASITE"} -- NPCs with the same class with be allied
 ENT.HasDeathRagdoll = false -- If set to false, it will not spawn the regular ragdoll of the SNPC
 ENT.HasDeathAnimation = true -- Does it play an animation when it dies?
 ENT.AnimTbl_Death = {"Melee_1"} -- Death Animations
-ENT.EntitiesToNoCollide = {"npc_vj_halo_flood_spv3_infection"}
 
 	-- Melee Attack ---------------------------------------------------------------------------------------------------------------------------------------------
 ENT.HasMeleeAttack = true -- Should the SNPC have a melee attack?

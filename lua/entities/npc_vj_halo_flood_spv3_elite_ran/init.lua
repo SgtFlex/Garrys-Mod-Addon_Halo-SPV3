@@ -50,7 +50,6 @@ ENT.RangeToMeleeDistance = 0 -- How close does it have to be until it uses melee
 ENT.RangeAttackAnimationStopMovement = false -- Should it stop moving when performing a range attack?
 ENT.AnimTbl_RangeAttack = {} -- Range Attack Animations
 ENT.NextRangeAttackTime = 0.5 -- How much time until it can use a range attack?
-ENT.EntitiesToNoCollide = {"npc_vj_halo_flood_spv3_infection"}
 ENT.DropWeaponOnDeath = true -- Should it drop its weapon on death?
 ENT.HasItemDropsOnDeath = true -- Should it drop items on death?
 ENT.ItemDropsOnDeathChance = 3 -- If set to 1, it will always drop it

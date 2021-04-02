@@ -33,7 +33,21 @@ ENT.LeapAttackDamageDistance = 30 -- How far does the damage go?
 ENT.HasDeathRagdoll = false -- If set to false, it will not spawn the regular ragdoll of the SNPC
 ENT.PushProps = false -- Should it push props when trying to move?
 //Prevent blocking of infection forms but also don't block the way of other combat forms
-ENT.EntitiesToNoCollide = {"player", "npc_vj_halo_flood_spv3_elite", "npc_vj_halo_flood_spv3_elite_runner", "npc_vj_halo_flood_spv3_elite_hg", "npc_vj_halo_flood_spv3_marine", "npc_vj_halo_flood_spv3_odst", "npc_vj_halo_flood_spv3_carrier"}
+ENT.EntitiesToNoCollide = //Can't no collide players, have to use correct collision group
+{
+	"npc_vj_halo_flood_spv3_elite", 
+	"npc_vj_halo_flood_spv3_elite_ran", 
+	"npc_vj_halo_flood_spv3_elite_runner", 
+	"npc_vj_halo_flood_spv3_elite_hg", 
+	"npc_vj_halo_flood_spv3_elite_suicide",
+	"npc_vj_halo_flood_spv3_elite_oss",
+	"npc_vj_halo_flood_spv3_marine", 
+	"npc_vj_halo_flood_spv3_odst", 
+	"npc_vj_halo_flood_spv3_carrier", 
+	"npc_vj_halo_flood_spv3_wolf", 
+	"npc_vj_halo_flood_spv3_jackal", 
+	"npc_vj_halo_flood_spv3_brute", 
+}
 ENT.FindEnemy_UseSphere = true -- Should the SNPC be able to see all around him? (360) | Objects and walls can still block its sight!
 ENT.OnlyDoKillEnemyWhenClear = false -- If set to true, it will only play the OnKilledEnemy sound when there isn't any other enemies
 ENT.canFlinch = 0
@@ -108,7 +122,8 @@ ENT.NextSoundTime_Idle1 = 1
 ENT.NextSoundTime_Idle2 = 2
 ---------------------------------------------------------------------------------------------------------------------------------------------
 function ENT:CustomOnInitialize()
-	self:SetCollisionGroup(19)
+	self.NextProcessTime = self.NextProcessTime * 3
+	self:SetCollisionGroup(16)
 	self.MovingSound = CreateSound(self, "infection_form/infector_sound/infector/move/move"..math.random(1,3)..".wav")
 	timer.Simple(0.1, function() 
 		if (IsValid(self)) then
@@ -167,7 +182,6 @@ function ENT:CustomOnDoKilledEnemy(argent,attacker,inflictor)
 				infection:SetAngles(Angle(0,0,0))
 				infection:SetMoveType(3)
 				infection:RemoveFlags(FL_NOTARGET)
-				infection:SetCollisionGroup(0)
 				infection:SetNotSolid(false)
 				local spreadRadius = 20
 				local velocity = Vector(math.random(-spreadRadius, spreadRadius),math.random(-spreadRadius, spreadRadius),math.random(100, 175))
@@ -306,12 +320,6 @@ function ENT:CustomOnDoKilledEnemy(argent,attacker,inflictor)
 			self.combatForm.SpawnedFromInf = true
 			self.combatForm.StartHealth = self.enemyHealth
 			self.combatForm.ShieldHealth = self.enemyShields
-			self.combatForm:SetCollisionGroup(1)
-			timer.Simple(0.5, function()
-				if (IsValid(self)) then
-					self.combatForm:SetCollisionGroup(0)
-				end
-			end)
 			self.combatForm:Spawn()
 			self.combatForm:SetAngles(self.enemyAng)
 			self.combatForm:SetPos(self.enemyPos)
@@ -385,7 +393,6 @@ function ENT:CustomOnLeapAttack_AfterChecks(TheHitEntity)
 		self:GetEnemy().HasLatch = self:GetEnemy().HasLatch + 1
 		self:SetMoveType(MOVETYPE_NONE)
 		self:AddFlags(FL_NOTARGET)
-		self:SetCollisionGroup(0)
 		self:SetNotSolid(true)
 		self:SetAngles(self:GetEnemy():GetAngles() + Angle(-90,0,0))
 		self.BoneToFollow = VJ_PICKRANDOMTABLE(math.random(0, self:GetEnemy():GetBoneCount()-1))

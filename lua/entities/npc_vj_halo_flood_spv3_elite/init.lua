@@ -14,7 +14,6 @@ ENT.StartHealth = 44
 ENT.ShieldHealth = 100
 ENT.CurrentHealth = ENT.StartHealth
 ENT.ShieldCurrentHealth = ENT.ShieldHealth
-ENT.EntitiesToNoCollide = {"npc_vj_halo_flood_spv3_infection"}
 	-- ====== Blood-Related Variables ====== --
 ENT.Bleeds = true -- Does the SNPC bleed? (Blood decal, particle, etc.)
 ENT.BloodColor = "Yellow" -- The blood type, this will determine what it should use (decal, particle, etc.)
