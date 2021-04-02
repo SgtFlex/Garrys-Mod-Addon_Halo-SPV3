@@ -33,7 +33,7 @@ ENT.LeapAttackDamageDistance = 30 -- How far does the damage go?
 ENT.HasDeathRagdoll = false -- If set to false, it will not spawn the regular ragdoll of the SNPC
 ENT.PushProps = false -- Should it push props when trying to move?
 //Prevent blocking of infection forms but also don't block the way of other combat forms
-ENT.EntitiesToNoCollide = {"npc_vj_halo_flood_spv3_infection", "npc_vj_halo_flood_spv3_elite", "npc_vj_halo_flood_spv3_elite_runner", "npc_vj_halo_flood_spv3_elite_hg", "npc_vj_halo_flood_spv3_marine", "npc_vj_halo_flood_spv3_odst", "npc_vj_halo_flood_spv3_carrier"}
+ENT.EntitiesToNoCollide = {"player", "npc_vj_halo_flood_spv3_elite", "npc_vj_halo_flood_spv3_elite_runner", "npc_vj_halo_flood_spv3_elite_hg", "npc_vj_halo_flood_spv3_marine", "npc_vj_halo_flood_spv3_odst", "npc_vj_halo_flood_spv3_carrier"}
 ENT.FindEnemy_UseSphere = true -- Should the SNPC be able to see all around him? (360) | Objects and walls can still block its sight!
 ENT.OnlyDoKillEnemyWhenClear = false -- If set to true, it will only play the OnKilledEnemy sound when there isn't any other enemies
 ENT.canFlinch = 0
@@ -108,7 +108,7 @@ ENT.NextSoundTime_Idle1 = 1
 ENT.NextSoundTime_Idle2 = 2
 ---------------------------------------------------------------------------------------------------------------------------------------------
 function ENT:CustomOnInitialize()
-	self:SetCollisionGroup(15)
+	self:SetCollisionGroup(19)
 	self.MovingSound = CreateSound(self, "infection_form/infector_sound/infector/move/move"..math.random(1,3)..".wav")
 	timer.Simple(0.1, function() 
 		if (IsValid(self)) then
