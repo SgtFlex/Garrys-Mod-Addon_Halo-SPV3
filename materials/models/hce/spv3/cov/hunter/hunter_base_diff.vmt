@@ -2,7 +2,7 @@
 {
 	"$basetexture" "models/hce/spv3/cov/hunter/hunter_base_diff"
 	"$bumpmap" "models/hce/spv3/cov/hunter/hunter_base_diff_nrm"
-
+	$surfaceprop metal
 	"$color2"		"[0.87 0.87 0.87]"
 	
 	"$normalmapalphaenvmapmask"    "1"

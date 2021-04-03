@@ -33,8 +33,9 @@ ENT.LeapAttackDamageDistance = 30 -- How far does the damage go?
 ENT.HasDeathRagdoll = false -- If set to false, it will not spawn the regular ragdoll of the SNPC
 ENT.PushProps = false -- Should it push props when trying to move?
 //Prevent blocking of infection forms but also don't block the way of other combat forms
-ENT.EntitiesToNoCollide = //Can't no collide players, have to use correct collision group
+ENT.EntitiesToNoCollide = //Player no collide does affect how it behaves, even though the wiki states it doesn't
 {
+	"player",
 	"npc_vj_halo_flood_spv3_elite", 
 	"npc_vj_halo_flood_spv3_elite_ran", 
 	"npc_vj_halo_flood_spv3_elite_runner", 
@@ -122,8 +123,11 @@ ENT.NextSoundTime_Idle1 = 1
 ENT.NextSoundTime_Idle2 = 2
 ---------------------------------------------------------------------------------------------------------------------------------------------
 function ENT:CustomOnInitialize()
-	self.NextProcessTime = self.NextProcessTime * 3
-	self:SetCollisionGroup(16)
+	self.NextProcessTime = self.NextProcessTime + 2
+	self:SetCollisionGroup(19)
+	hook.Add("Touch", "StuckPrevention", function()
+		PrintMessage(3, "Touched!")
+end)
 	self.MovingSound = CreateSound(self, "infection_form/infector_sound/infector/move/move"..math.random(1,3)..".wav")
 	timer.Simple(0.1, function() 
 		if (IsValid(self)) then
@@ -131,8 +135,6 @@ function ENT:CustomOnInitialize()
 			self:SetFriction(0.3)
 		end
 	end)
-	
-	self:CapabilitiesAdd(bit.bor(CAP_MOVE_CLIMB))
 	self.StartHealth = self.StartHealth * GetConVarNumber("vj_spv3_HealthModifier")
 	if (self.StartHealth < 1) then self.StartHealth = 1 end
 	self:SetHealth(self.StartHealth)
@@ -145,23 +147,20 @@ function ENT:CustomDeathAnimationCode(dmginfo,hitgroup) //Perhaps giving errors 
 	self.inflictor = dmginfo:GetInflictor()
 	self.vector = self:GetPos()
 	self:SetNoDraw(true)
-	if (GetConVarNumber("vj_spv3_InfFormsExplode")==1 and self.AlreadyDoneFirstLeapAttack == false and self.LeapAttacking == false) then
-		timer.Simple(0.2, function()
-			if (IsValid(self)) then
-				self.BlastInfo = DamageInfo()
-				self.BlastInfo:SetDamageType(DMG_SLASH)
-				self.BlastInfo:SetDamage(5 * GetConVarNumber("vj_spv3_damageModifier"))
-				self.BlastInfo:SetDamagePosition(self.vector)
-				if (IsValid(self.inflictor)) then
-					self.BlastInfo:SetInflictor(self.inflictor)
-					self.BlastInfo:SetAttacker(self.inflictor)
-				end
-				self.BlastInfo:SetReportedPosition(self.vector)
-				util.BlastDamageInfo(self.BlastInfo, self.vector, 50)
+	timer.Simple(0.2, function()
+		if (IsValid(self) && (GetConVarNumber("vj_spv3_InfFormsExplode")==1 and self.HitShield == false)) then
+			self.BlastInfo = DamageInfo()
+			self.BlastInfo:SetDamageType(DMG_SLASH)
+			self.BlastInfo:SetDamage(5 * GetConVarNumber("vj_spv3_damageModifier"))
+			self.BlastInfo:SetDamagePosition(self.vector)
+			if (IsValid(self.inflictor)) then
+				self.BlastInfo:SetInflictor(self.inflictor)
+				self.BlastInfo:SetAttacker(self.inflictor)
 			end
-		end)
-		
-	end
+			self.BlastInfo:SetReportedPosition(self.vector)
+			util.BlastDamageInfo(self.BlastInfo, self.vector, 50)
+		end
+	end)
 end
 
 
@@ -355,13 +354,14 @@ end
 
 ENT.AttachedTo = ""
 
-
+ENT.HitShield = false
 function ENT:CustomOnLeapAttack_AfterChecks(TheHitEntity) 
 	if ((TheHitEntity.ShieldCurrentHealth && TheHitEntity.ShieldCurrentHealth > 0) || (TheHitEntity:IsPlayer() && TheHitEntity:Armor() > 0)) then
 		if (GetConVarNumber("vj_spv3_InfFormsExplode")==0) then
 			TheHitEntity:TakeDamage(self.LeapAttackDamage, self, self)
 		end
 		self:TakeDamage(5, TheHitEntity, TheHitEntity)
+		self.HitShield = true
 		return
 	end
 	if (IsValid(self) and IsValid(self:GetEnemy())  and self:GetEnemy():Health() < self:GetEnemy():GetMaxHealth()*.4) then
