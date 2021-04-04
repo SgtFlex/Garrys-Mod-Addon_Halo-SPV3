@@ -1,0 +1,6 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/hce/spv3/unsc/warthog/rwarthog_rl_diff2"
+	"$surfaceprop" metal
+}
+

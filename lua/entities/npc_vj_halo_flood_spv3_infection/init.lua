@@ -125,9 +125,6 @@ ENT.NextSoundTime_Idle2 = 2
 function ENT:CustomOnInitialize()
 	self.NextProcessTime = self.NextProcessTime + 2
 	self:SetCollisionGroup(19)
-	hook.Add("Touch", "StuckPrevention", function()
-		PrintMessage(3, "Touched!")
-end)
 	self.MovingSound = CreateSound(self, "infection_form/infector_sound/infector/move/move"..math.random(1,3)..".wav")
 	timer.Simple(0.1, function() 
 		if (IsValid(self)) then

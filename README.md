@@ -15,12 +15,20 @@ After that, take the folder inside the zip and put it in your "Addons" folder in
 
 # Changes from current workshop version
 Changes that are different and WIP compared to the workshop version:
-   <br/>-Added Covenant Phantom w/ Turret
+
+I've been working on these changes for months, so I cannot bother with summarizing everything. You can find the changes I've made throughout here: https://github.com/SgtFlex/Garrys-Mod-Addon_Halo-SPV3/commits/main
+Here is at least the jist of some of it:
+   <br/>-Added configurable menu that can be opened with "spv3_settings" in the console
+   <br/>-Added Map Spawner
+   <br/>-Added Skirmishers
+   <br/>-Added Covenant Phantom w/ Turrets
+   <br/>-Added UNSC Pelican w/ Turrets
    <br/>-Added Flood Biomass
    <br/>-Sentinels are now much much more effective against large swaths of flood (can hit more than 1 target per sweep)
    <br/>-Added 8 additional voice permutations for marines
    <br/>-Added hitgroups and dismemberment to Flood Marine
    <br/>-Added hitgroups and dismemberment to Flood Elite
+   <br/>-Added hitgroups and dismemberment to Flood Brute
    <br/>-Added Energy Sword
    <br/>-Added proper Berserking for Elites
    <br/>-Higher-ranked elites will randomly pull out swords when shields deplete
@@ -30,6 +38,7 @@ Changes that are different and WIP compared to the workshop version:
    <br/>-Added evasion to marines
    <br/>-Changed evasion code for Elites, Brutes, and Jackals (So they evade when fighting other NPCs too and not just players)
    <br/>-Added flying death animations for all relevant NPCs
+   <br/>-Updated all Hunters
    <br/>-Changed infection forms and made them feel more "floaty"
 	<br/>-Infection forms now explode on contact with shields
 	<br/>-Infection forms deal double damage to active shields
@@ -48,6 +57,8 @@ Changes that are different and WIP compared to the workshop version:
    <br/>-Changed around weapon tables within UNSC faction
    <br/>-Removed unnecessary file causing error upon load in
    <br/>-Fixed various bones, so weapons are wielded better
+   <br/>-Fixed several material issues
+   <br/>-Changed sound format to save on space
    <br/>-Fixed Flood jackal retaining colors of host but applying it to the flesh as well
    <br/>-Marines (and sub types) can use Covie grenades if they're allowed to use Covie weapons
    <br/>-Brutes (and sub types) can use Human grenades if they're allowed to use Human weapons

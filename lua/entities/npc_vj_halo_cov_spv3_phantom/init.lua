@@ -109,7 +109,6 @@ function ENT:CustomOnInitialize()
 	if (trace.Hit) then
 		self:SetPos(trace.HitPos + Vector(0,0,math.random(300, 1000)))
 	end
-	self:SetNoDraw(true)
 	self:VJ_ACT_PLAYACTIVITY(self.SpawnAnim,true,self:SequenceDuration(self:LookupSequence(self.SpawnAnim)),false)	
 	self:SetCollisionBounds(Vector(-500, -300, -50), Vector(500, 300, 400))
 	self.engineSound = CreateSound(self, "phantom/engine_hover.wav")
@@ -128,17 +127,23 @@ function ENT:CustomOnInitialize()
 	self.gravSound:ChangeVolume(0)
 	self.hoverSound:ChangeVolume(0)
 	self.engineSound:ChangeVolume(0)
-	self.turret = ents.Create("npc_vj_halo_cov_spv3_phantom_turret")
-	self.turret:SetParent(self, 2)
-	self.turret:SetPos(self:GetAttachment(self:LookupAttachment("Cannon"))["Pos"])
-	self.turret:SetAngles(self:GetAngles())
-	self.turret:SetOwner(self)
-	self.turret:Spawn()
-	self.turret:SetNoDraw(true)
+	local i
+	self.turret = {}
+	for i=1, 3 do
+		self.turret[i] = ents.Create("npc_vj_halo_cov_spv3_phantom_turret")
+		self.turret[i]:SetParent(self, 2)
+		self.turret[i]:SetPos(self:GetAttachment(self:LookupAttachment("Cannon"..i))["Pos"])
+		self.turret[i]:SetAngles(self:GetAttachment(self:LookupAttachment("Cannon"..i))["Ang"])
+		self.turret[i]:SetOwner(self)
+		self.turret[i]:Spawn()
+		self.turret[i]:SetNoDraw(true)
+	end
 	timer.Simple(0.3, function()
-		if (IsValid(self) and IsValid(self.turret)) then
+		if (IsValid(self) and IsValid(self.turret[1])) then
 			self:SetNoDraw(false)
-			self.turret:SetNoDraw(false)
+			for i=1, 3 do
+				self.turret[i]:SetNoDraw(false)
+			end
 		end
 	end)
 	timer.Simple(self:SequenceDuration(self:LookupSequence(self.SpawnAnim)), function()
@@ -177,8 +182,11 @@ function ENT:SpawnCovies()
 			self.SpawnedUnits = self.SpawnedUnits + 1
 			if (self.SpawnedUnits==(#self.TableSpawns + 1)) then
 				local stickAround = 3
-				if (IsValid(self.turret)) then
-					local stickAround = GetConVar("vj_spv3_phantomAssistTime"):GetInt()
+				for i=1, 3 do
+					if (IsValid(self.turret[i])) then
+						local stickAround = GetConVar("vj_spv3_phantomAssistTime"):GetInt()
+						break
+					end
 				end
 				timer.Simple(stickAround, function()
 					if (IsValid(self)) then
