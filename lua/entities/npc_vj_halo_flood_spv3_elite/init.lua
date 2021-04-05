@@ -183,12 +183,11 @@ function ENT:CustomOnInitialize()
 	-- Shields --
 	if (self.SpawnedFromInf==false) then
 		if (math.random(0,100) < GetConVarNumber("vj_spv3_floodEliteShield")) then
-		self.ShieldHealth = self.ShieldHealth * GetConVarNumber("vj_spv3_ShieldModifier")
-		self.ShieldActivated = true
+			self.ShieldHealth = self.ShieldHealth * GetConVarNumber("vj_spv3_ShieldModifier")
+			self.ShieldActivated = true
+		end
 	else
-		self.ShieldHealth = 0
-		self.ShieldActivated = false
-	end
+		self.ShieldActivated = true
 	end
 	self.StartHealth = self.StartHealth * GetConVarNumber("vj_spv3_HealthModifier")
 	self.ShieldCurrentHealth = self.ShieldHealth

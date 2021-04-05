@@ -337,31 +337,35 @@ function ENT:CustomOnAllyDeath(argent)
 				end
 			end
 			if (self.HasProtector==false or (math.random(0,10) < 3)) then
-				self.ScaredSound = CreateSound(self, VJ_PICKRANDOMTABLE(self.SoundTbl_Scared))
-				self.ScaredSound:Play()
-				self.Behavior = VJ_BEHAVIOR_PASSIVE
-				self.AnimTbl_Walk = {ACT_RUN_SCARED} -- Set the walking animations | Put multiple to let the base pick a random animation when it moves
-				self.AnimTbl_Run = {ACT_RUN_SCARED} -- Set the running animations | Put multiple to let the base pick a random animation when it moves
-				self.AnimTbl_MoveToCover = {ACT_RUN_SCARED}
-				timer.Create("Scared"..self:GetCreationID(), math.random(1.5,3), 5, function()
-					if !(IsValid(self)) then return end 
-					self.ScaredSound = CreateSound(self, VJ_PICKRANDOMTABLE(self.SoundTbl_Scared))
-					self.ScaredSound:Play()
-					self.AnimTbl_Walk = {ACT_RUN_SCARED} -- Set the walking animations | Put multiple to let the base pick a random animation when it moves
-					self.AnimTbl_Run = {ACT_RUN_SCARED} -- Set the running animations | Put multiple to let the base pick a random animation when it moves
-					self.AnimTbl_MoveToCover = {ACT_RUN_SCARED}
-					self:VJ_TASK_COVER_FROM_ENEMY("TASK_RUN_PATH")
-				end)
-				timer.Simple(10, function()
-					if !(IsValid(self)) then return end
-					self.Behavior = VJ_BEHAVIOR_PASSIVE
-					self.AnimTbl_Walk = {ACT_WALK} -- Set the walking animations | Put multiple to let the base pick a random animation when it moves
-					self.AnimTbl_Run = {ACT_RUN} -- Set the running animations | Put multiple to let the base pick a random animation when it moves
-					self.AnimTbl_MoveToCover = {ACT_RUN}
-				end)
+				self:Flee()
 			end
 	end)
 end
+end
+
+function ENT:Flee()
+	self.ScaredSound = CreateSound(self, VJ_PICKRANDOMTABLE(self.SoundTbl_Scared))
+	self.ScaredSound:Play()
+	self.Behavior = VJ_BEHAVIOR_PASSIVE
+	self.AnimTbl_Walk = {ACT_RUN_SCARED} -- Set the walking animations | Put multiple to let the base pick a random animation when it moves
+	self.AnimTbl_Run = {ACT_RUN_SCARED} -- Set the running animations | Put multiple to let the base pick a random animation when it moves
+	self.AnimTbl_MoveToCover = {ACT_RUN_SCARED}
+	timer.Create("Scared"..self:GetCreationID(), math.random(1.5,3), 5, function()
+		if !(IsValid(self)) then return end 
+		self.ScaredSound = CreateSound(self, VJ_PICKRANDOMTABLE(self.SoundTbl_Scared))
+		self.ScaredSound:Play()
+		self.AnimTbl_Walk = {ACT_RUN_SCARED} -- Set the walking animations | Put multiple to let the base pick a random animation when it moves
+		self.AnimTbl_Run = {ACT_RUN_SCARED} -- Set the running animations | Put multiple to let the base pick a random animation when it moves
+		self.AnimTbl_MoveToCover = {ACT_RUN_SCARED}
+		self:VJ_TASK_COVER_FROM_ENEMY("TASK_RUN_PATH")
+	end)
+	timer.Simple(10, function()
+		if !(IsValid(self)) then return end
+		self.Behavior = VJ_BEHAVIOR_PASSIVE
+		self.AnimTbl_Walk = {ACT_WALK} -- Set the walking animations | Put multiple to let the base pick a random animation when it moves
+		self.AnimTbl_Run = {ACT_RUN} -- Set the running animations | Put multiple to let the base pick a random animation when it moves
+		self.AnimTbl_MoveToCover = {ACT_RUN}
+	end)
 end
 
 ENT.GrenadeAttackVelForward1 = 300 -- Grenade attack velocity up | The first # in math.random

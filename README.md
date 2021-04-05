@@ -75,3 +75,5 @@ Here is at least the jist of some of it:
  <br/>
  <br/>
 
+
+NOT (*.png OR *.vmt OR *.vtf OR *.lua OR *.ogg OR *.wav OR *.vtx OR *.mdl OR *.phy OR *.vvd)

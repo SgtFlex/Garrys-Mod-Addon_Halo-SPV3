@@ -36,6 +36,7 @@ ENT.PushProps = false -- Should it push props when trying to move?
 ENT.EntitiesToNoCollide = //Player no collide does affect how it behaves, even though the wiki states it doesn't
 {
 	"player",
+	"npc_vj_halo_flood_spv3_infection",
 	"npc_vj_halo_flood_spv3_elite", 
 	"npc_vj_halo_flood_spv3_elite_ran", 
 	"npc_vj_halo_flood_spv3_elite_runner", 
@@ -170,90 +171,138 @@ ENT.enemyShields = 0
 ENT.enemySeqDur = 0
 ENT.imposter = ""
 function ENT:CustomOnDoKilledEnemy(argent,attacker,inflictor)
-	if (argent.AttachedInfectForms) then
-		for k=0, #argent.AttachedInfectForms do
-			local infection = argent.AttachedInfectForms[k]
-			if (IsValid(infection)) then
-				infection:FollowBone(NULL, 0)
-				infection:SetAngles(Angle(0,0,0))
-				infection:SetMoveType(3)
-				infection:RemoveFlags(FL_NOTARGET)
-				infection:SetNotSolid(false)
-				local spreadRadius = 20
-				local velocity = Vector(math.random(-spreadRadius, spreadRadius),math.random(-spreadRadius, spreadRadius),math.random(100, 175))
-				infection:GetPhysicsObject():SetVelocity(velocity)
-				infection:SetAngles(Angle(infection:GetAngles().x, velocity:Angle().y, infection:GetAngles().z))
-				infection:VJ_ACT_PLAYACTIVITY("Melee_1",true,1.3,false)	
-
-			end
+	table.RemoveByValue(self.AttachedTo.AttachedInfectForms, self)
+	table.insert(self.AttachedTo.AttachedInfectForms, 1, self) //We put the killing infection form at the front of the table
+	if (self.AttachedTo.AttachedInfectForms) then
+		for k=2, #self.AttachedTo.AttachedInfectForms do
+			self.AttachedTo.AttachedInfectForms[2]:Unlatch()
 		end
 	end
-	if (self:GetEnemy():IsPlayer()==true) then self:Remove() return end
-	self.enemyModel = self:GetEnemy():GetModel()
-	self.enemyPos = self:GetEnemy():GetPos()
-	self.enemyAng = self:GetEnemy():GetAngles()
-	self.enemyCol = self:GetEnemy():GetColor()
-	self.enemySkin = self:GetEnemy():GetSkin()
-	if (IsValid(self:GetEnemy():GetActiveWeapon())) then self.enemyWep = self:GetEnemy():GetActiveWeapon():GetClass() end
-	if (self:GetEnemy().StartHealth) then self.enemyHealth = self:GetEnemy().StartHealth 
-	else self.enemyHealth = self:GetEnemy():GetMaxHealth() end
-	if (self:GetEnemy().ShieldHealth) then self.enemyShields = self:GetEnemy().ShieldHealth end
+	self:TransformHost()
+end
+
+//Possibly unnecessary, but I found carrier forms blowing up large amounts of infection forms too frequently without this
+function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
+	if ((IsValid(dmginfo:GetInflictor())) and (dmginfo:GetInflictor():GetClass()=="npc_vj_halo_flood_spv3_carrier" or dmginfo:GetInflictor():GetClass()=="npc_vj_halo_flood_spv3_elite_runner" or dmginfo:GetInflictor():GetClass()=="npc_vj_halo_flood_spv3_odst" or dmginfo:GetInflictor():GetClass()=="npc_vj_halo_flood_spv3_jackal" or dmginfo:GetInflictor():GetClass()=="npc_vj_halo_flood_spv3_wolf" or dmginfo:GetInflictor():GetClass()=="sent_vj_flood_spv3_biomass")) then
+		dmginfo:SetDamage(0)
+	end
+	if (dmginfo:GetInflictor()==self.AttachedTo) then
+		dmginfo:SetDamage(0)
+	end
+	if (dmginfo:GetDamageType()==DMG_BLAST) then
+		dmginfo:ScaleDamage(3.5)
+	end
+	if (dmginfo:GetAttacker():IsNPC()) then
+		dmginfo:ScaleDamage(GetConVarNumber("vj_spv3_NPCTakeDamageModifier"))
+	end
+end
+
+ENT.AttachedTo = nil
+ENT.HitShield = false
+function ENT:CustomOnLeapAttack_AfterChecks(TheHitEntity) 
+	if ((TheHitEntity.ShieldCurrentHealth && TheHitEntity.ShieldCurrentHealth > 0) || (TheHitEntity:IsPlayer() && TheHitEntity:Armor() > 0)) then
+		if (GetConVarNumber("vj_spv3_InfFormsExplode")==0) then
+			TheHitEntity:TakeDamage(self.LeapAttackDamage, self, self)
+		end
+		self:TakeDamage(5, TheHitEntity, TheHitEntity)
+		self.HitShield = true
+		return
+	end
+	if (IsValid(self) and IsValid(self:GetEnemy())  and self:GetEnemy():Health() < self:GetEnemy():GetMaxHealth()*.4) then
+		self.AttachedTo = self:GetEnemy()
+		if (self.AttachedTo.AttachedInfectForms==nil) then
+			self.AttachedTo.AttachedInfectForms = {}
+		end
+		if (#self.AttachedTo.AttachedInfectForms >= 7) then
+			return
+		end
+		if (#self.AttachedTo.AttachedInfectForms<=0) then
+			if (self.AttachedTo.SoundTbl_Stuck) then
+				self.AttachedTo:EmitSound(VJ_PICKRANDOMTABLE(self.AttachedTo.SoundTbl_Stuck))
+			end
+			timer.Create("Terror"..self.AttachedTo:GetCreationID(), 2, 0, function()
+			if (IsValid(self) and IsValid(self.AttachedTo)) then
+				if (self.AttachedTo.SoundTbl_Stuck) then
+					self.AttachedTo:EmitSound(VJ_PICKRANDOMTABLE(self.AttachedTo.SoundTbl_Stuck))
+				end
+			end
+		end)
+		end
+		self:Latch()
+	end
+end
+
+function ENT:TransformHost()
+	if (self.AttachedTo:IsPlayer()==true) then self:Remove() return end
+	self.enemyModel = self.AttachedTo:GetModel()
+	self.enemyPos = self.AttachedTo:GetPos()
+	self.enemyAng = self.AttachedTo:GetAngles()
+	self.enemyCol = self.AttachedTo:GetColor()
+	self.enemySkin = self.AttachedTo:GetSkin()
+	if (IsValid(self.AttachedTo:GetActiveWeapon())) then self.enemyWep = self.AttachedTo:GetActiveWeapon():GetClass() end
+	if (self.AttachedTo.StartHealth) then 
+		self.enemyHealth = self.AttachedTo.StartHealth 
+	else 
+		self.enemyHealth = self.AttachedTo:GetMaxHealth() 
+	end
+	if (self.AttachedTo.ShieldHealth) then 
+		self.enemyShields = self.AttachedTo.ShieldHealth 
+	end
 	if (GetConVarString("vj_spv3_floodOption") == "infect_nothing") then return end
 	if ((GetConVarString("vj_spv3_floodOption") == "infect_onlyHalo") or (GetConVarString("vj_spv3_floodOption") == "infect_anything")) then
-		if (string.find(tostring(argent), "marine") or string.find(tostring(argent), "crewman")) then
+		if (string.find(tostring(self.AttachedTo), "marine") or string.find(tostring(self.AttachedTo), "crewman")) then
 			self.combatForm = ents.Create("npc_vj_halo_flood_spv3_marine")
-			self.enemyHealth = self:GetEnemy().StartHealth * 1.25
-		elseif (string.find(tostring(argent), "odst")) then
+			self.enemyHealth = self.AttachedTo.StartHealth * 1.25
+		elseif (string.find(tostring(self.AttachedTo), "odst")) then
 			self.combatForm = ents.Create("npc_vj_halo_flood_spv3_odst")
-			self.enemyHealth = self:GetEnemy().StartHealth * 1.25
+			self.enemyHealth = self.AttachedTo.StartHealth * 1.25
 		end
-		if (string.find(tostring(argent), "elite")) and (string.find(tostring(argent), "hg")) then
+		if (string.find(tostring(self.AttachedTo), "elite")) and (string.find(tostring(self.AttachedTo), "hg")) then
 			self.combatForm = ents.Create("npc_vj_halo_flood_spv3_elite_hg")
-			self.Skin = self:GetEnemy():GetSkin()
-			self.enemyHealth = self:GetEnemy().StartHealth * 1.25
-			self.enemyShields = self:GetEnemy().ShieldHealth
-		elseif (string.find(tostring(argent), "elite")) and (string.find(tostring(argent), "oss")) then
+			self.Skin = self.AttachedTo:GetSkin()
+			self.enemyHealth = self.AttachedTo.StartHealth * 1.25
+			self.enemyShields = self.AttachedTo.ShieldHealth
+		elseif (string.find(tostring(self.AttachedTo), "elite")) and (string.find(tostring(self.AttachedTo), "oss")) then
 			self.combatForm = ents.Create("npc_vj_halo_flood_spv3_elite_oss")
-			self.enemyHealth = self:GetEnemy().StartHealth * 1.25
-			self.enemyShields = self:GetEnemy().ShieldHealth
-		elseif (string.find(tostring(argent), "elite")) then
+			self.enemyHealth = self.AttachedTo.StartHealth * 1.25
+			self.enemyShields = self.AttachedTo.ShieldHealth
+		elseif (string.find(tostring(self.AttachedTo), "elite")) then
 			local random = math.random(0,100)
 			if (random > 90) then
 				self.combatForm = ents.Create("npc_vj_halo_flood_spv3_elite_runner")
-				self.enemyHealth = self:GetEnemy().StartHealth * 1.25
-				self.enemyShields = self:GetEnemy().ShieldHealth
+				self.enemyHealth = self.AttachedTo.StartHealth * 1.25
+				self.enemyShields = self.AttachedTo.ShieldHealth
 			elseif (random <=90 and random >= 75) then
 				self.combatForm = ents.Create("npc_vj_halo_flood_spv3_elite_suicide")
-				self.enemyHealth = self:GetEnemy().StartHealth * 1.25
-				self.enemyShields = self:GetEnemy().ShieldHealth
-				self.Skin = self:GetEnemy():GetSkin()
+				self.enemyHealth = self.AttachedTo.StartHealth * 1.25
+				self.enemyShields = self.AttachedTo.ShieldHealth
+				self.Skin = self.AttachedTo:GetSkin()
 			else
 				self.combatForm = ents.Create("npc_vj_halo_flood_spv3_elite")
-				self.enemyHealth = self:GetEnemy().StartHealth * 1.25
-				self.enemyShields = self:GetEnemy().ShieldHealth
-				self.Skin = self:GetEnemy():GetSkin()
+				self.enemyHealth = self.AttachedTo.StartHealth * 1.25
+				self.enemyShields = self.AttachedTo.ShieldHealth
+				self.Skin = self.AttachedTo:GetSkin()
 			end
-		elseif (string.find(tostring(argent), "grunt")) then
+		elseif (string.find(tostring(self.AttachedTo), "grunt")) then
 			self.combatForm = ents.Create("npc_vj_halo_flood_spv3_carrier")
-			self.enemyHealth = self:GetEnemy().StartHealth * .35
-		elseif (string.find(tostring(argent), "jackal") or string.find(tostring(argent), "skirm")) then
+			self.enemyHealth = self.AttachedTo.StartHealth * .35
+		elseif (string.find(tostring(self.AttachedTo), "jackal") or string.find(tostring(self.AttachedTo), "skirm")) then
 			self.combatForm = ents.Create("npc_vj_halo_flood_spv3_jackal")
-			self.enemyHealth = self:GetEnemy().StartHealth * .35
-		elseif (string.find(tostring(argent), "brute")) then
+			self.enemyHealth = self.AttachedTo.StartHealth * .35
+		elseif (string.find(tostring(self.AttachedTo), "brute")) then
 			self.combatForm = ents.Create("npc_vj_halo_flood_spv3_brute")
-			self.enemyHealth = self:GetEnemy().StartHealth * 1.25
+			self.enemyHealth = self.AttachedTo.StartHealth * 1.25
 		end
-		if (string.find(tostring(argent), "nat")) then
-			if (string.find(tostring(argent), "wolf")) then
+		if (string.find(tostring(self.AttachedTo), "nat")) then
+			if (string.find(tostring(self.AttachedTo), "wolf")) then
 				self.combatForm = ents.Create("npc_vj_halo_flood_spv3_wolf")
-				self.enemyHealth = self:GetEnemy().StartHealth * 1.25
+				self.enemyHealth = self.AttachedTo.StartHealth * 1.25
 			end
 		end
 	end
 	if ((GetConVarString("vj_spv3_floodOption") == "infect_anything")) and (self.combatForm == "") then
 		self.combatForm = ents.Create("npc_vj_halo_flood_spv3_marine")
 	end
-
 	if (self.combatForm!="" and IsValid(self.combatForm)) then
 		self:SetHealth(999999)
 		self:SetNoDraw(true)
@@ -266,24 +315,24 @@ function ENT:CustomOnDoKilledEnemy(argent,attacker,inflictor)
 				end
 			end
 	    end)
-	    if (self:GetEnemy().HasDeathRagdoll) then
-			self:GetEnemy().HasDeathRagdoll=false
-			self:GetEnemy().HasDeathAnimation=false
+	    if (self.AttachedTo.HasDeathRagdoll) then
+			self.AttachedTo.HasDeathRagdoll=false
+			self.AttachedTo.HasDeathAnimation=false
 		end
-		if (self:GetEnemy():LookupSequence("Transform")!=-1) then
-			self.enemySeqDur = self:GetEnemy():SequenceDuration(self:GetEnemy():LookupSequence("Transform"))
+		if (self.AttachedTo:LookupSequence("Transform")!=-1) then
+			self.enemySeqDur = self.AttachedTo:SequenceDuration(self.AttachedTo:LookupSequence("Transform"))
 			self.imposter = ents.Create("prop_dynamic")
-			if (self:GetEnemy().SoundTbl_Transform) then
-				self:GetEnemy():EmitSound(VJ_PICKRANDOMTABLE(self:GetEnemy().SoundTbl_Transform))
+			if (self.AttachedTo.SoundTbl_Transform) then
+				self.AttachedTo:EmitSound(VJ_PICKRANDOMTABLE(self.AttachedTo.SoundTbl_Transform))
 			end
 			self.imposter:SetModel(self.enemyModel)
 			self.imposter:SetSkin(self.enemySkin)
 			self.imposter:SetAngles(self.enemyAng)
 			self.imposter:SetPos(self.enemyPos)
 			self.imposter:Spawn()
-			local bodygroups = self:GetEnemy():GetBodyGroups()
+			local bodygroups = self.AttachedTo:GetBodyGroups()
 			for k, v in pairs(bodygroups) do
-				self.imposter:SetBodygroup(bodygroups[k]["id"], self:GetEnemy():GetBodygroup(bodygroups[k]["id"]))
+				self.imposter:SetBodygroup(bodygroups[k]["id"], self.AttachedTo:GetBodygroup(bodygroups[k]["id"]))
 			end
 			self.imposter:SetColor(self.enemyCol)
 			self:SetParent(self.imposter)
@@ -320,101 +369,80 @@ function ENT:CustomOnDoKilledEnemy(argent,attacker,inflictor)
 			self.combatForm:SetAngles(self.enemyAng)
 			self.combatForm:SetPos(self.enemyPos)
 			self.combatForm:SetColor(self.enemyCol)
-			self.combatForm:VJ_ACT_PLAYACTIVITY(ACT_COVER_PISTOL_LOW,true,1.5,false)
+			self.combatForm:VJ_ACT_PLAYACTIVITY(ACT_COVER_PISTOL_LOW,false,1.5,false)
 			self:Remove()
 		end
 	end
 end
 
-//Possibly unnecessary, but I found carrier forms blowing up large amounts of infection forms too frequently without this
-function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
-	if ((IsValid(dmginfo:GetInflictor())) and (dmginfo:GetInflictor():GetClass()=="npc_vj_halo_flood_spv3_carrier" or dmginfo:GetInflictor():GetClass()=="npc_vj_halo_flood_spv3_elite_runner" or dmginfo:GetInflictor():GetClass()=="npc_vj_halo_flood_spv3_odst" or dmginfo:GetInflictor():GetClass()=="npc_vj_halo_flood_spv3_jackal" or dmginfo:GetInflictor():GetClass()=="npc_vj_halo_flood_spv3_wolf" or dmginfo:GetInflictor():GetClass()=="sent_vj_flood_spv3_biomass")) then
-		dmginfo:SetDamage(0)
+function ENT:Latch()
+	if (string.find(tostring(self.AttachedTo), "npc_vj_halo_cov_spv3_grunt_")) then
+		self.AttachedTo:Flee()
 	end
-	if (dmginfo:GetInflictor()==self.AttachedTo) then
-		dmginfo:SetDamage(0)
+	table.insert(self.AttachedTo.AttachedInfectForms, self)
+	if (self.AttachedTo:LookupSequence("Transform")!=-1 and #self.AttachedTo.AttachedInfectForms<=1) then
+		self.AttachedTo:VJ_ACT_PLAYACTIVITY("Transform",true,1.5,false)
 	end
-	if (dmginfo:GetDamageType()==DMG_BLAST) then
-		dmginfo:ScaleDamage(3.5)
-	end
-	if (dmginfo:GetAttacker():IsNPC()) then
-		dmginfo:ScaleDamage(GetConVarNumber("vj_spv3_NPCTakeDamageModifier"))
-	end
-end
-
-
-function ENT:CustomOnLeapAttack_BeforeChecks() 
-	if (self:GetEnemy()) then
-		self.CollConstraint = constraint.NoCollide(self, self:GetEnemy(), 0, 0)
-	end
-end
-
-ENT.AttachedTo = ""
-
-ENT.HitShield = false
-function ENT:CustomOnLeapAttack_AfterChecks(TheHitEntity) 
-	if ((TheHitEntity.ShieldCurrentHealth && TheHitEntity.ShieldCurrentHealth > 0) || (TheHitEntity:IsPlayer() && TheHitEntity:Armor() > 0)) then
-		if (GetConVarNumber("vj_spv3_InfFormsExplode")==0) then
-			TheHitEntity:TakeDamage(self.LeapAttackDamage, self, self)
-		end
-		self:TakeDamage(5, TheHitEntity, TheHitEntity)
-		self.HitShield = true
-		return
-	end
-	if (IsValid(self) and IsValid(self:GetEnemy())  and self:GetEnemy():Health() < self:GetEnemy():GetMaxHealth()*.4) then
-		if (self:GetEnemy().HasLatch==nil) then
-			self:GetEnemy().HasLatch = 0
-		end
-		if (self:GetEnemy().AttachedInfectForms==nil) then
-			self:GetEnemy().AttachedInfectForms = {}
-		end
-		if (self:GetEnemy().HasLatch >= 7) then
-			return
-		end
-		if (self:GetEnemy().HasLatch==0 or self:GetEnemy().TerrorOwner==nil) then
-			self:GetEnemy().TerrorOwner=self
-			if (self:GetEnemy().SoundTbl_Stuck) then
-				self:GetEnemy():EmitSound(VJ_PICKRANDOMTABLE(self:GetEnemy().SoundTbl_Stuck))
-			end
-			timer.Create("Terror"..self:GetCreationID(), 2, 0, function()
-			if (IsValid(self) and IsValid(self:GetEnemy())) then
-				if (self:GetEnemy().SoundTbl_Stuck) then
-					self:GetEnemy():EmitSound(VJ_PICKRANDOMTABLE(self:GetEnemy().SoundTbl_Stuck))
-				end
+	self:VJ_ACT_PLAYACTIVITY("Melee_1",true,30,false)	
+	self:SetMoveType(MOVETYPE_NONE)
+	self:SetAngles(self:GetEnemy():GetAngles() + Angle(-90,0,0))
+	self.BoneToFollow = VJ_PICKRANDOMTABLE(math.random(0, self:GetEnemy():GetBoneCount()-1))
+	self.BonePos, self.BoneAng = self:GetEnemy():GetBonePosition(self.BoneToFollow)
+	self:FollowBone(self:GetEnemy(), self.BoneToFollow)
+	self:SetPos(self.BonePos)
+	self:SetAngles(self.BoneAng + Angle(90, 0, 0))
+	self:SetVelocity(Vector(0,0,0))
+	self:GetEnemy():SetSequence(27)
+	if (self.AttachedTo:IsPlayer()) then
+		timer.Simple(3, function()
+			if (IsValid(self) and IsValid(self.AttachedTo)) then
+				self:Unlatch()
 			end
 		end)
-		end
-		table.insert(self:GetEnemy().AttachedInfectForms, self)
-		self:VJ_ACT_PLAYACTIVITY("Melee_1",true,30,false)	
-		self.AttachedTo = self:GetEnemy()
-		self:GetEnemy().HasLatch = self:GetEnemy().HasLatch + 1
-		self:SetMoveType(MOVETYPE_NONE)
-		self:AddFlags(FL_NOTARGET)
-		self:SetNotSolid(true)
-		self:SetAngles(self:GetEnemy():GetAngles() + Angle(-90,0,0))
-		self.BoneToFollow = VJ_PICKRANDOMTABLE(math.random(0, self:GetEnemy():GetBoneCount()-1))
-		self.BonePos, self.BoneAng = self:GetEnemy():GetBonePosition(self.BoneToFollow)
-		self:FollowBone(self:GetEnemy(), self.BoneToFollow)
-		self:SetPos(self.BonePos)
-		self:SetAngles(self.BoneAng + Angle(90, 0, 0))
-		self:SetVelocity(Vector(0,0,0))
-		self:GetEnemy():SetSequence(27)
-		timer.Create("Damage"..self:GetCreationID(), 0.5, 0, function()
-			if (IsValid(self) and self.AttachedTo==self:GetEnemy()) then //May need fixing, line below giving errors
-				self:GetEnemy():TakeDamage(1, self, self)
-			elseif (IsValid(self)) then
+	end
+	timer.Create("Damage"..self:GetCreationID(), 0.5, 0, function()
+		if (IsValid(self)) then
+			if (IsValid(self.AttachedTo) and self.Dead==false) then
+				self.AttachedTo:TakeDamage(1, self, self)
+			else
 				timer.Destroy("Damage"..self:GetCreationID())
 			end
-		end)
-	end
+		end
+	end)
 end
+
+function ENT:Unlatch()
+	timer.Destroy("Damage"..self:GetCreationID())
+	table.RemoveByValue(self.AttachedTo.AttachedInfectForms, self)
+	self:FollowBone(NULL, 0)
+	self:SetAngles(Angle(0,0,0))
+	self:SetMoveType(3)
+	local spreadRadius = 20
+	local velocity = Vector(math.random(-spreadRadius, spreadRadius),math.random(-spreadRadius, spreadRadius),math.random(100, 175))
+	self:GetPhysicsObject():SetVelocity(velocity)
+	self:SetAngles(Angle(self:GetAngles().x, velocity:Angle().y, self:GetAngles().z))
+	self:VJ_ACT_PLAYACTIVITY("Melee_1",true,1.3,false)
+	self.AttachedTo = nil	
+end
+
+//Experimental, makes it harder with NPCs with full-auto guns to negate a swarm
+function ENT:CustomOnInitialKilled(dmginfo, hitgroup) 
+	if (self.AttachedTo!=nil) then
+		self:Unlatch()
+	end	
+	for k, v in pairs(ents.FindInSphere(dmginfo:GetDamagePosition(), 100)) do
+		if (v:GetClass()=="npc_vj_halo_flood_spv3_infection") then
+			v:RemoveFlags(FL_NOTARGET)
+		end
+	end
+end -- Ran the moment the NPC dies!
+
 
 function ENT:CustomOnLeapAttack_BeforeStartTimer() 
 	self.NextLeapAttackTime = math.random(2.5, 4.5) -- How much time until it can use a leap attack?
 	self.LeapAttackVelocityRight = math.random(-50, 50) -- How much right force should it apply?
 	self.LeapAttackVelocityUp = math.random(150, 230) -- How much upward force should it apply?
 	self.LeapDistance = math.random(400, 600)-- The distance of the leap, for example if it is set to 500, when the SNPC is 500 Unit away, it will jump
-
 end
 
 function ENT:MultipleMeleeAttacks() end

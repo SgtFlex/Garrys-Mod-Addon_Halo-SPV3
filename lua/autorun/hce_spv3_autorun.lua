@@ -135,9 +135,10 @@ if VJExists == true then
 	VJ.AddConVar("vj_spv3_mapLimit", 80, FCVAR_ARCHIVE)
 	VJ.AddConVar("vj_spv3_dropGrenades", 1, FCVAR_ARCHIVE)
 
-	
-	concommand.Add("spv3_settings", function( ply )
+	if (SERVER) then
 		util.AddNetworkString("vj_spv3_open_menu")
+	end
+	concommand.Add("spv3_settings", function( ply )
 		net.Start("vj_spv3_open_menu")
 		net.Send(ply)
 	end)
