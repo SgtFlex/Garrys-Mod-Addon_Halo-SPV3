@@ -56,7 +56,6 @@ end
 ---------------------------------------------------------------------------------------------------------------------------------------------
 ENT.glow = ""
 function ENT:CustomOnInitialize()
-	self:SetOwner(nil)
 	if (self:GetOwner():IsNPC()) then
 		self.RadiusDamage=self.RadiusDamage * GetConVarNumber("vj_spv3_damageModifier")
 	end
@@ -142,16 +141,18 @@ ENT.GrenadeWeps = {
 
 function ENT:DeathEffects()
 	for k,v in pairs(ents.FindInSphere(self:GetPos(), self.RadiusDamageRadius)) do
-		for i,j in pairs(self.GrenadeWeps) do
-			if (v:GetClass()==tostring("weapon"..self.GrenadeWeps[i])) then
-				local nadeSpawned = ents.Create("obj"..self.GrenadeWeps[i])
-				nadeSpawned:SetPos(v:GetPos())
-				nadeSpawned:SetAngles(v:GetAngles())
-				nadeSpawned:Spawn()
-				if (IsValid(self:GetOwner())) then
-					nadeSpawned:SetOwner(self:GetOwner())
+		if (v:GetOwner()==nil) then
+			for i,j in pairs(self.GrenadeWeps) do
+				if (v:GetClass()==tostring("weapon"..self.GrenadeWeps[i])) then
+					local nadeSpawned = ents.Create("obj"..self.GrenadeWeps[i])
+					nadeSpawned:SetPos(v:GetPos())
+					nadeSpawned:SetAngles(v:GetAngles())
+					nadeSpawned:Spawn()
+					if (IsValid(self:GetOwner())) then
+						nadeSpawned:SetOwner(self:GetOwner())
+					end
+					v:Remove()
 				end
-				v:Remove()
 			end
 		end
 	end

@@ -57,7 +57,6 @@ end
 ---------------------------------------------------------------------------------------------------------------------------------------------
 function ENT:CustomOnInitialize()
 	if (self:GetOwner():IsNPC()) then
-		self:SetOwner(nil)
 		self.RadiusDamage=self.RadiusDamage * GetConVarNumber("vj_spv3_damageModifier")
 	end
 	ParticleEffectAttach("hcea_t25p_tracer_charged_sparks", PATTACH_ABSORIGIN_FOLLOW, self, 0)
@@ -130,16 +129,18 @@ ENT.GrenadeWeps = {
 function ENT:DeathEffects()
 	self.trailSound:Stop()
 	for k,v in pairs(ents.FindInSphere(self:GetPos(), self.RadiusDamageRadius)) do
-		for i,j in pairs(self.GrenadeWeps) do
-			if (v:GetClass()==tostring("weapon"..self.GrenadeWeps[i])) then
-				local nadeSpawned = ents.Create("obj"..self.GrenadeWeps[i])
-				nadeSpawned:SetPos(v:GetPos())
-				nadeSpawned:SetAngles(v:GetAngles())
-				nadeSpawned:Spawn()
-				if (IsValid(self:GetOwner())) then
-					nadeSpawned:SetOwner(self:GetOwner())
+		if (v:GetOwner()==nil) then
+			for i,j in pairs(self.GrenadeWeps) do
+				if (v:GetClass()==tostring("weapon"..self.GrenadeWeps[i])) then
+					local nadeSpawned = ents.Create("obj"..self.GrenadeWeps[i])
+					nadeSpawned:SetPos(v:GetPos())
+					nadeSpawned:SetAngles(v:GetAngles())
+					nadeSpawned:Spawn()
+					if (IsValid(self:GetOwner())) then
+						nadeSpawned:SetOwner(self:GetOwner())
+					end
+					v:Remove()
 				end
-				v:Remove()
 			end
 		end
 	end
