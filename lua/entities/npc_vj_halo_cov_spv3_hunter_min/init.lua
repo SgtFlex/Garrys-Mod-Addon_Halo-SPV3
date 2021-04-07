@@ -8,7 +8,7 @@ include('shared.lua')
 ENT.Model = {"models/hce/spv3/cov/hunter/hunter.mdl"} -- The game will pick a random model from the table when the SNPC is spawned | Add as many as you want
 ENT.StartHealth = 35
 ENT.Skin = 2
-ENT.HullType = HULL_LARGE
+ENT.HullType = HULL_MEDIUM
 ---------------------------------------------------------------------------------------------------------------------------------------------
 -- Custom
 ENT.HUNTER_BlockWalking = false

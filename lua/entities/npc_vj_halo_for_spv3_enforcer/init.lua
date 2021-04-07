@@ -184,7 +184,7 @@ function ENT:AttackMode(mode)
 	if (mode == 1) then
 		timer.Destroy("timer_range_start"..self:EntIndex())
 		self.attackSequence = 1
-		self.TimeUntilRangeAttackProjectileRelease=0.5
+		self.TimeUntilRangeAttackProjectileRelease=0.35
 		self.RangeAttackReps = 10
 		self.countAttacks = 0
 	elseif (mode == 0) then
