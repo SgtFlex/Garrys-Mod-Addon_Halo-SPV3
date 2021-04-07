@@ -1,0 +1,20 @@
+"VertexLitGeneric"
+{
+  	"$basetexture" 			"models/hce/spv3/forerunner/enforcer/enforcer_diff"
+    	"$bumpmap" 			"models/hce/spv3/forerunner/enforcer/enforcer_nrml"
+	"$selfillum" 			"1"
+	"$selfillumtint" 			"[50 50 50]"
+	"$normalmapalphaenvmapmask"	"1"
+	"$phong" "1"
+	"$phongboost" "10"
+	"$PhongExponent" "5"
+	"$phongalbedotint" "1"
+	"$phongfresnelranges" "[3 5 7]"
+	"$phongexponenttexture" "models/sentinels/phongExpTexture"
+	"$detail" "models/sentinels/scratchedmetal"
+	"$detailscale" 4
+	"$detailblendfactor" 1
+	"$detailblendmode" 0
+
+}
+

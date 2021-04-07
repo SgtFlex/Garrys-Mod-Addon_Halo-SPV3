@@ -63,9 +63,7 @@ function ENT:CustomOnPhysicsCollide(data, phys)
 		fire[i]:SetKeyValue("fireattack", "5")
 		fire[i]:Spawn()
 		fire[i]:Activate()
-
 	end
-
 end -- Return false to disable the base functions from running
 /*-----------------------------------------------
 	*** Copyright (c) 2012-2016 by DrVrej, All rights reserved. ***

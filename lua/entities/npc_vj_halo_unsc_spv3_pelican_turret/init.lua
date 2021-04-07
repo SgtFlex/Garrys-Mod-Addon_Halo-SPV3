@@ -17,11 +17,12 @@ ENT.Immune_AcidPoisonRadiation = true -- Immune to Acid, Poison and Radiation
 	-- Relationships ---------------------------------------------------------------------------------------------------------------------------------------------
 ENT.HasAllies = true -- Put to false if you want it not to have any allies
 ENT.VJ_NPC_Class = {"CLASS_UNSC", "CLASS_PLAYER_ALLY"} -- NPCs with the same class with be allied to each other
+ENT.FriendsWithAllPlayerAllies = true -- Should this SNPC be friends with all other player allies that are running on VJ Base?
+
 -- ENT.AnimTbl_WeaponAttackFiringGesture = {} -- Firing Gesture animations used when the SNPC is firing the weapon
 -- ENT.AnimTbl_TakingCover = {} -- The animation it plays when hiding in a covered position
 ENT.DisableFootStepSoundTimer = true -- If set to true, it will disable the time system for the footstep sound code, allowing you to use other ways like model events
 ENT.MovementType = VJ_MOVETYPE_STATIONARY
-ENT.Behavior = VJ_BEHAVIOR_AGGRESSIVE
 ENT.HasRangeAttack = true -- Should the SNPC have a range attack?
 ENT.RangeAttackEntityToSpawn = "obj_vj_spv3_shade_cannon" -- The entity that is spawned when range attacking
 ENT.RangeAttackReps = 30 -- How many times does it run the projectile code?
@@ -48,8 +49,9 @@ ENT.RangeAttackSound = {
 ENT.ConstantlyFaceEnemy = true
 ENT.ConstantlyFaceEnemy_IfAttacking = true -- Should it face the enemy when attacking?
 ENT.RangeAttackAnimationFaceEnemy = false
+ENT.UnreachableByMelee = false
 function ENT:CustomOnInitialize()
-	self:SetCollisionBounds(Vector(30,30,15), Vector(-30, -30, -50))
+	self:SetCollisionBounds(Vector(30,30,70), Vector(-30, -30, 10))
 	self:SetHullSizeNormal()
 	self.eyeLight = ents.Create("env_sprite")
 	self.eyeLight:SetParent(self,self:LookupAttachment("Light"))
@@ -70,9 +72,13 @@ function ENT:CustomOnInitialize()
 		filter = self,
 		ignoreworld = false,
 		})
+		-- if (trace.HitPos:Distance(self:GetPos()) >= 150) then
+		-- end
 		if (trace.Hit) then
-			self:SetPos(trace.HitPos + Vector(0,0,-15))
+			self:SetPos(trace.HitPos + Vector(0,0,-70))
 		end
+
+		
 	end
 end)
 	

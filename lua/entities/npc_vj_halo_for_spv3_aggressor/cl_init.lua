@@ -1,6 +1,5 @@
 if (!file.Exists("autorun/vj_base_autorun.lua","LUA")) then return end
 include('shared.lua')
-require('sound_vj_track')
 /*--------------------------------------------------
 	=============== Creature SNPC Base ===============
 	*** Copyright (c) 2012-2019 by DrVrej, All rights reserved. ***
@@ -35,7 +34,6 @@ function ENT:CustomOnDraw()
 end
 -- Custom functions ---------------------------------------------------------------------------------------------------------------------------------------------
 function ENT:DrawBeam()
-	-- print("I am drawing!"..CurTime())
 	if (self:LookupAttachment("barrel") != 0) then 
 		firingPos = self:GetAttachment(self:LookupAttachment("barrel"))["Pos"]
 	else 

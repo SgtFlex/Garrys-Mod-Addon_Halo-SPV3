@@ -1,6 +1,5 @@
 if (!file.Exists("autorun/vj_base_autorun.lua","LUA")) then return end
 include('shared.lua')
-require('sound_vj_track')
 include('entities/npc_vj_halo_for_spv3_aggressor/cl_init.lua')
 /*--------------------------------------------------
 	=============== Creature SNPC Base ===============

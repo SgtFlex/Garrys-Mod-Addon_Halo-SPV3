@@ -24,6 +24,7 @@ if VJExists == true then
 	VJ.AddNPC("[For] Aggressor","npc_vj_halo_for_spv3_aggressor",vCat)
 	VJ.AddNPC("[For] Aggressor Major","npc_vj_halo_for_spv3_aggressor_major",vCat)
 	VJ.AddNPC("[For] Aggressor Black","npc_vj_halo_for_spv3_aggressor_black",vCat)
+	VJ.AddNPC("[For] Enforcer","npc_vj_halo_for_spv3_enforcer",vCat)
 	--==__Flood__==--
 	VJ.AddNPC("[Flood] Infection Form","npc_vj_halo_flood_spv3_infection",vCat)
 	VJ.AddNPC("[Flood] Elite","npc_vj_halo_flood_spv3_elite",vCat)
