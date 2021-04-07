@@ -78,8 +78,8 @@ if VJExists == true then
 	VJ.AddNPC_HUMAN("[UNSC] ODST","npc_vj_halo_unsc_spv3_odst",{"weapon_vj_unsc_spv3_br", "weapon_vj_unsc_spv3_dmr", "weapon_vj_unsc_spv3_sr", "weapon_vj_unsc_spv3_smgsd", "weapon_vj_unsc_spv3_rl"},vCat)
 	VJ.AddNPC_HUMAN("[UNSC] Marine","npc_vj_halo_unsc_spv3_marine",{"weapon_vj_unsc_spv3_ar", "weapon_vj_unsc_spv3_sg", "weapon_vj_unsc_spv3_br", "weapon_vj_unsc_spv3_smg"},vCat)
 	VJ.AddNPC_HUMAN("[UNSC] Crewman","npc_vj_halo_unsc_spv3_crewman",{"weapon_vj_unsc_spv3_magnum"},vCat)
-	VJ.AddNPC_HUMAN("[UNSC] Sgt. Stacker","npc_vj_halo_unsc_spv3_stacker",{"weapon_vj_unsc_spv3_ar", "weapon_vj_unsc_spv3_sg", "weapon_vj_unsc_spv3_br", "weapon_vj_unsc_spv3_smg", "weapon_vj_unsc_spv3_sr"},vCat)
-	VJ.AddNPC_HUMAN("[UNSC] Sgt. Johnson","npc_vj_halo_unsc_spv3_johnson",{"weapon_vj_unsc_spv3_ar", "weapon_vj_unsc_spv3_sg", "weapon_vj_unsc_spv3_br", "weapon_vj_unsc_spv3_smg"},vCat)
+	VJ.AddNPC_HUMAN("[UNSC] Sgt. Stacker","npc_vj_halo_unsc_spv3_stacker",{"weapon_vj_unsc_spv3_sr"},vCat)
+	VJ.AddNPC_HUMAN("[UNSC] Sgt. Johnson","npc_vj_halo_unsc_spv3_johnson",{"weapon_vj_unsc_spv3_sg"},vCat)
 	VJ.AddNPC_HUMAN("[UNSC] Captain Keyes","npc_vj_halo_unsc_spv3_keyes",{"weapon_vj_unsc_spv3_magnum", "weapon_vj_unsc_spv3_smg"},vCat)
 	VJ.AddNPC_HUMAN("[UNSC] Master Chief","npc_vj_halo_unsc_spv3_chief",{"weapon_vj_unsc_spv3_ar", "weapon_vj_unsc_spv3_sg", "weapon_vj_unsc_spv3_br", "weapon_vj_unsc_spv3_smg"},vCat)
 
