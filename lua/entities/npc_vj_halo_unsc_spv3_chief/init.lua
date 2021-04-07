@@ -13,11 +13,8 @@ ENT.ShieldCurrentHealth = ENT.ShieldHealth
 ENT.ShieldActivated=true
 ENT.ShieldDelay = 6
 ENT.CanFlinch = 0 -- 0 = Don't flinch | 1 = Flinch at any damage | 2 = Flinch only from certain damages
+ENT.Model = {"models/hce/spv3/unsc/chief/chief.mdl"} -- The game will pick a random model from the table when the SNPC is spawned | Add as many as you want
 
-ENT.BGs = {
-	4,
-	4,
-}
 ENT.Skins = {
 	9
 }
@@ -114,8 +111,6 @@ function ENT:CustomOnInitialize()
 	self:SetSkin(VJ_PICKRANDOMTABLE(self.Skins))
 	self:SetCollisionBounds(Vector(20, 20, 75), Vector(-20, -20, 0))
 	self:SetColor(Color(math.random(self.ColorRange[1].x, self.ColorRange[2].x),math.random(self.ColorRange[1].y, self.ColorRange[2].y) ,math.random(self.ColorRange[1].z, self.ColorRange[2].z)))
-	self:SetBodygroup(0, self.BGs[1])
-	self:SetBodygroup(1, self.BGs[2])
 	-- Shields & Health --
 	self.StartHealth = self.StartHealth * GetConVarNumber("vj_spv3_HealthModifier")
 	self.ShieldHealth = self.ShieldHealth * GetConVarNumber("vj_spv3_ShieldModifier")
