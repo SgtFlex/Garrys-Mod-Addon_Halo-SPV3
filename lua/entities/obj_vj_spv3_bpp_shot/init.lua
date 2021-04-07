@@ -8,15 +8,13 @@ include("shared.lua")
 ENT.Model = {"models/spitball_small.mdl"} -- The models it should spawn with | Picks a random one from the table
 ENT.DoesRadiusDamage = true -- Should it do a blast damage when it hits something?
 ENT.RadiusDamageRadius = 1 -- How far the damage go? The farther away it's from its enemy, the less damage it will do | Counted in world units
-ENT.RadiusDamage = 30 -- How much damage should it deal? Remember this is a radius damage, therefore it will do less damage the farther away the entity is from its enemy
+ENT.RadiusDamage = 5 -- How much damage should it deal? Remember this is a radius damage, therefore it will do less damage the farther away the entity is from its enemy
 ENT.RadiusDamageUseRealisticRadius = true -- Should the damage decrease the farther away the enemy is from the position that the projectile hit?
-ENT.RadiusDamageType = DMG_PLASMA -- Damage type
+ENT.RadiusDamageType = DMG_SLASH -- Damage type
 ENT.ShakeWorldOnDeath = false -- Should the world shake when the projectile hits something?
 ENT.DecalTbl_DeathDecals = {"FadingScorch"}
-ENT.SoundTbl_Idle = {"weapons/plasma pistol/charged loop/charged loop.wav"}
-ENT.SoundTbl_OnCollide = {
-	"weapons/plasma pistol/charged impact/brute charged impact.ogg",
-}
+ENT.SoundTbl_Idle = {""}
+ENT.SoundTbl_OnCollide = {"weapons/plasmarifle/plasmahit/plasma_hit1.ogg", "weapons/plasmarifle/plasmahit/plasma_hit2.ogg", "weapons/plasmarifle/plasmahit/plasma_hit3.ogg", "weapons/plasmarifle/plasmahit/plasma_hit4.ogg", "weapons/plasmarifle/plasmahit/plasma_hit5.ogg"}
 ---------------------------------------------------------------------------------------------------------------------------------------------
 function ENT:CustomOnInitialize()
 	self.RadiusDamage = self.RadiusDamage * GetConVarNumber("vj_spv3_damageModifier") -- How much damage should it deal? Remember this is a radius damage, therefore it will do less damage the farther away the entity is from its enemy
@@ -26,9 +24,9 @@ function ENT:CustomOnInitialize()
 	self.glow:SetKeyValue("rendermode", "9")
 	self.glow:SetKeyValue("renderamt", "255")
 	self.glow:SetKeyValue("model","blueflare1_noz.vmt")
-	self.glow:SetKeyValue("GlowProxySize","3")
+	self.glow:SetKeyValue("GlowProxySize","1")
 	self.glow:SetKeyValue("rendercolor", "250 70 0")
-	self.glow:SetKeyValue("scale","4.5")
+	self.glow:SetKeyValue("scale","1")
 	self.glow:SetPos(self:GetPos())
 	self.glow:SetParent(self)
 	self.glow:Spawn()
@@ -50,22 +48,6 @@ function ENT:DeathEffects(data,phys)
 	self.ExplosionLight1:Fire("TurnOn", "", 0)
 	self:DeleteOnRemove(self.ExplosionLight1)
 end
-
-function ENT:CustomOnPhysicsCollide(data, phys) 
-	local i
-	local fire = {}
-	data.HitEntity:Ignite(5, 10)
-	for i = 1, 5 do
-		fire[i] = ents.Create("env_fire")
-		fire[i]:SetKeyValue("spawnflags", tostring(128 + 32 + 4 + 2))
-		fire[i]:SetPos(data.HitPos + Vector(math.random(-150, 150), math.random(-150, 150), 0))
-		fire[i]:SetKeyValue("health", "8")
-		fire[i]:SetKeyValue("firesize", "100")
-		fire[i]:SetKeyValue("damagescale", "8")
-		fire[i]:Spawn()
-		fire[i]:Activate()
-	end
-end -- Return false to disable the base functions from running
 /*-----------------------------------------------
 	*** Copyright (c) 2012-2016 by DrVrej, All rights reserved. ***
 	No parts of this code or any of its contents may be reproduced, copied, modified or adapted,

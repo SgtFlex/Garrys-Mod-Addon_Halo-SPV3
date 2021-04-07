@@ -435,7 +435,6 @@ end
 
 ENT.savedVelocity = 0
 function ENT:Decelerate() //Linear Deceleration
-	PrintMessage(3, "Decelerate")
 if (VJ_IsBeingControlled) then return false end
 self.savedVelocity = self:GetVelocity()
 if (self.VJ_IsBeingControlled==true) then self.flyVars["DecelerationTime"] = 0.1 end
@@ -473,7 +472,6 @@ function ENT:SentinelTransitionAcceleration()
 end
 
 function ENT:RandomPosition1()
-	PrintMessage(3, "RandomPos1")
 	if (VJ_IsBeingControlled) then return false end
 	timer.Create("PositionNearEnemy"..self.uniqueId, self.flyVars["DecelerationTime"] + self.flyVars["AccelerationTime"] + TravelTime, 1, function() 
 		if (IsValid(self)) then
@@ -490,7 +488,6 @@ function ENT:RandomPosition1()
 end
 
 function ENT:RandomPosition2()
-	PrintMessage(3, "RandomPos2")
 	if (VJ_IsBeingControlled) then return false end
 	TravelTime = math.random(self.flyVars["minTravelTime"], self.flyVars["maxTravelTime"])
 	timer.Create("PositionNearEnemy"..self.uniqueId, self.flyVars["DecelerationTime"] + self.flyVars["AccelerationTime"] + TravelTime, 1, function() 

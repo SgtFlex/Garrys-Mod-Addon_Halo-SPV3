@@ -221,17 +221,19 @@ function ENT:CustomOnPhysicsCollide(data, phys)
 		fire[i]:SetKeyValue("spawnflags", tostring(128 + 32 + 4 + 2))
 		fire[i]:SetPos(data.HitPos + Vector(math.random(-150, 150), math.random(-150, 150), 0))
 		fire[i]:SetKeyValue("health", "8")
-		fire[i]:SetKeyValue("firesize", "10")
-		fire[i]:SetKeyValue("fireattack", "5")
+		fire[i]:SetKeyValue("firesize", "100")
+		fire[i]:SetKeyValue("damagescale", "8")
 		fire[i]:Spawn()
 		fire[i]:Activate()
 	end
 	for k,v in pairs(ents.FindInSphere(data.HitPos, self.RadiusDamageRadius)) do
-		v:Ignite(5, 150)
-		if (v.SoundTbl_Stuck) then
-			v:EmitSound(VJ_PICKRANDOMTABLE(v.SoundTbl_Stuck))
-			if (v:LookupSequence("Transform")!=-1) then
-				v:VJ_ACT_PLAYACTIVITY("Transform", true, 4, false)
+		if (self:GetOwner():Disposition(v)==D_HT) then
+			v:Ignite(5, 150)
+			if (v.SoundTbl_Stuck) then
+				v:EmitSound(VJ_PICKRANDOMTABLE(v.SoundTbl_Stuck))
+				if (v:LookupSequence("Transform")!=-1) then
+					v:VJ_ACT_PLAYACTIVITY("Transform", true, 4, false)
+				end
 			end
 		end
 	end
