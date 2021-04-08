@@ -43,7 +43,13 @@ ENT.PaintDecalOnDeath = true -- Should it paint a decal when it hits something?
 ENT.DecalTbl_DeathDecals = {"FadingScorch"} -- Decals that paint when the projectile dies | It picks a random one from this table
 	-- Sounds ---------------------------------------------------------------------------------------------------------------------------------------------
 ENT.HasStartupSounds = true -- Does it make a sound when the projectile is created?
-ENT.SoundTbl_Startup = {"npc_vj_sent_sentinel/sentinel_needle.wav"}
+ENT.SoundTbl_Startup = {
+	"weapons/pulse laser/sent_enforcer_pulse_fire/Pulsef1.ogg",
+	"weapons/pulse laser/sent_enforcer_pulse_fire/Pulsef2.ogg",
+	"weapons/pulse laser/sent_enforcer_pulse_fire/Pulsef3.ogg",
+	"weapons/pulse laser/sent_enforcer_pulse_fire/Pulsef4.ogg",
+	"weapons/pulse laser/sent_enforcer_pulse_fire/Pulsef5.ogg",
+}
 ENT.StartupSoundChance = 1 -- How much chance to play the sound? 1 = always
 ENT.StartupSoundLevel = 100
 ENT.StartupSoundPitch1 = 80

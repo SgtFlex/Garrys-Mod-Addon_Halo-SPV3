@@ -220,7 +220,7 @@ function ENT:CustomRangeAttackCode()
 		rocket2:GetPhysicsObject():SetVelocity(self:RangeAttackCode_GetShootPos() + Vector(0,0,150)) //used self:GetForward()*(distanceXY*.3) + Vector(0,0,300) previously
 	elseif (self.attackSequence == 1) then
 		if (self.limbs["left_arm"]["Removed"]==false) then
-		local bolt1 = ents.Create("obj_vj_sent_bolt")
+		local bolt1 = ents.Create("obj_vj_enforcer_bolt")
 			bolt1:SetPos(self:GetAttachment(self:LookupAttachment("left_arm"))["Pos"])
 			bolt1:SetOwner(self)
 			bolt1:Spawn()
@@ -229,7 +229,7 @@ function ENT:CustomRangeAttackCode()
 			-- ParticleEffectAttach("hcea_hunter_needler_proj", PATTACH_ABSORIGIN_FOLLOW, bolt1, 0)
 		end
 		if (self.limbs["right_arm"]["Removed"]==false) then
-			local bolt2 = ents.Create("obj_vj_sent_bolt")
+			local bolt2 = ents.Create("obj_vj_enforcer_bolt")
 			bolt2:SetPos(self:GetAttachment(self:LookupAttachment("right_arm"))["Pos"])
 			bolt2:SetOwner(self)
 			bolt2:Spawn()

@@ -43,7 +43,11 @@ ENT.PaintDecalOnDeath = true -- Should it paint a decal when it hits something?
 ENT.DecalTbl_DeathDecals = {"Scorch"} -- Decals that paint when the projectile dies | It picks a random one from this table
 	-- Sounds ---------------------------------------------------------------------------------------------------------------------------------------------
 ENT.HasStartupSounds = true -- Does it make a sound when the projectile is created?
-ENT.SoundTbl_Startup = {"rocket_fire_h3/rocket_h3_1.wav", "rocket_fire_h3/rocket_h3_2.wav", "rocket_fire_h3/rocket_h3_3.wav", "rocket_fire_h3/rocket_h3_4.wav", }
+ENT.SoundTbl_Startup = {
+	"weapons/incineration cannon/chargefire/1.ogg",
+	"weapons/incineration cannon/chargefire/2.ogg",
+	"weapons/incineration cannon/chargefire/3.ogg",
+}
 ENT.StartupSoundChance = 1 -- How much chance to play the sound? 1 = always
 ENT.StartupSoundLevel = 90
 ENT.StartupSoundPitch1 = 80
@@ -57,7 +61,9 @@ ENT.IdleSoundPitch2 = 100
 ENT.NextSoundTime_Idle1 = 0.2
 ENT.NextSoundTime_Idle2 = 0.5
 ENT.HasOnCollideSounds = true -- Should it play a sound when it collides something?
-ENT.SoundTbl_OnCollide = {"weapons/plasma pistol/charged impact/brute charged impact.ogg",}
+ENT.SoundTbl_OnCollide = {
+	"weapons/incineration cannon/incineration_cannon_explosion/explosion.ogg"
+}
 ENT.OnCollideSoundChance = 1 -- How much chance to play the sound? 1 = always
 ENT.OnCollideSoundLevel = 80
 ENT.OnCollideSoundPitch1 = 80
@@ -227,7 +233,7 @@ function ENT:CustomOnPhysicsCollide(data, phys)
 		fire[i]:Activate()
 	end
 	for k,v in pairs(ents.FindInSphere(data.HitPos, self.RadiusDamageRadius)) do
-		if (self:GetOwner():Disposition(v)==D_HT) then
+		if (IsValid(self:GetOwner()) and self:GetOwner():Disposition(v)==D_HT) then
 			v:Ignite(5, 150)
 			if (v.SoundTbl_Stuck) then
 				v:EmitSound(VJ_PICKRANDOMTABLE(v.SoundTbl_Stuck))
