@@ -47,7 +47,7 @@ ENT.SightAngle = 240 -- The sight angle | Example: 180 would make the it see all
 --Movement--
 ENT.Aerial_FlyingSpeed_Calm = 90 -- The speed it should fly with, when it's wandering, moving slowly, etc. | Basically walking campared to ground SNPCs
 ENT.Aerial_FlyingSpeed_Alerted = 90 --
-ENT.RangeDistance = ENT.flyVars["maxRadiusAroundTarget"]*1.25
+ENT.RangeDistance = 5000
 --ENT.SoundTbl_RangeAttack = {""}
 ENT.TimeUntilRangeAttackProjectileRelease = .4 -- How much time until the projectile code is ran?
 ENT.RangeAttackReps = 1
