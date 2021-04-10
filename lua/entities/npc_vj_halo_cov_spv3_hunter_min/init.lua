@@ -305,7 +305,6 @@ function ENT:CustomOnInitialize()
 	local allies = ents.FindInSphere(self:GetPos(), 3000)
 	for k, v in pairs(allies) do
 		if (v != self and v:IsNPC() and string.find(tostring(v:GetClass()), "hunter") and v.HunterBro == nil) then
-			PrintMessage(3, tostring(v))
 			self.HunterBro = v
 			v.HunterBro = self
 			return

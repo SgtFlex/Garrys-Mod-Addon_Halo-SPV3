@@ -110,7 +110,7 @@ if VJExists == true then
 	VJ.AddWeapon("[SPV3] (Cov) Needler Grenade","weapon_vj_cov_spv3_needler_nade", false, vCat)
 	VJ.AddWeapon("[SPV3] (UNSC) Frag Grenade","weapon_vj_unsc_spv3_frag_nade", false, vCat)
 
-	VJ.AddConVar("vj_spv3_DamageModifier", 0.5, FCVAR_ARCHIVE)
+	VJ.AddConVar("vj_spv3_DamageModifier", 1, FCVAR_ARCHIVE)
 	VJ.AddConVar("vj_spv3_NPCTakeDamageModifier", 2, FCVAR_ARCHIVE)
 	VJ.AddConVar("vj_spv3_HealthModifier", 1, FCVAR_ARCHIVE)
 	VJ.AddConVar("vj_spv3_ShieldModifier", 1, FCVAR_ARCHIVE)

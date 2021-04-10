@@ -108,11 +108,6 @@ ENT.gibTable = {
 "models/combine_helicopter/bomb_debris_3.mdl"
 }
 ENT.dropExtraWeapons = {
-"weapon_vj_sent_h2needleweapon",
-"weapon_vj_sent_h2needleweapon",
-"weapon_vj_sent_h2rocketweapon",
-"weapon_vj_sent_h2rocketweapon",
-"weapon_vj_sent_sentinelbeammajor"
 }
 ENT.lights = {
 	MainEyeLight = {Object = "", Attachment = "root", Color = "255 125 100", Scale = 3, Offset = Vector(60, 0, 60)},
@@ -162,18 +157,18 @@ end
 ENT.leftShield=""
 ENT.rightShield=""
 function ENT:CreateShield()
-	self.leftShield = ents.Create("obj_vj_sent_shield")
-	self.leftShield:SetModel( "models/sentinels/enf_lshield.mdl" )
-	self.leftShield:SetMoveParent(self)
-	self.leftShield:SetPos(self:GetShootPos() + self:GetRight()*-27 + self:GetForward()*150 + Vector(0, 0, -20))
-	self.leftShield:SetOwner(self)
-	self.leftShield:Spawn()
-	self.rightShield = ents.Create("obj_vj_sent_shield")
-	self.rightShield:SetModel( "models/sentinels/enf_rshield.mdl" )
-	self.rightShield:SetMoveParent(self)
-	self.rightShield:SetPos(self:GetShootPos() + self:GetRight()*27 + self:GetForward()*150 + Vector(0, 0, -20))
-	self.rightShield:SetOwner(self)
-	self.rightShield:Spawn()
+	-- self.leftShield = ents.Create("obj_vj_sent_shield")
+	-- self.leftShield:SetModel( "models/sentinels/enf_lshield.mdl" )
+	-- self.leftShield:SetMoveParent(self)
+	-- self.leftShield:SetPos(self:GetShootPos() + self:GetRight()*-27 + self:GetForward()*150 + Vector(0, 0, -20))
+	-- self.leftShield:SetOwner(self)
+	-- self.leftShield:Spawn()
+	-- self.rightShield = ents.Create("obj_vj_sent_shield")
+	-- self.rightShield:SetModel( "models/sentinels/enf_rshield.mdl" )
+	-- self.rightShield:SetMoveParent(self)
+	-- self.rightShield:SetPos(self:GetShootPos() + self:GetRight()*27 + self:GetForward()*150 + Vector(0, 0, -20))
+	-- self.rightShield:SetOwner(self)
+	-- self.rightShield:Spawn()
 end
 
 
