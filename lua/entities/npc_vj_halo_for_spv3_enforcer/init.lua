@@ -64,6 +64,7 @@ ENT.gib = false
 ENT.timeDeath = false
 ENT.uniqueId = ""
 --Variant Code--
+ENT.TurningSpeed = 1
 ENT.spriteTrail = {
 	Object = "",
 	startWidth = 150,
