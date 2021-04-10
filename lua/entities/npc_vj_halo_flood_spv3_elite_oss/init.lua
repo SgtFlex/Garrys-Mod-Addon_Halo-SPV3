@@ -10,7 +10,7 @@ ENT.Model = {"models/hce/spv3/flood/elite/floodelite.mdl"} -- The game will pick
 ENT.modelColor = Color(0,0,0)
 ENT.bodyGroups = {0, 0, 0, 0, 0}
 
-ENT.StartHealth = 63
+ENT.StartHealth = 100
 ENT.ShieldHealth = 0
 ENT.SpawnedFromInf=false
 function ENT:CustomOnInitialize()

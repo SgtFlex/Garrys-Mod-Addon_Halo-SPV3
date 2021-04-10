@@ -13,8 +13,9 @@ ENT.bodyGroupTable = {
 	2,
 	3,
 }
-ENT.StartHealth = 70
-ENT.ShieldHealth = 155
+ENT.StartHealth = 100
+ENT.ShieldHealth = 300
+//Exception here, 375 just seems too high
 ENT.ExtraShotCount = 4
 ENT.WeaponProfficiency = 100
 ENT.Skin=0

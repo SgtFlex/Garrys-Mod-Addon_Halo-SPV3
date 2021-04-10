@@ -11,8 +11,8 @@ ENT.bodyGroupTable = {
 	1,
 	2,
 }
-ENT.StartHealth = 50
-ENT.ShieldHealth = 135
+ENT.StartHealth = 150
+ENT.ShieldHealth = 200
 ENT.ExtraShotCount = 2
 ENT.WeaponProfficiency = 70
 ENT.Skin=0

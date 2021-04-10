@@ -10,8 +10,8 @@ ENT.HullType = HULL_MEDIUM
 ENT.Model = {"models/hce/spv3/flood/elite/floodelite.mdl"} -- The game will pick a random model from the table when the SNPC is spawned | Add as many as you want
 ENT.modelColor = Color(67,79,127)
 ENT.Skin = 1
-ENT.StartHealth = 44
-ENT.ShieldHealth = 100
+ENT.StartHealth = 100
+ENT.ShieldHealth = 75
 ENT.CurrentHealth = ENT.StartHealth
 ENT.ShieldCurrentHealth = ENT.ShieldHealth
 	-- ====== Blood-Related Variables ====== --

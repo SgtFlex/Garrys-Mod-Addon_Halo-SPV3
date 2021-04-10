@@ -6,9 +6,9 @@ include("shared.lua")
 	without the prior written consent of the author, unless otherwise indicated for stand-alone materials.
 -----------------------------------------------*/
 ENT.Model = {"models/hce/spv3/misc/needle.mdl"} -- The models it should spawn with | Picks a random one from the table
-ENT.DoesRadiusDamage = true -- Should it do a blast damage when it hits something?
+ENT.DoesRadiusDamage = false -- Should it do a blast damage when it hits something?
 ENT.RadiusDamageRadius = 1 -- How far the damage go? The farther away it's from its enemy, the less damage it will do | Counted in world units
-ENT.RadiusDamage = 3 -- How much damage should it deal? Remember this is a radius damage, therefore it will do less damage the farther away the entity is from its enemy
+ENT.RadiusDamage = 0 -- How much damage should it deal? Remember this is a radius damage, therefore it will do less damage the farther away the entity is from its enemy
 ENT.RadiusDamageUseRealisticRadius = true -- Should the damage decrease the farther away the enemy is from the position that the projectile hit?
 ENT.RadiusDamageType = DMG_SLASH -- Damage type
 ENT.ShakeWorldOnDeath = false -- Should the world shake when the projectile hits something?
@@ -130,7 +130,7 @@ function ENT:CustomOnCollideWithoutRemove(data,phys)
 					table.Empty(data.HitEntity.needles)
 				elseif (data.HitEntity.needles == nil or #data.HitEntity.needles < 7) then
 					if (data.HitEntity:IsNPC() or data.HitEntity:IsPlayer()) then
-						data.HitEntity:TakeDamage(4, self:GetOwner(), self:GetOwner())
+						data.HitEntity:TakeDamage(7 * GetConVarNumber("vj_spv3_damageModifier"), self:GetOwner(), self:GetOwner())
 						table.remove(data.HitEntity.needles)
 					end
 					self:Remove()

@@ -8,7 +8,7 @@ SWEP.NPC_ReloadSound 			= SWEP.ReloadSound -- Sounds it plays when the base dete
 SWEP.Primary.TracerType 		= "AirboatGunHeavyTracer" -- Tracer type (Examples: AR2)
 SWEP.Primary.Damage				= 2.5
 SWEP.Primary.NumberOfShots		= 30	 -- How many shots per attack?
-SWEP.Primary.ClipSize			= 8 -- Max amount of bullets per clip
+SWEP.Primary.ClipSize			= 10 -- Max amount of bullets per clip
 SWEP.NPC_NextPrimaryFire 		= 1.3 -- Next time it can use primary fire
 SWEP.NPC_ExtraShotsPerFire		= 0
 SWEP.NPC_CustomSpread 			= 3 -- This is added on top of the custom spread that's set inside the SNPC! | Starting from 1: Closer to 0 = better accuracy, Farther than 1 = worse accuracy

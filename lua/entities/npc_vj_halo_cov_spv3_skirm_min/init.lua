@@ -15,7 +15,7 @@ ENT.UNSCWeps = {
 ENT.AnimTbl_IdleStand = {ACT_IDLE}
 ENT.WeaponProfficiency = 70
 ENT.ExtraShotCount = 1
-
+ENT.StartHealth = 45
 function ENT:CustomOnInitialize()
 	self:SetColor(255,255,255)
 	self:SetBodygroup(1, 0)

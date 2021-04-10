@@ -7,7 +7,8 @@ include('entities/npc_vj_halo_cov_spv3_jackal_min/init.lua')
 	without the prior written consent of the author, unless otherwise indicated for stand-alone materials.
 -----------------------------------------------*/
 ENT.ExtraShotCount = 2
-ENT.StartHealth = 65
+ENT.StartHealth = 75
+//150 shields
 ENT.bodyGroupTable = {
 	1,
 	1,

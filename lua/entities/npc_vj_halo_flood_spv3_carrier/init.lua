@@ -8,7 +8,7 @@ include('shared.lua')
 ENT.HullType = HULL_MEDIUM
 
 ENT.Model = {"models/hce/spv3/flood/carrier/carrier.mdl"} -- The game will pick a random model from the table when the SNPC is spawned | Add as many as you want
-ENT.StartHealth = 30
+ENT.StartHealth = 50
 ENT.modelColor = Color(255,191,0)
 ---------------------------------------------------------------------------------------------------------------------------------------------
 	-- ====== Blood-Related Variables ====== --

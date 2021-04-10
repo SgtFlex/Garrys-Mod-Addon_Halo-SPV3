@@ -22,7 +22,8 @@ ENT.bodyGroupTable = {
 	0,
 }
 ENT.Skin = 1
-ENT.StartHealth = 160
+ENT.StartHealth = 200
+//25 shields
 ENT.CurrentHealth = ENT.StartHealth
 ENT.ShieldHealth = 0
 ENT.ShieldCurrentHealth = ENT.ShieldHealth

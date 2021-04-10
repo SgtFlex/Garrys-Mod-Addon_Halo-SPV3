@@ -18,8 +18,8 @@ ENT.RangeAttackAnimationStopMovement = false -- Should it stop moving when perfo
 ENT.AnimTbl_RangeAttack = {} -- Range Attack Animations
 ENT.NextRangeAttackTime = 0.5 -- How much time until it can use a range attack?
 ENT.HasDeathAnimation = false
-ENT.StartHealth = 50
-ENT.ShieldHealth = 120
+ENT.StartHealth = 120
+ENT.ShieldHealth = 0
 
 ENT.infFormCount = 6
 local spreadRadius = 175

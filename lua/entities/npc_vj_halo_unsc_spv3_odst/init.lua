@@ -6,7 +6,9 @@ include('entities/npc_vj_halo_unsc_spv3_marine/init.lua')
 	No parts of this code or any of its contents may be reproduced, copied, modified or adapted,
 	without the prior written consent of the author, unless otherwise indicated for stand-alone materials.
 -----------------------------------------------*/
-ENT.StartHealth = 120
+ENT.StartHealth = 100
+ENT.ShieldHealth = 65
+//65 shields
 ENT.BGs = {
 	2,
 	4,

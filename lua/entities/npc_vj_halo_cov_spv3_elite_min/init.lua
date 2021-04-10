@@ -16,7 +16,7 @@ ENT.bodyGroupTable = {
 	2,
 	4,
 }
-ENT.StartHealth = 35
+ENT.StartHealth = 100
 ENT.CurrentHealth = ENT.StartHealth
 ENT.ShieldHealth = 100
 ENT.ShieldCurrentHealth = ENT.ShieldHealth

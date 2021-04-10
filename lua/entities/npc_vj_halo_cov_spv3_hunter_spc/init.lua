@@ -6,7 +6,7 @@ include('entities/npc_vj_halo_cov_spv3_hunter_min/init.lua')
 	No parts of this code or any of its contents may be reproduced, copied, modified or adapted,
 	without the prior written consent of the author, unless otherwise indicated for stand-alone materials.
 -----------------------------------------------*/
-ENT.StartHealth = 65
+ENT.StartHealth = 250
 
 	-- Relationships ---------------------------------------------------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------------------------------------

@@ -11,6 +11,9 @@ ENT.HullType = HULL_MEDIUM
 ENT.Model = {"models/hce/spv3/unsc/marine/marine.mdl"} -- The game will pick a random model from the table when the SNPC is spawned | Add as many as you want
 ENT.modelColor = Color(255,255,255)
 ENT.StartHealth = 90
+ENT.ArmorHealth = 55
+ENT.ArmorCurrentHealth = ENT.ArmorHealth
+//55 Armor
 	-- ====== Blood-Related Variables ====== --
 ENT.Bleeds = true -- Does the SNPC bleed? (Blood decal, particle, etc.)
 ENT.BloodColor = "Red" -- The blood type, this will determine what it should use (decal, particle, etc.)
@@ -309,7 +312,11 @@ function ENT:CustomOnInitialize()
 	self:SetCollisionBounds(Vector(15, 15, 70), Vector(-15, -15, 0))
 	self:SetColor(Color(math.random(self.ColorRange[1].x, self.ColorRange[2].x),math.random(self.ColorRange[1].y, self.ColorRange[2].y) ,math.random(self.ColorRange[1].z, self.ColorRange[2].z)))
 	self.StartHealth = self.StartHealth * GetConVarNumber("vj_spv3_HealthModifier")
-	self:SetHealth(self.StartHealth)
+	self.ArmorHealth = self.ArmorHealth * GetConVarNumber("vj_spv3_ArmorModifier")
+	self.ArmorCurrentHealth = self.ArmorHealth
+	self.CurrentHealth = self.StartHealth
+	self.ArmorActivated = true
+	self:SetHealth(self.ArmorHealth + self.StartHealth)
 	local i
 	for i = 0, #self.BGs-1 do
 		self:SetBodygroup(i, self.BGs[i+1])
@@ -330,7 +337,7 @@ function ENT:CustomOnAcceptInput(key,activator,caller,data)
 	end
 end
 
-
+ENT.ArmorDelay = 6
 ENT.EvadeCooldown = 0
 function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 	if (dmginfo:GetAttacker():IsNPC()) then
@@ -352,6 +359,16 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 	if (dmginfo:GetDamageType()==DMG_BLAST) then
 		dmginfo:ScaleDamage(3.5)
 	end
+	if self.ArmorActivated == true then
+		-- self.Bleeds=false
+		if (dmginfo:GetDamageType()==DMG_PLASMA) then
+			self.ArmorCurrentHealth = (self.ArmorCurrentHealth - (dmginfo:GetDamage()*3))
+		else
+			self.ArmorCurrentHealth = (self.ArmorCurrentHealth - dmginfo:GetDamage())
+		end
+	else
+		self.CurrentHealth = self.CurrentHealth - dmginfo:GetDamage()
+	end
 	if (dmginfo:GetDamage() >= self:Health()) then
 		if (dmginfo:GetDamageType()==DMG_BLAST or dmginfo:GetDamageType()==DMG_CLUB or dmginfo:GetDamageForce():Length()>=10000) then
 			self:FlyingDeath(dmginfo)
@@ -361,6 +378,35 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 		self.AlertFriendsOnDeath = false
 		self:TakeDamage(self:Health(), dmginfo:GetAttacker(), dmginfo:GetInflictor())
 	end
+end
+
+function ENT:CustomOnTakeDamage_AfterDamage(dmginfo,hitgroup)
+	self:SetHealth((self.ArmorCurrentHealth + self.CurrentHealth))		
+	if (self.ArmorCurrentHealth<=0) then		
+		self:CustomOnTakeDamage_ArmorsDestroyed(dmginfo, hitgroup)
+		self.ArmorActivated=false
+	end
+	if (timer.Exists("ArmorDelay"..self:GetCreationID())) then
+		timer.Adjust("ArmorDelay"..self:GetCreationID(), self.ArmorDelay, 1)
+	else
+		timer.Create("ArmorDelay"..self:GetCreationID(), self.ArmorDelay, 1, function() 
+			if (IsValid(self)) then
+				self.ArmorActivated = true
+				self.ArmorCurrentHealth = self.ArmorHealth
+				self:SetHealth(self.CurrentHealth + self.ArmorCurrentHealth)
+				-- self.Bleeds=false
+			end
+		end)
+	end
+end
+---------------------------------------------------------------------------------------------------------------------------------------------
+function ENT:CustomOnTakeDamage_ArmorsDestroyed(dmginfo, hitgroup)
+	if self.ArmorActivated == false then return end
+	-- self:EmitSound(Sound("ambient/energy/weld" .. math.random(1,2) .. ".ogg"),80,100)
+	-- self.CanFlinch = 1
+	-- self:DoFlinch(dmginfo, hitgroup)
+	-- self.CanFlinch = 0
+	self.ArmorActivated = false
 end
 
 function ENT:FlyingDeath(dmginfo)

@@ -143,18 +143,18 @@ ENT.WeaponTable = {
 }
 
 ENT.Variants = {
-	{Name = "Minor", Color = Color(67,79,127), BodyGroup = {0, 1, 1, 1, 1}, Skin = 1, Health = 44, Shields = 100},
-	{Name = "Major", Color = Color(127,0,0), BodyGroup = {0, 1, 1, 1, 1}, Skin = 2, Health = 45, Shields = 120},
-	{Name = "Ultra", Color = Color(182,182,182), BodyGroup = {0, 1, 1, 1, 1}, Skin = 0, Health = 63, Shields = 135},
-	{Name = "Zealot", Color = Color(255,191,0), BodyGroup = {0, 1, 1, 1, 1}, Skin = 3, Health = 75, Shields = 150},
-	{Name = "Spec-Ops", Color = Color(36,36,36), BodyGroup = {0, 1, 1, 1, 1}, Skin = 0, Health = 63, Shields = 135},
-	{Name = "Ossoona", Color = Color(36,36,36), BodyGroup = {0, 1, 1, 1, 1}, Skin = 0, Health = 75, Shields = 0},
-	{Name = "HG Minor", Color = Color(67,79,127), BodyGroup = {0, 1, 2, 2, 2}, Skin = 1, Health = 50, Shields = 135},
-	{Name = "HG Major", Color = Color(127,0,0), BodyGroup = {0, 1, 2, 2, 2}, Skin = 2, Health = 75, Shields = 145},
-	{Name = "HG Ultra", Color = Color(182,182,182), BodyGroup = {0, 1, 2, 2, 2}, Skin = 0, Health = 88, Shields = 155},
-	{Name = "HG Zealot", Color = Color(255,191,0), BodyGroup = {0, 1, 2, 2, 2}, Skin = 3, Health = 100, Shields = 165},
-	{Name = "Runner", Color = Color(67,79,127), BodyGroup = {0, 2, 0, 0, 0}, Skin = 0, Health = 45, Shields = 100},
-	{Name = "Suicide", Color = Color(127,0,0), BodyGroup = {0, 1, 1, 1, 1}, Skin = 2, Health = 50, Shields = 120}
+	{Name = "Minor", Color = Color(67,79,127), BodyGroup = {0, 1, 1, 1, 1}, Skin = 1, Health = 100, Shields = 75},
+	{Name = "Major", Color = Color(127,0,0), BodyGroup = {0, 1, 1, 1, 1}, Skin = 2, Health = 100, Shields = 112},
+	{Name = "Ultra", Color = Color(182,182,182), BodyGroup = {0, 1, 1, 1, 1}, Skin = 0, Health = 100, Shields = 131},
+	{Name = "Zealot", Color = Color(255,191,0), BodyGroup = {0, 1, 1, 1, 1}, Skin = 3, Health = 100, Shields = 225},
+	{Name = "Spec-Ops", Color = Color(36,36,36), BodyGroup = {0, 1, 1, 1, 1}, Skin = 0, Health = 100, Shields = 150},
+	{Name = "Ossoona", Color = Color(36,36,36), BodyGroup = {0, 1, 1, 1, 1}, Skin = 0, Health = 100, Shields = 0},
+	{Name = "HG Minor", Color = Color(67,79,127), BodyGroup = {0, 1, 2, 2, 2}, Skin = 1, Health = 100, Shields = 112},
+	{Name = "HG Major", Color = Color(127,0,0), BodyGroup = {0, 1, 2, 2, 2}, Skin = 2, Health = 100, Shields = 168},
+	{Name = "HG Ultra", Color = Color(182,182,182), BodyGroup = {0, 1, 2, 2, 2}, Skin = 0, Health = 100, Shields = 225},
+	{Name = "HG Zealot", Color = Color(255,191,0), BodyGroup = {0, 1, 2, 2, 2}, Skin = 3, Health = 100, Shields = 337},
+	{Name = "Runner", Color = Color(67,79,127), BodyGroup = {0, 2, 0, 0, 0}, Skin = 0, Health = 100, Shields = 0},
+	{Name = "Suicide", Color = Color(127,0,0), BodyGroup = {0, 1, 1, 1, 1}, Skin = 2, Health = 120, Shields = 0}
 }
 ---------------------------------------------------------------------------------------------------------------------------------------------
 ENT.PlasmaNade1 = nil

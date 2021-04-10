@@ -6,7 +6,7 @@ include('shared.lua')
 	without the prior written consent of the author, unless otherwise indicated for stand-alone materials.
 -----------------------------------------------*/
 ENT.Model = {"models/hce/spv3/cov/hunter/hunter.mdl"} -- The game will pick a random model from the table when the SNPC is spawned | Add as many as you want
-ENT.StartHealth = 35
+ENT.StartHealth = 250
 ENT.Skin = 2
 ENT.HullType = HULL_MEDIUM
 ---------------------------------------------------------------------------------------------------------------------------------------------

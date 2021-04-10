@@ -10,8 +10,8 @@ ENT.Model = {"models/hce/spv3/flood/elite/floodelite.mdl"} -- The game will pick
 ENT.modelColor = Color(127,0,0)
 ENT.bodyGroupTable = {0, 2, 0, 0, 0}
 
-ENT.StartHealth = 44
-ENT.ShieldHealth = 100
+ENT.StartHealth = 100
+ENT.ShieldHealth = 0
 
 ENT.infFormCount = 6
 local spreadRadius = 175

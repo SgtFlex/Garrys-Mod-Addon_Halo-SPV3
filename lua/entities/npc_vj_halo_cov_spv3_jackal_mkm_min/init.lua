@@ -7,6 +7,7 @@ include('entities/npc_vj_halo_cov_spv3_jackal_min/init.lua')
 	without the prior written consent of the author, unless otherwise indicated for stand-alone materials.
 -----------------------------------------------*/
 ENT.ExtraShotCount = 0
+ENT.StartHealth = 100
 ENT.LightColor = Color(255, 0, 255)
 ENT.UNSCWeps = {
 	"weapon_vj_unsc_spv3_br",

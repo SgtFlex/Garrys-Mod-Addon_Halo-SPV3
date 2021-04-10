@@ -10,7 +10,7 @@ ENT.HullType = HULL_MEDIUM
 ENT.Model = {"models/hce/spv3/flood/brute/floodbrute.mdl"} -- The game will pick a random model from the table when the SNPC is spawned | Add as many as you want
 ENT.modelColor = Color(255,255,255)
 ENT.bodyGroup = 0
-ENT.StartHealth = 200
+ENT.StartHealth = 120
 ---------------------------------------------------------------------------------------------------------------------------------------------
 	-- ====== Blood-Related Variables ====== --
 ENT.Bleeds = true -- Does the SNPC bleed? (Blood decal, particle, etc.)

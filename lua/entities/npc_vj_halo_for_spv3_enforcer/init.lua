@@ -20,10 +20,11 @@ ENT.defensiveStats = {
 	shieldRegen = 1,
 	shieldSpeed = .1,
 	shieldDelay = 5,
-	hullMax = 500,
-	hullCurrent = 500,
+	hullMax = 225,
+	hullCurrent = 225,
 	hullArmor = 25,
 }
+//270 shields (attached)
 -- ENT.hullMaxHealth = 500
 -- ENT.hullHealth = ENT.hullMaxHealth
 -- ENT.shieldMaxHealth = 0

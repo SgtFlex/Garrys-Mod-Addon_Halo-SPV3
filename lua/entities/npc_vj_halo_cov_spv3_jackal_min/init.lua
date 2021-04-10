@@ -8,6 +8,7 @@ include('entities/npc_vj_halo_shared_spv3/init.lua')
 -----------------------------------------------*/
 ENT.Model = {"models/hce/spv3/cov/jackal/jackal.mdl"} -- The game will pick a random model from the table when the SNPC is spawned | Add as many as you want
 ENT.StartHealth = 50
+//125 shields
 ENT.HullType = HULL_MEDIUM
 ENT.bodyGroupTable = {
 	1,

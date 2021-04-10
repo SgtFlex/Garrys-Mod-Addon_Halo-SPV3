@@ -10,5 +10,5 @@ ENT.Model = {"models/hce/spv3/flood/elite/floodelite.mdl"} -- The game will pick
 ENT.modelColor = Color(127,0,0)
 ENT.bodyGroupTable = {0, 1, 2, 2, 2}
 ENT.Skin = 2
-ENT.StartHealth = 75
-ENT.ShieldHealth = 75
+ENT.StartHealth = 100
+ENT.ShieldHealth = 112

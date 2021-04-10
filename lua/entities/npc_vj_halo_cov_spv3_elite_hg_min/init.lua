@@ -13,8 +13,10 @@ ENT.bodyGroupTable = {
 	2,
 	3,
 }
-ENT.StartHealth = 50
-ENT.ShieldHealth = 135
+ENT.StartHealth = 100
+ENT.ShieldHealth = 150
+//In SPV3 their shields are immune to ballistic weapons but the same as a sheild minor aside from that
+//I think it would be better to just have 1.5x shields perhaps?
 ENT.Skin=1
 ENT.HasSword = true
 ENT.ExtraShotCount = 3

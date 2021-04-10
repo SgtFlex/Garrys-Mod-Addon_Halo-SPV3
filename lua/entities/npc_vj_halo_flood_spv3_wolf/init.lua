@@ -8,7 +8,7 @@ include('shared.lua')
 ENT.HullType = HULL_MEDIUM
 
 ENT.Model = {"models/hce/spv3/nature/blindwolf/blindwolf.mdl"} -- The game will pick a random model from the table when the SNPC is spawned | Add as many as you want
-ENT.StartHealth = 75
+ENT.StartHealth = 100
 ---------------------------------------------------------------------------------------------------------------------------------------------
 	-- ====== Blood-Related Variables ====== --
 ENT.Bleeds = true -- Does the SNPC bleed? (Blood decal, particle, etc.)
