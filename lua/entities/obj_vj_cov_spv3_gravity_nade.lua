@@ -112,7 +112,7 @@ function ENT:CustomOnPhysicsCollide(data,phys)
 				if !(v:IsWorld()) then
 					if (IsValid(v:GetPhysicsObject())) then
 						if (v:IsNPC() or v:IsPlayer()) and (v.MovementType != VJ_MOVETYPE_STATIONARY) then
-							v:SetVelocity((v:GetPos()-self:GetPos())*-self:GetPos():DistToSqr(v:GetPos())/9000)
+							v:SetVelocity((v:GetPos()-self:GetPos())*-self:GetPos():DistToSqr(v:GetPos())/18000)
 							v:TakeDamage(self.RadiusDamage/20, self:GetOwner(), self:GetOwner())
 						else
 							v:GetPhysicsObject():SetVelocity((v:GetPos()-self:GetPos())*-self:GetPos():DistToSqr(v:GetPos())/4500)

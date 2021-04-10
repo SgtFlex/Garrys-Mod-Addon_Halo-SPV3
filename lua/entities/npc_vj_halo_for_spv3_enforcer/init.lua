@@ -39,14 +39,14 @@ ENT.StartHealth = ENT.defensiveStats["hullMax"] + ENT.defensiveStats["shieldMax"
 ENT.MovementType = VJ_MOVETYPE_AERIAL -- How does the SNPC move?
 ENT.VJ_NPC_Class = {"CLASS_SENTINEL", "CLASS_PLAYER_ALLY"} -- NPCs with the same class with be allied to each other
 ENT.ItemDropsOnDeath_EntityList = {}
-ENT.AA_ConstantlyMove = false
+ENT.AA_ConstantlyMove = true
 --Vision--
 ENT.SightDistance = 10000 -- How far it can see
 ENT.SightAngle = 240 -- The sight angle | Example: 180 would make the it see all around it | Measured in degrees and then converted to radians
 --Movement--
 ENT.Aerial_FlyingSpeed_Calm = 90 -- The speed it should fly with, when it's wandering, moving slowly, etc. | Basically walking campared to ground SNPCs
 ENT.Aerial_FlyingSpeed_Alerted = 90 --
-ENT.RangeDistance = 5000
+ENT.RangeDistance = ENT.flyVars["maxRadiusAroundTarget"]*1.25
 --ENT.SoundTbl_RangeAttack = {""}
 ENT.TimeUntilRangeAttackProjectileRelease = .4 -- How much time until the projectile code is ran?
 ENT.RangeAttackReps = 1
@@ -56,6 +56,7 @@ ENT.DisableRangeAttackAnimation = true -- if true, it will disable the animation
 ENT.DisableDefaultRangeAttackCode = true -- When true, it won't spawn the range attack entity, allowing you to make your own
 ENT.RangeAttackAnimationStopMovement = false -- Should it stop moving when performing a range attack?
 ENT.RangeAttackExtraTimers = {}
+ENT.NoChaseAfterCertainRange = false -- Should the SNPC not be able to chase when it's between number x and y?
 
 ENT.dead = false
 ENT.fall = false
@@ -135,15 +136,16 @@ ENT.limbs = {
 	left_rocket = 		{Removed = false, Health = 25, Lights = {}, Hitgroup = 504, Bodygroups = {"left_rocket"}, Gibs = {"models/combine_helicopter/bomb_debris_3.mdl","models/combine_helicopter/bomb_debris_3.mdl","models/combine_helicopter/bomb_debris_3.mdl", "models/gibs/metal_gib5.mdl", "models/gibs/metal_gib5.mdl"}},
 	right_rocket = 		{Removed = false, Health = 25, Lights = {}, Hitgroup = 503, Bodygroups = {"right_rocket"}, Gibs = {"models/combine_helicopter/bomb_debris_3.mdl","models/combine_helicopter/bomb_debris_3.mdl","models/combine_helicopter/bomb_debris_3.mdl", "models/gibs/metal_gib5.mdl", "models/gibs/metal_gib5.mdl"}},
 }
-ENT.HasMeleeAttack = true -- Should the SNPC have a melee attack?
-ENT.DisableDefaultMeleeAttackDamageCode = true -- Disables the default melee attack damage code
-ENT.MeleeAttackDistance = 1400 -- How close does it have to be until it attacks?
-ENT.NextMeleeAttackTime = 10 -- How much time until it can use a melee attack?
-ENT.MeleeAttackAnimationAllowOtherTasks = true -- If set to true, the animation will not stop other tasks from playing, such as chasing | Useful for gesture attacks!
-ENT.DisableMeleeAttackAnimation = true -- if true, it will disable the animation code
-ENT.DisableRangeAttackAnimation = false -- if true, it will disable the animation code
-ENT.MeleeAttackReps = 1 -- How many times does it run the melee attack code?
-ENT.RangeToMeleeDistance = 0 -- How close does it have to be until it uses melee?
+//Melee attack code for Enforcers as part of sentinels. Unneeded here
+-- ENT.HasMeleeAttack = true -- Should the SNPC have a melee attack?
+-- ENT.DisableDefaultMeleeAttackDamageCode = true -- Disables the default melee attack damage code
+-- ENT.MeleeAttackDistance = 1400 -- How close does it have to be until it attacks?
+-- ENT.NextMeleeAttackTime = 10 -- How much time until it can use a melee attack?
+-- ENT.MeleeAttackAnimationAllowOtherTasks = true -- If set to true, the animation will not stop other tasks from playing, such as chasing | Useful for gesture attacks!
+-- ENT.DisableMeleeAttackAnimation = true -- if true, it will disable the animation code
+-- ENT.DisableRangeAttackAnimation = false -- if true, it will disable the animation code
+-- ENT.MeleeAttackReps = 1 -- How many times does it run the melee attack code?
+-- ENT.RangeToMeleeDistance = 0 -- How close does it have to be until it uses melee?
 
 function ENT:VariantCode()
 	if (self.shield) then
@@ -210,9 +212,9 @@ function ENT:CustomRangeAttackCode()
 		rocket:SetOwner( self )
 		rocket2:SetOwner( self )
 		rocket:Spawn()
-		rocket:GetPhysicsObject():SetVelocity(self:RangeAttackCode_GetShootPos() + Vector(0,0,150)) //used self:GetForward()*(distanceXY*.3) + Vector(0,0,300) previously
+		rocket:GetPhysicsObject():SetVelocity(self:RangeAttackCode_GetShootPos() + Vector(0,0,200)) //used self:GetForward()*(distanceXY*.3) + Vector(0,0,300) previously
 		rocket2:Spawn()
-		rocket2:GetPhysicsObject():SetVelocity(self:RangeAttackCode_GetShootPos() + Vector(0,0,150)) //used self:GetForward()*(distanceXY*.3) + Vector(0,0,300) previously
+		rocket2:GetPhysicsObject():SetVelocity(self:RangeAttackCode_GetShootPos() + Vector(0,0,200)) //used self:GetForward()*(distanceXY*.3) + Vector(0,0,300) previously
 	elseif (self.attackSequence == 1) then
 		if (self.limbs["left_arm"]["Removed"]==false) then
 		local bolt1 = ents.Create("obj_vj_enforcer_bolt")
@@ -233,7 +235,7 @@ function ENT:CustomRangeAttackCode()
 			-- ParticleEffectAttach("hcea_hunter_needler_proj", PATTACH_ABSORIGIN_FOLLOW, bolt2, 0)
 		end
 	end
-	if (self.attackSequence == 0 && self.countAttacks >= self.RangeAttackReps * 2) then
+	if (self.attackSequence == 0 && self.countAttacks >= self.RangeAttackReps) then
 		self:AttackMode(1)
 	elseif (self.attackSequence == 1 && self.countAttacks >= self.RangeAttackReps * 2) then
 		self:AttackMode(0)

@@ -28,16 +28,16 @@ ENT.ShakeWorldOnDeathAmplitude = 16 -- How much the screen will shake | From 1 t
 ENT.ShakeWorldOnDeathRadius = 3000 -- How far the screen shake goes, in world units
 ENT.ShakeWorldOnDeathtDuration = 1 -- How long the screen shake will last, in seconds
 ENT.ShakeWorldOnDeathFrequency = 200 -- The frequency
-ENT.DoesRadiusDamage = false -- Should it do a blast damage when it hits something?
-ENT.RadiusDamageRadius = 100 -- How far the damage go? The farther away it's from its enemy, the less damage it will do | Counted in world units
+ENT.DoesRadiusDamage = true -- Should it do a blast damage when it hits something?
+ENT.RadiusDamageRadius = 50 -- How far the damage go? The farther away it's from its enemy, the less damage it will do | Counted in world units
 ENT.RadiusDamageUseRealisticRadius = false -- Should the damage decrease the farther away the enemy is from the position that the projectile hit?
-ENT.RadiusDamage = 8
+ENT.RadiusDamage = 10
 ENT.RadiusDamageType = DMG_SLASH -- Damage type
 ENT.RadiusDamageForce = false -- Put the force amount it should apply | false = Don't apply any force
 ENT.RadiusDamageForce_Up = false -- How much up force should it have? | false = Let the base automatically decide the force using RadiusDamageForce value
 ENT.RadiusDamageDisableVisibilityCheck = false -- Should it disable the visibility check? | true = Disables the visibility check
 ENT.DoesDirectDamage = false -- Should it do a direct damage when it hits something?
-ENT.DirectDamage = 10
+ENT.DirectDamage = 0
 ENT.DirectDamageType = DMG_SLASH -- Damage type
 ENT.PaintDecalOnDeath = true -- Should it paint a decal when it hits something?
 ENT.DecalTbl_DeathDecals = {"FadingScorch"} -- Decals that paint when the projectile dies | It picks a random one from this table

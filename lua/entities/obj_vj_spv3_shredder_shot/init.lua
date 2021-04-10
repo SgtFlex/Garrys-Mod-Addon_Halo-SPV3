@@ -106,38 +106,40 @@ function ENT:CustomOnCollideWithoutRemove(data,phys)
 			end
 		end
 	end
-	timer.Create("Needles"..self:GetCreationID(), 1.45, 1, function()
-		if IsValid(self) then
-			if ((data.HitEntity:IsNPC() or data.HitEntity:IsPlayer()) and #data.HitEntity.needles >= 7) then
-				self:EmitSound("weapons/needler/super/superneedleboom.ogg")
-				local BlastInfo = DamageInfo()
-				BlastInfo:SetDamageType(DMG_BLAST)
-				BlastInfo:SetDamage(40 * GetConVarNumber("vj_spv3_damageModifier"))
-				BlastInfo:SetDamagePosition(self:GetPos())
-				if (IsValid(self:GetOwner())) then
-					BlastInfo:SetAttacker(self:GetOwner())
-				end
-				BlastInfo:SetReportedPosition(self:GetPos())
-				util.BlastDamageInfo(BlastInfo, self:GetPos(), 50)
-				util.ScreenShake(self:GetPos(),16,100,1,800)
-				ParticleEffect("hcea_hunter_shade_cannon_explode_ground", self:LocalToWorld(Vector(0,0,20)), self:GetAngles(), nil)
-				for i,j in pairs(data.HitEntity.needles) do
-					if IsValid(j) then
-						j:Remove()
+	if (!(timer.Exists("Needles"..self:GetCreationID()))) then
+		timer.Create("Needles"..self:GetCreationID(), 1.45, 1, function()
+			if IsValid(self) then
+				if ((data.HitEntity:IsNPC() or data.HitEntity:IsPlayer()) and #data.HitEntity.needles >= 7) then
+					self:EmitSound("weapons/needler/super/superneedleboom.ogg")
+					local BlastInfo = DamageInfo()
+					BlastInfo:SetDamageType(DMG_BLAST)
+					BlastInfo:SetDamage(40 * GetConVarNumber("vj_spv3_damageModifier"))
+					BlastInfo:SetDamagePosition(self:GetPos())
+					if (IsValid(self:GetOwner())) then
+						BlastInfo:SetAttacker(self:GetOwner())
 					end
+					BlastInfo:SetReportedPosition(self:GetPos())
+					util.BlastDamageInfo(BlastInfo, self:GetPos(), 50)
+					util.ScreenShake(self:GetPos(),16,100,1,800)
+					ParticleEffect("hcea_hunter_shade_cannon_explode_ground", self:LocalToWorld(Vector(0,0,20)), self:GetAngles(), nil)
+					for i,j in pairs(data.HitEntity.needles) do
+						if IsValid(j) then
+							j:Remove()
+						end
+					end
+					table.Empty(data.HitEntity.needles)
+				elseif (data.HitEntity.needles == nil or #data.HitEntity.needles < 7) then
+					if (data.HitEntity:IsNPC() or data.HitEntity:IsPlayer()) then
+						data.HitEntity:TakeDamage(4, self:GetOwner(), self:GetOwner())
+						table.remove(data.HitEntity.needles)
+					end
+					self:Remove()
+					self:EmitSound("weapons/needler/expire/1.ogg") 
+					ParticleEffect("hcea_hunter_needler_pistol_impact", self:LocalToWorld(Vector(0,0,0)), self:GetAngles(), nil)
 				end
-				table.Empty(data.HitEntity.needles)
-			elseif (data.HitEntity.needles == nil or #data.HitEntity.needles < 7) then
-				if (data.HitEntity:IsNPC() or data.HitEntity:IsPlayer()) then
-					data.HitEntity:TakeDamage(4, self:GetOwner(), self:GetOwner())
-					table.remove(data.HitEntity.needles)
-				end
-				self:Remove()
-				self:EmitSound("weapons/needler/expire/1.ogg") 
-				ParticleEffect("hcea_hunter_needler_pistol_impact", self:LocalToWorld(Vector(0,0,0)), self:GetAngles(), nil)
 			end
-		end
-	end)
+		end)
+	end
 	if ((data.HitEntity:IsNPC() or data.HitEntity:IsPlayer()) and #data.HitEntity.needles >= 7) then
 		if (data.HitEntity.Berserked!=nil and data.HitEntity.Berserked!=true and math.random(0, 1)==1) then
 			data.HitEntity:Berserk()
