@@ -31,7 +31,7 @@ ENT.ShakeWorldOnDeathFrequency = 200 -- The frequency
 ENT.DoesRadiusDamage = true -- Should it do a blast damage when it hits something?
 ENT.RadiusDamageRadius = 250 -- How far the damage go? The farther away it's from its enemy, the less damage it will do | Counted in world units
 ENT.RadiusDamageUseRealisticRadius = true -- Should the damage decrease the farther away the enemy is from the position that the projectile hit?
-ENT.RadiusDamage = 30
+ENT.RadiusDamage = 30 * GetConVarNumber("vj_spv3_DamageModifier")
 ENT.RadiusDamageType = DMG_BLAST -- Damage type
 ENT.RadiusDamageForce = 100 -- Put the force amount it should apply | false = Don't apply any force
 ENT.RadiusDamageForce_Up = false -- How much up force should it have? | false = Let the base automatically decide the force using RadiusDamageForce value

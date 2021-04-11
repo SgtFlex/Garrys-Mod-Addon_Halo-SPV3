@@ -6,7 +6,6 @@ include('entities/npc_vj_halo_cov_spv3_hunter_min/init.lua')
 	No parts of this code or any of its contents may be reproduced, copied, modified or adapted,
 	without the prior written consent of the author, unless otherwise indicated for stand-alone materials.
 -----------------------------------------------*/
-ENT.StartHealth = 250
 ENT.HasRangeAttack = true -- Should the SNPC have a range attack?
 ENT.RangeToMeleeDistance = 400 -- How close does it have to be until it uses melee?
 ENT.RangeDistance = 1600

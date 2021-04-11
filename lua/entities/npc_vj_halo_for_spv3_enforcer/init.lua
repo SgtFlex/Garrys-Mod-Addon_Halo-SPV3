@@ -20,8 +20,8 @@ ENT.defensiveStats = {
 	shieldRegen = 1,
 	shieldSpeed = .1,
 	shieldDelay = 5,
-	hullMax = 225,
-	hullCurrent = 225,
+	hullMax = 225 * GetConVarNumber("vj_spv3_HealthModifier"),
+	hullCurrent = 225 * GetConVarNumber("vj_spv3_HealthModifier"),
 	hullArmor = 25,
 }
 //270 shields (attached)

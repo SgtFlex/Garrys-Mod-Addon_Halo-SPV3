@@ -8,6 +8,8 @@ include('entities/npc_vj_halo_shared_spv3/init.lua')
 -----------------------------------------------*/
 ENT.Model = {"models/hce/spv3/cov/jackal/jackal.mdl"} -- The game will pick a random model from the table when the SNPC is spawned | Add as many as you want
 ENT.StartHealth = 50
+ENT.ShieldHealth = 125 * GetConVarNumber("vj_spv3_ShieldModifier")
+ENT.ShieldCurrentHealth = ENT.ShieldHealth
 //125 shields
 ENT.HullType = HULL_MEDIUM
 ENT.bodyGroupTable = {
@@ -142,6 +144,7 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 		dmginfo:ScaleDamage(GetConVarNumber("vj_spv3_NPCTakeDamageModifier"))
 	end
 	if hitgroup == 11 then
+		self.ShieldCurrentHealth = self.ShieldCurrentHealth - dmginfo:GetDamage()
 		dmginfo:ScaleDamage(0)
 		ParticleEffect("hcea_shield_impact", dmginfo:GetDamagePosition(), dmginfo:GetDamageForce():Angle(), self)
 	end
@@ -158,6 +161,18 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 		self:TakeDamage(self:Health(), dmginfo:GetAttacker(), dmginfo:GetInflictor())
 	end
 end
+
+function ENT:CustomOnTakeDamage_AfterDamage(dmginfo,hitgroup)
+	if self.ShieldCurrentHealth <= 0 then
+		self:SetHitboxSet("noShield")
+		self:SetBodygroup(1, 0)
+		ParticleEffectAttach("hcea_shield_disperse",PATTACH_POINT_FOLLOW,self,self:LookupAttachment("origin"))
+		if (math.random(0,1)==1) then
+			self:Flee()
+		end
+	end
+end
+
 
 function ENT:FlyingDeath(dmginfo)
 	self.HasDeathRagdoll = false
@@ -261,27 +276,31 @@ function ENT:CustomOnAllyDeath(argent)
 				end
 			end
 			if (self.HasProtector==false or (math.random(0,10) < 3)) then
-				self.Behavior = VJ_BEHAVIOR_PASSIVE
-				self.AnimTbl_Walk = {ACT_RUN_SCARED} -- Set the walking animations | Put multiple to let the base pick a random animation when it moves
-				self.AnimTbl_Run = {ACT_RUN_SCARED} -- Set the running animations | Put multiple to let the base pick a random animation when it moves
-				self.AnimTbl_MoveToCover = {ACT_RUN_SCARED}
-				timer.Create("Scared"..self:GetCreationID(), math.random(1.5,3), 5, function()
-					if !(IsValid(self)) then return end 
-					self.AnimTbl_Walk = {ACT_RUN_SCARED} -- Set the walking animations | Put multiple to let the base pick a random animation when it moves
-					self.AnimTbl_Run = {ACT_RUN_SCARED} -- Set the running animations | Put multiple to let the base pick a random animation when it moves
-					self.AnimTbl_MoveToCover = {ACT_RUN_SCARED}
-					self:VJ_TASK_COVER_FROM_ENEMY("TASK_RUN_PATH")
-				end)
-				timer.Simple(10, function()
-					if !(IsValid(self)) then return end
-					self.Behavior = VJ_BEHAVIOR_PASSIVE
-					self.AnimTbl_Walk = {ACT_WALK} -- Set the walking animations | Put multiple to let the base pick a random animation when it moves
-					self.AnimTbl_Run = {ACT_RUN} -- Set the running animations | Put multiple to let the base pick a random animation when it moves
-					self.AnimTbl_MoveToCover = {ACT_RUN}
-				end)
+				self:Flee()
 			end
 	end)
 end
+end
+
+function ENT:Flee()
+	self.Behavior = VJ_BEHAVIOR_PASSIVE
+	self.AnimTbl_Walk = {ACT_RUN_SCARED} -- Set the walking animations | Put multiple to let the base pick a random animation when it moves
+	self.AnimTbl_Run = {ACT_RUN_SCARED} -- Set the running animations | Put multiple to let the base pick a random animation when it moves
+	self.AnimTbl_MoveToCover = {ACT_RUN_SCARED}
+	timer.Create("Scared"..self:GetCreationID(), math.random(1.5,3), 5, function()
+		if !(IsValid(self)) then return end 
+		self.AnimTbl_Walk = {ACT_RUN_SCARED} -- Set the walking animations | Put multiple to let the base pick a random animation when it moves
+		self.AnimTbl_Run = {ACT_RUN_SCARED} -- Set the running animations | Put multiple to let the base pick a random animation when it moves
+		self.AnimTbl_MoveToCover = {ACT_RUN_SCARED}
+		self:VJ_TASK_COVER_FROM_ENEMY("TASK_RUN_PATH")
+	end)
+	timer.Simple(10, function()
+		if !(IsValid(self)) then return end
+		self.Behavior = VJ_BEHAVIOR_PASSIVE
+		self.AnimTbl_Walk = {ACT_WALK} -- Set the walking animations | Put multiple to let the base pick a random animation when it moves
+		self.AnimTbl_Run = {ACT_RUN} -- Set the running animations | Put multiple to let the base pick a random animation when it moves
+		self.AnimTbl_MoveToCover = {ACT_RUN}
+	end)
 end
 
 function ENT:CustomOnInitialKilled(dmginfo, hitgroup)

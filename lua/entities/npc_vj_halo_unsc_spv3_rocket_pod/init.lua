@@ -8,7 +8,7 @@ include('shared.lua')
 ENT.HullType = HULL_MEDIUM
 	-- ====Variant Variables==== --
 ENT.Model = {"models/hce/spv3/unsc/pelican/pelican_rocket_pod.mdl"} -- The game will pick a random model from the table when the SNPC is spawned | Add as many as you want
-ENT.StartHealth = 1000
+ENT.StartHealth = 1000 * GetConVarNumber("vj_spv3_HealthModifier")
 	-- ====== Blood-Related Variables ====== --
 ENT.Bleeds = false-- Does the SNPC bleed? (Blood decal, particle, etc.)
 ENT.Immune_Dissolve = true -- Immune to Dissolving | Example: Combine Ball

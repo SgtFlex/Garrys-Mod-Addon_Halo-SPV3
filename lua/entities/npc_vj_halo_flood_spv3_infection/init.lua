@@ -28,7 +28,7 @@ ENT.NextAnyAttackTime_Leap = 2 -- How much time until it can use any attack agai
 ENT.LeapAttackExtraTimers = {0.2,0.6,0.8, 1, 1.2, 1.5, 2} -- Extra leap attack timers | it will run the damage code after the given amount of seconds
 ENT.LeapAttackVelocityForward = -150 -- How much forward force should it apply?
 ENT.LeapAttackVelocityUp = 200 -- How much upward force should it apply?
-ENT.LeapAttackDamage = 5
+ENT.LeapAttackDamage = 10
 ENT.LeapAttackDamageDistance = 30 -- How far does the damage go?
 ENT.HasDeathRagdoll = false -- If set to false, it will not spawn the regular ragdoll of the SNPC
 ENT.PushProps = false -- Should it push props when trying to move?
@@ -149,7 +149,7 @@ function ENT:CustomDeathAnimationCode(dmginfo,hitgroup) //Perhaps giving errors 
 		if (IsValid(self) && (GetConVarNumber("vj_spv3_InfFormsExplode")==1 and self.HitShield == false)) then
 			self.BlastInfo = DamageInfo()
 			self.BlastInfo:SetDamageType(DMG_SLASH)
-			self.BlastInfo:SetDamage(5 * GetConVarNumber("vj_spv3_damageModifier"))
+			self.BlastInfo:SetDamage(self.LeapAttackDamage * GetConVarNumber("vj_spv3_damageModifier"))
 			self.BlastInfo:SetDamagePosition(self.vector)
 			if (IsValid(self.inflictor)) then
 				self.BlastInfo:SetInflictor(self.inflictor)
@@ -204,7 +204,7 @@ function ENT:CustomOnLeapAttack_AfterChecks(TheHitEntity)
 		if (GetConVarNumber("vj_spv3_InfFormsExplode")==0) then
 			TheHitEntity:TakeDamage(self.LeapAttackDamage, self, self)
 		end
-		self:TakeDamage(5, TheHitEntity, TheHitEntity)
+		self:TakeDamage(self.LeapAttackDamage, TheHitEntity, TheHitEntity)
 		self.HitShield = true
 		return
 	end
@@ -403,7 +403,7 @@ function ENT:Latch()
 	timer.Create("Damage"..self:GetCreationID(), 0.5, 0, function()
 		if (IsValid(self)) then
 			if (IsValid(self.AttachedTo) and self.Dead==false) then
-				self.AttachedTo:TakeDamage(1, self, self)
+				self.AttachedTo:TakeDamage((self.LeapAttackDamage * GetConVarNumber("vj_spv3_DamageModifier"))/5, self, self)
 			else
 				timer.Destroy("Damage"..self:GetCreationID())
 			end
@@ -414,6 +414,7 @@ end
 function ENT:Unlatch()
 	timer.Destroy("Damage"..self:GetCreationID())
 	table.RemoveByValue(self.AttachedTo.AttachedInfectForms, self)
+	self.AttachedTo = nil
 	self:FollowBone(NULL, 0)
 	self:SetAngles(Angle(0,0,0))
 	self:SetMoveType(3)
@@ -422,7 +423,7 @@ function ENT:Unlatch()
 	self:GetPhysicsObject():SetVelocity(velocity)
 	self:SetAngles(Angle(self:GetAngles().x, velocity:Angle().y, self:GetAngles().z))
 	self:VJ_ACT_PLAYACTIVITY("Melee_1",true,1.3,false)
-	self.AttachedTo = nil	
+	
 end
 
 //Experimental, makes it harder with NPCs with full-auto guns to negate a swarm

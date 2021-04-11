@@ -312,7 +312,7 @@ function ENT:CustomOnInitialize()
 	self:SetCollisionBounds(Vector(15, 15, 70), Vector(-15, -15, 0))
 	self:SetColor(Color(math.random(self.ColorRange[1].x, self.ColorRange[2].x),math.random(self.ColorRange[1].y, self.ColorRange[2].y) ,math.random(self.ColorRange[1].z, self.ColorRange[2].z)))
 	self.StartHealth = self.StartHealth * GetConVarNumber("vj_spv3_HealthModifier")
-	self.ArmorHealth = self.ArmorHealth * GetConVarNumber("vj_spv3_ArmorModifier")
+	self.ArmorHealth = self.ArmorHealth * GetConVarNumber("vj_spv3_ShieldModifier")
 	self.ArmorCurrentHealth = self.ArmorHealth
 	self.CurrentHealth = self.StartHealth
 	self.ArmorActivated = true

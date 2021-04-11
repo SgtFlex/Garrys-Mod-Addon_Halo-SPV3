@@ -190,7 +190,7 @@ function ENT:CustomOnInitialize()
 		self.ShieldActivated = true
 	end
 	self.StartHealth = self.StartHealth * GetConVarNumber("vj_spv3_HealthModifier")
-	self.ShieldCurrentHealth = self.ShieldHealth
+	self.ShieldCurrentHealth = self.ShieldHealth * GetConVarNumber("vj_spv3_ShieldModifier")
 	self.CurrentHealth = self.StartHealth
 	self:SetHealth(self.ShieldHealth + self.StartHealth)
 end
