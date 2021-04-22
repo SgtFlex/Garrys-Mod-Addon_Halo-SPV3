@@ -10,6 +10,7 @@ ENT.Model = {"models/hce/spv3/cov/jackal/jackal.mdl"} -- The game will pick a ra
 ENT.StartHealth = 50
 ENT.ShieldHealth = 125 * GetConVarNumber("vj_spv3_ShieldModifier")
 ENT.ShieldCurrentHealth = ENT.ShieldHealth
+ENT.ShieldDelay = 6
 //125 shields
 ENT.HullType = HULL_MEDIUM
 ENT.bodyGroupTable = {
@@ -126,6 +127,7 @@ function ENT:CustomOnThink_AIEnabled()
 end
 ---------------------------------------------------------------------------------------------------------------------------------------------
 ENT.EvadeCooldown = 0
+ENT.ShieldActivated = true
 function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 	if (dmginfo:GetDamageType()==DMG_BLAST) then
 		dmginfo:ScaleDamage(3.5)
@@ -144,7 +146,12 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 		dmginfo:ScaleDamage(GetConVarNumber("vj_spv3_NPCTakeDamageModifier"))
 	end
 	if hitgroup == 11 then
-		self.ShieldCurrentHealth = self.ShieldCurrentHealth - dmginfo:GetDamage()
+		if (dmginfo:GetDamageType()==DMG_PLASMA or dmginfo:GetDamageType()==DMG_BURN) then
+			self.ShieldCurrentHealth = self.ShieldCurrentHealth - dmginfo:GetDamage() * 2
+		else
+			self.ShieldCurrentHealth = self.ShieldCurrentHealth - dmginfo:GetDamage()
+		end
+			
 		dmginfo:ScaleDamage(0)
 		ParticleEffect("hcea_shield_impact", dmginfo:GetDamagePosition(), dmginfo:GetDamageForce():Angle(), self)
 	end
@@ -156,14 +163,12 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 			self:FlyingDeath(dmginfo)
 		end
 	end
-	if dmginfo:GetDamageType()==DMG_CLUB && Vector((dmginfo:GetDamagePosition() - self:GetPos()).x, (dmginfo:GetDamagePosition() - self:GetPos()).y, 0):Dot(Vector(self:GetForward().x, self:GetForward().y, 0)) < 0 then
+	if dmginfo:GetAttacker():IsPlayer() && dmginfo:GetDamageType()==DMG_CLUB && Vector((dmginfo:GetDamagePosition() - self:GetPos()).x, (dmginfo:GetDamagePosition() - self:GetPos()).y, 0):Dot(Vector(self:GetForward().x, self:GetForward().y, 0)) < 0 then
 		self.AlertFriendsOnDeath = false
 		self:TakeDamage(self:Health(), dmginfo:GetAttacker(), dmginfo:GetInflictor())
 	end
-end
-
-function ENT:CustomOnTakeDamage_AfterDamage(dmginfo,hitgroup)
-	if self.ShieldCurrentHealth <= 0 then
+	if self.ShieldCurrentHealth <= 0 and self.ShieldActivated==true then
+		self.ShieldActivated = false
 		self:SetHitboxSet("noShield")
 		self:SetBodygroup(1, 0)
 		ParticleEffectAttach("hcea_shield_disperse",PATTACH_POINT_FOLLOW,self,self:LookupAttachment("origin"))
@@ -171,8 +176,20 @@ function ENT:CustomOnTakeDamage_AfterDamage(dmginfo,hitgroup)
 			self:Flee()
 		end
 	end
+	if (timer.Exists("ShieldDelay"..self:GetCreationID())) then
+		timer.Adjust("ShieldDelay"..self:GetCreationID(), self.ShieldDelay, 1)
+	else
+		timer.Create("ShieldDelay"..self:GetCreationID(), self.ShieldDelay, 1, function() 
+			if (IsValid(self) and self.ShieldCurrentHealth < self.ShieldHealth) then
+				self.ShieldActivated = true
+				self.ShieldCurrentHealth = self.ShieldHealth
+				self:SetHitboxSet("default")
+				self:SetBodygroup(1, 1)
+				ParticleEffectAttach("hcea_shield_disperse",PATTACH_POINT_FOLLOW,self,self:LookupAttachment("origin"))
+			end
+		end)
+	end
 end
-
 
 function ENT:FlyingDeath(dmginfo)
 	self.HasDeathRagdoll = false

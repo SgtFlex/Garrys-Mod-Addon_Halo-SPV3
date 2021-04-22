@@ -95,8 +95,8 @@ function ENT:CustomOnInitialize()
 		self:SetCollisionGroup(1)
 		timer.Simple(0.05, function() if (IsValid(self)) then self:SetCollisionGroup(13) end end)
 	end
-	self.RadiusDamage = 5 * GetConVarNumber("vj_sent_sentinelDamageModifier") -- How much damage should it deal? Remember this is a radius damage, therefore it will do less damage the farther away the entity is from its enemy
-	self.DirectDamage = 3 * GetConVarNumber("vj_sent_sentinelDamageModifier")-- How much damage should it do when it hits something
+	self.RadiusDamage = 5 * GetConVarNumber("vj_spv3_DamageModifier") -- How much damage should it deal? Remember this is a radius damage, therefore it will do less damage the farther away the entity is from its enemy
+	self.DirectDamage = 3 * GetConVarNumber("vj_spv3_DamageModifier")-- How much damage should it do when it hits something
 	self:AddEffects(EF_NODRAW)
 	light = ents.Create("env_sprite")
 	light:SetKeyValue("model","orangecore2.vmt")

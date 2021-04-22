@@ -6,11 +6,11 @@ include("shared.lua")
 	without the prior written consent of the author, unless otherwise indicated for stand-alone materials.
 -----------------------------------------------*/
 ENT.Model = {"models/spitball_small.mdl"} -- The models it should spawn with | Picks a random one from the table
-ENT.DoesRadiusDamage = true -- Should it do a blast damage when it hits something?
+ENT.DoesRadiusDamage = false -- Should it do a blast damage when it hits something?
 ENT.RadiusDamageRadius = 1 -- How far the damage go? The farther away it's from its enemy, the less damage it will do | Counted in world units
 ENT.RadiusDamage = 35 -- How much damage should it deal? Remember this is a radius damage, therefore it will do less damage the farther away the entity is from its enemy
 ENT.RadiusDamageUseRealisticRadius = true -- Should the damage decrease the farther away the enemy is from the position that the projectile hit?
-ENT.RadiusDamageType = DMG_PLASMA -- Damage type
+ENT.RadiusDamageType = DMG_BURN -- Damage type
 ENT.ShakeWorldOnDeath = false -- Should the world shake when the projectile hits something?
 ENT.DecalTbl_DeathDecals = {"FadingScorch"}
 ENT.SoundTbl_Idle = {"weapons/plasma pistol/charged loop/charged loop.wav"}
@@ -20,6 +20,9 @@ ENT.SoundTbl_OnCollide = {
 	"weapons/plasma pistol/charged impact/charged impact (3).ogg",
 	"weapons/plasma pistol/charged impact/charged impact (4).ogg",
 }
+ENT.DoesDirectDamage = true -- Should it do a direct damage when it hits something?
+ENT.DirectDamage = 35 -- How much damage should it do when it hits something
+ENT.DirectDamageType = DMG_BURN -- Damage type
 ---------------------------------------------------------------------------------------------------------------------------------------------
 function ENT:CustomOnInitialize()
 	self.RadiusDamage = self.RadiusDamage * GetConVarNumber("vj_spv3_damageModifier") -- How much damage should it deal? Remember this is a radius damage, therefore it will do less damage the farther away the entity is from its enemy

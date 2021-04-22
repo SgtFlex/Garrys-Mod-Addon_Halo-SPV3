@@ -24,7 +24,10 @@ ENT.HasBloodParticle = true -- Does it spawn a particle when damaged?
 ENT.Immune_Dissolve = true -- Immune to Dissolving | Example: Combine Ball
 ENT.Immune_AcidPoisonRadiation = true -- Immune to Acid, Poison and Radiation
 ENT.HasBloodPool = false -- Does it have a blood pool?
-
+ENT.EntitiesToNoCollide = //Player no collide does affect how it behaves, even though the wiki states it doesn't
+{
+	"npc_vj_halo_flood_spv3_infection",
+}
 	-- Relationships ---------------------------------------------------------------------------------------------------------------------------------------------
 ENT.VJ_NPC_Class = {"CLASS_PARASITE"} -- NPCs with the same class with be allied to each other
 ENT.HasDeathAnimation = true -- Does it play an animation when it dies?

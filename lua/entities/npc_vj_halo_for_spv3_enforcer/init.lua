@@ -20,8 +20,8 @@ ENT.defensiveStats = {
 	shieldRegen = 1,
 	shieldSpeed = .1,
 	shieldDelay = 5,
-	hullMax = 225 * GetConVarNumber("vj_spv3_HealthModifier"),
-	hullCurrent = 225 * GetConVarNumber("vj_spv3_HealthModifier"),
+	hullMax = 600 * GetConVarNumber("vj_spv3_HealthModifier"),
+	hullCurrent = 600 * GetConVarNumber("vj_spv3_HealthModifier"),
 	hullArmor = 25,
 }
 //270 shields (attached)
@@ -66,6 +66,9 @@ ENT.timeDeath = false
 ENT.uniqueId = ""
 --Variant Code--
 ENT.TurningSpeed = 1
+ENT.TurningUseAllAxis = true -- If set to true, angles will not be restricted to y-axis, it will change all axes (plural axis)
+ENT.HasPoseParameterLooking = false -- Does it look at its enemy using poseparameters?
+
 ENT.spriteTrail = {
 	Object = "",
 	startWidth = 150,
@@ -84,7 +87,7 @@ ENT.flyVars = {
 	minTravelTime = 3,
 	maxTravelTime = 10
 }
-ENT.shield = false
+ENT.shield = true
 ENT.countAttacks = 0
 ENT.attackSequence = 0
 ENT.altRocket = false
@@ -152,27 +155,26 @@ ENT.limbs = {
 function ENT:VariantCode()
 	if (self.shield) then
 		self:CreateShield()
-	self:SetCollisionBounds(Vector(100, 100, 100), Vector(-100, -100, -100))
-
 	end
+	self:SetCollisionBounds(Vector(80, 100, 70), Vector(-100, -100, -80))
 end
 
 
 ENT.leftShield=""
 ENT.rightShield=""
 function ENT:CreateShield()
-	-- self.leftShield = ents.Create("obj_vj_sent_shield")
-	-- self.leftShield:SetModel( "models/sentinels/enf_lshield.mdl" )
-	-- self.leftShield:SetMoveParent(self)
-	-- self.leftShield:SetPos(self:GetShootPos() + self:GetRight()*-27 + self:GetForward()*150 + Vector(0, 0, -20))
-	-- self.leftShield:SetOwner(self)
-	-- self.leftShield:Spawn()
-	-- self.rightShield = ents.Create("obj_vj_sent_shield")
-	-- self.rightShield:SetModel( "models/sentinels/enf_rshield.mdl" )
-	-- self.rightShield:SetMoveParent(self)
-	-- self.rightShield:SetPos(self:GetShootPos() + self:GetRight()*27 + self:GetForward()*150 + Vector(0, 0, -20))
-	-- self.rightShield:SetOwner(self)
-	-- self.rightShield:Spawn()
+	self.leftShield = ents.Create("obj_vj_spv3_enforcer_shield")
+	self.leftShield:SetModel( "models/sentinels/enf_lshield.mdl" )
+	self.leftShield:SetMoveParent(self)
+	self.leftShield:SetPos(self:GetShootPos() + self:GetRight()*-27 + self:GetForward()*110 + Vector(0, 0, -20))
+	self.leftShield:SetOwner(self)
+	self.leftShield:Spawn()
+	self.rightShield = ents.Create("obj_vj_spv3_enforcer_shield")
+	self.rightShield:SetModel( "models/sentinels/enf_rshield.mdl" )
+	self.rightShield:SetMoveParent(self)
+	self.rightShield:SetPos(self:GetShootPos() + self:GetRight()*27 + self:GetForward()*110 + Vector(0, 0, -20))
+	self.rightShield:SetOwner(self)
+	self.rightShield:Spawn()
 end
 
 

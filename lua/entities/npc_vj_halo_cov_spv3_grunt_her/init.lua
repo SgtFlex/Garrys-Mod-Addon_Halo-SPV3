@@ -13,6 +13,6 @@ ENT.bodyGroupTable = {
 	1,
 	1,
 }
-ENT.StartHealth = 35
+ENT.StartHealth = 75
 -- ENT.ShieldHealth = 0
 ENT.ExtraShotCount = 1

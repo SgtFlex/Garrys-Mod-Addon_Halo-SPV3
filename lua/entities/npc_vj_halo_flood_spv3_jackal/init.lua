@@ -26,7 +26,10 @@ ENT.HasDeathAnimation = true -- Does it play an animation when it dies?
 ENT.AnimTbl_Death = {} -- Death Animations
 ENT.DeathAnimationTime = 1.65 -- Time until the SNPC spawns its corpse and gets removed
 ENT.DisableDeathAnimationSCHED = true -- If set to true, it will disable the setschedule code
-
+ENT.EntitiesToNoCollide = //Player no collide does affect how it behaves, even though the wiki states it doesn't
+{
+	"npc_vj_halo_flood_spv3_infection",
+}
 	-- Melee Attack ---------------------------------------------------------------------------------------------------------------------------------------------
 
 ENT.HasMeleeAttack = true -- Should the SNPC have a melee attack?

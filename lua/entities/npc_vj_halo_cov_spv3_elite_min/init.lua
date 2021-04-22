@@ -31,7 +31,10 @@ ENT.HasBloodParticle = true -- Does it spawn a particle when damaged?
 
 ENT.Immune_Dissolve = true -- Immune to Dissolving | Example: Combine Ball
 ENT.Immune_AcidPoisonRadiation = true -- Immune to Acid, Poison and Radiation
-
+ENT.EntitiesToNoCollide = //Player no collide does affect how it behaves, even though the wiki states it doesn't
+{
+	"npc_vj_halo_flood_spv3_infection",
+}
 	-- Relationships ---------------------------------------------------------------------------------------------------------------------------------------------
 ENT.HasAllies = true -- Put to false if you want it not to have any allies
 ENT.VJ_NPC_Class = {"CLASS_COV"} -- NPCs with the same class with be allied to each other
@@ -324,12 +327,12 @@ function ENT:CustomOnInitialize()
 
 end
 
-function ENT:CustomOnMeleeAttack_AfterChecks(hitEnt)
-	if (hitEnt.MeleeAttacking==true) then
-		hitEnt:SetAngles(hitEnt:GetAngles() + Angle(0,180,0))
-	end
-	return false 
-end -- return true to disable the attack and move onto the next entity!
+-- function ENT:CustomOnMeleeAttack_AfterChecks(hitEnt)
+-- 	if (hitEnt.MeleeAttacking==true) then
+-- 		hitEnt:SetAngles(hitEnt:GetAngles() + Angle(0,180,0))
+-- 	end
+-- 	return false 
+-- end -- return true to disable the attack and move onto the next entity!
 ---------------------------------------------------------------------------------------------------------------------------------------------
 -- function ENT:CustomOnThink_AIEnabled()
 -- 	-- Shields --
@@ -462,24 +465,20 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 	if self.ShieldActivated == true then
 		self.Bleeds=false
 		ParticleEffect("hcea_shield_impact", dmginfo:GetDamagePosition(), dmginfo:GetDamageForce():Angle(), self)
-		if (dmginfo:GetDamageType()==DMG_PLASMA) then
-			self.ShieldCurrentHealth = (self.ShieldCurrentHealth - (dmginfo:GetDamage()*3))
+		if (dmginfo:GetDamageType()==DMG_PLASMA or dmginfo:GetDamageType()==DMG_BURN) then
+			self.ShieldCurrentHealth = math.Clamp((self.ShieldCurrentHealth - (dmginfo:GetDamage()*2)), 0, (self.ShieldCurrentHealth - (dmginfo:GetDamage()*2)))
 		else
-			self.ShieldCurrentHealth = (self.ShieldCurrentHealth - dmginfo:GetDamage())
+			self.ShieldCurrentHealth = math.Clamp((self.ShieldCurrentHealth - (dmginfo:GetDamage())), 0, (self.ShieldCurrentHealth - (dmginfo:GetDamage())))
 		end
 	else
 		self.CurrentHealth = self.CurrentHealth - dmginfo:GetDamage()
 	end
-
 	if (dmginfo:GetDamage() >= self:Health()) then
 		if (dmginfo:GetDamageType()==DMG_BLAST or dmginfo:GetDamageType()==DMG_CLUB) then
 			self:FlyingDeath(dmginfo)
 		end
 	end
-	-- print("Type: "..tostring(dmginfo:GetDamageType()))
-	-- print("Position: "..tostring(dmginfo:GetDamagePosition()))
-	-- print("Calculation: "..tostring(Vector((dmginfo:GetDamagePosition() - self:GetPos()).x, (dmginfo:GetDamagePosition() - self:GetPos()).y, 0):Dot(Vector(self:GetForward().x, self:GetForward().y, 0))))
-	if dmginfo:GetDamageType()==DMG_CLUB && Vector((dmginfo:GetDamagePosition() - self:GetPos()).x, (dmginfo:GetDamagePosition() - self:GetPos()).y, 0):Dot(Vector(self:GetForward().x, self:GetForward().y, 0)) < 0 then
+	if dmginfo:GetAttacker():IsPlayer() && dmginfo:GetDamageType()==DMG_CLUB && Vector((dmginfo:GetDamagePosition() - self:GetPos()).x, (dmginfo:GetDamagePosition() - self:GetPos()).y, 0):Dot(Vector(self:GetForward().x, self:GetForward().y, 0)) < 0 then
 		self.AlertFriendsOnDeath = false
 		self:TakeDamage(self:Health(), dmginfo:GetAttacker(), dmginfo:GetInflictor())
 	end

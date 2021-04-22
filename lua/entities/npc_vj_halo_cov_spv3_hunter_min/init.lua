@@ -290,14 +290,12 @@ end
 function ENT:CustomOnAcceptInput(key,activator,caller,data)
 	if key == "Step" then
 		self:EmitSound("hunter/run/walk"..math.random(1,6)..".ogg", 80, 90, 1)
-	
+		self:EmitSound("hunter/standunarmedmovefront/hunter_run_"..math.random(1,8)..".ogg", 80, 90, 1)
 	elseif key == "Melee1" then
 		self:EmitSound("hunter/unarmed_melee/hunter_shield_swing_"..math.random(1,3)..".ogg", 80, 100, 1)
 		self:EmitSound("hunter/melee/melee"..math.random(5,28)..".ogg", 80, 100, 1)
-		
 	elseif key == "Hit" then
 		self:MeleeAttackCode()
-	
 	end
 end
 ENT.HunterBro = nil

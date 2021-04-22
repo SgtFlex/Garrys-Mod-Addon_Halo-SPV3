@@ -177,12 +177,12 @@ function ENT:FindSeq(seq)
 	return self:GetSequenceActivity(self:LookupSequence(seq))
 end
 
-function ENT:CustomOnMeleeAttack_AfterChecks(hitEnt)
-	if (hitEnt.MeleeAttacking==true) then
-		hitEnt:SetAngles(hitEnt:GetAngles() + Angle(0,180,0))
-	end
-	return false 
-end -- return true to disable the attack and move onto the next entity!
+-- function ENT:CustomOnMeleeAttack_AfterChecks(hitEnt)
+-- 	if (hitEnt.MeleeAttacking==true) then
+-- 		hitEnt:SetAngles(hitEnt:GetAngles() + Angle(0,180,0))
+-- 	end
+-- 	return false 
+-- end -- return true to disable the attack and move onto the next entity!
 
 ENT.SoundTbl_OnKilledEnemy = {
 	"brute/killEnemy/killEnemy (1).ogg",
@@ -410,7 +410,7 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 			self:FlyingDeath(dmginfo)
 		end
 	end
-	if dmginfo:GetDamageType()==DMG_CLUB && Vector((dmginfo:GetDamagePosition() - self:GetPos()).x, (dmginfo:GetDamagePosition() - self:GetPos()).y, 0):Dot(Vector(self:GetForward().x, self:GetForward().y, 0)) < 0 then
+	if dmginfo:GetAttacker():IsPlayer() && dmginfo:GetDamageType()==DMG_CLUB && Vector((dmginfo:GetDamagePosition() - self:GetPos()).x, (dmginfo:GetDamagePosition() - self:GetPos()).y, 0):Dot(Vector(self:GetForward().x, self:GetForward().y, 0)) < 0 then
 		self.AlertFriendsOnDeath = false
 		self:TakeDamage(self:Health(), dmginfo:GetAttacker(), dmginfo:GetInflictor())
 	end

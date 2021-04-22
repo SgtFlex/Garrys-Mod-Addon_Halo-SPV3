@@ -28,6 +28,10 @@ ENT.HasBloodPool = true -- Does it have a blood pool?
 ENT.VJ_NPC_Class = {"CLASS_PARASITE"} -- NPCs with the same class with be allied to each other
 ENT.HasDeathAnimation = true -- Does it play an animation when it dies?
 ENT.AnimTbl_Death = {"Die_1", "Die_2", "Die_3", "Die_4"} -- Death Animations
+ENT.EntitiesToNoCollide = //Player no collide does affect how it behaves, even though the wiki states it doesn't
+{
+	"npc_vj_halo_flood_spv3_infection",
+}
 	-- Melee Attack ---------------------------------------------------------------------------------------------------------------------------------------------
 ENT.HasMeleeAttack = true -- Should the SNPC have a melee attack?
 ENT.MeleeAttackDistance = 70
@@ -166,6 +170,7 @@ ENT.bodyParts = {
 ENT.bodyGroupTable = {0, 1, 1, 1, 1}
 ---------------------------------------------------------------------------------------------------------------------------------------------
 ENT.SpawnedFromInf=false
+ENT.ShieldActivated = true
 function ENT:CustomOnInitialize()
 	self:SetSkin(self.Skin)
 	timer.Simple(0.01, function() 
@@ -184,13 +189,14 @@ function ENT:CustomOnInitialize()
 	if (self.SpawnedFromInf==false) then
 		if (math.random(0,100) < GetConVarNumber("vj_spv3_floodEliteShield")) then
 			self.ShieldHealth = self.ShieldHealth * GetConVarNumber("vj_spv3_ShieldModifier")
-			self.ShieldActivated = true
+			self.ShieldCurrentHealth = self.ShieldHealth
+		else
+			self.ShieldHealth = 0
+			self.ShieldCurrentHealth = self.ShieldHealth
+			self.ShieldActivated = false
 		end
-	else
-		self.ShieldActivated = true
 	end
 	self.StartHealth = self.StartHealth * GetConVarNumber("vj_spv3_HealthModifier")
-	self.ShieldCurrentHealth = self.ShieldHealth * GetConVarNumber("vj_spv3_ShieldModifier")
 	self.CurrentHealth = self.StartHealth
 	self:SetHealth(self.ShieldHealth + self.StartHealth)
 end
@@ -247,10 +253,10 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 	if self.ShieldActivated == true then
 		self.Bleeds=false
 		ParticleEffect("hcea_shield_impact", dmginfo:GetDamagePosition(), dmginfo:GetDamageForce():Angle(), self)
-		if (dmginfo:GetDamageType()==DMG_PLASMA) then
-			self.ShieldCurrentHealth = (self.ShieldCurrentHealth - (dmginfo:GetDamage()*3))
+		if (dmginfo:GetDamageType()==DMG_PLASMA or dmginfo:GetDamageType()==DMG_BURN) then
+			self.ShieldCurrentHealth = math.Clamp((self.ShieldCurrentHealth - (dmginfo:GetDamage()*2)), 0, (self.ShieldCurrentHealth - (dmginfo:GetDamage()*2)))
 		else
-			self.ShieldCurrentHealth = (self.ShieldCurrentHealth - dmginfo:GetDamage())
+			self.ShieldCurrentHealth = math.Clamp((self.ShieldCurrentHealth - (dmginfo:GetDamage())), 0, (self.ShieldCurrentHealth - (dmginfo:GetDamage())))
 		end
 	else
 		self.CurrentHealth = self.CurrentHealth - dmginfo:GetDamage()

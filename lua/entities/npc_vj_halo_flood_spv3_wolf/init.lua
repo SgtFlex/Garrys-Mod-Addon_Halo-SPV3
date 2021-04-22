@@ -20,6 +20,10 @@ ENT.HasDeathAnimation = true -- Does it play an animation when it dies?
 ENT.AnimTbl_Death = {"Die_Front", "Die_Left", "Die_Right"} -- Death Animations
 	-- Relationships ---------------------------------------------------------------------------------------------------------------------------------------------
 ENT.VJ_NPC_Class = {"CLASS_PARASITE"} -- NPCs with the same class with be allied to each other
+ENT.EntitiesToNoCollide = //Player no collide does affect how it behaves, even though the wiki states it doesn't
+{
+	"npc_vj_halo_flood_spv3_infection",
+}
 	-- Melee Attack ---------------------------------------------------------------------------------------------------------------------------------------------
 ENT.HasMeleeAttack = true -- Should the SNPC have a melee attack?
 ENT.MeleeAttackDamage = 40
