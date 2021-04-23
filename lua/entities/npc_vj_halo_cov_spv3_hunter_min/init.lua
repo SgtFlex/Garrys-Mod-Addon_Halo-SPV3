@@ -149,32 +149,33 @@ function ENT:SpawnLights() //Spawn any light sprites around the sentinel
 end
 ---------------------------------------------------------------------------------------------------------------------------------------------
 function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
-	if (dmginfo:GetDamageType()==DMG_BLAST) then
-		dmginfo:ScaleDamage(3.5)
-	end
-	
 	if (dmginfo:GetAttacker():IsNPC()) then
 		dmginfo:ScaleDamage(GetConVarNumber("vj_spv3_NPCTakeDamageModifier"))
 	end
 	if (dmginfo:GetDamageType()==DMG_BLAST) then
-		dmginfo:SetMaxDamage(10)
-		dmginfo:SetDamage(10)
-		dmginfo:SetDamageBonus(0)
-		if (dmginfo:GetDamage() >= 10) then
-			dmginfo:SetDamage(self:Health())
-		end
-	elseif (hitgroup != 4) then
+		dmginfo:ScaleDamage(3.5)
+		-- dmginfo:SetMaxDamage(10)
+		-- dmginfo:SetDamage(10)
+		-- dmginfo:SetDamageBonus(0)
+		-- if (dmginfo:GetDamage() >= 10) then
+		-- 	dmginfo:SetDamage(self:Health())
+		-- end
+	end
+	if (hitgroup != 12 and !dmginfo:GetDamageType()==DMG_BLAST) then
 		dmginfo:ScaleDamage(0)
 		self:EmitSound("hunter/hard_metal_thick_cov_hunter/hard_metal_thick_cov_hunter"..math.random(1,4)..".ogg", 80, 100, 1)
+	end
+	if (hitgroup == 12 and dmginfo:GetDamage() >= GetConVarNumber("vj_spv3_PrecisionThreshold")) then
+		dmginfo:ScaleDamage(5)
 	end
 	if (dmginfo:GetDamage() >= self:Health()) then
 		if (dmginfo:GetDamageType()==DMG_BLAST) then
 			self:FlyingDeath(dmginfo)
 		end
 	end
-	if (dmginfo:GetDamageType()!=DMG_BLAST and dmginfo:GetDamageForce():Length()>=5000) then
-		dmginfo:SetDamage(5)
-	end
+	-- if (dmginfo:GetDamageType()!=DMG_BLAST and dmginfo:GetDamageForce():Length()>=5000) then
+	-- 	dmginfo:SetDamage(5)
+	-- end
 end
 
 function ENT:FlyingDeath(dmginfo)

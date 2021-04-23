@@ -355,7 +355,7 @@ ENT.SoundTbl_Transform = {
 }
 
 ENT.bodyParts = {
-	Head = {Health = 35, Bodygroup = "Head", Removed = false},
+	Head = {Health = GetConVarNumber("vj_spv3_PrecisionThreshold"), Bodygroup = "Head", Removed = false},
 }
 ---------------------------------------------------------------------------------------------------------------------------------------------
 function ENT:CustomOnAcceptInput(key,activator,caller,data)
@@ -437,7 +437,7 @@ function ENT:CustomOnTakeDamage_AfterDamage(dmginfo,hitgroup)
 		self:Berserk()
 		
 	end
-	if (hitgroup==500 and self.bodyParts["Head"]["Removed"]==false) then
+	if (hitgroup==500 and dmginfo:GetDamage()>=GetConVar("vj_spv3_PrecisionThreshold"):GetInt() and self.bodyParts["Head"]["Removed"]==false) then
 		self.bodyParts["Head"]["Health"] = self.bodyParts["Head"]["Health"] - dmginfo:GetDamage()
 		if (self.bodyParts["Head"]["Health"] <= 0) then
 			self.bodyParts["Head"]["Removed"]=true

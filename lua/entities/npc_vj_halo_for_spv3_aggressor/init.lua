@@ -48,7 +48,7 @@ ENT.defensiveStats = {
 	hullCurrent = 25,
 	hullArmor = 10,
 }
-ENT.StartHealth = ENT.defensiveStats["hullMax"] + ENT.defensiveStats["shieldMax"]
+ENT.StartHealth = (ENT.defensiveStats["hullMax"] * GetConVarNumber("vj_spv3_HealthModifier")) + (ENT.defensiveStats["shieldMax"] * GetConVarNumber("vj_spv3_ShieldModifier"))
 ENT.attackStats = {
 	damage = 90,
 	beamDuration = 1.5,
@@ -538,8 +538,8 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 	//Above lines only pertain to shield FX
 
 	if (self.defensiveStats["shieldCurrent"] > 0) && !(self:Health() > self.defensiveStats["shieldMax"]+self.defensiveStats["hullMax"]) then
-		if (dmginfo:GetDamageType()==DMG_PLASMA) then
-			self.defensiveStats["shieldCurrent"] = math.Clamp(self.defensiveStats["shieldCurrent"] - (dmginfo:GetDamage()*3), 0, self.defensiveStats["shieldMax"])
+		if (dmginfo:GetDamageType()==DMG_PLASMA or dmginfo:GetDamageType()==BURN) then
+			self.defensiveStats["shieldCurrent"] = math.Clamp(self.defensiveStats["shieldCurrent"] - (dmginfo:GetDamage()*2), 0, self.defensiveStats["shieldMax"])
 		else
 			self.defensiveStats["shieldCurrent"] = math.Clamp(self.defensiveStats["shieldCurrent"] - dmginfo:GetDamage(), 0, self.defensiveStats["shieldMax"])
 		end

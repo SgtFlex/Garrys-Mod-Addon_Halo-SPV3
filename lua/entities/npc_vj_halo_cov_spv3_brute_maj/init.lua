@@ -24,7 +24,7 @@ ENT.ExtraShotCount = 2
 ENT.modelColor = Color(60,10,10)
 
 ENT.bodyParts = {
-	Head = {Health = 55, Bodygroup = "Head", Removed = false},
+	Head = {Health = GetConVarNumber("vj_spv3_PrecisionThreshold")*2, Bodygroup = "Head", Removed = false},
 }
 ENT.UNSCWeps = {
 	"weapon_vj_unsc_spv3_br",

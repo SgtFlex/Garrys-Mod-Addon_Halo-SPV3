@@ -353,18 +353,14 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 			self.EvadeCooldown = CurTime() + 4
 		end
 	end
-	if (hitgroup == 504 and dmginfo:GetDamage() >= 10) then
+	if (hitgroup == 504 and dmginfo:GetDamage() >= GetConVarNumber("vj_spv3_PrecisionThreshold")) then
 		dmginfo:SetDamage(self:Health())
 	end
 	if (dmginfo:GetDamageType()==DMG_BLAST) then
 		dmginfo:ScaleDamage(3.5)
 	end
 	if self.ArmorActivated == true then
-		if (dmginfo:GetDamageType()==DMG_PLASMA) then
-			self.ArmorCurrentHealth = (self.ArmorCurrentHealth - (dmginfo:GetDamage()*3))
-		else
-			self.ArmorCurrentHealth = (self.ArmorCurrentHealth - dmginfo:GetDamage())
-		end
+		self.ArmorCurrentHealth = (self.ArmorCurrentHealth - dmginfo:GetDamage())
 	else
 		self.CurrentHealth = self.CurrentHealth - dmginfo:GetDamage()
 	end
