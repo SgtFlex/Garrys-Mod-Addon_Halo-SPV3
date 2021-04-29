@@ -538,7 +538,7 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 	//Above lines only pertain to shield FX
 
 	if (self.defensiveStats["shieldCurrent"] > 0) && !(self:Health() > self.defensiveStats["shieldMax"]+self.defensiveStats["hullMax"]) then
-		if (dmginfo:GetDamageType()==DMG_PLASMA or dmginfo:GetDamageType()==BURN) then
+		if (dmginfo:GetDamageType()==DMG_PLASMA or dmginfo:GetDamageType()==DMG_BURN or dmginfo:GetDamageType()==DMG_SLOWBURN) then
 			self.defensiveStats["shieldCurrent"] = math.Clamp(self.defensiveStats["shieldCurrent"] - (dmginfo:GetDamage()*2), 0, self.defensiveStats["shieldMax"])
 		else
 			self.defensiveStats["shieldCurrent"] = math.Clamp(self.defensiveStats["shieldCurrent"] - dmginfo:GetDamage(), 0, self.defensiveStats["shieldMax"])

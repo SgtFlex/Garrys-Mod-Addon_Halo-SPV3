@@ -146,7 +146,7 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 		dmginfo:ScaleDamage(GetConVarNumber("vj_spv3_NPCTakeDamageModifier"))
 	end
 	if hitgroup == 11 then
-		if (dmginfo:GetDamageType()==DMG_PLASMA or dmginfo:GetDamageType()==DMG_BURN) then
+		if (dmginfo:GetDamageType()==DMG_PLASMA or dmginfo:GetDamageType()==DMG_BURN or dmginfo:GetDamageType()==DMG_SLOWBURN) then
 			self.ShieldCurrentHealth = self.ShieldCurrentHealth - dmginfo:GetDamage() * 2
 		else
 			self.ShieldCurrentHealth = self.ShieldCurrentHealth - dmginfo:GetDamage()

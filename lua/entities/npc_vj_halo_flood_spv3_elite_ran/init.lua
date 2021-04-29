@@ -270,10 +270,10 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 	if self.ShieldActivated == true then
 		self.Bleeds=false
 		ParticleEffect("hcea_shield_impact", dmginfo:GetDamagePosition(), dmginfo:GetDamageForce():Angle(), self)
-		if (dmginfo:GetDamageType()==DMG_PLASMA) then
-			self.ShieldCurrentHealth = (self.ShieldCurrentHealth - (dmginfo:GetDamage()*3))
+		if (dmginfo:GetDamageType()==DMG_PLASMA or dmginfo:GetDamageType()==DMG_BURN or dmginfo:GetDamageType()==DMG_SLOWBURN) then
+			self.ShieldCurrentHealth = math.Clamp((self.ShieldCurrentHealth - (dmginfo:GetDamage()*2)), 0, (self.ShieldCurrentHealth - (dmginfo:GetDamage()*2)))
 		else
-			self.ShieldCurrentHealth = (self.ShieldCurrentHealth - dmginfo:GetDamage())
+			self.ShieldCurrentHealth = math.Clamp((self.ShieldCurrentHealth - (dmginfo:GetDamage())), 0, (self.ShieldCurrentHealth - (dmginfo:GetDamage())))
 		end
 	else
 		self.CurrentHealth = self.CurrentHealth - dmginfo:GetDamage()

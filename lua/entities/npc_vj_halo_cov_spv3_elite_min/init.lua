@@ -443,6 +443,7 @@ end
 ENT.ShieldDelay = 6
 ENT.EvadeCooldown = 0
 function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
+	print(dmginfo:GetDamageType())
 	if (dmginfo:GetDamageType()==DMG_BLAST) then
 		dmginfo:ScaleDamage(3.5)
 	end
@@ -465,11 +466,9 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 	if self.ShieldActivated == true then
 		self.Bleeds=false
 		ParticleEffect("hcea_shield_impact", dmginfo:GetDamagePosition(), dmginfo:GetDamageForce():Angle(), self)
-		if (dmginfo:GetDamageType()==DMG_PLASMA or dmginfo:GetDamageType()==DMG_BURN) then
-			print("Is Burn or Plasma type")
+		if (dmginfo:GetDamageType()==DMG_PLASMA or dmginfo:GetDamageType()==DMG_BURN or dmginfo:GetDamageType()==DMG_SLOWBURN) then
 			self.ShieldCurrentHealth = math.Clamp((self.ShieldCurrentHealth - (dmginfo:GetDamage()*2)), 0, (self.ShieldCurrentHealth - (dmginfo:GetDamage()*2)))
 		else
-			print("Is something else type")
 			self.ShieldCurrentHealth = math.Clamp((self.ShieldCurrentHealth - (dmginfo:GetDamage())), 0, (self.ShieldCurrentHealth - (dmginfo:GetDamage())))
 		end
 	else
