@@ -6,4 +6,4 @@ SWEP.Primary.Sound				= {"weapons/smg sd/fire/new_specops_smg_1.ogg", "weapons/s
 SWEP.ReloadSound 				= {"weapons/smg sd/reload/reload_full_1.ogg", "weapons/smg sd/reload/reload_full_2.ogg"}
 SWEP.Primary.TracerType 		= "AirboatGunHeavyTracer" -- Tracer type (Examples: AR2)
 SWEP.PrintName					= "SMG SD"
-SWEP.Primary.Damage				= 10  -- Damage
+SWEP.Primary.Damage				= 5  -- Damage
