@@ -330,9 +330,9 @@ function ENT:CustomOnTakeDamage_AfterDamage(dmginfo,hitgroup)
 			local pos, ang = self:GetBonePosition(13)
 			pos = pos + self:GetRight()*35
 			if (self.bodyGroupTable[2]==1) then
-				helmet = self:CreateGibEntity("obj_vj_gib", {"models/hce/spv3/cov/grunt/garbage/minor_mask.mdl"}, {Pos = pos, Ang = ang, Vel = dmginfo:GetDamageForce()*0.3 + Vector(0,0,300)})
+				helmet = self:CreateGibEntity("obj_vj_metal_gib", {"models/hce/spv3/cov/grunt/garbage/minor_mask.mdl"}, {Pos = pos, Ang = ang, Vel = dmginfo:GetDamageForce()*0.3 + Vector(0,0,300), BloodDecal = nil})
 			else
-				helmet = self:CreateGibEntity("obj_vj_gib", {"models/hce/spv3/cov/grunt/garbage/major_mask.mdl"}, {Pos = pos, Ang = ang, Vel = dmginfo:GetDamageForce()*0.3 + Vector(0,0,300)})
+				helmet = self:CreateGibEntity("obj_vj_metal_gib", {"models/hce/spv3/cov/grunt/garbage/major_mask.mdl"}, {Pos = pos, Ang = ang, Vel = dmginfo:GetDamageForce()*0.3 + Vector(0,0,300), BloodDecal = nil})
 			end
 		end
 	end
@@ -347,10 +347,10 @@ function ENT:CustomOnTakeDamage_AfterDamage(dmginfo,hitgroup)
 			local ang = self:GetAttachment(self:LookupAttachment("Backpack"))["Ang"]
 			local backpack = nil
 			if (self.bodyGroupTable[1]==1) then
-				backpack = self:CreateGibEntity("obj_vj_gib", {"models/hce/spv3/cov/grunt/garbage/tank_two.mdl"}, {Pos = pos, Ang = ang, Vel = dmginfo:GetDamageForce()*0.3 + Vector(0,0,300)})
+				backpack = self:CreateGibEntity("obj_vj_metal_gib", {"models/hce/spv3/cov/grunt/garbage/tank_two.mdl"}, {Pos = pos, Ang = ang, Vel = dmginfo:GetDamageForce()*0.3 + Vector(0,0,300)})
 				backpack:SetColor(self:GetColor())
 			else
-				backpack = self:CreateGibEntity("obj_vj_gib", {"models/hce/spv3/cov/grunt/garbage/tank_one.mdl"}, {Pos = pos, Ang = ang, Vel = dmginfo:GetDamageForce()*0.3 + Vector(0,0,300)})
+				backpack = self:CreateGibEntity("obj_vj_metal_gib", {"models/hce/spv3/cov/grunt/garbage/tank_one.mdl"}, {Pos = pos, Ang = ang, Vel = dmginfo:GetDamageForce()*0.3 + Vector(0,0,300)})
 				backpack:SetColor(self:GetColor())
 			end
 			self:Flee()
