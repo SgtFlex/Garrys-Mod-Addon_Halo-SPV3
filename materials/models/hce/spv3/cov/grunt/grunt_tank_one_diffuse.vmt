@@ -1,7 +1,8 @@
 "VertexlitGeneric"
 {
-	"$basetexture" "models/hce/spv3/cov/grunt/grunt_tank_one_diffuse"
+	"$basetexture" "models/hce/spv3/cov/grunt/grunt_tank_one_diffuse1"
 	"$bumpmap" "models/hce/spv3/cov/grunt/grunt_tank_one_normal"
+
 
 	"$normalmapalphaenvmapmask"    "1"
 	"$phong" "1"
@@ -21,4 +22,5 @@
 	
 	"$blendtintbybasealpha" "1"
 	"$blendtintcoloroverbase" "0"
+
 }

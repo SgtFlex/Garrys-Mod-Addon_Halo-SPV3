@@ -22,4 +22,9 @@
 	
 	"$blendtintbybasealpha" "1"
 	"$blendtintcoloroverbase" "0"
+
+	"$detail" "models/hce/spv3/cov/grunt/grunt_skin_detail"
+	"$detailscale" 4
+	"$detailblendfactor" 1
+	"$detailblendmode" 0
 }

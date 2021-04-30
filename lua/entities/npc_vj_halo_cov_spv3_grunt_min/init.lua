@@ -327,6 +327,13 @@ function ENT:CustomOnTakeDamage_AfterDamage(dmginfo,hitgroup)
 			self:VJ_ACT_PLAYACTIVITY("Hit_Head", true, 1, false)
 			self:EmitSound("grunt/shared/grunt_mask_destroyed/grunt_backpack_steam"..math.random(1,3)..".ogg", 80, 100, 1)
 			self:Flee()
+			local pos, ang = self:GetBonePosition(13)
+			pos = pos + self:GetRight()*35
+			if (self.bodyGroupTable[2]==1) then
+				helmet = self:CreateGibEntity("obj_vj_gib", {"models/hce/spv3/cov/grunt/garbage/minor_mask.mdl"}, {Pos = pos, Ang = ang, Vel = dmginfo:GetDamageForce()*0.3 + Vector(0,0,300)})
+			else
+				helmet = self:CreateGibEntity("obj_vj_gib", {"models/hce/spv3/cov/grunt/garbage/major_mask.mdl"}, {Pos = pos, Ang = ang, Vel = dmginfo:GetDamageForce()*0.3 + Vector(0,0,300)})
+			end
 		end
 	end
 	if (hitgroup==508 and self.bodyParts["Body"]["Removed"]==false) then
@@ -336,7 +343,7 @@ function ENT:CustomOnTakeDamage_AfterDamage(dmginfo,hitgroup)
 			self:SetBodygroup(self:FindBodygroupByName(self.bodyParts["Body"]["Bodygroup"]), 0)
 			self:VJ_ACT_PLAYACTIVITY("h_f_gut", true, 1, false)
 			self:EmitSound("grunt/shared/grunt_backpack_destroyed/grunt_backpack_steam"..math.random(1,3)..".ogg", 80, 100, 1)
-			local pos = self:GetAttachment(self:LookupAttachment("Backpack"))["Pos"]
+			local pos = self:GetAttachment(self:LookupAttachment("Backpack"))["Pos"] + self:GetRight()*35 //Corrective position
 			local ang = self:GetAttachment(self:LookupAttachment("Backpack"))["Ang"]
 			local backpack = nil
 			if (self.bodyGroupTable[1]==1) then
