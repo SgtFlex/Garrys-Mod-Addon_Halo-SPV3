@@ -11,7 +11,7 @@ ENT.modelColor = Color(127,63,63)
 
 ENT.bodyGroupTable = {
 	1,
-	0,
+	1,
 }
 ENT.StartHealth = 75
 -- ENT.ShieldHealth = 0

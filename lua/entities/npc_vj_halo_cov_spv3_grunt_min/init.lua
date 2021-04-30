@@ -11,8 +11,8 @@ ENT.HullType = HULL_MEDIUM
 ENT.Model = {"models/hce/spv3/cov/grunt/grunt.mdl"} -- The game will pick a random model from the table when the SNPC is spawned | Add as many as you want
 ENT.modelColor = Color(127,111,63)
 ENT.bodyGroupTable = {
-	0,
-	0,
+	2,
+	1,
 }
 ENT.StartHealth = 45
 -- ENT.ShieldHealth = 0
@@ -229,9 +229,17 @@ self.SoundTbl_WeaponReload = {
 }
 end
 
+ENT.bodyParts = {
+	Head = {Health = GetConVarNumber("vj_spv3_PrecisionThreshold"), Bodygroup = "Head", Removed = false},
+	Body = {Health = GetConVarNumber("vj_spv3_PrecisionThreshold"), Bodygroup = "Body", Removed = false}
+}
+
 
 function ENT:CustomOnInitialize()
 	self:RandomizeTraits()
+	for i=1, #self.bodyGroupTable do
+		self:SetBodygroup(i, self.bodyGroupTable[i])
+	end
 	-- timer.Simple(0.1, function()
 	-- if (self:GetActiveWeapon().HoldType!="pistol") then
 	-- 	self.AnimTbl_WeaponAttack = {ACT_IDLE_RIFLE} -- Animation played when the SNPC does weapon attack
@@ -292,6 +300,7 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 			self.EvadeCooldown = CurTime() + 4
 		end
 	end
+	
 	if (dmginfo:GetAttacker():IsNPC()) then
 		dmginfo:ScaleDamage(GetConVarNumber("vj_spv3_NPCTakeDamageModifier"))
 	end
@@ -306,6 +315,39 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 	if dmginfo:GetAttacker():IsPlayer() && dmginfo:GetDamageType()==DMG_CLUB && Vector((dmginfo:GetDamagePosition() - self:GetPos()).x, (dmginfo:GetDamagePosition() - self:GetPos()).y, 0):Dot(Vector(self:GetForward().x, self:GetForward().y, 0)) < 0 then
 		self.AlertFriendsOnDeath = false
 		self:TakeDamage(self:Health(), dmginfo:GetAttacker(), dmginfo:GetInflictor())
+	end
+end
+
+function ENT:CustomOnTakeDamage_AfterDamage(dmginfo,hitgroup) 
+	if (hitgroup==505 and self.bodyParts["Head"]["Removed"]==false) then
+		self.bodyParts["Head"]["Health"] = self.bodyParts["Head"]["Health"] - dmginfo:GetDamage()
+		if (self.bodyParts["Head"]["Health"] <= 0) then
+			self.bodyParts["Head"]["Removed"]=true
+			self:SetBodygroup(self:FindBodygroupByName(self.bodyParts["Head"]["Bodygroup"]), 0)
+			self:VJ_ACT_PLAYACTIVITY("Hit_Head", true, 1, false)
+			self:EmitSound("grunt/shared/grunt_mask_destroyed/grunt_backpack_steam"..math.random(1,3)..".ogg", 80, 100, 1)
+			self:Flee()
+		end
+	end
+	if (hitgroup==508 and self.bodyParts["Body"]["Removed"]==false) then
+		self.bodyParts["Body"]["Health"] = self.bodyParts["Body"]["Health"] - dmginfo:GetDamage()
+		if (self.bodyParts["Body"]["Health"] <= 0) then
+			self.bodyParts["Body"]["Removed"]=true
+			self:SetBodygroup(self:FindBodygroupByName(self.bodyParts["Body"]["Bodygroup"]), 0)
+			self:VJ_ACT_PLAYACTIVITY("h_f_gut", true, 1, false)
+			self:EmitSound("grunt/shared/grunt_backpack_destroyed/grunt_backpack_steam"..math.random(1,3)..".ogg", 80, 100, 1)
+			local pos = self:GetAttachment(self:LookupAttachment("Backpack"))["Pos"]
+			local ang = self:GetAttachment(self:LookupAttachment("Backpack"))["Ang"]
+			local backpack = nil
+			if (self.bodyGroupTable[1]==1) then
+				backpack = self:CreateGibEntity("obj_vj_gib", {"models/hce/spv3/cov/grunt/garbage/tank_two.mdl"}, {Pos = pos, Ang = ang, Vel = dmginfo:GetDamageForce()*0.3 + Vector(0,0,300)})
+				backpack:SetColor(self:GetColor())
+			else
+				backpack = self:CreateGibEntity("obj_vj_gib", {"models/hce/spv3/cov/grunt/garbage/tank_one.mdl"}, {Pos = pos, Ang = ang, Vel = dmginfo:GetDamageForce()*0.3 + Vector(0,0,300)})
+				backpack:SetColor(self:GetColor())
+			end
+			self:Flee()
+		end
 	end
 end
 
@@ -370,7 +412,69 @@ function ENT:Flee()
 end
 
 ENT.GrenadeAttackVelForward1 = 300 -- Grenade attack velocity up | The first # in math.random
-
+//Brought over from sentinels addon, possibly old/outdated?
+function ENT:CreateGibEntity(Ent,Models,Tbl_Features,CustomCode)
+	// self:CreateGibEntity("prop_ragdoll","",{Pos=self:LocalToWorld(Vector(0,3,0)),Ang=self:GetAngles(),Vel=})
+	if self.AllowedToGib == false then return end
+	Ent = Ent or "prop_ragdoll"
+	if Models == "UseAlien_Small" then Models = {"models/gibs/xenians/sgib_01.mdl","models/gibs/xenians/sgib_02.mdl","models/gibs/xenians/sgib_03.mdl"} end
+	if Models == "UseAlien_Big" then Models = {"models/gibs/xenians/mgib_01.mdl","models/gibs/xenians/mgib_02.mdl","models/gibs/xenians/mgib_03.mdl","models/gibs/xenians/mgib_04.mdl","models/gibs/xenians/mgib_05.mdl","models/gibs/xenians/mgib_06.mdl","models/gibs/xenians/mgib_07.mdl"} end
+	if Models == "UseHuman_Small" then Models = {"models/gibs/humans/sgib_01.mdl","models/gibs/humans/sgib_02.mdl","models/gibs/humans/sgib_03.mdl"} end
+	if Models == "UseHuman_Big" then Models = {"models/gibs/humans/mgib_01.mdl","models/gibs/humans/mgib_02.mdl","models/gibs/humans/mgib_03.mdl","models/gibs/humans/mgib_04.mdl","models/gibs/humans/mgib_05.mdl","models/gibs/humans/mgib_06.mdl","models/gibs/humans/mgib_07.mdl"} end
+	Models = VJ_PICKRANDOMTABLE(Models)
+	local vTbl_BloodType = "Green"
+	if VJ_HasValue({"models/gibs/xenians/sgib_01.mdl","models/gibs/xenians/sgib_02.mdl","models/gibs/xenians/sgib_03.mdl","models/gibs/xenians/mgib_01.mdl","models/gibs/xenians/mgib_02.mdl","models/gibs/xenians/mgib_03.mdl","models/gibs/xenians/mgib_04.mdl","models/gibs/xenians/mgib_05.mdl","models/gibs/xenians/mgib_06.mdl","models/gibs/xenians/mgib_07.mdl"},Models) then
+		vTbl_BloodType = "Yellow"
+	end
+	vTbl_Features = Tbl_Features or {}
+	vTbl_Position = vTbl_Features.Pos or self:GetPos() +self:OBBCenter()
+	vTbl_Angle = vTbl_Features.Ang or Angle(math.Rand(-180,180),math.Rand(-180,180),math.Rand(-180,180)) //self:GetAngles()
+	vTbl_Velocity_NoDamageForce = vTbl_Features.Vel_NoDmgForce or false -- If set to true, it won't add the damage force to the given velocity
+	vTbl_Velocity = vTbl_Features.Vel or Vector(math.Rand(-100,100),math.Rand(-100,100),math.Rand(150,250)) -- Used to set the velocity | "UseDamageForce" = To use the damage's force only
+	if self.LatestDmgInfo != nil then
+		local dmgforce = self.LatestDmgInfo:GetDamageForce()/70
+		if vTbl_Velocity_NoDamageForce == false && vTbl_Features.Vel != "UseDamageForce" then
+			vTbl_Velocity = vTbl_Velocity + dmgforce
+		end
+		if vTbl_Features.Vel == "UseDamageForce" then
+			vTbl_Velocity = dmgforce
+		end
+	end
+	vTbl_AngleVelocity = vTbl_Features.AngVel or Vector(math.Rand(-200,200),math.Rand(-200,200),math.Rand(-200,200)) -- Angle velocity, how fast it rotates as it's flying
+	vTbl_BloodType = vTbl_Features.BloodType or vTbl_BloodType -- Certain entities such as the VJ Gib entity, you can use this to set its gib type
+	vTbl_BloodDecal = vTbl_Features.BloodDecal or "Default" -- The decal it spawns when it collides with something, leave empty to let the base decide
+	vTbl_NoFade = vTbl_Features.NoFade or false -- Should it fade away and delete?
+	vTbl_RemoveOnCorpseDelete = vTbl_Features.RemoveOnCorpseDelete or false -- Should the entity get removed if the corpse is removed?
+	local gib = ents.Create(Ent)
+	gib:SetModel(Models)
+	gib:SetPos(vTbl_Position)
+	gib:SetAngles(vTbl_Angle)
+	if gib:GetClass() == "obj_vj_gib" then
+		gib.BloodType = vTbl_BloodType
+		gib.Collide_Decal = vTbl_BloodDecal
+	end
+	gib:Spawn()
+	gib:Activate()
+	gib.IsVJBase_Gib = true
+	gib.RemoveOnCorpseDelete = vTbl_RemoveOnCorpseDelete
+	if GetConVarNumber("vj_npc_gibcollidable") == 0 then gib:SetCollisionGroup(1) end
+	local phys = gib:GetPhysicsObject()
+	if IsValid(phys) then
+		//phys:SetMass(60)
+		phys:AddVelocity(vTbl_Velocity)
+		phys:AddAngleVelocity(vTbl_AngleVelocity)
+	end
+	cleanup.ReplaceEntity(gib)
+	if GetConVarNumber("vj_npc_fadegibs") == 1 && vTbl_NoFade == false then
+		if gib:GetClass() == "prop_ragdoll" then gib:Fire("FadeAndRemove","",GetConVarNumber("vj_npc_fadegibstime")) end
+		if gib:GetClass() == "prop_physics" then gib:Fire("kill","",GetConVarNumber("vj_npc_fadegibstime")) end
+	end
+	if vTbl_RemoveOnCorpseDelete == true then//self.Corpse:DeleteOnRemove(extraent)
+		self.ExtraCorpsesToRemove_Transition[#self.ExtraCorpsesToRemove_Transition+1] = gib
+	end
+	if (CustomCode) then CustomCode(gib) end
+	return gib
+end
 
 /*-----------------------------------------------
 	*** Copyright (c) 2012-2016 by DrVrej, All rights reserved. ***
