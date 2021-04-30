@@ -187,6 +187,8 @@ function ENT:CustomOnInitialize()
 	self:SetCollisionBounds(Vector(-16, -16, 0), Vector(16, 16, 80))
 	-- Shields --
 	if (self.SpawnedFromInf==false) then
+		self.StartHealth = self.StartHealth * GetConVarNumber("vj_spv3_HealthModifier")
+		self.CurrentHealth = self.StartHealth
 		if (math.random(0,100) < GetConVarNumber("vj_spv3_floodEliteShield")) then
 			self.ShieldHealth = self.ShieldHealth * GetConVarNumber("vj_spv3_ShieldModifier")
 			self.ShieldCurrentHealth = self.ShieldHealth
@@ -196,8 +198,7 @@ function ENT:CustomOnInitialize()
 			self.ShieldActivated = false
 		end
 	end
-	self.StartHealth = self.StartHealth * GetConVarNumber("vj_spv3_HealthModifier")
-	self.CurrentHealth = self.StartHealth
+	
 	self:SetHealth(self.ShieldHealth + self.StartHealth)
 end
 ---------------------------------------------------------------------------------------------------------------------------------------------

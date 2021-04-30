@@ -125,7 +125,7 @@ ENT.NextSoundTime_Idle2 = 2
 ---------------------------------------------------------------------------------------------------------------------------------------------
 function ENT:CustomOnInitialize()
 	self.NextProcessTime = self.NextProcessTime + 2
-	self:SetCollisionGroup(19)
+	self:SetCollisionGroup(15)
 	self.MovingSound = CreateSound(self, "infection_form/infector_sound/infector/move/move"..math.random(1,3)..".wav")
 	timer.Simple(0.1, function() 
 		if (IsValid(self)) then
@@ -133,7 +133,7 @@ function ENT:CustomOnInitialize()
 			self:SetFriction(0.3)
 		end
 	end)
-	self.StartHealth = self.StartHealth * GetConVarNumber("vj_spv3_HealthModifier")
+	self.StartHealth = self.StartHealth
 	if (self.StartHealth < 1) then self.StartHealth = 1 end
 	self:SetHealth(self.StartHealth)
 	self.LeapAttackDamage = self.LeapAttackDamage * GetConVarNumber("vj_spv3_damageModifier")

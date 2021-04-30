@@ -13,8 +13,8 @@ ENT.modelColor = Color(0,110,255)
 ENT.bodyGroups = {1,1,1,0,0}
 ENT.StartHealth = 150
 
-ENT.infFormCount = 6
-local spreadRadius = 175
+ENT.infFormCount = 5
+local spreadRadius = 50
 
 ENT.HasDeathRagdoll = false -- If set to false, it will not spawn the regular ragdoll of the SNPC
 ENT.bodyParts = {

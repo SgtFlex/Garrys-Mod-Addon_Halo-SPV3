@@ -443,7 +443,6 @@ end
 ENT.ShieldDelay = 6
 ENT.EvadeCooldown = 0
 function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
-	print(dmginfo:GetDamageType())
 	if (dmginfo:GetDamageType()==DMG_BLAST) then
 		dmginfo:ScaleDamage(3.5)
 	end

@@ -13,8 +13,8 @@ ENT.bodyGroupTable = {0, 2, 0, 0, 0}
 ENT.StartHealth = 100
 ENT.ShieldHealth = 0
 
-ENT.infFormCount = 6
-local spreadRadius = 175
+ENT.infFormCount = 5
+local spreadRadius = 50
 
 ENT.HasDeathRagdoll = false -- If set to false, it will not spawn the regular ragdoll of the SNPC
 

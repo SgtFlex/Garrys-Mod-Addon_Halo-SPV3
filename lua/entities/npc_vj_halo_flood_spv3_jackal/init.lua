@@ -144,8 +144,8 @@ function ENT:CustomOnMeleeAttack_AfterChecks(hitEnt)
 	return false 
 end -- return true to disable the attack and move onto the next entity!
 ---------------------------------------------------------------------------------------------------------------------------------------------
-ENT.infFormCount = 10
-local spreadRadius = 200
+ENT.infFormCount = 5
+local spreadRadius = 50
 function ENT:CustomDeathAnimationCode(dmginfo,hitgroup)
 	self.infFormCount = math.Round(self.infFormCount*(GetConVarNumber("vj_spv3_infModifier")))
 	self:EmitSound((self.SoundTbl_Expl[math.random(1, #(self.SoundTbl_Expl))]))

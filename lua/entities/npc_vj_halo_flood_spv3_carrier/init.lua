@@ -89,7 +89,7 @@ function ENT:CustomOnInitialize()
 	self:SetCollisionBounds(Vector(17, 17, 75), Vector(-17, -17, 0))
 end
 ---------------------------------------------------------------------------------------------------------------------------------------------
-ENT.infFormCount = 10
+ENT.infFormCount = 25
 ENT.infForm = nil
 local spreadRadius = 275
 function ENT:CustomDeathAnimationCode(dmginfo,hitgroup)
