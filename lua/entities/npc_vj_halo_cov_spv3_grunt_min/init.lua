@@ -341,7 +341,7 @@ function ENT:CustomOnTakeDamage_AfterDamage(dmginfo,hitgroup)
 		if (self.bodyParts["Body"]["Health"] <= 0) then
 			self.bodyParts["Body"]["Removed"]=true
 			self:SetBodygroup(self:FindBodygroupByName(self.bodyParts["Body"]["Bodygroup"]), 0)
-			self:VJ_ACT_PLAYACTIVITY("h_f_gut", true, 1, false)
+			self:VJ_ACT_PLAYACTIVITY("h_b_gut", true, 1, false)
 			self:EmitSound("grunt/shared/grunt_backpack_destroyed/grunt_backpack_steam"..math.random(1,3)..".ogg", 80, 100, 1)
 			local pos = self:GetAttachment(self:LookupAttachment("Backpack"))["Pos"] + self:GetRight()*35 //Corrective position
 			local ang = self:GetAttachment(self:LookupAttachment("Backpack"))["Ang"]
