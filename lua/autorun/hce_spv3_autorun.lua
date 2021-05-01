@@ -17,6 +17,7 @@ if VJExists == true then
 	VJ.AddNPC("[Spawn] Map Spawner","obj_vj_halo_spv3_map_spawner",vCat)
 	VJ.AddNPC("[Nat] Blind Wolf","npc_vj_halo_nat_spv3_blindwolf",vCat)
 	VJ.AddNPC("[Spawn Cov] Phantom","npc_vj_halo_cov_spv3_phantom",vCat)
+	VJ.AddNPC("[Spawn Cov] Phantom Tri-turret","npc_vj_halo_cov_spv3_phantom_tri",vCat)
 	VJ.AddNPC("[Spawn UNSC] Pelican","npc_vj_halo_unsc_spv3_pelican",vCat)
 	VJ.AddNPC("[Cov] Turret","npc_vj_halo_cov_spv3_phantom_turret",vCat)
 	VJ.AddNPC("[UNSC] Hanging Turret","npc_vj_halo_unsc_spv3_pelican_turret",vCat)

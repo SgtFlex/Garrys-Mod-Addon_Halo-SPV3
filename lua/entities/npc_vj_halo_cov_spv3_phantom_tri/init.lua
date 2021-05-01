@@ -129,7 +129,7 @@ function ENT:CustomOnInitialize()
 	self.engineSound:ChangeVolume(0)
 	local i
 	self.turret = {}
-	for i=1, 1 do
+	for i=1, 3 do
 		self.turret[i] = ents.Create("npc_vj_halo_cov_spv3_phantom_turret")
 		self.turret[i]:SetParent(self, 2)
 		self.turret[i]:SetPos(self:GetAttachment(self:LookupAttachment("Cannon"..i))["Pos"])
@@ -141,7 +141,7 @@ function ENT:CustomOnInitialize()
 	timer.Simple(0.3, function()
 		if (IsValid(self) and IsValid(self.turret[1])) then
 			self:SetNoDraw(false)
-			for i=1, 1 do
+			for i=1, 3 do
 				self.turret[i]:SetNoDraw(false)
 			end
 		end
@@ -182,7 +182,7 @@ function ENT:SpawnCovies()
 			self.SpawnedUnits = self.SpawnedUnits + 1
 			if (self.SpawnedUnits==(#self.TableSpawns + 1)) then
 				local stickAround = 3
-				for i=1, 1 do
+				for i=1, 3 do
 					if (IsValid(self.turret[i])) then
 						local stickAround = GetConVar("vj_spv3_phantomAssistTime"):GetInt()
 						break
