@@ -335,6 +335,8 @@ function ENT:CustomOnTakeDamage_AfterDamage(dmginfo,hitgroup)
 				helmet = self:CreateGibEntity("obj_vj_metal_gib", {"models/hce/spv3/cov/grunt/garbage/major_mask.mdl"}, {Pos = pos, Ang = ang, Vel = dmginfo:GetDamageForce()*0.3 + Vector(0,0,300), BloodDecal = nil})
 			end
 			ParticleEffect("GruntMaskGas", pos - self:GetRight()*35 , ang, self)
+			self:EmitSound("brute/fx/brute_armor_destroyed/cov_damage_small.wav")
+
 		end
 	end
 	if (hitgroup==508 and self.bodyParts["Body"]["Removed"]==false) then
@@ -355,6 +357,7 @@ function ENT:CustomOnTakeDamage_AfterDamage(dmginfo,hitgroup)
 				backpack:SetColor(self:GetColor())
 			end
 			ParticleEffectAttach("GruntBackGasTank",PATTACH_POINT_FOLLOW,self,self:LookupAttachment("Backpack"))
+			self:EmitSound("brute/fx/brute_armor_destroyed/cov_damage_small.wav")
 			self:Flee()
 		end
 	end

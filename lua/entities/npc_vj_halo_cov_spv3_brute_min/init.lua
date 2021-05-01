@@ -454,6 +454,7 @@ function ENT:CustomOnTakeDamage_AfterDamage(dmginfo,hitgroup)
 				helmet:SetColor(self:GetColor())
 				helmet:SetSkin(self:GetSkin())
 			end
+			self:EmitSound("brute/fx/brute_armor_destroyed/cov_damage_small.wav")
 		end
 	end
 end
