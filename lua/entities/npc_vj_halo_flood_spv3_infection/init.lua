@@ -200,7 +200,7 @@ end
 ENT.AttachedTo = nil
 ENT.HitShield = false
 function ENT:CustomOnLeapAttack_AfterChecks(TheHitEntity) 
-	if ((TheHitEntity.ShieldCurrentHealth && TheHitEntity.ShieldCurrentHealth > 0) || (TheHitEntity:IsPlayer() && TheHitEntity:Armor() > 0)) then
+	if ((TheHitEntity.ShieldCurrentHealth && TheHitEntity.ShieldCurrentHealth > 0 && !(string.find(tostring(TheHitEntity), "jackal") || string.find(tostring(TheHitEntity), "skirm"))) || (TheHitEntity:IsPlayer() && TheHitEntity:Armor() > 0)) then
 		if (GetConVarNumber("vj_spv3_InfFormsExplode")==0) then
 			TheHitEntity:TakeDamage(self.LeapAttackDamage, self, self)
 		end
