@@ -47,17 +47,7 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 	if (dmginfo:GetAttacker():IsNPC()) then
 		dmginfo:ScaleDamage(GetConVarNumber("vj_spv3_NPCTakeDamageModifier"))
 	end
-	if self.ShieldActivated == true then
-		self.Bleeds=false
-		ParticleEffect("hcea_shield_impact", dmginfo:GetDamagePosition(), dmginfo:GetDamageForce():Angle(), self)
-		if (dmginfo:GetDamageType()==DMG_PLASMA or dmginfo:GetDamageType()==DMG_BURN or dmginfo:GetDamageType()==DMG_SLOWBURN) then
-			self.ShieldCurrentHealth = math.Clamp((self.ShieldCurrentHealth - (dmginfo:GetDamage()*2)), 0, (self.ShieldCurrentHealth - (dmginfo:GetDamage()*2)))
-		else
-			self.ShieldCurrentHealth = math.Clamp((self.ShieldCurrentHealth - (dmginfo:GetDamage())), 0, (self.ShieldCurrentHealth - (dmginfo:GetDamage())))
-		end
-	else
-		self.CurrentHealth = self.CurrentHealth - dmginfo:GetDamage()
-	end
+	
 	if (self.bodyParts["Head"]["Removed"]==true and hitgroup==500 and dmginfo:GetDamage() >= GetConVarNumber("vj_spv3_PrecisionThreshold") and self.ShieldCurrentHealth < dmginfo:GetDamage()) then
 		dmginfo:SetDamage(self:Health())
 	end
@@ -78,7 +68,17 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 			end
 		end
 	end
-	
+	if self.ShieldActivated == true then
+		self.Bleeds=false
+		ParticleEffect("hcea_shield_impact", dmginfo:GetDamagePosition(), dmginfo:GetDamageForce():Angle(), self)
+		if (dmginfo:GetDamageType()==DMG_PLASMA or dmginfo:GetDamageType()==DMG_BURN or dmginfo:GetDamageType()==DMG_SLOWBURN) then
+			self.ShieldCurrentHealth = math.Clamp((self.ShieldCurrentHealth - (dmginfo:GetDamage()*2)), 0, (self.ShieldCurrentHealth - (dmginfo:GetDamage()*2)))
+		else
+			self.ShieldCurrentHealth = math.Clamp((self.ShieldCurrentHealth - (dmginfo:GetDamage())), 0, (self.ShieldCurrentHealth - (dmginfo:GetDamage())))
+		end
+	else
+		self.CurrentHealth = self.CurrentHealth - dmginfo:GetDamage()
+	end
 	if (dmginfo:GetDamage() >= self:Health()) then
 		if (dmginfo:GetDamageType()==DMG_BLAST or dmginfo:GetDamageType()==DMG_CLUB or dmginfo:GetDamageForce():Length()>=10000) then
 			self:FlyingDeath(dmginfo)
@@ -88,13 +88,15 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 		self.AlertFriendsOnDeath = false
 		self:TakeDamage(self:Health(), dmginfo:GetAttacker(), dmginfo:GetInflictor())
 	end
+	
 end
 
-function ENT:CustomOnTakeDamage_AfterDamage(dmginfo,hitgroup) 
+function ENT:CustomOnTakeDamage_AfterDamage(dmginfo,hitgroup)
 	self:SetHealth((self.ShieldCurrentHealth + self.CurrentHealth))
 	if (self.ShieldCurrentHealth<=0 and self.ShieldActivated==true) then
 		self.ShieldActivated=false
 		self.Bleeds=true
+		self:EmitSound("brute/fx/brute_shield_destroyed/brute_shield_destroyed ("..math.random(1, 3)..").ogg")
 		if (self.BodyArmor==true) then
 			self.BodyArmor = false
 			for k, v in pairs(self:GetBodyGroups()) do

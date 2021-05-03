@@ -400,6 +400,9 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 	if (dmginfo:GetAttacker():IsNPC()) then
 		dmginfo:ScaleDamage(GetConVarNumber("vj_spv3_NPCTakeDamageModifier"))
 	end
+	if (self.bodyParts["Head"]["Removed"]==true and hitgroup==500 and dmginfo:GetDamage() >= GetConVarNumber("vj_spv3_PrecisionThreshold")) then
+		dmginfo:SetDamage(self:Health())
+	end
 	if (hitgroup==500 and dmginfo:GetDamage()>=GetConVar("vj_spv3_PrecisionThreshold"):GetInt() and self.bodyParts["Head"]["Removed"]==false) then
 		self.bodyParts["Head"]["Health"] = self.bodyParts["Head"]["Health"] - dmginfo:GetDamage()
 		if (self.bodyParts["Head"]["Health"] <= 0) then
@@ -412,11 +415,12 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 			helmet:SetColor(self:GetColor())
 			helmet:SetSkin(self:GetSkin())
 			self:EmitSound("brute/fx/brute_armor_destroyed/cov_damage_small.wav")
+			if (math.abs(self.bodyParts["Head"]["Health"]) >= GetConVar("vj_spv3_PrecisionThreshold"):GetInt()) then
+				dmginfo:SetDamage(self:Health())
+			end
 		end
 	end
-	if (self.bodyParts["Head"]["Removed"]==true and hitgroup==500 and dmginfo:GetDamage() >= GetConVarNumber("vj_spv3_PrecisionThreshold")) then
-		dmginfo:SetDamage(self:Health())
-	end
+	
 	if (dmginfo:GetDamage() >= self:Health()) then
 		if (dmginfo:GetDamageType()==DMG_BLAST or dmginfo:GetDamageType()==DMG_CLUB or dmginfo:GetDamageForce():Length()>=10000) then
 			self:FlyingDeath(dmginfo)
@@ -486,7 +490,9 @@ function ENT:Berserk()
 end
 
 function ENT:CustomOnPriorToKilled(dmginfo,hitgroup) 
-	self.BerserkSound:Stop()
+	if (self.BerserkSound) then
+		self.BerserkSound:Stop()
+	end
 end
 
 
