@@ -18,7 +18,7 @@ ENT.bodyGroupTable = {
 	1,
 }
 ENT.Skin = 0
-ENT.helmet = "models/hce/spv3/cov/brute/garbage/major_helmet.mdl"
+ENT.helmet = "models/hce/spv3/cov/brute/garbage/ultra_helmet.mdl"
 ENT.StartHealth = 250
 ENT.ShieldHealth = 75
 ENT.BodyArmor = true
@@ -99,9 +99,59 @@ function ENT:CustomOnTakeDamage_AfterDamage(dmginfo,hitgroup)
 		self:EmitSound("brute/fx/brute_shield_destroyed/brute_shield_destroyed ("..math.random(1, 3)..").ogg")
 		if (self.BodyArmor==true) then
 			self.BodyArmor = false
+			local pos, ang = self:GetBonePosition(14)
+			pos = pos + self:GetRight()*75		
+			helmet = self:CreateGibEntity("obj_vj_metal_gib", {self.helmet}, {Pos = pos, Ang = ang})
+			helmet:SetSkin(self:GetSkin())
+			helmet:SetColor(self:GetColor())
+			pos, ang = self:GetBonePosition(8)
+			pos = pos + self:GetRight()*75	+ self:GetForward() * 10
+			local front = self:CreateGibEntity("obj_vj_metal_gib", {"models/hce/spv3/cov/brute/garbage/ultra_front.mdl"}, {Pos = pos, Ang = ang})
+			front:SetSkin(self:GetSkin())
+			front:SetColor(self:GetColor())
+			pos, ang = self:GetBonePosition(8)
+			pos = pos + self:GetRight()*75 + self:GetForward() * -10
+			local back = self:CreateGibEntity("obj_vj_metal_gib", {"models/hce/spv3/cov/brute/garbage/ultra_back.mdl"}, {Pos = pos, Ang = ang})
+			back:SetSkin(self:GetSkin())
+			back:SetColor(self:GetColor())
+			pos, ang = self:GetBonePosition(10)
+			pos = pos + self:GetRight()*75			
+			local shoulder1 = self:CreateGibEntity("obj_vj_metal_gib", {"models/hce/spv3/cov/brute/garbage/ultra_shoulder_1.mdl"}, {Pos = pos, Ang = ang})
+			shoulder1:SetSkin(self:GetSkin())
+			shoulder1:SetColor(self:GetColor())
+			pos, ang = self:GetBonePosition(11)
+			pos = pos + self:GetRight()*75
+			local shoulder2 = self:CreateGibEntity("obj_vj_metal_gib", {"models/hce/spv3/cov/brute/garbage/ultra_shoulder_2.mdl"}, {Pos = pos, Ang = ang})
+			shoulder2:SetSkin(self:GetSkin())
+			shoulder2:SetColor(self:GetColor())
+			pos, ang = self:GetBonePosition(17)			
+			local shoulder3 = self:CreateGibEntity("obj_vj_metal_gib", {"models/hce/spv3/cov/brute/garbage/ultra_shoulder_1.mdl"}, {Pos = pos, Ang = ang})
+			shoulder3:SetSkin(self:GetSkin())
+			shoulder3:SetColor(self:GetColor())
+			pos, ang = self:GetBonePosition(18)			
+			local shoulder4 = self:CreateGibEntity("obj_vj_metal_gib", {"models/hce/spv3/cov/brute/garbage/ultra_shoulder_2.mdl"}, {Pos = pos, Ang = ang})
+			shoulder4:SetSkin(self:GetSkin())
+			shoulder4:SetColor(self:GetColor())
+			pos, ang = self:GetBonePosition(1)			
+			local leg1 = self:CreateGibEntity("obj_vj_metal_gib", {"models/hce/spv3/cov/brute/garbage/ultra_leg_1.mdl"}, {Pos = pos, Ang = ang})
+			leg1:SetSkin(self:GetSkin())
+			leg1:SetColor(self:GetColor())
+			pos, ang = self:GetBonePosition(2)			
+			local leg2 = self:CreateGibEntity("obj_vj_metal_gib", {"models/hce/spv3/cov/brute/garbage/ultra_leg_2.mdl"}, {Pos = pos, Ang = ang})
+			leg2:SetSkin(self:GetSkin())
+			leg2:SetColor(self:GetColor())
+			pos, ang = self:GetBonePosition(4)			
+			local leg3 = self:CreateGibEntity("obj_vj_metal_gib", {"models/hce/spv3/cov/brute/garbage/ultra_leg_1.mdl"}, {Pos = pos, Ang = ang})
+			leg3:SetSkin(self:GetSkin())
+			leg3:SetColor(self:GetColor())
+			pos, ang = self:GetBonePosition(5)			
+			local leg4 = self:CreateGibEntity("obj_vj_metal_gib", {"models/hce/spv3/cov/brute/garbage/ultra_leg_2.mdl"}, {Pos = pos, Ang = ang})
+			leg4:SetSkin(self:GetSkin())
+			leg4:SetColor(self:GetColor())
 			for k, v in pairs(self:GetBodyGroups()) do
 				self:SetBodygroup(k, 0)
 			end
+
 			self:VJ_ACT_PLAYACTIVITY("Hit_Head", true, 1, false)
 		end
 		if (self.Berserked==false) then
