@@ -21,6 +21,7 @@ ENT.bodyGroupTable = {
 	0,
 	0,
 }
+ENT.helmet = "models/hce/spv3/cov/brute/garbage/minor_helmet.mdl"
 ENT.Skin = 1
 ENT.StartHealth = 200
 //25 shields
@@ -142,8 +143,6 @@ function ENT:CustomOnInitialize()
 		end
 		self.GrenadeAttackEntity = VJ_PICKRANDOMTABLE(self.GrenadeTypes)
 	end)
-
-	
 	self.NextMoveTime = 0
 	self.NextDodgeTime = 0
 	self.NextMoveAroundTime = 0
@@ -160,10 +159,9 @@ function ENT:CustomOnInitialize()
 	self.StartHealth = self.StartHealth * GetConVarNumber("vj_spv3_HealthModifier")
 	self.ShieldHealth = self.ShieldHealth * GetConVarNumber("vj_spv3_ShieldModifier")
 	self.ShieldCurrentHealth = self.ShieldHealth
+	self.ShieldActivated = (self.ShieldCurrentHealth > 0)
 	self.CurrentHealth = self.StartHealth
-	self.ShieldActivated = false
 	self:SetHealth(self.ShieldHealth + self.StartHealth)
-
 end
 ---------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -402,7 +400,21 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 	if (dmginfo:GetAttacker():IsNPC()) then
 		dmginfo:ScaleDamage(GetConVarNumber("vj_spv3_NPCTakeDamageModifier"))
 	end
-	if (self.bodyParts["Head"]["Removed"]==true and hitgroup==500 and dmginfo:GetDamage() >= 10) then
+	if (hitgroup==500 and dmginfo:GetDamage()>=GetConVar("vj_spv3_PrecisionThreshold"):GetInt() and self.bodyParts["Head"]["Removed"]==false) then
+		self.bodyParts["Head"]["Health"] = self.bodyParts["Head"]["Health"] - dmginfo:GetDamage()
+		if (self.bodyParts["Head"]["Health"] <= 0) then
+			self.bodyParts["Head"]["Removed"]=true
+			self:SetBodygroup(self:FindBodygroupByName(self.bodyParts["Head"]["Bodygroup"]), 0)
+			self:VJ_ACT_PLAYACTIVITY("Hit_Head", true, 1, false)
+			local pos, ang = self:GetBonePosition(14)
+			pos = pos + self:GetRight() * 75
+			helmet = self:CreateGibEntity("obj_vj_metal_gib", {self.helmet}, {Pos = pos, Ang = ang, Vel = dmginfo:GetDamageForce()*0.3 + Vector(0,0,300)})
+			helmet:SetColor(self:GetColor())
+			helmet:SetSkin(self:GetSkin())
+			self:EmitSound("brute/fx/brute_armor_destroyed/cov_damage_small.wav")
+		end
+	end
+	if (self.bodyParts["Head"]["Removed"]==true and hitgroup==500 and dmginfo:GetDamage() >= GetConVarNumber("vj_spv3_PrecisionThreshold")) then
 		dmginfo:SetDamage(self:Health())
 	end
 	if (dmginfo:GetDamage() >= self:Health()) then
@@ -436,26 +448,6 @@ function ENT:CustomOnTakeDamage_AfterDamage(dmginfo,hitgroup)
 	if (self:Health()<self:GetMaxHealth()*.4 and self.Berserked==false) then
 		self:Berserk()
 		
-	end
-	if (hitgroup==500 and dmginfo:GetDamage()>=GetConVar("vj_spv3_PrecisionThreshold"):GetInt() and self.bodyParts["Head"]["Removed"]==false) then
-		self.bodyParts["Head"]["Health"] = self.bodyParts["Head"]["Health"] - dmginfo:GetDamage()
-		if (self.bodyParts["Head"]["Health"] <= 0) then
-			self.bodyParts["Head"]["Removed"]=true
-			self:SetBodygroup(self:FindBodygroupByName(self.bodyParts["Head"]["Bodygroup"]), 0)
-			self:VJ_ACT_PLAYACTIVITY("Hit_Head", true, 1, false)
-			local pos, ang = self:GetBonePosition(14)
-			pos = pos + self:GetRight() * 75
-			if (self.bodyGroupTable[1]==1) then
-				helmet = self:CreateGibEntity("obj_vj_metal_gib", {"models/hce/spv3/cov/brute/garbage/minor_helmet.mdl"}, {Pos = pos, Ang = ang, Vel = dmginfo:GetDamageForce()*0.3 + Vector(0,0,300)})
-				helmet:SetColor(self:GetColor())
-				helmet:SetSkin(self:GetSkin())
-			else
-				helmet = self:CreateGibEntity("obj_vj_metal_gib", {"models/hce/spv3/cov/brute/garbage/major_helmet.mdl"}, {Pos = pos, Ang = ang, Vel = dmginfo:GetDamageForce()*0.3 + Vector(0,0,300)})
-				helmet:SetColor(self:GetColor())
-				helmet:SetSkin(self:GetSkin())
-			end
-			self:EmitSound("brute/fx/brute_armor_destroyed/cov_damage_small.wav")
-		end
 	end
 end
 

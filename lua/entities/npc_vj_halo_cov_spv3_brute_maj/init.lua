@@ -18,13 +18,14 @@ ENT.bodyGroupTable = {
 	0,
 }
 ENT.Skin = 2
+ENT.helmet = "models/hce/spv3/cov/brute/garbage/major_helmet.mdl"
 ENT.StartHealth = 250
 //35 shields
 ENT.ExtraShotCount = 2
 ENT.modelColor = Color(60,10,10)
 
 ENT.bodyParts = {
-	Head = {Health = GetConVarNumber("vj_spv3_PrecisionThreshold")*2, Bodygroup = "Head", Removed = false},
+	Head = {Health = GetConVarNumber("vj_spv3_PrecisionThreshold")*1.5, Bodygroup = "Head", Removed = false},
 }
 ENT.UNSCWeps = {
 	"weapon_vj_unsc_spv3_br",

@@ -54,12 +54,44 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 		dmginfo:ScaleDamage(GetConVarNumber("vj_spv3_NPCTakeDamageModifier"))
 	end
 	if hitgroup == 509 then
+		if (dmginfo:GetDamageType()==DMG_PLASMA or dmginfo:GetDamageType()==DMG_BURN or dmginfo:GetDamageType()==DMG_SLOWBURN) then
+			self.ShieldCurrentHealth = self.ShieldCurrentHealth - dmginfo:GetDamage() * 2
+		else
+			self.ShieldCurrentHealth = self.ShieldCurrentHealth - dmginfo:GetDamage()
+		end
+			
 		dmginfo:ScaleDamage(0)
 		ParticleEffect("hcea_shield_impact", dmginfo:GetDamagePosition(), dmginfo:GetDamageForce():Angle(), self)
+	end
+	if (hitgroup == 506 and dmginfo:GetDamage() >= GetConVarNumber("vj_spv3_PrecisionThreshold")) then
+		dmginfo:SetDamage(self:Health())
 	end
 	if (dmginfo:GetDamage() >= self:Health()) then
 		if (dmginfo:GetDamageType()==DMG_BLAST or dmginfo:GetDamageType()==DMG_CLUB or dmginfo:GetDamageForce():Length()>=10000) then
 			self:FlyingDeath(dmginfo)
 		end
+	end
+	if dmginfo:GetAttacker():IsPlayer() && dmginfo:GetDamageType()==DMG_CLUB && Vector((dmginfo:GetDamagePosition() - self:GetPos()).x, (dmginfo:GetDamagePosition() - self:GetPos()).y, 0):Dot(Vector(self:GetForward().x, self:GetForward().y, 0)) < 0 then
+		self.AlertFriendsOnDeath = false
+		self:TakeDamage(self:Health(), dmginfo:GetAttacker(), dmginfo:GetInflictor())
+	end
+	if self.ShieldCurrentHealth <= 0 and self.ShieldActivated==true then
+		self.ShieldActivated = false
+		self:SetHitboxSet("default")
+		self:SetBodygroup(1, 0)
+		ParticleEffectAttach("hcea_shield_disperse",PATTACH_POINT_FOLLOW,self,self:LookupAttachment("origin"))
+	end
+	if (timer.Exists("ShieldDelay"..self:GetCreationID())) then
+		timer.Adjust("ShieldDelay"..self:GetCreationID(), self.ShieldDelay, 1)
+	else
+		timer.Create("ShieldDelay"..self:GetCreationID(), self.ShieldDelay, 1, function() 
+			if (IsValid(self) and self.ShieldCurrentHealth < self.ShieldHealth) then
+				self.ShieldActivated = true
+				self.ShieldCurrentHealth = self.ShieldHealth
+				self:SetHitboxSet("shielded")
+				self:SetBodygroup(1, 1)
+				ParticleEffectAttach("hcea_shield_disperse",PATTACH_POINT_FOLLOW,self,self:LookupAttachment("origin"))
+			end
+		end)
 	end
 end

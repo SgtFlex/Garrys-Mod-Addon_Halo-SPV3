@@ -155,7 +155,7 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 		dmginfo:ScaleDamage(0)
 		ParticleEffect("hcea_shield_impact", dmginfo:GetDamagePosition(), dmginfo:GetDamageForce():Angle(), self)
 	end
-	if (hitgroup == 506 and dmginfo:GetDamage() >= 10) then
+	if (hitgroup == 506 and dmginfo:GetDamage() >= GetConVarNumber("vj_spv3_PrecisionThreshold")) then
 		dmginfo:SetDamage(self:Health())
 	end
 	if (dmginfo:GetDamage() >= self:Health()) then
