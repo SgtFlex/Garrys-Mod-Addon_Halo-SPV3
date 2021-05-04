@@ -38,7 +38,6 @@ ENT.BloodColor = "Red" -- The blood type, this will determine what it should use
 ENT.HasBloodParticle = true -- Does it spawn a particle when damaged?
 
 ENT.Immune_Dissolve = true -- Immune to Dissolving | Example: Combine Ball
-ENT.Immune_AcidPoisonRadiation = true -- Immune to Acid, Poison and Radiation
 
 	-- Relationships ---------------------------------------------------------------------------------------------------------------------------------------------
 ENT.HasAllies = true -- Put to false if you want it not to have any allies
