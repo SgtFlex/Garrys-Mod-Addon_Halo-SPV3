@@ -14,7 +14,6 @@ ENT.StartHealth = 60 * GetConVarNumber("vj_spv3_HealthModifier")
 ENT.Bleeds = true -- Does the SNPC bleed? (Blood decal, particle, etc.)
 ENT.BloodColor = "Red" -- The blood type, this will detemine what it should use (decal, particle, etc.)
 ENT.Immune_Dissolve = true -- Immune to Dissolving | Example: Combine Ball
-ENT.Immune_AcidPoisonRadiation = true -- Immune to Acid, Poison and Radiation
 ENT.HasBloodPool = true -- Does it have a blood pool?
 ENT.BecomeEnemyToPlayer = true -- Should the friendly SNPC become enemy towards the player if it's damaged by it or it witnesses another ally killed by it
 ENT.BecomeEnemyToPlayerLevel = 0 -- Any time the player does something bad, the NPC's anger level raises by 1, if it surpasses this, it will become enemy!

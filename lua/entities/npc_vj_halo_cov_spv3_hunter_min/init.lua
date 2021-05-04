@@ -22,7 +22,6 @@ ENT.NoChaseAfterCertainRange_Type = "OnlyRange" -- "Regular" = Default behavior 
 ENT.Bleeds = true -- Does the SNPC bleed? (Blood decal, particle, etc.)
 ENT.BloodColor = "Orange" -- The blood type, this will detemine what it should use (decal, particle, etc.)
 ENT.Immune_Dissolve = true -- Immune to Dissolving | Example: Combine Ball
-ENT.Immune_AcidPoisonRadiation = true -- Immune to Acid, Poison and Radiation
 
 	-- Relationships ---------------------------------------------------------------------------------------------------------------------------------------------
 ENT.HasAllies = true -- Put to false if you want it not to have any allies

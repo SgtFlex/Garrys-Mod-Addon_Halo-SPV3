@@ -26,7 +26,6 @@ ENT.BloodColor = "Purple" -- The blood type, this will determine what it should 
 -- Use the following variables to customize the blood the way you want it:
 ENT.HasBloodParticle = true -- Does it spawn a particle when damaged?
 ENT.Immune_Dissolve = true -- Immune to Dissolving | Example: Combine Ball
-ENT.Immune_AcidPoisonRadiation = true -- Immune to Acid, Poison and Radiation
 ENT.AllowWeaponReloading = true -- If false, the SNPC will no longer reload
 ENT.CanFlinch = 1 -- 0 = Don't flinch | 1 = Flinch at any damage | 2 = Flinch only from certain damages
 ENT.FlinchChance = 2

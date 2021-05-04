@@ -30,7 +30,6 @@ ENT.BloodColor = "Purple" -- The blood type, this will determine what it should 
 ENT.HasBloodParticle = true -- Does it spawn a particle when damaged?
 
 ENT.Immune_Dissolve = true -- Immune to Dissolving | Example: Combine Ball
-ENT.Immune_AcidPoisonRadiation = true -- Immune to Acid, Poison and Radiation
 ENT.EntitiesToNoCollide = //Player no collide does affect how it behaves, even though the wiki states it doesn't
 {
 	"npc_vj_halo_flood_spv3_infection",

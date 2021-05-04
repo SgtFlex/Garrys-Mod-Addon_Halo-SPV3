@@ -25,7 +25,6 @@ ENT.BloodColor = "Blue" -- The blood type, this will determine what it should us
 -- Use the following variables to customize the blood the way you want it:
 ENT.HasBloodParticle = true -- Does it spawn a particle when damaged?
 ENT.Immune_Dissolve = true -- Immune to Dissolving | Example: Combine Ball
-ENT.Immune_AcidPoisonRadiation = true -- Immune to Acid, Poison and Radiation
 ENT.AllowWeaponReloading = true -- If false, the SNPC will no longer reload
 
 	-- Relationships ---------------------------------------------------------------------------------------------------------------------------------------------

@@ -21,7 +21,6 @@ ENT.BloodColor = "Yellow" -- The blood type, this will determine what it should 
 -- Use the following variables to customize the blood the way you want it:
 ENT.HasBloodParticle = true -- Does it spawn a particle when damaged?
 ENT.Immune_Dissolve = true -- Immune to Dissolving | Example: Combine Ball
-ENT.Immune_AcidPoisonRadiation = true -- Immune to Acid, Poison and Radiation
 ENT.HasBloodPool = true -- Does it have a blood pool?
 
 	-- Relationships ---------------------------------------------------------------------------------------------------------------------------------------------

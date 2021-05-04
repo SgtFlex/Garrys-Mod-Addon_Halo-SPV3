@@ -12,7 +12,6 @@ ENT.StartHealth = 5000 * GetConVarNumber("vj_spv3_HealthModifier")
 	-- ====== Blood-Related Variables ====== --
 ENT.Bleeds = false-- Does the SNPC bleed? (Blood decal, particle, etc.)
 ENT.Immune_Dissolve = true -- Immune to Dissolving | Example: Combine Ball
-ENT.Immune_AcidPoisonRadiation = true -- Immune to Acid, Poison and Radiation
 ENT.GibOnDeathDamagesTable = {"All"} -- Damages that it gibs from | "UseDefault" = Uses default damage types | "All" = Gib from any damage
 	-- Relationships ---------------------------------------------------------------------------------------------------------------------------------------------
 ENT.HasAllies = true -- Put to false if you want it not to have any allies

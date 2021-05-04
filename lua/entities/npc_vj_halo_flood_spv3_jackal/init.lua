@@ -14,7 +14,6 @@ ENT.StartHealth = 20
 ENT.Bleeds = true -- Does the SNPC bleed? (Blood decal, particle, etc.)
 ENT.BloodColor = "Yellow" -- The blood type, this will detemine what it should use (decal, particle, etc.)
 ENT.Immune_Dissolve = true -- Immune to Dissolving | Example: Combine Ball
-ENT.Immune_AcidPoisonRadiation = true -- Immune to Acid, Poison and Radiation
 ENT.HasBloodPool = false -- Does it have a blood pool?
 
 	-- Relationships ---------------------------------------------------------------------------------------------------------------------------------------------
