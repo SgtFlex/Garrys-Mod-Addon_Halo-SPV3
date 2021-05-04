@@ -48,6 +48,7 @@ ENT.NextAnyAttackTime_Melee = 1.7
 ENT.MeleeAttackDamageType = DMG_SLASH
 
 ENT.HasLeapAttack = true -- Should the SNPC have a leap attack?
+ENT.AnimTbl_LeapAttack = {ACT_JUMP} -- Melee Attack Animations
 ENT.LeapDistance = 1000 -- The distance of the leap, for example if it is set to 500, when the SNPC is 500 Unit away, it will jump
 ENT.LeapAttackVelocityForward = 200 -- How much forward force should it apply?
 ENT.LeapAttackVelocityUp = 500 -- How much upward force should it apply?

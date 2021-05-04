@@ -49,7 +49,7 @@ ENT.LeapAttackVelocityForward = 200 -- How much forward force should it apply?
 ENT.LeapAttackVelocityUp = 500 -- How much upward force should it apply?
 ENT.LeapToMeleeDistance = 600 -- How close does it have to be until it uses melee?
 ENT.NextLeapAttackTime = 2.5 -- How much time until it can use a leap attack?
-
+ENT.AnimTbl_LeapAttack = {ACT_JUMP} -- Melee Attack Animations
 ENT.GrenadeWeps = {
 	"weapon_vj_cov_spv3_needler_nade",
 	"weapon_vj_cov_spv3_plasma_nade",

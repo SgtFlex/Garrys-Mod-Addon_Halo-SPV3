@@ -151,7 +151,6 @@ function ENT:CustomOnTakeDamage_AfterDamage(dmginfo,hitgroup)
 			for k, v in pairs(self:GetBodyGroups()) do
 				self:SetBodygroup(k, 0)
 			end
-
 			self:VJ_ACT_PLAYACTIVITY("Hit_Head", true, 1, false)
 		end
 		if (self.Berserked==false) then

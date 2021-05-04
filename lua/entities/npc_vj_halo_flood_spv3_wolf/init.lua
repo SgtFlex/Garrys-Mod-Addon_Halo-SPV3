@@ -49,7 +49,8 @@ ENT.NoChaseAfterCertainRange_FarDistance = "UseRangeDistance" -- How far until i
 ENT.NoChaseAfterCertainRange_CloseDistance = 300 -- How near until it can chase again? | "UseRangeDistance" = Use the number provided by the range attack instead
 ENT.RangeToMeleeDistance = 300 -- How close does it have to be until it uses melee?
 ENT.NoChaseAfterCertainRange_Type = "Regular" -- "Regular" = Default behavior | "OnlyRange" = Only does it if it's able to range attack
-ENT.HasLeapAttack = false -- Should the SNPC have a leap attack?
+ENT.HasLeapAttack = true -- Should the SNPC have a leap attack?
+ENT.AnimTbl_LeapAttack = {ACT_JUMP} -- Melee Attack Animations
 ENT.LeapDistance = 1000 -- The distance of the leap, for example if it is set to 500, when the SNPC is 500 Unit away, it will jump
 ENT.LeapAttackVelocityForward = 200 -- How much forward force should it apply?
 ENT.LeapAttackVelocityUp = 500 -- How much upward force should it apply?

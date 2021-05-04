@@ -16,16 +16,16 @@ ENT.BloodColor = "Red" -- The blood type, this will detemine what it should use 
 ENT.Immune_Dissolve = true -- Immune to Dissolving | Example: Combine Ball
 ENT.Immune_AcidPoisonRadiation = true -- Immune to Acid, Poison and Radiation
 ENT.HasBloodPool = true -- Does it have a blood pool?
-
+ENT.BecomeEnemyToPlayer = true -- Should the friendly SNPC become enemy towards the player if it's damaged by it or it witnesses another ally killed by it
+ENT.BecomeEnemyToPlayerLevel = 0 -- Any time the player does something bad, the NPC's anger level raises by 1, if it surpasses this, it will become enemy!
 	-- Relationships ---------------------------------------------------------------------------------------------------------------------------------------------
-ENT.VJ_NPC_Class = {"CLASS_WOLF"} -- NPCs with the same class with be allied to each other
+ENT.VJ_NPC_Class = {"CLASS_EARTH_FAUNA"} -- NPCs with the same class with be allied to each other
 ENT.HasDeathAnimation = true -- Does it play an animation when it dies?
 ENT.AnimTbl_Death = {"Die_Front", "Die_Left", "Die_Right"} -- Death Animations
-
+ENT.FriendsWithAllPlayerAllies = true -- Should this SNPC be friends with all other player allies that are running on VJ Base?
 	-- Death ---------------------------------------------------------------------------------------------------------------------------------------------
 ENT.HasDeathRagdoll = true -- If set to false, it will not spawn the regular ragdoll of the SNPC
 ENT.DeathAnimationTime = 0.5 -- Time until the SNPC spawns its corpse and gets removed
-ENT.EntitiesToNoCollide = {"npc_vj_halo_flood_spv3_infection"}
 ENT.Behavior = VJ_BEHAVIOR_NEUTRAL
 	-- Melee Attack ---------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -45,6 +45,7 @@ ENT.NextAnyAttackTime_Melee = 1.7
 ENT.MeleeAttackDamageType = DMG_SLASH
 
 ENT.HasLeapAttack = true -- Should the SNPC have a leap attack?
+ENT.AnimTbl_LeapAttack = {ACT_JUMP} -- Melee Attack Animations
 ENT.LeapDistance = 1000 -- The distance of the leap, for example if it is set to 500, when the SNPC is 500 Unit away, it will jump
 ENT.LeapAttackVelocityForward = 200 -- How much forward force should it apply?
 ENT.LeapAttackVelocityUp = 500 -- How much upward force should it apply?
