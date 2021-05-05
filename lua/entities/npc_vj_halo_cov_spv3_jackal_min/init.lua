@@ -57,6 +57,7 @@ ENT.AllowWeaponReloading = true -- If false, the SNPC will no longer reload
 
 	-- Death ---------------------------------------------------------------------------------------------------------------------------------------------
 ENT.DropWeaponOnDeath = true -- Should it drop its weapon on death?
+ENT.DropWeaponOnDeathAttachment = "Cannon" -- Which attachment should it use for the weapon's position
 ENT.HasDeathBodyGroup = false -- Set to true if you want to put a bodygroup when it dies
 ENT.HasItemDropsOnDeath = false -- Should it drop items on death?
 ENT.UNSCWeps = {
