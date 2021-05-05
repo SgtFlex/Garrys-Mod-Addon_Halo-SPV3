@@ -18,7 +18,6 @@ ENT.HasGibOnDeathSounds = false -- Does it have gib sounds? | Mostly used for th
 ---------------------------------------------------------------------------------------------------------------------------------------------
 ENT.HasLeapAttack = true -- Should the SNPC have a leap attack?
 ENT.HasMeleeAttack = false-- Should the SNPC have a leap attack?
-
 ENT.AnimTbl_LeapAttack = {ACT_JUMP} -- Melee Attack Animations
 ENT.LeapDistance = 300 -- The distance of the leap, for example if it is set to 500, when the SNPC is 500 Unit away, it will jump
 ENT.LeapToMeleeDistance = 0 -- How close does it have to be until it uses melee?
@@ -30,6 +29,8 @@ ENT.LeapAttackVelocityForward = -150 -- How much forward force should it apply?
 ENT.LeapAttackVelocityUp = 200 -- How much upward force should it apply?
 ENT.LeapAttackDamage = 10
 ENT.LeapAttackDamageDistance = 30 -- How far does the damage go?
+ENT.LeapAttackDamageType = DMG_DIRECT -- Type of Damage
+
 ENT.HasDeathRagdoll = false -- If set to false, it will not spawn the regular ragdoll of the SNPC
 ENT.PushProps = false -- Should it push props when trying to move?
 //Prevent blocking of infection forms but also don't block the way of other combat forms
@@ -403,7 +404,12 @@ function ENT:Latch()
 	timer.Create("Damage"..self:GetCreationID(), 0.5, 0, function()
 		if (IsValid(self)) then
 			if (IsValid(self.AttachedTo) and self.Dead==false) then
-				self.AttachedTo:TakeDamage((self.LeapAttackDamage * GetConVarNumber("vj_spv3_DamageModifier"))/5, self, self)
+				local d = DamageInfo()
+				d:SetDamage((self.LeapAttackDamage * GetConVarNumber("vj_spv3_DamageModifier"))/5)
+				d:SetAttacker(self)
+				d:SetInflictor(self)
+				d:SetDamageType(DMG_DIRECT)
+				self.AttachedTo:TakeDamageInfo(d)
 			else
 				timer.Destroy("Damage"..self:GetCreationID())
 			end
