@@ -54,6 +54,8 @@ ENT.HasMeleeAttack = false -- Should the SNPC have a melee attack?
 ENT.DisableFootStepSoundTimer = true -- If set to true, it will disable the time system for the footstep sound code, allowing you to use other ways like model events
 	-- Death ---------------------------------------------------------------------------------------------------------------------------------------------
 ENT.DropWeaponOnDeath = true -- Should it drop its weapon on death?
+ENT.DropWeaponOnDeathAttachment = "Cannon" -- Which attachment should it use for the weapon's position
+
 ENT.HasItemDropsOnDeath = true -- Should it drop items on death?
 ENT.ItemDropsOnDeathChance = 3 -- If set to 1, it will always drop it
 ENT.ThingsToDrop = {}
