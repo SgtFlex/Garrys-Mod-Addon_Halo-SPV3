@@ -40,7 +40,7 @@ function ENT:CustomDeathAnimationCode(dmginfo,hitgroup)
 			BlastInfo:SetReportedPosition(self:GetPos())
 			util.BlastDamageInfo(BlastInfo, self:GetPos(), 250)
 			util.ScreenShake(self:GetPos(),16,100,1,800)
-			ParticleEffect("hcea_flood_carrier_death", self:LocalToWorld(Vector(0,0,20)), self:GetAngles(), nil)
+			ParticleEffect("CarrierDeath", self:GetPos() + self:OBBCenter(), self:GetAngles(), nil)
 			//ParticleEffectAttach("hcea_flood_inf_death",PATTACH_POINT_FOLLOW,self,0)
 			for k=1, self.infFormCount do
 				self.infForm = ents.Create("npc_vj_halo_flood_spv3_infection")

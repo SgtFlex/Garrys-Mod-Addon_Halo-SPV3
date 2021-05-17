@@ -142,7 +142,7 @@ end
 ---------------------------------------------------------------------------------------------------------------------------------------------
 ENT.inflictor = nil
 function ENT:CustomDeathAnimationCode(dmginfo,hitgroup) //Perhaps giving errors because inflictor is dead?
-	ParticleEffect("hcea_flood_infected_death", self:LocalToWorld(Vector(0,0,20)), self:GetAngles(), nil)
+	ParticleEffect("InfDeath", self:GetPos() + self:OBBCenter(), self:GetAngles(), nil)
 	self.inflictor = dmginfo:GetInflictor()
 	self.vector = self:GetPos()
 	self:SetNoDraw(true)

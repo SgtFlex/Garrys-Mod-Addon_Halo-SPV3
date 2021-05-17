@@ -242,7 +242,7 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 			self:RemoveAllDecals()
 			self:SetBodygroup(self:FindBodygroupByName(self.bodyParts["Inf_Form"]["Bodygroup"]), 2)
 			self:EmitSound("infection_form/infection_pop/pop1.ogg")
-			ParticleEffect("hcea_flood_infected_death", self:LocalToWorld(Vector(0,0,50)), self:GetAngles() + Angle(90,0,0), nil)
+			ParticleEffect("InfDeath", self:GetPos() + Vector(0,0,50), self:GetAngles(), nil)
 			dmginfo:SetDamage(self:Health())
 		end
 	end
