@@ -68,7 +68,7 @@ end
 function ENT:CustomOnKilled(dmginfo, hitgroup) 
 	if (IsValid(self:GetOwner()) and self:GetOwner():GetClass()=="npc_vj_halo_cov_spv3_phantom_tri" and self:GetOwner().SpawnedUnits==(#self:GetOwner().TableSpawns + 1)) then
 		for i=1, 3 do
-			if (IsValid(self.turret[i])) then
+			if (IsValid(self:GetOwner().turret[i]) and self:GetOwner().turret[i]!=self) then
 				return
 			end
 		end

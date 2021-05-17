@@ -183,7 +183,7 @@ function ENT:SpawnCovies()
 				local stickAround = 3
 				for i=1, 3 do
 					if (IsValid(self.turret[i])) then
-						local stickAround = GetConVar("vj_spv3_phantomAssistTime"):GetInt()
+						stickAround = GetConVar("vj_spv3_phantomAssistTime"):GetInt()
 						break
 					end
 				end
@@ -197,7 +197,10 @@ function ENT:SpawnCovies()
 	end)
 end
 
+local isLeaving = false
 function ENT:Leave()
+	if (isLeaving==true) then return end
+	isLeaving = true
 	self:VJ_ACT_PLAYACTIVITY(self.LeaveAnim,true,self:SequenceDuration(self:LookupSequence(self.LeaveAnim)),false)
 	self.movingSound:ChangeVolume(0, 5)	
 	timer.Simple(self:SequenceDuration(self:LookupSequence(self.LeaveAnim)), function()

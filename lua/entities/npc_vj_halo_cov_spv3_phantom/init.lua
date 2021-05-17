@@ -183,8 +183,7 @@ function ENT:SpawnCovies()
 				local stickAround = 3
 				for i=1, 1 do
 					if (IsValid(self.turret[i])) then
-						local stickAround = GetConVar("vj_spv3_phantomAssistTime"):GetInt()
-						break
+						stickAround = GetConVar("vj_spv3_phantomAssistTime"):GetInt()
 					end
 				end
 				timer.Simple(stickAround, function()
@@ -197,7 +196,10 @@ function ENT:SpawnCovies()
 	end)
 end
 
+local isLeaving = false
 function ENT:Leave()
+	if (isLeaving==true) then return end
+	isLeaving = true
 	self:VJ_ACT_PLAYACTIVITY(self.LeaveAnim,true,self:SequenceDuration(self:LookupSequence(self.LeaveAnim)),false)
 	self.movingSound:ChangeVolume(0, 5)	
 	timer.Simple(self:SequenceDuration(self:LookupSequence(self.LeaveAnim)), function()
@@ -207,17 +209,6 @@ function ENT:Leave()
 	end)
 end
 
-function ENT:CustomOnThink() 
-	-- if (self:GetVelocity():Length() <= 10) then
-	-- 	self.hoverSound:ChangeVolume(1)
-	-- 	self.movingSound:ChangeVolume(0)
-	-- 	self.engineSound:ChangeVolume(1)
-	-- else
-	-- 	self.hoverSound:ChangeVolume(0)
-	-- 	self.movingSound:ChangeVolume(1)
-	-- 	self.engineSound:ChangeVolume(0)
-	-- end
-end
 
 function ENT:CustomOnAcceptInput(key,activator,caller,data)
 	if key == "Engine_moving"then

@@ -136,7 +136,7 @@ function ENT:DoDeath()
 	BlastInfo:SetReportedPosition(self:GetPos())
 	util.BlastDamageInfo(BlastInfo, self:GetPos(), self.BlastRadius)
 	util.ScreenShake(self:GetPos(),16,100,1,800)
-	ParticleEffect("hcea_flood_carrier_death", self:LocalToWorld(Vector(0,0,20)), self:GetAngles(), nil)
+	ParticleEffect("CarrierDeath", self:LocalToWorld(Vector(0,0,20)), self:GetAngles(), nil)
 	self.SpawnedNPCs = {}
 	if (math.random(0,1)==0 || self:GetBodygroup(1)==2) then
 		self.infFormCount = ((3 - self:GetBodygroup(1)) * 1) + math.Round(self.infFormCount*(GetConVarNumber("vj_spv3_infModifier")))
