@@ -44,6 +44,7 @@ ENT.HasAllies = true -- Put to false if you want it not to have any allies
 ENT.VJ_NPC_Class = {"CLASS_COV"} -- NPCs with the same class with be allied to each other
 ENT.AnimTbl_WeaponReload = {ACT_RELOAD} -- Animations that play when the SNPC reloads
 ENT.AnimTbl_WeaponAttack = {ACT_IDLE_PISTOL} -- Animation played when the SNPC does weapon attack
+ENT.AnimTbl_WeaponAttackFiringGesture = {ACT_GESTURE_RANGE_ATTACK_PISTOL} -- Firing Gesture animations used when the SNPC is firing the weapon
 ENT.HasDeathAnimation = true -- Does it play an animation when it dies?
 ENT.AnimTbl_Death = {} -- Death Animations
 ENT.AnimTbl_CallForHelp = {"Warn"} -- Call For Help Animations
@@ -136,6 +137,7 @@ function ENT:CustomOnInitialize()
 		end
 		if (self:GetActiveWeapon().HoldType=="ar2") then
 			self.AnimTbl_WeaponAttack = {ACT_IDLE_RIFLE} -- Animation played when the SNPC does weapon attack
+			self.AnimTbl_WeaponAttackFiringGesture = {ACT_GESTURE_RANGE_ATTACK_AR2} -- Firing Gesture animations used when the SNPC is firing the weapon
 			self.AnimTbl_ShootWhileMovingRun = {ACT_RUN_RIFLE} -- Animations it will play when shooting while running | NOTE: Weapon may translate the animation that they see fit!
 			self.AnimTbl_ShootWhileMovingWalk = {ACT_RUN_RIFLE} -- Animations it will play when shooting while walking | NOTE: Weapon may translate the animation that they see fit!
 			self.AnimTbl_MeleeAttack = {ACT_MELEE_ATTACK1} -- Melee Attack Animations
@@ -385,6 +387,7 @@ end
 ENT.Berserked = false
 ENT.EvadeCooldown = 0
 function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
+	self:VJ_ACT_PLAYACTIVITY(ACT_FLINCH_PHYSICS, false, false, false, 0, {AlwaysUseGesture=true})
 	if (dmginfo:GetDamageType()==DMG_BLAST) then
 		dmginfo:ScaleDamage(3.5)
 	end
@@ -494,6 +497,25 @@ function ENT:CustomOnPriorToKilled(dmginfo,hitgroup)
 	if (self.BerserkSound) then
 		self.BerserkSound:Stop()
 	end
+end
+
+ENT.NextTalkTime = 0
+ENT.MouthOpenness = 0
+function ENT:CustomOnThink() //Is pretty much HL:Resurgence talk system. Maybe more complexity in the future?
+	if CurTime() < self.NextTalkTime then
+		if self.MouthOpenness == 0 then
+			self.MouthOpenness = math.random(10,70)
+		else
+			self.MouthOpenness = 0
+		end
+		self:SetPoseParameter("move_mouth", self.MouthOpenness)
+	else
+		self:SetPoseParameter("move_mouth",0)
+	end
+end
+---------------------------------------------------------------------------------------------------------------------------------------------
+function ENT:OnPlayCreateSound(sdData, sdFile)
+	self.NextTalkTime = CurTime() + SoundDuration(sdFile)*3.5 --For some reason the soundduration is wrong. perhaps a bug with .ogg format?
 end
 
 

@@ -100,7 +100,7 @@ local spreadRadius = 175
 			BlastInfo:SetReportedPosition(self.ragdoll:GetPos())
 			util.BlastDamageInfo(BlastInfo, self.ragdoll:GetPos(), 250)
 			util.ScreenShake(self.ragdoll:GetPos(),16,100,1,800)
-			ParticleEffect("hcea_flood_carrier_death", self.ragdoll:LocalToWorld(Vector(0,0,20)), self.ragdoll:GetAngles(), nil)
+			ParticleEffect("CarrierDeath", self.ragdoll:LocalToWorld(Vector(0,0,20)), self.ragdoll:GetAngles(), nil)
 			//ParticleEffectAttach("hcea_flood_inf_death",PATTACH_POINT_FOLLOW,self,0)
 			for k=1, self.infFormCount do
 				self.infForm = ents.Create("npc_vj_halo_flood_spv3_infection")
