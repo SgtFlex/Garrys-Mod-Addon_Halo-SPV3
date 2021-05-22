@@ -294,6 +294,7 @@ else
 end
 
 game.AddParticles("particles/halo_beam.pcf")
+game.AddParticles("particles/FlexParticles.pcf")
 game.AddParticles("particles/covenant_fx.pcf")
 	local particlename = {
 		"halo_beam_main",
