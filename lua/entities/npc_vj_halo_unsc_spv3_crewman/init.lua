@@ -19,6 +19,16 @@ ENT.CovWeps = {
 ENT.ColorRange = {Vector (0,0,0), Vector(255,255,255)}
 ENT.Cooldown = 0
 function ENT:CustomOnThink()
+	if CurTime() < self.NextTalkTime then
+		if self.MouthOpenness == 0 then
+			self.MouthOpenness = math.random(10,70)
+		else
+			self.MouthOpenness = 0
+		end
+		self:SetPoseParameter("move_mouth", self.MouthOpenness)
+	else
+		self:SetPoseParameter("move_mouth",0)
+	end
 	self.Cooldown = self.Cooldown + 0.1
 	if (math.random(1,25)==1 and self.Cooldown>=2 and self:GetEnemy() and self.KeyesBuff!=true) then
 		self:VJ_ACT_PLAYACTIVITY("Cower_idle",true,1,false)

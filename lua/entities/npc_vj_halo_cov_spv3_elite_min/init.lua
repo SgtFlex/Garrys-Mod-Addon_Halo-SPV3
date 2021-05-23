@@ -594,6 +594,26 @@ function ENT:CustomOnAlert(ent)
 	end
 end
 
+ENT.MouthOpenness = 0
+ENT.NextTalkTime = 0
+function ENT:CustomOnThink() //Is pretty much HL:Resurgence talk system. Maybe more complexity in the future?
+	if CurTime() < self.NextTalkTime then
+		if self.MouthOpenness == 0 then
+			self.MouthOpenness = math.random(20,100)
+		else
+			self.MouthOpenness = 0
+		end
+		self:SetPoseParameter("move_mouth", self.MouthOpenness)
+	else
+		self:SetPoseParameter("move_mouth",0)
+	end
+end
+---------------------------------------------------------------------------------------------------------------------------------------------
+function ENT:OnPlayCreateSound(sdData, sdFile)
+	self.NextTalkTime = CurTime() + SoundDuration(sdFile)*3.5 --For some reason the soundduration is wrong. perhaps a bug with .ogg format?
+end
+
+
 function ENT:MeleeAttackCode() //Setting melee damage type to DMG_CLUB
 	if self.Dead == true or self.vACT_StopAttacks == true or self.Flinching == true or self.ThrowingGrenade == true then return end
 	if self.StopMeleeAttackAfterFirstHit == true && self.AlreadyDoneMeleeAttackFirstHit == true then return end

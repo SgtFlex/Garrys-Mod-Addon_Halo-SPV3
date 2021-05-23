@@ -27,6 +27,16 @@ ENT.CovWeps = {
 ENT.ColorRange = {Vector (255,255,255), Vector(255,255,255)}
 ENT.Cooldown = 0
 function ENT:CustomOnThink()
+	if CurTime() < self.NextTalkTime then
+		if self.MouthOpenness == 0 then
+			self.MouthOpenness = math.random(10,70)
+		else
+			self.MouthOpenness = 0
+		end
+		self:SetPoseParameter("move_mouth", self.MouthOpenness)
+	else
+		self:SetPoseParameter("move_mouth",0)
+	end
 	self.Cooldown = self.Cooldown + 0.1
 	if (self.Cooldown>=5) then
 		self.Cooldown = 0
