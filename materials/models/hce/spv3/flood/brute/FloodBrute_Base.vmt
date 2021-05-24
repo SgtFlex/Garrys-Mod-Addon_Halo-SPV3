@@ -7,5 +7,6 @@
 	"$phongboost"		"3"
 	"$phongfresnelranges"	"[0.1 0.5 5]"
 	"$blendtintbybasealpha" "1"
+
 }
 

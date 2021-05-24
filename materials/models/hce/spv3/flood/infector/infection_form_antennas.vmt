@@ -1,4 +1,4 @@
-"VertexlitGeneric"
+"UnlitGeneric"
 {
 	"$basetexture" "models/hce/spv3/flood/infector/infection_form_antennas"
 	"$additive" 1
