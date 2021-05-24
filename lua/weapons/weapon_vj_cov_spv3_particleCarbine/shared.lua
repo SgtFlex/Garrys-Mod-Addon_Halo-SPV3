@@ -15,3 +15,4 @@ SWEP.NPC_TimeUntilFire 			= 0.3 -- How much time until the bullet/projectile is 
 SWEP.NPC_HasReload = false
 SWEP.Primary.Burst				= true -- Is it a burst weapon?
 SWEP.PrintName					= "Particle Carbine"
+SWEP.PrimaryEffects_DynamicLightColor = Color(220, 0, 191, 255)

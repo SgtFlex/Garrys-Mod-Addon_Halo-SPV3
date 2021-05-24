@@ -25,3 +25,4 @@ SWEP.NPC_SecondaryFireDistance = 2500 -- How close does the owner's enemy have t
 SWEP.NPC_HasSecondaryFireSound = true -- Can the secondary fire sound be played?
 SWEP.NPC_SecondaryFireSound = {"weapons/plasma pistol/charged fire/charged fire.ogg"} -- The sound it plays when the secondary fire is used
 SWEP.NPC_SecondaryFireSoundLevel = 90 -- The sound level to use for the secondary firing sound
+SWEP.PrimaryEffects_DynamicLightColor = Color(33, 255, 0, 255)

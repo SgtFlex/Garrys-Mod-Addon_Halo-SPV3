@@ -14,7 +14,7 @@ SWEP.NPC_CustomSpread 			= 0.3 -- This is added on top of the custom spread that
 SWEP.NPC_TimeUntilFire 			= 0.04 -- How much time until the bullet/projectile is fired?
 SWEP.NPC_HasReload = false
 SWEP.PrintName					= "Focus Rifle"
-
+SWEP.PrimaryEffects_DynamicLightColor = Color(255, 93, 0, 255)
 function SWEP:CustomOnPrimaryAttack_BeforeShoot()
 	self.firingSound = CreateSound(self, "weapons/focus rifle/fire/OMG_LAZOR_2.ogg")
 	self.firingSound:Play()

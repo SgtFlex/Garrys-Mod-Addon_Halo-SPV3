@@ -30,7 +30,7 @@ SWEP.PrimaryEffects_MuzzleAttachment = "muzzle"
 SWEP.PrimaryEffects_MuzzleFlash = true
 SWEP.PrimaryEffects_MuzzleParticles = {}
 SWEP.PrimaryEffects_SpawnShells = false
-SWEP.PrimaryEffects_DynamicLightColor = Color(14, 171, 255)
+SWEP.PrimaryEffects_DynamicLightColor = Color(255, 150, 60)
 SWEP.Primary.Projectile = "obj_vj_spv3_pr_shot"
 SWEP.Primary.ProjectileSpeed = 4000
 SWEP.Secondary.ProjectileSpeed = 1000
@@ -46,7 +46,7 @@ SWEP.NPC_TimeUntilFireExtraTimers = {} -- Extra timers, which will make the gun 
 SWEP.Primary.Delay				= SWEP.NPC_TimeUntilFireExtraTimers[1] -- Time until it can shoot again
 
 SWEP.NPC_CustomSpread = 1 -- This is added on top of the custom spread that's set inside the SNPC! | Starting from 1: Closer to 0 = better accuracy, Farther than 1 = worse accuracy
-SWEP.Color = Color(255,255,255)
+--SWEP.Color = Color(255,255,255)
 ---------------------------------------------------------------------------------------------------------------------------------------------
 function SWEP:CustomOnInitialize() 
 	if (self:GetOwner():IsNPC()) then

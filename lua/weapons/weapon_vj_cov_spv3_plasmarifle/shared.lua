@@ -19,3 +19,4 @@ SWEP.PrimaryEffects_MuzzleParticles = {"hcea_hunter_plasma_rifle_fire"}
 SWEP.PrimaryEffects_SpawnShells = false
 SWEP.PrintName					= "Plasma Rifle"
 SWEP.HoldType 					= "pistol"
+SWEP.PrimaryEffects_DynamicLightColor = Color(220, 0, 255, 255)

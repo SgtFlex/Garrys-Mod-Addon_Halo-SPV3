@@ -17,6 +17,7 @@ SWEP.Primary.Projectile = "obj_vj_spv3_nr_shot"
 SWEP.Primary.ProjectileSpeed = 1000
 SWEP.PrintName					= "Needler"
 SWEP.HoldType 					= "pistol"
+SWEP.PrimaryEffects_DynamicLightColor = Color(220, 0, 255, 255)
 function SWEP:CustomOnPrimaryAttack_BeforeShoot()
 	if (self:GetOwner():IsNPC()) then
 		self.Primary.Damage	= self.Primary.Damage * GetConVarNumber("vj_spv3_damageModifier") -- Damage

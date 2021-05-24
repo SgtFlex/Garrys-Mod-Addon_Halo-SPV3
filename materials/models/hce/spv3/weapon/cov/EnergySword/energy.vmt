@@ -1,18 +1,14 @@
-"VertexlitGeneric"
+"UnlitGeneric"
 {
-	"$basetexture" "models/hce/spv3/weapon/cov/energysword/energy_diff_new"
+	"$basetexture" "models/hce/spv3/weapon/cov/energysword/energy_diff"
 	$additive 1
 	$nocull 1
 	$color2 "[0.7 0.9 0.9]"
 
-"Proxies"
-	{
-	"TextureScroll"
-		{
-		"texturescrollvar" "$baseTextureTransform"
-		"texturescrollrate" "0.3"
-		"texturescrollangle" "0"
-		}
-	}
+	"$detail" "models/hce/spv3/weapon/cov/hunter_cannons/white_box"
+	$detailscale 1
+	$detailblendmode 0
+	$detailblendfactor 1
+	$detailtint "[0 0.7 0.7]"
 
 }

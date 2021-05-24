@@ -1,0 +1,29 @@
+"UnlitGeneric"
+{
+	"$basetexture" "models/hce/spv3/weapon/cov/energysword/energy_sword_sparks_diff"
+	$additive 1
+	$nocull 1
+	$color2 "[0 5 5]"
+	$cvar "[.62 .5]"
+	$svar "[1 .5]"
+	$rvar -90
+	$tvar "[0 0]"
+	"Proxies"
+	{
+	"LinearRamp"
+		{
+		"rate"	"-0.3"
+		"initialValue" "0"
+		"resultVar" "$tvar[1]"
+		}
+	"TextureTransform"
+		{
+		centerVar "$cvar"
+		scaleVar "$svar"
+		rotateVar "$rvar"
+		translateVar "$tvar"
+		resultVar "$basetexturetransform"
+		}
+	}
+	
+}

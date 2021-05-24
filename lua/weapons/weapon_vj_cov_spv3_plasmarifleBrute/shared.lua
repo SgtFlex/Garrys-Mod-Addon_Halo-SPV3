@@ -21,3 +21,4 @@ SWEP.PrimaryEffects_SpawnShells = false
 SWEP.Color = Color(255, 30, 30, 0)
 SWEP.PrintName					= "Brute Plasma Rifle"
 SWEP.HoldType 					= "pistol"
+SWEP.PrimaryEffects_DynamicLightColor = Color(255, 0, 0, 255)

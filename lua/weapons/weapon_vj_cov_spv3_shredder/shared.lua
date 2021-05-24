@@ -17,3 +17,4 @@ SWEP.Primary.Projectile = "obj_vj_spv3_shredder_shot"
 SWEP.Primary.ProjectileSpeed = 3000
 SWEP.PrintName					= "Shredder"
 SWEP.HoldType 					= "pistol"
+SWEP.PrimaryEffects_DynamicLightColor = Color(255, 93, 0, 255)

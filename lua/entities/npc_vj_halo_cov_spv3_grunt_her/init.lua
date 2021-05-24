@@ -11,7 +11,7 @@ ENT.VJ_NPC_Class = {"CLASS_HER"} -- NPCs with the same class with be allied to e
 ENT.modelColor = Color(145,160,120)
 ENT.bodyGroupTable = {
 	1,
-	1,
+	2,
 }
 ENT.StartHealth = 75
 -- ENT.ShieldHealth = 0
