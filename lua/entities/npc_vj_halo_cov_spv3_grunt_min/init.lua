@@ -46,7 +46,7 @@ ENT.DisableFootStepSoundTimer = true -- If set to true, it will disable the time
 	-- Death ---------------------------------------------------------------------------------------------------------------------------------------------
 ENT.DropWeaponOnDeath = true -- Should it drop its weapon on death?
 ENT.DropWeaponOnDeathAttachment = "Cannon" -- Which attachment should it use for the weapon's position
-
+ENT.AnimTbl_Death = {"Die_1", "Die_2", "Die_3", "Die_4"}
 ENT.HasItemDropsOnDeath = true -- Should it drop items on death?
 ENT.ItemDropsOnDeathChance = 3 -- If set to 1, it will always drop it
 ENT.ThingsToDrop = {}
@@ -82,7 +82,6 @@ ENT.GrenadeWeps = {
 }
 ENT.EntitiesToRunFrom = {obj_spore=true,obj_vj_grenade=true,obj_grenade=true,obj_handgrenade=true,npc_grenade_frag=true,doom3_grenade=true,fas2_thrown_m67=true,cw_grenade_thrown=true,obj_cpt_grenade=true,cw_flash_thrown=true,ent_hl1_grenade=true, obj_vj_unsc_spv3_frag_nade=true,obj_vj_cov_spv3_plasma_nade=true,obj_vj_cov_spv3_gravity_nade=true,obj_vj_cov_spv3_cluster_nade=true,obj_vj_cov_spv3_needler_nade=true, npc_vj_halo_flood_spv3_carrier=true}
 ENT.HasDeathAnimation = true -- Does it play an animation when it dies?
-ENT.AnimTbl_Death = {"Die_1", "Die_2", "Die_3"} -- Death Animations
 ---------------------------------------------------------------------------------------------------------------------------------------------
 ENT.UNSCWeps = {
 	"weapon_vj_unsc_spv3_magnum",
@@ -227,10 +226,6 @@ self.SoundTbl_WeaponReload = {
 	}
 end
 
-ENT.bodyParts = {
-	Head = {Health = GetConVarNumber("vj_spv3_PrecisionThreshold"), Bodygroup = "Head", Removed = false},
-	Body = {Health = GetConVarNumber("vj_spv3_PrecisionThreshold"), Bodygroup = "Body", Removed = false}
-}
 
 
 function ENT:CustomOnInitialize()
@@ -257,6 +252,10 @@ function ENT:UseConVars()
 			self:Give(VJ_PICKRANDOMTABLE(self.UNSCWeps))
 		end
 	end)
+	self.bodyParts = {
+		Head = {Health = GetConVarNumber("vj_spv3_PrecisionThreshold"), Bodygroup = "Head", Removed = false},
+		Body = {Health = GetConVarNumber("vj_spv3_PrecisionThreshold"), Bodygroup = "Body", Removed = false}
+	}
 end
 
 function ENT:CustomOnAcceptInput(key,activator,caller,data)
@@ -305,12 +304,10 @@ function ENT:DoSpecialDeath(typeDeath, dmginfo)
 	elseif (typeDeath=="BackBreak") then --Do the following when taking damage via DMG_CLUB to the back
 		self.AlertFriendsOnDeath = false
 		self:TakeDamage(self:Health(), dmginfo:GetAttacker(), dmginfo:GetInflictor())
-		self:VJ_ACT_PLAYACTIVITY("Die_1", true, 2, false)
+		self:VJ_ACT_PLAYACTIVITY("Die_5", true, 2, false)
 	elseif (typeDeath=="Headshot") then --Do the following when dying via a headshot (above the precisionThreshold)
 		dmginfo:SetDamage(self:Health())
-		self:VJ_ACT_PLAYACTIVITY("Die_1", true, 2, false)
 	elseif (typeDeath=="LargeForce") then --Do the following when dying to DMG_CLUB with high force or DMG_BLAST
-		self:DisperseShield()
 		self.HasDeathRagdoll = false
 		self.HasDeathAnimation = false
 		self.imposter = ents.Create("obj_vj_imposter")
