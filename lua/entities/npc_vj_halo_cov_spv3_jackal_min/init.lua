@@ -116,10 +116,6 @@ ENT.SoundTbl_Pain = {
 "jackal/pain/pain20.ogg"
 }
 
-ENT.SoundTbl_CallForHelp = {
-
-}
-
 ENT.SoundTbl_Death = {
 "jackal/dth/dth1.ogg",
 "jackal/dth/dth2.ogg",
@@ -207,7 +203,7 @@ function ENT:CheckForSpecialDeaths(dmginfo)
 	elseif (dmginfo:GetAttacker():IsPlayer() && dmginfo:GetDamageType()==DMG_CLUB && Vector((dmginfo:GetDamagePosition() - self:GetPos()).x, (dmginfo:GetDamagePosition() - self:GetPos()).y, 0):Dot(Vector(self:GetForward().x, self:GetForward().y, 0)) < 0) then
 		return "BackBreak"
 	elseif (dmginfo:GetDamage() >= self:Health() and (dmginfo:GetDamageType()==DMG_BLAST or dmginfo:GetDamageType()==DMG_CLUB)) then
-		return "Flying"
+		return "LargeForce"
 	else
 		return nil
 	end
@@ -223,7 +219,7 @@ function ENT:DoSpecialDeath(typeDeath, dmginfo)
 	elseif (typeDeath=="Headshot") then --Do the following when dying via a headshot (above the precisionThreshold)
 		dmginfo:SetDamage(self:Health())
 		self:VJ_ACT_PLAYACTIVITY("Die_1", true, 2, false)
-	elseif (typeDeath=="Flying") then --Do the following when dying to DMG_CLUB with high force or DMG_BLAST
+	elseif (typeDeath=="LargeForce") then --Do the following when dying to DMG_CLUB with high force or DMG_BLAST
 		self:DisperseShield()
 		self.HasDeathRagdoll = false
 		self.HasDeathAnimation = false
@@ -341,7 +337,6 @@ end
 function ENT:OnPlayCreateSound(sdData, sdFile)
 	self.NextTalkTime = CurTime() + SoundDuration(sdFile)*3.5 --For some reason the soundduration is wrong. perhaps a bug with .ogg format?
 end
-
 /*-----------------------------------------------
 	*** Copyright (c) 2012-2016 by DrVrej, All rights reserved. ***
 	No parts of this code or any of its contents may be reproduced, copied, modified or adapted,
