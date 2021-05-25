@@ -14,16 +14,12 @@ ENT.UNSCWeps = {
 ENT.WeaponProfficiency = 100
 ENT.ExtraShotCount = 2
 ENT.ShieldActivated = true
-//50 shields
+ENT.ShieldMaxHealth = 100
+//50 shields in SPV3
+
 function ENT:CustomOnInitialize()
 	self:SetHitboxSet("shielded")
 	self:SetBodygroup(1, 1)
 	self:SetBodygroup(2, 1)
-	timer.Simple(0.01, function() 
-		if (GetConVarNumber("vj_spv3_covUNSCWeps")==1 and math.random(0,1)==1) then
-			self:GetActiveWeapon():Remove()
-			self:Give(VJ_PICKRANDOMTABLE(self.UNSCWeps))
-		end
-	end)
 	self:SetCollisionBounds(Vector(20, 20, 75), Vector(-20, -20, 0))
 end

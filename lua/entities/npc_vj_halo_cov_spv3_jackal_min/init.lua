@@ -8,10 +8,11 @@ include('entities/npc_vj_halo_shared_spv3/init.lua')
 -----------------------------------------------*/
 ENT.Model = {"models/hce/spv3/cov/jackal/jackal.mdl"} -- The game will pick a random model from the table when the SNPC is spawned | Add as many as you want
 ENT.StartHealth = 50
-ENT.ShieldMaxHealth = 125 * GetConVarNumber("vj_spv3_ShieldModifier")
+ENT.ShieldMaxHealth = 125 
 ENT.ShieldCurrentHealth = ENT.ShieldMaxHealth
 ENT.ShieldDelay = 6
-ENT.ShieldRecharge = 0.1
+ENT.ShieldRecharge = 1
+ENT.ShieldActivated = true
 //125 shields
 ENT.HullType = HULL_MEDIUM
 ENT.bodyGroupTable = {
@@ -150,13 +151,8 @@ function ENT:CustomOnInitialize()
 	for i=1, #self.bodyGroupTable do
 		self:SetBodygroup(i, self.bodyGroupTable[i])
 	end
-	self.StartHealth = self.StartHealth * GetConVarNumber("vj_spv3_HealthModifier")
-	self:SetHealth(self.StartHealth)
+	self:UseConVars()
 	timer.Simple(0.01, function() 
-		if (GetConVarNumber("vj_spv3_covUNSCWeps")==1 and math.random(0,1)==1) then
-			self:GetActiveWeapon():Remove()
-			self:Give(VJ_PICKRANDOMTABLE(self.UNSCWeps))
-		end
 		if (self:GetActiveWeapon():GetClass()=="weapon_vj_cov_spv3_plasmapistol") then
 			self:SetSkin(0)
 		elseif (self:GetActiveWeapon():GetClass()=="weapon_vj_cov_spv3_needler") then
@@ -170,9 +166,22 @@ function ENT:CustomOnInitialize()
 	self:SetColor(self.Color)
 	self:SetCollisionBounds(Vector(20, 20, 75), Vector(-20, -20, 0))
 end
+
+function ENT:UseConVars()
+	self.StartHealth = self.StartHealth * GetConVarNumber("vj_spv3_HealthModifier")
+	self.ShieldMaxHealth = 125 * GetConVarNumber("vj_spv3_ShieldModifier")
+	self.ShieldCurrentHealth = self.ShieldMaxHealth
+	self:SetHealth(self.StartHealth)
+	timer.Simple(0.01, function()
+		if (GetConVarNumber("vj_spv3_covUNSCWeps")==1 and math.random(0,1)==1) then
+			self:GetActiveWeapon():Remove()
+			self:Give(VJ_PICKRANDOMTABLE(self.UNSCWeps))
+		end
+	end)
+end
 ---------------------------------------------------------------------------------------------------------------------------------------------
 ENT.EvadeCooldown = 0
-ENT.ShieldActivated = true
+
 function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 	if (dmginfo:GetDamageType()==DMG_BLAST) then
 		dmginfo:ScaleDamage(3.5)
@@ -238,10 +247,9 @@ end
 
 function ENT:DamageShield(dmginfo)
 	if (dmginfo:GetDamageType()==DMG_PLASMA or dmginfo:GetDamageType()==DMG_BURN or dmginfo:GetDamageType()==DMG_SLOWBURN) then
-		self.ShieldCurrentHealth = self.ShieldCurrentHealth - dmginfo:GetDamage() * 2
-	else
-		self.ShieldCurrentHealth = self.ShieldCurrentHealth - dmginfo:GetDamage()
-	end	
+		dmginfo:ScaleDamage(2)
+	end
+	self.ShieldCurrentHealth = math.max(self.ShieldCurrentHealth - dmginfo:GetDamage(), 0)
 	dmginfo:ScaleDamage(0)
 	ParticleEffect("hcea_shield_impact", dmginfo:GetDamagePosition(), dmginfo:GetDamageForce():Angle(), self)
 	if (self.ShieldCurrentHealth <= 0 and self.ShieldActivated==true) then
@@ -250,6 +258,7 @@ function ENT:DamageShield(dmginfo)
 			self:Flee()
 		end
 	end
+	timer.Destroy("RegenShield"..self:GetCreationID())
 	timer.Create("ShieldDelay"..self:GetCreationID(), self.ShieldDelay, 1, function() --Timers will reset everytime damage is applied, no need to adjust
 		if (IsValid(self) and self.ShieldCurrentHealth < self.ShieldMaxHealth) then
 			self:RegenerateShield()
@@ -268,7 +277,10 @@ end
 
 function ENT:RegenerateShield()
 	self.ShieldActivated = true
-	self.ShieldCurrentHealth = self.ShieldMaxHealth
+	timer.Create("RegenShield"..self:GetCreationID(), 0.1, (self.ShieldMaxHealth - self.ShieldCurrentHealth)/self.ShieldRecharge, function()
+		if (!IsValid(self)) then return end
+		self.ShieldCurrentHealth = math.min(self.ShieldCurrentHealth + self.ShieldRecharge, self.ShieldMaxHealth)
+	end)
 	self:SetHitboxSet("shielded")
 	self:SetBodygroup(1, 1)
 	ParticleEffectAttach("hcea_shield_disperse",PATTACH_POINT_FOLLOW,self,self:LookupAttachment("origin"))
