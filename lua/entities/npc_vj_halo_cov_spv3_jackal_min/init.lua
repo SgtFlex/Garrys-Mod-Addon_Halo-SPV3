@@ -179,9 +179,8 @@ function ENT:UseConVars()
 		end
 	end)
 end
----------------------------------------------------------------------------------------------------------------------------------------------
-ENT.EvadeCooldown = 0
 
+ENT.EvadeCooldown = 0
 function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 	if (dmginfo:GetDamageType()==DMG_BLAST) then
 		dmginfo:ScaleDamage(3.5)
