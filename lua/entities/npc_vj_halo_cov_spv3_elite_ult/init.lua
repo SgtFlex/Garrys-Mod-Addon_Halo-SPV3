@@ -14,7 +14,7 @@ ENT.bodyGroupTable = {
 	6,
 }
 ENT.StartHealth = 100
-ENT.ShieldHealth = 175
+ENT.ShieldMaxHealth = 175
 ENT.ExtraShotCount = 3
 ENT.WeaponProfficiency = 70
 ENT.Skin=0

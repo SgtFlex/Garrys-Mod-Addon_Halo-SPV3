@@ -18,7 +18,7 @@ ENT.bodyGroupTable = {
 }
 ENT.StartHealth = 120
 ENT.CurrentHealth = ENT.StartHealth
-ENT.ShieldHealth = 0
+ENT.ShieldMaxHealth = 0
 ENT.ShieldCurrentHealth = ENT.ShieldHealth
 ENT.ExtraShotCount = 0
 ENT.Skin=0
