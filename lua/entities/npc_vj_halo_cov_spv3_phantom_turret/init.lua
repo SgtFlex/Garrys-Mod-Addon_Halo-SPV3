@@ -77,3 +77,4 @@ function ENT:CustomOnKilled(dmginfo, hitgroup)
 		self:GetOwner():Leave()
 	end
 end
+

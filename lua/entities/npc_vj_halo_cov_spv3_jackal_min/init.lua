@@ -8,15 +8,17 @@ include('entities/npc_vj_halo_shared_spv3/init.lua')
 -----------------------------------------------*/
 ENT.Model = {"models/hce/spv3/cov/jackal/jackal.mdl"} -- The game will pick a random model from the table when the SNPC is spawned | Add as many as you want
 ENT.StartHealth = 50
-ENT.ShieldHealth = 125 * GetConVarNumber("vj_spv3_ShieldModifier")
-ENT.ShieldCurrentHealth = ENT.ShieldHealth
+ENT.ShieldMaxHealth = 125 * GetConVarNumber("vj_spv3_ShieldModifier")
+ENT.ShieldCurrentHealth = ENT.ShieldMaxHealth
 ENT.ShieldDelay = 6
+ENT.ShieldRecharge = 0.1
 //125 shields
 ENT.HullType = HULL_MEDIUM
 ENT.bodyGroupTable = {
 	1,
 	0,
 }
+ENT.AnimTbl_Death = {"Die_1", "Die_2", "Die_3", "Die_4"}
 ENT.NextThrowGrenadeTime = 0 -- Time until it can throw a grenade again
 ENT.ThrowGrenadeChance = 0 -- Chance that it will throw the grenade | Set to 1 to throw all the time
 	-- ====== Blood-Related Variables ====== --
@@ -69,143 +71,6 @@ ENT.EntitiesToRunFrom = {obj_spore=true,obj_vj_grenade=true,obj_grenade=true,obj
 ENT.Color = Color(100,100,140)
 ENT.WeaponProfficiency = 50
 ENT.ExtraShotCount = 0
----------------------------------------------------------------------------------------------------------------------------------------------
-function ENT:CustomOnSetupWeaponHoldTypeAnims(htype)
-    if (htype == "pistol") then
-    	self.WeaponAnimTranslations[ACT_RUN]						= ACT_RUN
-    	self.WeaponAnimTranslations[ACT_IDLE_AGITATED]				= ACT_IDLE_AGITATED
-    elseif (htype == "ar2") then
-    	self.WeaponAnimTranslations[ACT_RUN]						= ACT_RUN_RIFLE
-    	self.WeaponAnimTranslations[ACT_IDLE_AGITATED]				= ACT_IDLE_RIFLE
-    end
-	return true
-end
-
-function ENT:CustomOnInitialize()
-	self:RandomizeTraits()
-	for i=1, #self.bodyGroupTable do
-		self:SetBodygroup(i, self.bodyGroupTable[i])
-	end
-
--- 	timer.Simple(0.1, function()
--- 	if (self:GetActiveWeapon().HoldType=="ar2") then
--- 		self.AnimTbl_WeaponAttack = {ACT_IDLE_RIFLE} -- Animation played when the SNPC does weapon attack
--- 		self.AnimTbl_ShootWhileMovingRun = {ACT_RUN_RIFLE} -- Animations it will play when shooting while running | NOTE: Weapon may translate the animation that they see fit!
--- 		self.AnimTbl_ShootWhileMovingWalk = {ACT_RUN_RIFLE} -- Animations it will play when shooting while walking | NOTE: Weapon may translate the animation that they see fit!
--- 		self.AnimTbl_Run = {ACT_RUN_RIFLE}
--- 	end
--- end)
-
-	self.StartHealth = self.StartHealth * GetConVarNumber("vj_spv3_HealthModifier")
-	self:SetHealth(self.StartHealth)
-	timer.Simple(0.01, function() 
-		if (GetConVarNumber("vj_spv3_covUNSCWeps")==1 and math.random(0,1)==1) then
-			self:GetActiveWeapon():Remove()
-			self:Give(VJ_PICKRANDOMTABLE(self.UNSCWeps))
-		end
-		if (self:GetActiveWeapon():GetClass()=="weapon_vj_cov_spv3_plasmapistol") then
-			self:SetSkin(0)
-		elseif (self:GetActiveWeapon():GetClass()=="weapon_vj_cov_spv3_needler") then
-			self:SetSkin(1)
-		elseif (self:GetActiveWeapon():GetClass()=="weapon_vj_cov_spv3_plasmapistolbrute") then
-			self:SetSkin(2)
-		else
-			self:SetSkin(3)
-		end
-	end)
-	self:SetColor(self.Color)
-	self:SetCollisionBounds(Vector(20, 20, 75), Vector(-20, -20, 0))
-end
----------------------------------------------------------------------------------------------------------------------------------------------
-function ENT:CustomOnThink_AIEnabled()
-	-- Detection --
-	if self:GetEnemy() != nil then
-	self.AnimTbl_IdleStand = {ACT_IDLE}
-	else
-	self.AnimTbl_IdleStand = {ACT_IDLE_AGITATED}
-	end
-end
----------------------------------------------------------------------------------------------------------------------------------------------
-ENT.EvadeCooldown = 0
-ENT.ShieldActivated = true
-function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
-	if (dmginfo:GetDamageType()==DMG_BLAST) then
-		dmginfo:ScaleDamage(3.5)
-	end
-	if (math.random(0,2) == 2) then
-		if (self.EvadeCooldown <= CurTime()) then
-			if (math.random(0,1)==1) then
-				self:VJ_ACT_PLAYACTIVITY(ACT_SIGNAL1,true,1.5,false)
-			else
-				self:VJ_ACT_PLAYACTIVITY(ACT_SIGNAL2,true,1.5,false)
-			end
-			self.EvadeCooldown = CurTime() + 4
-		end
-	end
-	if (dmginfo:GetAttacker():IsNPC()) then
-		dmginfo:ScaleDamage(GetConVarNumber("vj_spv3_NPCTakeDamageModifier"))
-	end
-	if hitgroup == 11 then
-		if (dmginfo:GetDamageType()==DMG_PLASMA or dmginfo:GetDamageType()==DMG_BURN or dmginfo:GetDamageType()==DMG_SLOWBURN) then
-			self.ShieldCurrentHealth = self.ShieldCurrentHealth - dmginfo:GetDamage() * 2
-		else
-			self.ShieldCurrentHealth = self.ShieldCurrentHealth - dmginfo:GetDamage()
-		end
-			
-		dmginfo:ScaleDamage(0)
-		ParticleEffect("hcea_shield_impact", dmginfo:GetDamagePosition(), dmginfo:GetDamageForce():Angle(), self)
-	end
-	if (hitgroup == 506 and dmginfo:GetDamage() >= GetConVarNumber("vj_spv3_PrecisionThreshold")) then
-		dmginfo:SetDamage(self:Health())
-	end
-	if (dmginfo:GetDamage() >= self:Health()) then
-		if (dmginfo:GetDamageType()==DMG_BLAST or dmginfo:GetDamageType()==DMG_CLUB or dmginfo:GetDamageForce():Length()>=10000) then
-			self:FlyingDeath(dmginfo)
-		end
-	end
-	if dmginfo:GetAttacker():IsPlayer() && dmginfo:GetDamageType()==DMG_CLUB && Vector((dmginfo:GetDamagePosition() - self:GetPos()).x, (dmginfo:GetDamagePosition() - self:GetPos()).y, 0):Dot(Vector(self:GetForward().x, self:GetForward().y, 0)) < 0 then
-		self.AlertFriendsOnDeath = false
-		self:TakeDamage(self:Health(), dmginfo:GetAttacker(), dmginfo:GetInflictor())
-	end
-	if self.ShieldCurrentHealth <= 0 and self.ShieldActivated==true then
-		self.ShieldActivated = false
-		self:SetHitboxSet("noShield")
-		self:SetBodygroup(1, 0)
-		ParticleEffectAttach("hcea_shield_disperse",PATTACH_POINT_FOLLOW,self,self:LookupAttachment("origin"))
-		if (math.random(0,1)==1) then
-			self:Flee()
-		end
-	end
-	if (timer.Exists("ShieldDelay"..self:GetCreationID())) then
-		timer.Adjust("ShieldDelay"..self:GetCreationID(), self.ShieldDelay, 1)
-	else
-		timer.Create("ShieldDelay"..self:GetCreationID(), self.ShieldDelay, 1, function() 
-			if (IsValid(self) and self.ShieldCurrentHealth < self.ShieldHealth) then
-				self.ShieldActivated = true
-				self.ShieldCurrentHealth = self.ShieldHealth
-				self:SetHitboxSet("default")
-				self:SetBodygroup(1, 1)
-				ParticleEffectAttach("hcea_shield_disperse",PATTACH_POINT_FOLLOW,self,self:LookupAttachment("origin"))
-			end
-		end)
-	end
-end
-
-function ENT:FlyingDeath(dmginfo)
-	self.HasDeathRagdoll = false
-	self.HasDeathAnimation = false
-	self.imposter = ents.Create("obj_vj_imposter")
-	self.imposter:SetOwner(self)
-	self.imposter.Sequence = "Die_Airborne"
-	local velocity = dmginfo:GetDamageForce():GetNormalized() * 1500
-	if (dmginfo:GetDamageType()==DMG_CLUB or dmginfo:GetDamageForce():Length()) then
-		velocity = velocity * 0.3
-	end
-	self.imposter.Velocity = Vector(velocity.x, velocity.y, velocity.z + 500)
-	self.imposter.Angle = Angle(0,dmginfo:GetDamageForce():Angle().y,0)
-	self.imposter:Spawn()
-end
----------------------------------------------------------------------------------------------------------------------------------------------
 
 ENT.SoundTbl_OnKilledEnemy = {
 "jackal/tnt/tnt9.ogg",
@@ -273,30 +138,168 @@ ENT.SoundTbl_Death = {
 "jackal/dth/dth15.ogg"
 }
 ---------------------------------------------------------------------------------------------------------------------------------------------
+function ENT:CustomOnSetupWeaponHoldTypeAnims(htype)
+    if (htype == "pistol") then
+    	self.WeaponAnimTranslations[ACT_RUN]						= ACT_RUN
+    	self.WeaponAnimTranslations[ACT_IDLE_AGITATED]				= ACT_IDLE_AGITATED
+    elseif (htype == "ar2") then
+    	self.WeaponAnimTranslations[ACT_RUN]						= ACT_RUN_RIFLE
+    	self.WeaponAnimTranslations[ACT_IDLE_AGITATED]				= ACT_IDLE_RIFLE
+    end
+	return true
+end
+
+function ENT:CustomOnInitialize()
+	self:RandomizeTraits()
+	for i=1, #self.bodyGroupTable do
+		self:SetBodygroup(i, self.bodyGroupTable[i])
+	end
+	self.StartHealth = self.StartHealth * GetConVarNumber("vj_spv3_HealthModifier")
+	self:SetHealth(self.StartHealth)
+	timer.Simple(0.01, function() 
+		if (GetConVarNumber("vj_spv3_covUNSCWeps")==1 and math.random(0,1)==1) then
+			self:GetActiveWeapon():Remove()
+			self:Give(VJ_PICKRANDOMTABLE(self.UNSCWeps))
+		end
+		if (self:GetActiveWeapon():GetClass()=="weapon_vj_cov_spv3_plasmapistol") then
+			self:SetSkin(0)
+		elseif (self:GetActiveWeapon():GetClass()=="weapon_vj_cov_spv3_needler") then
+			self:SetSkin(1)
+		elseif (self:GetActiveWeapon():GetClass()=="weapon_vj_cov_spv3_plasmapistolbrute") then
+			self:SetSkin(2)
+		else
+			self:SetSkin(3)
+		end
+	end)
+	self:SetColor(self.Color)
+	self:SetCollisionBounds(Vector(20, 20, 75), Vector(-20, -20, 0))
+end
+---------------------------------------------------------------------------------------------------------------------------------------------
+ENT.EvadeCooldown = 0
+ENT.ShieldActivated = true
+function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
+	if (dmginfo:GetDamageType()==DMG_BLAST) then
+		dmginfo:ScaleDamage(3.5)
+	end
+	if (dmginfo:GetAttacker():IsNPC()) then
+		dmginfo:ScaleDamage(GetConVarNumber("vj_spv3_NPCTakeDamageModifier"))
+	end
+	if (math.random(0,2) == 2 and self.EvadeCooldown <= CurTime()) then
+		if (math.random(0,1)==1) then
+			self:VJ_ACT_PLAYACTIVITY(ACT_SIGNAL1,true,1.5,false)
+		else
+			self:VJ_ACT_PLAYACTIVITY(ACT_SIGNAL2,true,1.5,false)
+		end
+		self.EvadeCooldown = CurTime() + 4
+	end
+	if hitgroup == 509 then
+		self:DamageShield(dmginfo)
+	end
+	self.DeathType = self:CheckForSpecialDeaths(dmginfo)
+	if (self.DeathType != nil) then
+		self:DoSpecialDeath(self.DeathType, dmginfo)
+	end
+end
+
+function ENT:CheckForSpecialDeaths(dmginfo)
+	if (hitgroup == 506 and dmginfo:GetDamage() >= GetConVarNumber("vj_spv3_PrecisionThreshold")) then
+		return "Headshot"
+	elseif (dmginfo:GetAttacker():IsPlayer() && dmginfo:GetDamageType()==DMG_CLUB && Vector((dmginfo:GetDamagePosition() - self:GetPos()).x, (dmginfo:GetDamagePosition() - self:GetPos()).y, 0):Dot(Vector(self:GetForward().x, self:GetForward().y, 0)) < 0) then
+		return "BackBreak"
+	elseif (dmginfo:GetDamage() >= self:Health() and (dmginfo:GetDamageType()==DMG_BLAST or dmginfo:GetDamageType()==DMG_CLUB)) then
+		return "Flying"
+	else
+		return nil
+	end
+end
+
+function ENT:DoSpecialDeath(typeDeath, dmginfo)
+	if (typeDeath==nil) then
+		return
+	elseif (typeDeath=="BackBreak") then --Do the following when taking damage via DMG_CLUB to the back
+		self.AlertFriendsOnDeath = false
+		self:TakeDamage(self:Health(), dmginfo:GetAttacker(), dmginfo:GetInflictor())
+		self:VJ_ACT_PLAYACTIVITY("Die_1", true, 2, false)
+	elseif (typeDeath=="Headshot") then --Do the following when dying via a headshot (above the precisionThreshold)
+		dmginfo:SetDamage(self:Health())
+		self:VJ_ACT_PLAYACTIVITY("Die_1", true, 2, false)
+	elseif (typeDeath=="Flying") then --Do the following when dying to DMG_CLUB with high force or DMG_BLAST
+		self:DisperseShield()
+		self.HasDeathRagdoll = false
+		self.HasDeathAnimation = false
+		self.imposter = ents.Create("obj_vj_imposter")
+		self.imposter:SetOwner(self)
+		self.imposter.Sequence = "Die_Airborne"
+		local velocity = dmginfo:GetDamageForce():GetNormalized() * 1500
+		if (dmginfo:GetDamageType()==DMG_CLUB or dmginfo:GetDamageForce():Length()) then
+			velocity = velocity * 0.3
+		end
+		self.imposter.Velocity = Vector(velocity.x, velocity.y, velocity.z + 500)
+		self.imposter.Angle = Angle(0,dmginfo:GetDamageForce():Angle().y,0)
+		self.imposter:Spawn()
+	end
+end
+
+function ENT:DamageShield(dmginfo)
+	if (dmginfo:GetDamageType()==DMG_PLASMA or dmginfo:GetDamageType()==DMG_BURN or dmginfo:GetDamageType()==DMG_SLOWBURN) then
+		self.ShieldCurrentHealth = self.ShieldCurrentHealth - dmginfo:GetDamage() * 2
+	else
+		self.ShieldCurrentHealth = self.ShieldCurrentHealth - dmginfo:GetDamage()
+	end	
+	dmginfo:ScaleDamage(0)
+	ParticleEffect("hcea_shield_impact", dmginfo:GetDamagePosition(), dmginfo:GetDamageForce():Angle(), self)
+	if (self.ShieldCurrentHealth <= 0 and self.ShieldActivated==true) then
+		self:DisperseShield()
+		if (math.random(0,1)==1) then
+			self:Flee()
+		end
+	end
+	timer.Create("ShieldDelay"..self:GetCreationID(), self.ShieldDelay, 1, function() --Timers will reset everytime damage is applied, no need to adjust
+		if (IsValid(self) and self.ShieldCurrentHealth < self.ShieldMaxHealth) then
+			self:RegenerateShield()
+		end
+	end)
+end
+
+function ENT:DisperseShield()
+	if (self.ShieldActivated == false) then return false end
+	self.ShieldActivated = false
+	self:SetHitboxSet("noShield")
+	self:SetBodygroup(1, 0)
+	ParticleEffectAttach("hcea_shield_disperse",PATTACH_POINT_FOLLOW,self,self:LookupAttachment("origin"))
+	return true
+end
+
+function ENT:RegenerateShield()
+	self.ShieldActivated = true
+	self.ShieldCurrentHealth = self.ShieldMaxHealth
+	self:SetHitboxSet("shielded")
+	self:SetBodygroup(1, 1)
+	ParticleEffectAttach("hcea_shield_disperse",PATTACH_POINT_FOLLOW,self,self:LookupAttachment("origin"))
+end
+
 function ENT:CustomOnAcceptInput(key,activator,caller,data)
 	if key == "Step" then
 		self:EmitSound("elite/shared/walk/walk ("..math.random(1,6)..").ogg", 80, 100, 1)
 	elseif key == "Pain" then
-		self:EmitSound(VJ_PICKRANDOMTABLE(self.SoundTbl_Pain))
+		self:PlaySoundSystem("Pain")
 	end
 end
 
-ENT.HasProtector=false
 function ENT:CustomOnAllyDeath(argent) 
-	if ((string.find(tostring(argent), "elite")) or (string.find(tostring(argent), "brute"))) and (argent:GetPos():DistToSqr(self:GetPos()) <= 700000) then
-		timer.Simple(2.5, function() 
-			if (!IsValid(self)) then return end
-			self.HasProtector=false
-			for k, v in pairs(ents.FindInSphere(self:GetPos(), 50000)) do
-				if (string.find(tostring(v), "elite") or string.find(tostring(v), "brute")) and (v:IsNPC()) then
-					self.HasProtector = true
-				end
-			end
-			if (self.HasProtector==false or (math.random(0,10) < 3)) then
-				self:Flee()
-			end
-	end)
+	self.HasProtector = self:CheckForProtector()
+	if (self.HasProtector == false) then
+		self:Flee()
+	end
 end
+
+function ENT:CheckForProtector()
+	for k, v in pairs(ents.FindInSphere(self:GetPos(), 1000)) do
+		if (string.find(tostring(v), "elite") or string.find(tostring(v), "brute")) and (v:IsNPC()) then
+			return true
+		end
+	end
+	return false
 end
 
 function ENT:Flee()
@@ -306,22 +309,18 @@ function ENT:Flee()
 	self.AnimTbl_MoveToCover = {ACT_RUN_SCARED}
 	timer.Create("Scared"..self:GetCreationID(), math.random(1.5,3), 5, function()
 		if !(IsValid(self)) then return end 
-		self.AnimTbl_Walk = {ACT_RUN_SCARED} -- Set the walking animations | Put multiple to let the base pick a random animation when it moves
-		self.AnimTbl_Run = {ACT_RUN_SCARED} -- Set the running animations | Put multiple to let the base pick a random animation when it moves
-		self.AnimTbl_MoveToCover = {ACT_RUN_SCARED}
 		self:VJ_TASK_COVER_FROM_ENEMY("TASK_RUN_PATH")
-	end)
-	timer.Simple(10, function()
-		if !(IsValid(self)) then return end
-		self.Behavior = VJ_BEHAVIOR_PASSIVE
-		self.AnimTbl_Walk = {ACT_WALK} -- Set the walking animations | Put multiple to let the base pick a random animation when it moves
-		self.AnimTbl_Run = {ACT_RUN} -- Set the running animations | Put multiple to let the base pick a random animation when it moves
-		self.AnimTbl_MoveToCover = {ACT_RUN}
+		if (timer.RepsLeft("Scared"..self:GetCreationID())==0) then
+			self.Behavior = VJ_BEHAVIOR_AGGRESSIVE
+			self.AnimTbl_Walk = {ACT_WALK} -- Set the walking animations | Put multiple to let the base pick a random animation when it moves
+			self.AnimTbl_Run = {ACT_RUN} -- Set the running animations | Put multiple to let the base pick a random animation when it moves
+			self.AnimTbl_MoveToCover = {ACT_RUN}
+		end
 	end)
 end
 
 function ENT:CustomOnInitialKilled(dmginfo, hitgroup)
-	self:SetBodygroup(1, 0)
+	self:DisperseShield()
 end
 
 ENT.NextTalkTime = 0

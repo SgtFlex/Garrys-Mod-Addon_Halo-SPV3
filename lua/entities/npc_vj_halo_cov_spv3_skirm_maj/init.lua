@@ -13,20 +13,12 @@ ENT.UNSCWeps = {
 }
 ENT.WeaponProfficiency = 100
 ENT.ExtraShotCount = 2
+ENT.ShieldActivated = true
 //50 shields
 function ENT:CustomOnInitialize()
 	self:SetHitboxSet("shielded")
 	self:SetBodygroup(1, 1)
 	self:SetBodygroup(2, 1)
-	timer.Simple(0.1, function()
-	if (self:GetActiveWeapon().HoldType=="ar2") then
-		self.AnimTbl_WeaponAttack = {ACT_IDLE_RIFLE} -- Animation played when the SNPC does weapon attack
-		self.AnimTbl_ShootWhileMovingRun = {ACT_RUN_RIFLE} -- Animations it will play when shooting while running | NOTE: Weapon may translate the animation that they see fit!
-		self.AnimTbl_ShootWhileMovingWalk = {ACT_RUN_RIFLE} -- Animations it will play when shooting while walking | NOTE: Weapon may translate the animation that they see fit!
-		self.AnimTbl_Run = {ACT_RUN_RIFLE}
-		self.AnimTbl_IdleStand = {ACT_IDLE} -- The idle animation when AI is enabled
-	end
-end)
 	timer.Simple(0.01, function() 
 		if (GetConVarNumber("vj_spv3_covUNSCWeps")==1 and math.random(0,1)==1) then
 			self:GetActiveWeapon():Remove()
@@ -34,64 +26,4 @@ end)
 		end
 	end)
 	self:SetCollisionBounds(Vector(20, 20, 75), Vector(-20, -20, 0))
-end
-
-function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
-	if (dmginfo:GetDamageType()==DMG_BLAST) then
-		dmginfo:ScaleDamage(3.5)
-	end
-	if (math.random(0,2) == 2) then
-		if (self.EvadeCooldown <= CurTime()) then
-			if (math.random(0,1)==1) then
-				self:VJ_ACT_PLAYACTIVITY(ACT_SIGNAL1,true,1.5,false)
-			else
-				self:VJ_ACT_PLAYACTIVITY(ACT_SIGNAL2,true,1.5,false)
-			end
-			self.EvadeCooldown = CurTime() + 4
-		end
-	end
-	if (dmginfo:GetAttacker():IsNPC()) then
-		dmginfo:ScaleDamage(GetConVarNumber("vj_spv3_NPCTakeDamageModifier"))
-	end
-	if hitgroup == 509 then
-		if (dmginfo:GetDamageType()==DMG_PLASMA or dmginfo:GetDamageType()==DMG_BURN or dmginfo:GetDamageType()==DMG_SLOWBURN) then
-			self.ShieldCurrentHealth = self.ShieldCurrentHealth - dmginfo:GetDamage() * 2
-		else
-			self.ShieldCurrentHealth = self.ShieldCurrentHealth - dmginfo:GetDamage()
-		end
-			
-		dmginfo:ScaleDamage(0)
-		ParticleEffect("hcea_shield_impact", dmginfo:GetDamagePosition(), dmginfo:GetDamageForce():Angle(), self)
-	end
-	if (hitgroup == 506 and dmginfo:GetDamage() >= GetConVarNumber("vj_spv3_PrecisionThreshold")) then
-		dmginfo:SetDamage(self:Health())
-	end
-	if (dmginfo:GetDamage() >= self:Health()) then
-		if (dmginfo:GetDamageType()==DMG_BLAST or dmginfo:GetDamageType()==DMG_CLUB or dmginfo:GetDamageForce():Length()>=10000) then
-			self:FlyingDeath(dmginfo)
-		end
-	end
-	if dmginfo:GetAttacker():IsPlayer() && dmginfo:GetDamageType()==DMG_CLUB && Vector((dmginfo:GetDamagePosition() - self:GetPos()).x, (dmginfo:GetDamagePosition() - self:GetPos()).y, 0):Dot(Vector(self:GetForward().x, self:GetForward().y, 0)) < 0 then
-		self.AlertFriendsOnDeath = false
-		self:TakeDamage(self:Health(), dmginfo:GetAttacker(), dmginfo:GetInflictor())
-	end
-	if self.ShieldCurrentHealth <= 0 and self.ShieldActivated==true then
-		self.ShieldActivated = false
-		self:SetHitboxSet("default")
-		self:SetBodygroup(1, 0)
-		ParticleEffectAttach("hcea_shield_disperse",PATTACH_POINT_FOLLOW,self,self:LookupAttachment("origin"))
-	end
-	if (timer.Exists("ShieldDelay"..self:GetCreationID())) then
-		timer.Adjust("ShieldDelay"..self:GetCreationID(), self.ShieldDelay, 1)
-	else
-		timer.Create("ShieldDelay"..self:GetCreationID(), self.ShieldDelay, 1, function() 
-			if (IsValid(self) and self.ShieldCurrentHealth < self.ShieldHealth) then
-				self.ShieldActivated = true
-				self.ShieldCurrentHealth = self.ShieldHealth
-				self:SetHitboxSet("shielded")
-				self:SetBodygroup(1, 1)
-				ParticleEffectAttach("hcea_shield_disperse",PATTACH_POINT_FOLLOW,self,self:LookupAttachment("origin"))
-			end
-		end)
-	end
 end

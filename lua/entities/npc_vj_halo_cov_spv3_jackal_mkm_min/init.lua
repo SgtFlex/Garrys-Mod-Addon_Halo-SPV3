@@ -20,6 +20,7 @@ ENT.bodyGroupTable = {
 ENT.AnimTbl_IdleStand = {ACT_IDLE}
 ENT.Color = Color(80,80,80)
 ENT.eyeLight = ""
+ENT.ShieldActivated = false
 function ENT:CustomOnInitialize()
 	self:SetHitboxSet("noShield")
 	for i=1, #self.bodyGroupTable do

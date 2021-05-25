@@ -446,7 +446,7 @@ end -- Ran the moment the NPC dies!
 
 
 function ENT:CustomOnLeapAttack_BeforeStartTimer() 
-	
+	constraint.NoCollide(self, self:GetEnemy(), 0, 0)
 	self.NextLeapAttackTime = math.random(2.5, 4.5) -- How much time until it can use a leap attack?
 	self.LeapAttackVelocityRight = math.random(-50, 50) -- How much right force should it apply?
 	self.LeapAttackVelocityUp = math.random(150, 230) -- How much upward force should it apply?
