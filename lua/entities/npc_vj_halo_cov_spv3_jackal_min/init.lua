@@ -199,13 +199,13 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 	if hitgroup == 509 then
 		self:DamageShield(dmginfo)
 	end
-	self.DeathType = self:CheckForSpecialDeaths(dmginfo)
+	self.DeathType = self:CheckForSpecialDeaths(dmginfo, hitgroup)
 	if (self.DeathType != nil) then
 		self:DoSpecialDeath(self.DeathType, dmginfo)
 	end
 end
 
-function ENT:CheckForSpecialDeaths(dmginfo)
+function ENT:CheckForSpecialDeaths(dmginfo, hitgroup)
 	if (hitgroup == 506 and dmginfo:GetDamage() >= GetConVarNumber("vj_spv3_PrecisionThreshold")) then
 		return "Headshot"
 	elseif (dmginfo:GetAttacker():IsPlayer() && dmginfo:GetDamageType()==DMG_CLUB && Vector((dmginfo:GetDamagePosition() - self:GetPos()).x, (dmginfo:GetDamagePosition() - self:GetPos()).y, 0):Dot(Vector(self:GetForward().x, self:GetForward().y, 0)) < 0) then

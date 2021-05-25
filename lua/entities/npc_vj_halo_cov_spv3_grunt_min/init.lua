@@ -89,9 +89,15 @@ ENT.UNSCWeps = {
 
 function ENT:CustomOnSetupWeaponHoldTypeAnims(htype)
     if (htype == "pistol") then
+    	self.WeaponAnimTranslations[ACT_WALK]						= ACT_WALK
     	self.WeaponAnimTranslations[ACT_RUN]						= ACT_RUN
     	self.WeaponAnimTranslations[ACT_IDLE_AGITATED]				= ACT_IDLE_AGITATED
+    elseif (htype == "normal" or htype == "passive") then
+    	self.WeaponAnimTranslations[ACT_WALK]						= ACT_RUN_SCARED
+    	self.WeaponAnimTranslations[ACT_RUN]						= ACT_RUN_SCARED
+    	self.WeaponAnimTranslations[ACT_IDLE_AGITATED]				= ACT_RUN_SCARED
     else
+    	self.WeaponAnimTranslations[ACT_WALK]						= ACT_WALK
     	self.WeaponAnimTranslations[ACT_RUN]						= ACT_RUN_RIFLE
     	self.WeaponAnimTranslations[ACT_IDLE_AGITATED]				= ACT_IDLE_RIFLE
     end
@@ -226,8 +232,6 @@ self.SoundTbl_WeaponReload = {
 	}
 end
 
-
-
 function ENT:CustomOnInitialize()
 	self:RandomizeTraits()
 	for i=1, #self.bodyGroupTable do
@@ -240,7 +244,6 @@ function ENT:CustomOnInitialize()
 		self:SetBodygroup(i, self.bodyGroupTable[i])
 	end
 	self:SetCollisionBounds(Vector(20, 20, 60), Vector(-20, -20, 0))
-	
 end
 
 function ENT:UseConVars()
@@ -280,14 +283,14 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 		end
 		self.EvadeCooldown = CurTime() + 4
 	end
-	self.DeathType = self:CheckForSpecialDeaths(dmginfo)
+	self.DeathType = self:CheckForSpecialDeaths(dmginfo, hitgroup)
 	if (self.DeathType != nil) then
 		self:DoSpecialDeath(self.DeathType, dmginfo)
 	end
 end
 
-function ENT:CheckForSpecialDeaths(dmginfo)
-	if (hitgroup == 505 and dmginfo:GetDamage() >= GetConVarNumber("vj_spv3_PrecisionThreshold")) then
+function ENT:CheckForSpecialDeaths(dmginfo, hitgroup)
+	if (hitgroup == 505 and dmginfo:GetDamage() >= GetConVarNumber("vj_spv3_PrecisionThreshold") and (self.bodyGroupTable[2]!=2 or self.bodyParts["Head"]["Removed"]==true)) then
 		return "Headshot"
 	elseif (dmginfo:GetAttacker():IsPlayer() && dmginfo:GetDamageType()==DMG_CLUB && Vector((dmginfo:GetDamagePosition() - self:GetPos()).x, (dmginfo:GetDamagePosition() - self:GetPos()).y, 0):Dot(Vector(self:GetForward().x, self:GetForward().y, 0)) < 0) then
 		return "BackBreak"
@@ -389,9 +392,7 @@ function ENT:Flee()
 	self.ScaredSound = CreateSound(self, VJ_PICKRANDOMTABLE(self.SoundTbl_Scared))
 	self.ScaredSound:Play()
 	self.Behavior = VJ_BEHAVIOR_PASSIVE
-	self.AnimTbl_Walk = {ACT_RUN_SCARED} -- Set the walking animations | Put multiple to let the base pick a random animation when it moves
-	self.AnimTbl_Run = {ACT_RUN_SCARED} -- Set the running animations | Put multiple to let the base pick a random animation when it moves
-	self.AnimTbl_MoveToCover = {ACT_RUN_SCARED}
+	self:SetupWeaponHoldTypeAnims("passive")
 	timer.Create("Scared"..self:GetCreationID(), math.random(1.5,3), 5, function()
 		if !(IsValid(self)) then return end 
 		self.ScaredSound = CreateSound(self, VJ_PICKRANDOMTABLE(self.SoundTbl_Scared))
@@ -399,15 +400,12 @@ function ENT:Flee()
 		self:VJ_TASK_COVER_FROM_ENEMY("TASK_RUN_PATH")
 		if (timer.RepsLeft("Scared"..self:GetCreationID())==0) then
 			self.Behavior = VJ_BEHAVIOR_AGGRESSIVE
-			self.AnimTbl_Walk = {ACT_WALK} -- Set the walking animations | Put multiple to let the base pick a random animation when it moves
-			self.AnimTbl_Run = {ACT_RUN} -- Set the running animations | Put multiple to let the base pick a random animation when it moves
-			self.AnimTbl_MoveToCover = {ACT_RUN}
+			self:SetupWeaponHoldTypeAnims(self:GetActiveWeapon():GetHoldType())
 		end
 	end)
 end
 
-ENT.GrenadeAttackVelForward1 = 300 -- Grenade attack velocity up | The first # in math.random
-//Brought over from sentinels addon, possibly old/outdated?
+--Brought over from sentinels addon, possibly old/outdated?
 function ENT:CreateGibEntity(Ent,Models,Tbl_Features,CustomCode)
 	// self:CreateGibEntity("prop_ragdoll","",{Pos=self:LocalToWorld(Vector(0,3,0)),Ang=self:GetAngles(),Vel=})
 	if self.AllowedToGib == false then return end
