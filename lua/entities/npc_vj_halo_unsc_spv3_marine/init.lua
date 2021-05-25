@@ -11,8 +11,11 @@ ENT.HullType = HULL_MEDIUM
 ENT.Model = {"models/hce/spv3/unsc/marine/marine.mdl"} -- The game will pick a random model from the table when the SNPC is spawned | Add as many as you want
 ENT.modelColor = Color(255,255,255)
 ENT.StartHealth = 90
-ENT.ArmorHealth = 55
-ENT.ArmorCurrentHealth = ENT.ArmorHealth
+ENT.ArmorMaxHealth = 55
+ENT.ArmorCurrentHealth = ENT.ArmorMaxHealth
+ENT.ArmorDelay = 6
+ENT.ArmorRecharge = 1
+ENT.ArmorActivated = true
 //55 Armor
 	-- ====== Blood-Related Variables ====== --
 ENT.Bleeds = true -- Does the SNPC bleed? (Blood decal, particle, etc.)
@@ -48,7 +51,7 @@ ENT.HitGroupFlinching_Values = {
 	{HitGroup = {503}, Animation = {"h_f_l_arm"}},
 	{HitGroup = {505}, Animation = {"h_f_r_arm"}},
 }
-ENT.AnimTbl_Death = {"Die_1", "Die_2", "Die_3"} -- Death Animations
+ENT.AnimTbl_Death = {"Die_1", "Die_2", "Die_3", "Die_4", "Die_5"}
 	-- Melee Attack ---------------------------------------------------------------------------------------------------------------------------------------------
 ENT.HasMeleeAttack = false -- Should the SNPC have a melee attack?
 ENT.DisableFootStepSoundTimer = true -- If set to true, it will disable the time system for the footstep sound code, allowing you to use other ways like model events
@@ -116,9 +119,6 @@ function ENT:CustomOnSetupWeaponHoldTypeAnims(htype)
 	return true
 end
 
-
-
-
 function ENT:CustomOnPreInitialize()
 	self.BGs = {
 		math.random(0,23),
@@ -128,162 +128,170 @@ function ENT:CustomOnPreInitialize()
 	}
 	self.voicePermutation = tostring(math.random(1,9))
 	self.SoundTbl_OnKilledEnemy = {
-	"marine/marine0"..self.voicePermutation.."/killed_enemy/killed_enemy (1).ogg",
-	"marine/marine0"..self.voicePermutation.."/killed_enemy/killed_enemy (2).ogg",
-	-- "marine/marine0"..self.voicePermutation.."/killed_enemy/killed_enemy (3).ogg",
-	-- "marine/marine0"..self.voicePermutation.."/killed_enemy/killed_enemy (4).ogg",
-	-- "marine/marine0"..self.voicePermutation.."/killed_enemy/killed_enemy (5).ogg",
-	-- "marine/marine0"..self.voicePermutation.."/killed_enemy/killed_enemy (6).ogg",
-	-- "marine/marine0"..self.voicePermutation.."/killed_enemy/killed_enemy (7).ogg",
-}
-self.SoundTbl_Alert = {
-	"marine/marine0"..self.voicePermutation.."/seeFoe/seeFoe (1).ogg",
-	"marine/marine0"..self.voicePermutation.."/seeFoe/seeFoe (2).ogg",
-	"marine/marine0"..self.voicePermutation.."/seeFoe/seeFoe (3).ogg",
-	"marine/marine0"..self.voicePermutation.."/seeFoe/seeFoe (4).ogg",
-	"marine/marine0"..self.voicePermutation.."/seeFoe/seeFoe (5).ogg",
-	"marine/marine0"..self.voicePermutation.."/seeFoe/seeFoe (6).ogg",
-	"marine/marine0"..self.voicePermutation.."/seeFoe/seeFoe (7).ogg",
-	-- "marine/marine0"..self.voicePermutation.."/seeFoe/seeFoe (8).ogg",
-	-- "marine/marine0"..self.voicePermutation.."/seeFoe/seeFoe (9).ogg",
-	-- "marine/marine0"..self.voicePermutation.."/seeFoe/seeFoe (10).ogg",
-	-- "marine/marine0"..self.voicePermutation.."/seeFoe/seeFoe (11).ogg",
-	-- "marine/marine0"..self.voicePermutation.."/seeFoe/seeFoe (12).ogg",
-	-- "marine/marine0"..self.voicePermutation.."/seeFoe/seeFoe (13).ogg",
-	-- "marine/marine0"..self.voicePermutation.."/seeFoe/seeFoe (14).ogg",
-	-- "marine/marine0"..self.voicePermutation.."/seeFoe/seeFoe (15).ogg",
-	-- "marine/marine0"..self.voicePermutation.."/seeFoe/seeFoe (16).ogg",
-	-- "marine/marine0"..self.voicePermutation.."/seeFoe/seeFoe (17).ogg",
-	-- "marine/marine0"..self.voicePermutation.."/seeFoe/seeFoe (18).ogg",
-}
-self.SoundTbl_Pain = {
-	"marine/marine0"..self.voicePermutation.."/pain/pain (1).ogg",
-	"marine/marine0"..self.voicePermutation.."/pain/pain (2).ogg",
-	"marine/marine0"..self.voicePermutation.."/pain/pain (3).ogg",
-	"marine/marine0"..self.voicePermutation.."/pain/pain (4).ogg",
-	-- "marine/marine0"..self.voicePermutation.."/pain/pain (5).ogg",
-	-- "marine/marine0"..self.voicePermutation.."/pain/pain (6).ogg",
-	-- "marine/marine0"..self.voicePermutation.."/pain/pain (7).ogg",
-	-- "marine/marine0"..self.voicePermutation.."/pain/pain (8).ogg",
-	-- "marine/marine0"..self.voicePermutation.."/pain/pain (9).ogg",
-	-- "marine/marine0"..self.voicePermutation.."/pain/pain (10).ogg",
-	-- "marine/marine0"..self.voicePermutation.."/pain/pain (11).ogg",
-	-- "marine/marine0"..self.voicePermutation.."/pain/pain (12).ogg",
+		"marine/marine0"..self.voicePermutation.."/killed_enemy/killed_enemy (1).ogg",
+		"marine/marine0"..self.voicePermutation.."/killed_enemy/killed_enemy (2).ogg",
+		-- "marine/marine0"..self.voicePermutation.."/killed_enemy/killed_enemy (3).ogg",
+		-- "marine/marine0"..self.voicePermutation.."/killed_enemy/killed_enemy (4).ogg",
+		-- "marine/marine0"..self.voicePermutation.."/killed_enemy/killed_enemy (5).ogg",
+		-- "marine/marine0"..self.voicePermutation.."/killed_enemy/killed_enemy (6).ogg",
+		-- "marine/marine0"..self.voicePermutation.."/killed_enemy/killed_enemy (7).ogg",
+	}
+	self.SoundTbl_Alert = {
+		"marine/marine0"..self.voicePermutation.."/seeFoe/seeFoe (1).ogg",
+		"marine/marine0"..self.voicePermutation.."/seeFoe/seeFoe (2).ogg",
+		"marine/marine0"..self.voicePermutation.."/seeFoe/seeFoe (3).ogg",
+		"marine/marine0"..self.voicePermutation.."/seeFoe/seeFoe (4).ogg",
+		"marine/marine0"..self.voicePermutation.."/seeFoe/seeFoe (5).ogg",
+		"marine/marine0"..self.voicePermutation.."/seeFoe/seeFoe (6).ogg",
+		"marine/marine0"..self.voicePermutation.."/seeFoe/seeFoe (7).ogg",
+		-- "marine/marine0"..self.voicePermutation.."/seeFoe/seeFoe (8).ogg",
+		-- "marine/marine0"..self.voicePermutation.."/seeFoe/seeFoe (9).ogg",
+		-- "marine/marine0"..self.voicePermutation.."/seeFoe/seeFoe (10).ogg",
+		-- "marine/marine0"..self.voicePermutation.."/seeFoe/seeFoe (11).ogg",
+		-- "marine/marine0"..self.voicePermutation.."/seeFoe/seeFoe (12).ogg",
+		-- "marine/marine0"..self.voicePermutation.."/seeFoe/seeFoe (13).ogg",
+		-- "marine/marine0"..self.voicePermutation.."/seeFoe/seeFoe (14).ogg",
+		-- "marine/marine0"..self.voicePermutation.."/seeFoe/seeFoe (15).ogg",
+		-- "marine/marine0"..self.voicePermutation.."/seeFoe/seeFoe (16).ogg",
+		-- "marine/marine0"..self.voicePermutation.."/seeFoe/seeFoe (17).ogg",
+		-- "marine/marine0"..self.voicePermutation.."/seeFoe/seeFoe (18).ogg",
+	}
+	self.SoundTbl_Pain = {
+		"marine/marine0"..self.voicePermutation.."/pain/pain (1).ogg",
+		"marine/marine0"..self.voicePermutation.."/pain/pain (2).ogg",
+		"marine/marine0"..self.voicePermutation.."/pain/pain (3).ogg",
+		"marine/marine0"..self.voicePermutation.."/pain/pain (4).ogg",
+		-- "marine/marine0"..self.voicePermutation.."/pain/pain (5).ogg",
+		-- "marine/marine0"..self.voicePermutation.."/pain/pain (6).ogg",
+		-- "marine/marine0"..self.voicePermutation.."/pain/pain (7).ogg",
+		-- "marine/marine0"..self.voicePermutation.."/pain/pain (8).ogg",
+		-- "marine/marine0"..self.voicePermutation.."/pain/pain (9).ogg",
+		-- "marine/marine0"..self.voicePermutation.."/pain/pain (10).ogg",
+		-- "marine/marine0"..self.voicePermutation.."/pain/pain (11).ogg",
+		-- "marine/marine0"..self.voicePermutation.."/pain/pain (12).ogg",
 
-}
-self.SoundTbl_Death = {
-	"marine/marine0"..self.voicePermutation.."/death/death (1).ogg",
-	"marine/marine0"..self.voicePermutation.."/death/death (2).ogg",
-	"marine/marine0"..self.voicePermutation.."/death/death (3).ogg",
-	"marine/marine0"..self.voicePermutation.."/death/death (4).ogg",
-	"marine/marine0"..self.voicePermutation.."/death/death (5).ogg",
-	-- "marine/marine0"..self.voicePermutation.."/death/death (6).ogg",
-	-- "marine/marine0"..self.voicePermutation.."/death/death (7).ogg",
-	-- "marine/marine0"..self.voicePermutation.."/death/death (8).ogg",
-	-- "marine/marine0"..self.voicePermutation.."/death/death (9).ogg",
-	-- "marine/marine0"..self.voicePermutation.."/death/death (10).ogg",
-	-- "marine/marine0"..self.voicePermutation.."/death/death (11).ogg",
-	-- "marine/marine0"..self.voicePermutation.."/death/death (12).ogg",
-	-- "marine/marine0"..self.voicePermutation.."/death/death (13).ogg",
-}
-self.SoundTbl_Fall = {
-	"marine/marine0"..self.voicePermutation.."/fall/fall (1).ogg",
-	"marine/marine0"..self.voicePermutation.."/fall/fall (2).ogg",
-}
-self.SoundTbl_OnGrenadeSight = {
-	"marine/marine0"..self.voicePermutation.."/seeGrenade/seeGrenade (1).ogg",
-	"marine/marine0"..self.voicePermutation.."/seeGrenade/seeGrenade (2).ogg",
-	"marine/marine0"..self.voicePermutation.."/seeGrenade/seeGrenade (3).ogg",
-	"marine/marine0"..self.voicePermutation.."/seeGrenade/seeGrenade (4).ogg",
-	-- "marine/marine0"..self.voicePermutation.."/seeGrenade/seeGrenade (5).ogg",
-	-- "marine/marine0"..self.voicePermutation.."/seeGrenade/seeGrenade (6).ogg",
-	-- "marine/marine0"..self.voicePermutation.."/seeGrenade/seeGrenade (7).ogg",
-	-- "marine/marine0"..self.voicePermutation.."/seeGrenade/seeGrenade (8).ogg",
-	-- "marine/marine0"..self.voicePermutation.."/seeGrenade/seeGrenade (9).ogg",
-	-- "marine/marine0"..self.voicePermutation.."/seeGrenade/seeGrenade (10).ogg",
-	-- "marine/marine0"..self.voicePermutation.."/seeGrenade/seeGrenade (11).ogg",
-	-- "marine/marine0"..self.voicePermutation.."/seeGrenade/seeGrenade (12).ogg",
-	-- "marine/marine0"..self.voicePermutation.."/seeGrenade/seeGrenade (13).ogg",
-	-- "marine/marine0"..self.voicePermutation.."/seeGrenade/seeGrenade (14).ogg",
-}
-self.SoundTbl_GrenadeAttack = {
-	"marine/marine0"..self.voicePermutation.."/throwGrenade/throwGrenade (1).ogg",
-	"marine/marine0"..self.voicePermutation.."/throwGrenade/throwGrenade (2).ogg",
-	-- "marine/marine0"..self.voicePermutation.."/throwGrenade/throwGrenade (3).ogg",
-	-- "marine/marine0"..self.voicePermutation.."/throwGrenade/throwGrenade (4).ogg",
-	-- "marine/marine0"..self.voicePermutation.."/throwGrenade/throwGrenade (5).ogg",
-	-- "marine/marine0"..self.voicePermutation.."/throwGrenade/throwGrenade (6).ogg",
-	-- "marine/marine0"..self.voicePermutation.."/throwGrenade/throwGrenade (7).ogg",
-	-- "marine/marine0"..self.voicePermutation.."/throwGrenade/throwGrenade (8).ogg",
-	-- "marine/marine0"..self.voicePermutation.."/throwGrenade/throwGrenade (9).ogg",
-	-- "marine/marine0"..self.voicePermutation.."/throwGrenade/throwGrenade (10).ogg",
-	-- "marine/marine0"..self.voicePermutation.."/throwGrenade/throwGrenade (11).ogg",
-	-- "marine/marine0"..self.voicePermutation.."/throwGrenade/throwGrenade (12).ogg",
-	-- "marine/marine0"..self.voicePermutation.."/throwGrenade/throwGrenade (13).ogg",
-}
-self.SoundTbl_LostEnemy = {
-	
-}
-self.SoundTbl_Investigate = {
-	
-}
-self.SoundTbl_WeaponReload = {
-	"marine/marine0"..self.voicePermutation.."/cover/cover (1).ogg",
-	"marine/marine0"..self.voicePermutation.."/cover/cover (2).ogg",
-	-- "marine/marine0"..self.voicePermutation.."/cover/cover (3).ogg",
-	-- "marine/marine0"..self.voicePermutation.."/cover/cover (4).ogg",
-	-- "marine/marine0"..self.voicePermutation.."/cover/cover (5).ogg",
-	-- "marine/marine0"..self.voicePermutation.."/cover/cover (6).ogg",
+	}
+	self.SoundTbl_Death = {
+		"marine/marine0"..self.voicePermutation.."/death/death (1).ogg",
+		"marine/marine0"..self.voicePermutation.."/death/death (2).ogg",
+		"marine/marine0"..self.voicePermutation.."/death/death (3).ogg",
+		"marine/marine0"..self.voicePermutation.."/death/death (4).ogg",
+		"marine/marine0"..self.voicePermutation.."/death/death (5).ogg",
+		-- "marine/marine0"..self.voicePermutation.."/death/death (6).ogg",
+		-- "marine/marine0"..self.voicePermutation.."/death/death (7).ogg",
+		-- "marine/marine0"..self.voicePermutation.."/death/death (8).ogg",
+		-- "marine/marine0"..self.voicePermutation.."/death/death (9).ogg",
+		-- "marine/marine0"..self.voicePermutation.."/death/death (10).ogg",
+		-- "marine/marine0"..self.voicePermutation.."/death/death (11).ogg",
+		-- "marine/marine0"..self.voicePermutation.."/death/death (12).ogg",
+		-- "marine/marine0"..self.voicePermutation.."/death/death (13).ogg",
+	}
+	self.SoundTbl_Fall = {
+		"marine/marine0"..self.voicePermutation.."/fall/fall (1).ogg",
+		"marine/marine0"..self.voicePermutation.."/fall/fall (2).ogg",
+	}
+	self.SoundTbl_OnGrenadeSight = {
+		"marine/marine0"..self.voicePermutation.."/seeGrenade/seeGrenade (1).ogg",
+		"marine/marine0"..self.voicePermutation.."/seeGrenade/seeGrenade (2).ogg",
+		"marine/marine0"..self.voicePermutation.."/seeGrenade/seeGrenade (3).ogg",
+		"marine/marine0"..self.voicePermutation.."/seeGrenade/seeGrenade (4).ogg",
+		-- "marine/marine0"..self.voicePermutation.."/seeGrenade/seeGrenade (5).ogg",
+		-- "marine/marine0"..self.voicePermutation.."/seeGrenade/seeGrenade (6).ogg",
+		-- "marine/marine0"..self.voicePermutation.."/seeGrenade/seeGrenade (7).ogg",
+		-- "marine/marine0"..self.voicePermutation.."/seeGrenade/seeGrenade (8).ogg",
+		-- "marine/marine0"..self.voicePermutation.."/seeGrenade/seeGrenade (9).ogg",
+		-- "marine/marine0"..self.voicePermutation.."/seeGrenade/seeGrenade (10).ogg",
+		-- "marine/marine0"..self.voicePermutation.."/seeGrenade/seeGrenade (11).ogg",
+		-- "marine/marine0"..self.voicePermutation.."/seeGrenade/seeGrenade (12).ogg",
+		-- "marine/marine0"..self.voicePermutation.."/seeGrenade/seeGrenade (13).ogg",
+		-- "marine/marine0"..self.voicePermutation.."/seeGrenade/seeGrenade (14).ogg",
+	}
+	self.SoundTbl_GrenadeAttack = {
+		"marine/marine0"..self.voicePermutation.."/throwGrenade/throwGrenade (1).ogg",
+		"marine/marine0"..self.voicePermutation.."/throwGrenade/throwGrenade (2).ogg",
+		-- "marine/marine0"..self.voicePermutation.."/throwGrenade/throwGrenade (3).ogg",
+		-- "marine/marine0"..self.voicePermutation.."/throwGrenade/throwGrenade (4).ogg",
+		-- "marine/marine0"..self.voicePermutation.."/throwGrenade/throwGrenade (5).ogg",
+		-- "marine/marine0"..self.voicePermutation.."/throwGrenade/throwGrenade (6).ogg",
+		-- "marine/marine0"..self.voicePermutation.."/throwGrenade/throwGrenade (7).ogg",
+		-- "marine/marine0"..self.voicePermutation.."/throwGrenade/throwGrenade (8).ogg",
+		-- "marine/marine0"..self.voicePermutation.."/throwGrenade/throwGrenade (9).ogg",
+		-- "marine/marine0"..self.voicePermutation.."/throwGrenade/throwGrenade (10).ogg",
+		-- "marine/marine0"..self.voicePermutation.."/throwGrenade/throwGrenade (11).ogg",
+		-- "marine/marine0"..self.voicePermutation.."/throwGrenade/throwGrenade (12).ogg",
+		-- "marine/marine0"..self.voicePermutation.."/throwGrenade/throwGrenade (13).ogg",
+	}
 
-}
-self.SoundTbl_AllyDeath = {
-	"marine/marine0"..self.voicePermutation.."/ally_death/ally_death (1).ogg",
-	"marine/marine0"..self.voicePermutation.."/ally_death/ally_death (2).ogg",
-	-- "marine/marine0"..self.voicePermutation.."/ally_death/ally_death (3).ogg",
-	-- "marine/marine0"..self.voicePermutation.."/ally_death/ally_death (4).ogg",
-}
-self.SoundTbl_Stuck = {
-	"marine/marine0"..self.voicePermutation.."/stuck/stuck (1).ogg",
-	"marine/marine0"..self.voicePermutation.."/stuck/stuck (2).ogg",
-	-- "marine/marine0"..self.voicePermutation.."/stuck/stuck (3).ogg",
-	-- "marine/marine0"..self.voicePermutation.."/stuck/stuck (4).ogg",
-	-- "marine/marine0"..self.voicePermutation.."/stuck/stuck (5).ogg",
-	-- "marine/marine0"..self.voicePermutation.."/stuck/stuck (6).ogg",
-}
+	self.SoundTbl_WeaponReload = {
+		"marine/marine0"..self.voicePermutation.."/cover/cover (1).ogg",
+		"marine/marine0"..self.voicePermutation.."/cover/cover (2).ogg",
+		-- "marine/marine0"..self.voicePermutation.."/cover/cover (3).ogg",
+		-- "marine/marine0"..self.voicePermutation.."/cover/cover (4).ogg",
+		-- "marine/marine0"..self.voicePermutation.."/cover/cover (5).ogg",
+		-- "marine/marine0"..self.voicePermutation.."/cover/cover (6).ogg",
 
-self.SoundTbl_Transform = {
-	"marine/marine0"..self.voicePermutation.."/transform/transform (1).ogg",
-	-- "marine/marine0"..self.voicePermutation.."/transform/transform (2).ogg",
-	-- "marine/marine0"..self.voicePermutation.."/transform/transform (3).ogg",
-	-- "marine/marine0"..self.voicePermutation.."/transform/transform (4).ogg",
-	-- "marine/marine0"..self.voicePermutation.."/transform/transform (5).ogg",
-	-- "marine/marine0"..self.voicePermutation.."/transform/transform (6).ogg",
-	-- "marine/marine0"..self.voicePermutation.."/transform/transform (7).ogg",
-}
-self.SoundTbl_Suppressing = {
-	"marine/marine0"..self.voicePermutation.."/firing/firing (1).ogg",
-	"marine/marine0"..self.voicePermutation.."/firing/firing (2).ogg",
-	"marine/marine0"..self.voicePermutation.."/firing/firing (3).ogg",
-	"marine/marine0"..self.voicePermutation.."/firing/firing (4).ogg",
-	-- "marine/marine0"..self.voicePermutation.."/firing/firing (5).ogg",
-	-- "marine/marine0"..self.voicePermutation.."/firing/firing (6).ogg",
-	-- "marine/marine0"..self.voicePermutation.."/firing/firing (7).ogg",
-	-- "marine/marine0"..self.voicePermutation.."/firing/firing (8).ogg",
-	-- "marine/marine0"..self.voicePermutation.."/firing/firing (9).ogg",
-	-- "marine/marine0"..self.voicePermutation.."/firing/firing (10).ogg",
-	-- "marine/marine0"..self.voicePermutation.."/firing/firing (11).ogg",
-	-- "marine/marine0"..self.voicePermutation.."/firing/firing (12).ogg",
-	-- "marine/marine0"..self.voicePermutation.."/firing/firing (13).ogg",
-	-- "marine/marine0"..self.voicePermutation.."/firing/firing (14).ogg",
-	-- "marine/marine0"..self.voicePermutation.."/firing/firing (15).ogg",
-	-- "marine/marine0"..self.voicePermutation.."/firing/firing (16).ogg",
-}
+	}
+	self.SoundTbl_AllyDeath = {
+		"marine/marine0"..self.voicePermutation.."/ally_death/ally_death (1).ogg",
+		"marine/marine0"..self.voicePermutation.."/ally_death/ally_death (2).ogg",
+		-- "marine/marine0"..self.voicePermutation.."/ally_death/ally_death (3).ogg",
+		-- "marine/marine0"..self.voicePermutation.."/ally_death/ally_death (4).ogg",
+	}
+	self.SoundTbl_Stuck = {
+		"marine/marine0"..self.voicePermutation.."/stuck/stuck (1).ogg",
+		"marine/marine0"..self.voicePermutation.."/stuck/stuck (2).ogg",
+		-- "marine/marine0"..self.voicePermutation.."/stuck/stuck (3).ogg",
+		-- "marine/marine0"..self.voicePermutation.."/stuck/stuck (4).ogg",
+		-- "marine/marine0"..self.voicePermutation.."/stuck/stuck (5).ogg",
+		-- "marine/marine0"..self.voicePermutation.."/stuck/stuck (6).ogg",
+	}
+
+	self.SoundTbl_Transform = {
+		"marine/marine0"..self.voicePermutation.."/transform/transform (1).ogg",
+		-- "marine/marine0"..self.voicePermutation.."/transform/transform (2).ogg",
+		-- "marine/marine0"..self.voicePermutation.."/transform/transform (3).ogg",
+		-- "marine/marine0"..self.voicePermutation.."/transform/transform (4).ogg",
+		-- "marine/marine0"..self.voicePermutation.."/transform/transform (5).ogg",
+		-- "marine/marine0"..self.voicePermutation.."/transform/transform (6).ogg",
+		-- "marine/marine0"..self.voicePermutation.."/transform/transform (7).ogg",
+	}
+	self.SoundTbl_Suppressing = {
+		"marine/marine0"..self.voicePermutation.."/firing/firing (1).ogg",
+		"marine/marine0"..self.voicePermutation.."/firing/firing (2).ogg",
+		"marine/marine0"..self.voicePermutation.."/firing/firing (3).ogg",
+		"marine/marine0"..self.voicePermutation.."/firing/firing (4).ogg",
+		-- "marine/marine0"..self.voicePermutation.."/firing/firing (5).ogg",
+		-- "marine/marine0"..self.voicePermutation.."/firing/firing (6).ogg",
+		-- "marine/marine0"..self.voicePermutation.."/firing/firing (7).ogg",
+		-- "marine/marine0"..self.voicePermutation.."/firing/firing (8).ogg",
+		-- "marine/marine0"..self.voicePermutation.."/firing/firing (9).ogg",
+		-- "marine/marine0"..self.voicePermutation.."/firing/firing (10).ogg",
+		-- "marine/marine0"..self.voicePermutation.."/firing/firing (11).ogg",
+		-- "marine/marine0"..self.voicePermutation.."/firing/firing (12).ogg",
+		-- "marine/marine0"..self.voicePermutation.."/firing/firing (13).ogg",
+		-- "marine/marine0"..self.voicePermutation.."/firing/firing (14).ogg",
+		-- "marine/marine0"..self.voicePermutation.."/firing/firing (15).ogg",
+		-- "marine/marine0"..self.voicePermutation.."/firing/firing (16).ogg",
+	}
 end
 
-
 function ENT:CustomOnInitialize()
-	
 	self:RandomizeTraits()
+	self:SetSkin(VJ_PICKRANDOMTABLE(self.Skins))
+	self:SetCollisionBounds(Vector(15, 15, 70), Vector(-15, -15, 0))
+	self:SetColor(Color(math.random(self.ColorRange[1].x, self.ColorRange[2].x),math.random(self.ColorRange[1].y, self.ColorRange[2].y) ,math.random(self.ColorRange[1].z, self.ColorRange[2].z)))
+	for i = 0, #self.BGs-1 do
+		self:SetBodygroup(i, self.BGs[i+1])
+	end
+	self:UseConVars()
+end
+
+function ENT:UseConVars()
+	self.StartHealth = self.StartHealth * GetConVarNumber("vj_spv3_HealthModifier")
+	self.ArmorMaxHealth = self.ArmorMaxHealth * GetConVarNumber("vj_spv3_ShieldModifier")
+	self.ArmorCurrentHealth = self.ArmorMaxHealth
+	self.CurrentHealth = self.StartHealth
+	self:SetHealth(self.ArmorCurrentHealth + self.StartHealth)
 	timer.Simple(0.01, function() 
 		if (GetConVarNumber("vj_spv3_UNSCCovWeps")==1 and math.random(0,1)==1) then
 			self:GetActiveWeapon():Remove()
@@ -310,38 +318,19 @@ function ENT:CustomOnInitialize()
 	if (GetConVarNumber("vj_spv3_ffretal")==0) then 
 		self.BecomeEnemyToPlayer = false -- Should the friendly SNPC become enemy towards the player if it's damaged by a player?
 	end
-	self:SetSkin(VJ_PICKRANDOMTABLE(self.Skins))
-	self:SetCollisionBounds(Vector(15, 15, 70), Vector(-15, -15, 0))
-	self:SetColor(Color(math.random(self.ColorRange[1].x, self.ColorRange[2].x),math.random(self.ColorRange[1].y, self.ColorRange[2].y) ,math.random(self.ColorRange[1].z, self.ColorRange[2].z)))
-	self.StartHealth = self.StartHealth * GetConVarNumber("vj_spv3_HealthModifier")
-	self.ArmorHealth = self.ArmorHealth * GetConVarNumber("vj_spv3_ShieldModifier")
-	self.ArmorCurrentHealth = self.ArmorHealth
-	self.CurrentHealth = self.StartHealth
-	self.ArmorActivated = true
-	self:SetHealth(self.ArmorHealth + self.StartHealth)
-	local i
-	for i = 0, #self.BGs-1 do
-		self:SetBodygroup(i, self.BGs[i+1])
-	end
-	self.NextMoveTime = 0
-	self.NextDodgeTime = 0
-	self.NextMoveAroundTime = 0
-	self.NextBlockTime = 0
 end
----------------------------------------------------------------------------------------------------------------------------------------------
 
-
-
----------------------------------------------------------------------------------------------------------------------------------------------
 function ENT:CustomOnAcceptInput(key,activator,caller,data)
 	if key == "Step" then
 		self:EmitSound(VJ_PICK(self.SoundTbl_Step), 60, 100, 1)
 	end
 end
 
-ENT.ArmorDelay = 6
 ENT.EvadeCooldown = 0
 function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
+	if (dmginfo:GetDamageType()==DMG_BLAST) then
+		dmginfo:ScaleDamage(3.5)
+	end
 	if (dmginfo:GetAttacker():IsNPC()) then
 		dmginfo:ScaleDamage(GetConVarNumber("vj_spv3_NPCTakeDamageModifier"))
 	end
@@ -355,70 +344,78 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 			self.EvadeCooldown = CurTime() + 4
 		end
 	end
-	if (hitgroup == 504 and dmginfo:GetDamage() >= GetConVarNumber("vj_spv3_PrecisionThreshold")) then
-		dmginfo:SetDamage(self:Health())
-	end
-	if (dmginfo:GetDamageType()==DMG_BLAST) then
-		dmginfo:ScaleDamage(3.5)
-	end
 	if self.ArmorActivated == true then
-		self.ArmorCurrentHealth = (self.ArmorCurrentHealth - dmginfo:GetDamage())
+		self:DamageArmor(dmginfo)
 	else
 		self.CurrentHealth = self.CurrentHealth - dmginfo:GetDamage()
 	end
-	if (dmginfo:GetDamage() >= self:Health()) then
-		if (dmginfo:GetDamageType()==DMG_BLAST or dmginfo:GetDamageType()==DMG_CLUB or dmginfo:GetDamageForce():Length()>=10000) then
-			self:FlyingDeath(dmginfo)
-		end
+	self.DeathType = self:CheckForSpecialDeaths(dmginfo, hitgroup)
+	if (self.DeathType != nil) then
+		self:DoSpecialDeath(self.DeathType, dmginfo)
 	end
-	if dmginfo:GetAttacker():IsPlayer() && dmginfo:GetDamageType()==DMG_CLUB && Vector((dmginfo:GetDamagePosition() - self:GetPos()).x, (dmginfo:GetDamagePosition() - self:GetPos()).y, 0):Dot(Vector(self:GetForward().x, self:GetForward().y, 0)) < 0 then
+end
+
+function ENT:CheckForSpecialDeaths(dmginfo, hitgroup)
+	if (hitgroup == 504 and dmginfo:GetDamage() >= GetConVarNumber("vj_spv3_PrecisionThreshold")) then
+		return "Headshot"
+	elseif (dmginfo:GetAttacker():IsPlayer() && dmginfo:GetDamageType()==DMG_CLUB && Vector((dmginfo:GetDamagePosition() - self:GetPos()).x, (dmginfo:GetDamagePosition() - self:GetPos()).y, 0):Dot(Vector(self:GetForward().x, self:GetForward().y, 0)) < 0) then
+		return "BackBreak"
+	elseif (dmginfo:GetDamage() >= self:Health() and (dmginfo:GetDamageType()==DMG_BLAST or dmginfo:GetDamageType()==DMG_CLUB)) then
+		return "LargeForce"
+	else
+		return nil
+	end
+end
+
+function ENT:DoSpecialDeath(typeDeath, dmginfo)
+	if (typeDeath==nil) then
+		return
+	elseif (typeDeath=="BackBreak") then --Do the following when taking damage via DMG_CLUB to the back
 		self.AlertFriendsOnDeath = false
 		self:TakeDamage(self:Health(), dmginfo:GetAttacker(), dmginfo:GetInflictor())
+		self:VJ_ACT_PLAYACTIVITY("Die_5", true, 2, false)
+	elseif (typeDeath=="Headshot") then --Do the following when dying via a headshot (above the precisionThreshold)
+		dmginfo:SetDamage(self:Health())
+		self:VJ_ACT_PLAYACTIVITY("Die_1", true, 2, false)
+	elseif (typeDeath=="LargeForce") then --Do the following when dying to DMG_CLUB with high force or DMG_BLAST
+		self.HasDeathRagdoll = false
+		self.HasDeathAnimation = false
+		self.imposter = ents.Create("obj_vj_imposter")
+		self.imposter:SetOwner(self)
+		self.imposter.Sequence = "Die_Airborne"
+		local velocity = dmginfo:GetDamageForce():GetNormalized() * 1500
+		if (dmginfo:GetDamageType()==DMG_CLUB or dmginfo:GetDamageForce():Length()) then
+			velocity = velocity * 0.3
+		end
+		self.imposter.Velocity = Vector(velocity.x, velocity.y, velocity.z + 500)
+		self.imposter.Angle = Angle(0,dmginfo:GetDamageForce():Angle().y,0)
+		self.imposter:Spawn()
 	end
+end
+
+function ENT:DamageArmor(dmginfo)
+	self.ArmorCurrentHealth = math.max(self.ArmorCurrentHealth - dmginfo:GetDamage(), 0)
+	timer.Destroy("RegenArmor"..self:GetCreationID())
+	timer.Create("ArmorDelay"..self:GetCreationID(), self.ArmorDelay, 1, function() --Timers will reset everytime damage is applied, no need to adjust
+		if (IsValid(self) and self.ArmorCurrentHealth < self.ArmorMaxHealth) then
+			self:RegenerateArmor()
+		end
+	end)
+end
+
+function ENT:RegenerateArmor()
+	self.ArmorActivated = true
+	timer.Create("RegenArmor"..self:GetCreationID(), 0.1, (self.ArmorMaxHealth - self.ArmorCurrentHealth)/self.ArmorRecharge, function()
+		if (!IsValid(self)) then return end
+		self.ArmorCurrentHealth = math.min(self.ArmorCurrentHealth + self.ArmorRecharge, self.ArmorMaxHealth)
+		self:SetHealth(self.CurrentHealth + self.ArmorCurrentHealth)
+	end)
 end
 
 function ENT:CustomOnTakeDamage_AfterDamage(dmginfo,hitgroup)
-	self:SetHealth((self.ArmorCurrentHealth + self.CurrentHealth))		
 	if (self.ArmorCurrentHealth<=0) then		
-		self:CustomOnTakeDamage_ArmorsDestroyed(dmginfo, hitgroup)
 		self.ArmorActivated=false
 	end
-	if (timer.Exists("ArmorDelay"..self:GetCreationID())) then
-		timer.Adjust("ArmorDelay"..self:GetCreationID(), self.ArmorDelay, 1)
-	else
-		timer.Create("ArmorDelay"..self:GetCreationID(), self.ArmorDelay, 1, function() 
-			if (IsValid(self)) then
-				self.ArmorActivated = true
-				self.ArmorCurrentHealth = self.ArmorHealth
-				self:SetHealth(self.CurrentHealth + self.ArmorCurrentHealth)
-				-- self.Bleeds=false
-			end
-		end)
-	end
-end
----------------------------------------------------------------------------------------------------------------------------------------------
-function ENT:CustomOnTakeDamage_ArmorsDestroyed(dmginfo, hitgroup)
-	if self.ArmorActivated == false then return end
-	-- self:EmitSound(Sound("ambient/energy/weld" .. math.random(1,2) .. ".ogg"),80,100)
-	-- self.CanFlinch = 1
-	-- self:DoFlinch(dmginfo, hitgroup)
-	-- self.CanFlinch = 0
-	self.ArmorActivated = false
-end
-
-function ENT:FlyingDeath(dmginfo)
-	self.HasDeathRagdoll = false
-	self.HasDeathAnimation = false
-	self.imposter = ents.Create("obj_vj_imposter")
-	self.imposter:SetOwner(self)
-	self.imposter.Sequence = "Die_Airborne"
-	local velocity = dmginfo:GetDamageForce():GetNormalized() * 1500
-	if (dmginfo:GetDamageType()==DMG_CLUB or dmginfo:GetDamageForce():Length()) then
-		velocity = velocity * 0.3
-	end
-	self.imposter.Velocity = Vector(velocity.x, velocity.y, velocity.z + 500)
-	self.imposter.Angle = Angle(0,dmginfo:GetDamageForce():Angle().y,0)
-	self.imposter:Spawn()
 end
 
 ENT.NextTalkTime = 0
@@ -435,7 +432,7 @@ function ENT:CustomOnThink() //Is pretty much HL:Resurgence talk system. Maybe m
 		self:SetPoseParameter("move_mouth",0)
 	end
 end
----------------------------------------------------------------------------------------------------------------------------------------------
+
 function ENT:OnPlayCreateSound(sdData, sdFile)
 	self.NextTalkTime = CurTime() + SoundDuration(sdFile)*3.5 --For some reason the soundduration is wrong. perhaps a bug with .ogg format?
 end
