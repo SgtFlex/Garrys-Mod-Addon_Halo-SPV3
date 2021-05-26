@@ -20,14 +20,13 @@ ENT.StartHealth = 100
 ENT.CurrentHealth = ENT.StartHealth
 ENT.ShieldMaxHealth = 100
 ENT.ShieldCurrentHealth = ENT.ShieldMaxHealth
-ENT.ShieldActivated = true
 ENT.ShieldDelay = 6
 ENT.ShieldRecharge = 1
+ENT.IsInvis = false
 
 ENT.ExtraShotCount = 2
 ENT.WeaponProfficiency = 50
 	-- ====== Blood-Related Variables ====== --
-ENT.Bleeds = false -- Does the SNPC bleed? (Blood decal, particle, etc.)
 ENT.BloodColor = "Purple" -- The blood type, this will determine what it should use (decal, particle, etc.)
 	-- Types: "Red" || "Yellow" || "Green" || "Orange" || "Blue" || "Purple" || "White" || "Oil"
 -- Use the following variables to customize the blood the way you want it:
@@ -289,6 +288,9 @@ function ENT:CustomOnInitialize()
 		self:SetBodygroup(i, self.bodyGroupTable[i])
 	end
 	self:SetCollisionBounds(Vector(-18, -18, 0), Vector(18, 18, 85))
+	timer.Simple(0.01, function()
+		self:SetInvisibility(self.IsInvis)
+	end)
 end
 
 function ENT:UseConVars()
@@ -296,6 +298,8 @@ function ENT:UseConVars()
 	self.StartHealth = self.StartHealth * GetConVarNumber("vj_spv3_HealthModifier")
 	self.ShieldMaxHealth = self.ShieldMaxHealth * GetConVarNumber("vj_spv3_ShieldModifier")
 	self.ShieldCurrentHealth = self.ShieldMaxHealth
+	self.ShieldActivated = (self.ShieldCurrentHealth > 0)
+	self.Bleeds = (self.ShieldCurrentHealth <= 0)
 	self.CurrentHealth = self.StartHealth
 	self:SetHealth(self.ShieldMaxHealth + self.StartHealth)
 end
@@ -350,6 +354,13 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 			self.EvadeCooldown = CurTime() + 4
 		end
 	end
+	if (self.IsInvis==true) then
+		self:SetInvisibility(false)
+		timer.Simple(1, function() 
+			if (!IsValid(self) or self.Dead==true) then return end
+			self:SetInvisibility(true)
+		end)
+	end
 	if self.ShieldActivated == true then
 		self:DamageShield(dmginfo)
 	else
@@ -358,9 +369,38 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 			self:Berserk()
 		end
 	end
+	if (self.ShieldRecharge > 0) then
+		timer.Destroy("RegenShield"..self:GetCreationID())
+		timer.Create("ShieldDelay"..self:GetCreationID(), self.ShieldDelay, 1, function() --Timers will reset everytime damage is applied, no need to adjust
+			if (IsValid(self) and self.ShieldCurrentHealth < self.ShieldMaxHealth) then
+				self:RegenerateShield()
+			end
+		end)
+	end
 	self.DeathType = self:CheckForSpecialDeaths(dmginfo, hitgroup)
 	if (self.DeathType != nil) then
 		self:DoSpecialDeath(self.DeathType, dmginfo)
+	end
+end
+
+function ENT:SetInvisibility(bInvis)
+	if (self.IsInvis!=true) then
+		self.material = self:GetMaterial()
+		self.weaponMaterial = self:GetActiveWeapon():GetMaterial()
+	end
+	if (bInvis==true) then
+		self:GetActiveWeapon():SetMaterial("effects/spv3/cloak")
+		self:SetMaterial("effects/spv3/cloak")
+		self:AddFlags(FL_NOTARGET)
+		self:DrawShadow(false)
+		self:RemoveAllDecals()
+		self.IsInvis = true
+	else
+		self:SetMaterial(self.material)
+		self:RemoveFlags(FL_NOTARGET)
+		self:GetActiveWeapon():SetMaterial(self.weaponMaterial)
+		self:DrawShadow(true)
+		self.IsInvis = false
 	end
 end
 
@@ -376,12 +416,7 @@ function ENT:DamageShield(dmginfo)
 		self:DoFlinch(dmginfo, hitgroup)
 		self.CanFlinch = 0
 	end
-	timer.Destroy("RegenShield"..self:GetCreationID())
-	timer.Create("ShieldDelay"..self:GetCreationID(), self.ShieldDelay, 1, function() --Timers will reset everytime damage is applied, no need to adjust
-		if (IsValid(self) and self.ShieldCurrentHealth < self.ShieldMaxHealth) then
-			self:RegenerateShield()
-		end
-	end)
+	
 end
 
 function ENT:DisperseShield(dmginfo)

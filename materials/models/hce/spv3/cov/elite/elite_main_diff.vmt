@@ -1,6 +1,6 @@
 "VertexlitGeneric"
 {
-	"$basetexture" "models/hce/spv3/cov/elite/elite_main_diff"
+	$basetexture "models/hce/spv3/cov/elite/elite_main_diff"
 	"$bumpmap" "models/hce/spv3/cov/elite/elite_main_nrml_new"
 	"$surfaceprop" metal
 
@@ -8,10 +8,9 @@
 
 	"$normalmapalphaenvmapmask"    "1"
 	"$phong" "1"
-	"$phongexponent"				"2"
+	"$phongexponent"				"3"
 	"$phongboost"					"5.996837"
-	"$phongfresnelranges"			"[0.67 0.83 1]"
-
+	"$phongfresnelranges"			"[3 5 7]"
 	"$phongalbedotint" 1
 	"$phongexponenttexture" "models\Dark_Souls\shared\souls_green"
 	"$phongwarptexture" "models\Dark_Souls\shared\testwarp2"
@@ -28,3 +27,4 @@
 	"$blendtintbybasealpha" "1"
 	"$blendtintcoloroverbase" "0"
 }
+

@@ -1,0 +1,6 @@
+Refract
+{
+	$model 1
+	$refractamount 0.002
+	$buramount 0
+}
