@@ -107,7 +107,7 @@ function ENT:CustomDeathAnimationCode(dmginfo,hitgroup)
 		if self:IsValid() then
 			self:SetNoDraw(true)
 			local BlastInfo = DamageInfo()
-			self:EmitSound("carrier/kill_instant/kill_instant (1).ogg", nil, nil, nil, nil, 90)
+			self:EmitSound("carrier/kill_instant/kill_instant ("..math.random(1, 6)..").ogg")
 			BlastInfo:SetDamageType(DMG_BLAST)
 			BlastInfo:SetDamage(60 * GetConVarNumber("vj_spv3_damageModifier"))
 			BlastInfo:SetDamagePosition(self:GetPos())

@@ -7,7 +7,6 @@ include('entities/npc_vj_halo_cov_spv3_grunt_min/init.lua')
 	without the prior written consent of the author, unless otherwise indicated for stand-alone materials.
 -----------------------------------------------*/
 ENT.otherInit = function(entity) 
-	PrintMessage(3, "hi")
 	entity.Appearance = {
 		Color = Color(math.random(0, 255),math.random(0, 255),math.random(0, 255)),
 		Bodygroups = {math.random(1, 2), math.random(1, 2)},
