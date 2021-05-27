@@ -50,7 +50,7 @@ end
 
 ENT.FirstCollision = true
 ENT.infFormCount = 6
-local spreadRadius = 175
+local spreadRadius = 50
  function ENT:PhysicsCollide( data, phys )
  	if (self.FirstCollision == false) then return end
  	self.FirstCollision = false

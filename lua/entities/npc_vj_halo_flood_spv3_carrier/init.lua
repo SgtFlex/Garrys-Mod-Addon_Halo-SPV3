@@ -1,15 +1,19 @@
 AddCSLuaFile("shared.lua")
 include('shared.lua')
+include('entities/npc_vj_halo_shared_spv3/init.lua')
 /*-----------------------------------------------
 	*** Copyright (c) 2012-2016 by DrVrej, All rights reserved. ***
 	No parts of this code or any of its contents may be reproduced, copied, modified or adapted,
 	without the prior written consent of the author, unless otherwise indicated for stand-alone materials.
 -----------------------------------------------*/
 ENT.HullType = HULL_MEDIUM
-
 ENT.Model = {"models/hce/spv3/flood/carrier/carrier.mdl"} -- The game will pick a random model from the table when the SNPC is spawned | Add as many as you want
 ENT.StartHealth = 50
-ENT.modelColor = Color(255,191,0)
+ENT.Appearance = {
+	Color = Color(255,191,0),
+	Bodygroups = {},
+	Skin = 0,
+}
 ---------------------------------------------------------------------------------------------------------------------------------------------
 	-- ====== Blood-Related Variables ====== --
 ENT.Bleeds = true -- Does the SNPC bleed? (Blood decal, particle, etc.)
@@ -27,7 +31,7 @@ ENT.EntitiesToNoCollide = //Player no collide does affect how it behaves, even t
 ENT.HasDeathRagdoll = false -- If set to false, it will not spawn the regular ragdoll of the SNPC
 ENT.HasDeathAnimation = true -- Does it play an animation when it dies?
 ENT.AnimTbl_Death = {"Melee_1"} -- Death Animations
-
+ENT.HasItemDropsOnDeath = false
 	-- Melee Attack ---------------------------------------------------------------------------------------------------------------------------------------------
 ENT.HasMeleeAttack = true -- Should the SNPC have a melee attack?
 ENT.MeleeAttackDistance = 70
@@ -42,7 +46,6 @@ ENT.TimeUntilMeleeAttackDamage = 0
 ENT.NextAnyAttackTime_Melee = 1.7
 ENT.MeleeAttackDamage = 0
 ENT.MeleeAttackDamageType = DMG_SLASH
-
 	-- ====== Sound File Paths ====== --
 -- Leave blank if you don't want any sounds to play
 ENT.SoundTbl_Idle = {
@@ -74,27 +77,17 @@ ENT.SoundTbl_Impact = {
 
 function ENT:CustomOnMeleeAttack_BeforeChecks()
 	if self.Dead == true or self:GetEnemy() == nil then return end
-	self:TakeDamage(999999999999999,self,self) //end end)
+	self:TakeDamage(999999999999999,self,self)
 end
 ---------------------------------------------------------------------------------------------------------------------------------------------
 ENT.SpawnedFromInf=false
-function ENT:CustomOnInitialize()
-	if (self.SpawnedFromInf==false) then
-		self.StartHealth = self.StartHealth * GetConVarNumber("vj_spv3_healthModifier")
-	end
-	self:SetHealth(self.StartHealth)
-	self:CapabilitiesAdd(bit.bor(CAP_MOVE_CLIMB))
-	self:SetColor(self.modelColor)
-	self:SetCollisionBounds(Vector(17, 17, 75), Vector(-17, -17, 0))
-end
+ENT.CustomCollision = {Min = Vector(-17,-17,0), Max = Vector(17,17,75)}
 ---------------------------------------------------------------------------------------------------------------------------------------------
 ENT.infFormCount = 25
 ENT.infForm = nil
 local spreadRadius = 275
 function ENT:CustomDeathAnimationCode(dmginfo,hitgroup)
 	self.infFormCount = math.Round(self.infFormCount*(GetConVarNumber("vj_spv3_infModifier")))
-
-	
 	local inflation = Vector(1,1,1)
 	local deathTime = 1.3
 	if (self.KilledBySelf == false) then
@@ -110,12 +103,9 @@ function ENT:CustomDeathAnimationCode(dmginfo,hitgroup)
 			self:ManipulateBoneScale(self:LookupBone("frame sack right"), inflation)
 		end
 	end)
-	
-
-
-
 	timer.Simple(deathTime,function() 
 		if self:IsValid() then
+			self:SetNoDraw(true)
 			local BlastInfo = DamageInfo()
 			self:EmitSound("carrier/kill_instant/kill_instant (1).ogg", nil, nil, nil, nil, 90)
 			BlastInfo:SetDamageType(DMG_BLAST)

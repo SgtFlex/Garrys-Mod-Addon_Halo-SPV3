@@ -9,29 +9,32 @@ include('entities/npc_vj_halo_shared_spv3/init.lua')
 ENT.HullType = HULL_MEDIUM
 	-- ====Variant Variables==== --
 ENT.Model = {"models/hce/spv3/cov/brute/Brute.mdl"} -- The game will pick a random model from the table when the SNPC is spawned | Add as many as you want
-ENT.modelColor = Color(100,120,180)
-ENT.bodyGroupTable = {
-	1,
-	1,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-}
 ENT.helmet = "models/hce/spv3/cov/brute/garbage/minor_helmet.mdl"
-ENT.Skin = 1
 ENT.StartHealth = 200
-//25 shields
-ENT.CurrentHealth = ENT.StartHealth
-ENT.ShieldMaxHealth = 0
-ENT.ShieldCurrentHealth = ENT.ShieldMaxHealth
-ENT.ShieldActivated = false
-ENT.Bleeds = true -- Does the SNPC bleed? (Blood decal, particle, etc.)
+ENT.HeadHitgroup = 500
+--25 shields
+ENT.Appearance = {
+	Color = Color(100,120,180),
+	Bodygroups = {1, 1, 0, 0, 0, 0, 0, 0, 0},
+	Skin = 1,
+}
 ENT.HasBloodParticle = true -- Does it spawn a particle when damaged?
-
+ENT.Faction = "Covenant"
+ENT.RemovableParts = {
+	[500] = {Health = 15, Bodygroup = "Head", Execute = function(entity, dmginfo) 
+		entity:EmitSound("brute/fx/brute_armor_destroyed/cov_damage_small.wav")
+		entity:VJ_ACT_PLAYACTIVITY("Hit_Head", true, 1, false)
+		local pos, ang = entity:GetBonePosition(14)
+		pos = pos + entity:GetRight() * 75
+		helmet = entity:CreateGibEntity("obj_vj_metal_gib", {entity.helmet}, {Pos = pos, Ang = ang})
+		helmet:SetColor(entity:GetColor())
+		helmet:SetSkin(entity:GetSkin())
+		entity:EmitSound("brute/fx/brute_armor_destroyed/cov_damage_small.wav")
+		if (math.abs(entity.RemovableParts[500]["Health"]) >= GetConVar("vj_spv3_PrecisionThreshold"):GetInt()) then
+			--dmginfo:SetDamage(entity:Health())
+		end
+	end}, --Example of a removable bodygroup. Key must be hitgroup, Health is how much dmg it takes, Bodygroup is which part is removed
+}
 ENT.ExtraShotCount = 3
 ENT.WeaponProfficiency = 60
 	-- ====== Blood-Related Variables ====== --
@@ -103,7 +106,7 @@ ENT.CanThrowBackDetectedGrenades = false-- Should it try to pick up the detected
 ENT.MaxJumpLegalDistance = VJ_Set(400,550) -- The max distance the NPC can jump (Usually from one node to another) | ( UP, DOWN )
 ENT.UseTheSameGeneralSoundPitch = false
 ENT.BruteSelector = math.Rand(0,2)
-ENT.UNSCWeps = {
+ENT.ExtraWeapons = {
 	"weapon_vj_unsc_spv3_ar",
 	"weapon_vj_unsc_spv3_smg",
 	"weapon_vj_unsc_spv3_smgsd",
@@ -281,52 +284,13 @@ ENT.SoundTbl_Transform = {
 	"brute/transform/transform (3).ogg",
 }
 
-function ENT:CustomOnInitialize()
-	self:RandomizeTraits()
-	self:SetSkin(self.Skin)
-	self:SetColor(self.modelColor)
-	for i=1, #self.bodyGroupTable do
-		self:SetBodygroup(i, self.bodyGroupTable[i])
-	end
-	self:SetCollisionBounds(Vector(-20, -20, 0), Vector(20, 20, 80))
-	self:UseConVars()
-end
-
-function ENT:UseConVars()
-	self.MeleeAttackDamage = self.MeleeAttackDamage * GetConVarNumber("vj_spv3_damageModifier")
-	self.StartHealth = self.StartHealth * GetConVarNumber("vj_spv3_HealthModifier")
-	self.ShieldMaxHealth = self.ShieldMaxHealth * GetConVarNumber("vj_spv3_ShieldModifier")
-	self.ShieldCurrentHealth = self.ShieldMaxHealth
-	self.CurrentHealth = self.StartHealth
-	self:SetHealth(self.ShieldMaxHealth + self.StartHealth)
-	timer.Simple(0.01, function() 
-		if (GetConVarNumber("vj_spv3_covUNSCWeps")==1 and math.random(0,1)==1) then
-			self:GetActiveWeapon():Remove()
-			self:Give(VJ_PICKRANDOMTABLE(self.UNSCWeps))
-		end
-		if (GetConVarNumber("vj_spv3_covUNSCWeps")==1) then
-			self.GrenadeTypes = {
-				"obj_vj_cov_spv3_gravity_nade",
-				"obj_vj_cov_spv3_plasma_nade",
-				"obj_vj_cov_spv3_cluster_nade",
-				"obj_vj_unsc_spv3_frag_nade",
-				"obj_vj_cov_spv3_needler_nade",
-			}
-			self.GrenadeWeps = {
-				"weapon_vj_cov_spv3_needler_nade",
-				"weapon_vj_cov_spv3_plasma_nade",
-				"weapon_vj_cov_spv3_gravity_nade",
-				"weapon_vj_cov_spv3_cluster_nade",
-				"weapon_vj_unsc_spv3_frag_nade",
-			}
-		end
-		self.GrenadeAttackEntity = VJ_PICKRANDOMTABLE(self.GrenadeTypes)
-	end)
-	self.bodyParts = {
-		Head = {Health = GetConVarNumber("vj_spv3_PrecisionThreshold"), Bodygroup = "Head", Removed = false},
-	}
-end
-
+-- function ENT:CustomOnInitialize()
+-- 	self:RandomizeTraits()
+-- 	self:SetPhysicalAppearance()
+-- 	self:SetCollisionBounds(Vector(-20, -20, 0), Vector(20, 20, 80))
+-- 	self:UseConVars()
+-- end
+ENT.CustomCollision = {Min = Vector(-20, -20, 0), Max = Vector(20, 20, 80)}
 function ENT:CustomOnSetupWeaponHoldTypeAnims(htype)
     if (htype == "pistol") then
     	self.WeaponAnimTranslations[ACT_RUN]						= ACT_RUN_PISTOL
@@ -354,121 +318,6 @@ function ENT:CustomOnAcceptInput(key,activator,caller,data)
 	elseif key == "EvadeL" then
 		self:EmitSound("elite/stand_pistol_evade_left/stand_pistol_evade_left.ogg", 80, 100, 1)
 		self:EmitSound("elite/dodge/dodge"..math.random(1,6)..".ogg", 80, 100, 1)
-	end
-end
-
-ENT.Berserked = false
-ENT.EvadeCooldown = 0
-function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
-	self:VJ_ACT_PLAYACTIVITY(ACT_FLINCH_PHYSICS, false, false, false, 0, {AlwaysUseGesture=true})
-	if (dmginfo:GetDamageType()==DMG_BLAST) then
-		dmginfo:ScaleDamage(3.5)
-	end
-	if (dmginfo:GetAttacker():IsNPC()) then
-		dmginfo:ScaleDamage(GetConVarNumber("vj_spv3_NPCTakeDamageModifier"))
-	end
-	if (math.random(0,2) == 2) then
-		if (self.EvadeCooldown <= CurTime()) then
-			if (math.random(0,1)==1) then
-				self:VJ_ACT_PLAYACTIVITY(ACT_SIGNAL1,true,1,false)
-			else
-				self:VJ_ACT_PLAYACTIVITY(ACT_SIGNAL2,true,1,false)
-			end
-			self.EvadeCooldown = CurTime() + 4
-		end
-	end
-	if (self.ShieldActivated==true) then
-		self:DamageShield(dmginfo)
-	else
-		self.CurrentHealth = self.CurrentHealth - dmginfo:GetDamage()
-	end
-	if (hitgroup==500 and dmginfo:GetDamage()>=GetConVar("vj_spv3_PrecisionThreshold"):GetInt() and self.ShieldActivated==false) then
-		self:DamageSpecialPart("Head", dmginfo)
-	end
-	self.DeathType = self:CheckForSpecialDeaths(dmginfo, hitgroup)
-	if (self.DeathType != nil) then
-		self:DoSpecialDeath(self.DeathType, dmginfo)
-	end
-end
-
-function ENT:DamageShield(dmginfo)
-	if (dmginfo:GetDamageType()==DMG_PLASMA or dmginfo:GetDamageType()==DMG_BURN or dmginfo:GetDamageType()==DMG_SLOWBURN) then
-		dmginfo:ScaleDamage(2)
-	end
-	self.ShieldCurrentHealth = math.max(self.ShieldCurrentHealth - dmginfo:GetDamage(), 0)
-	ParticleEffect("hcea_shield_impact", dmginfo:GetDamagePosition(), dmginfo:GetDamageForce():Angle(), self)
-	if (self.ShieldCurrentHealth <= 0 and self.ShieldActivated==true) then
-		self:DisperseShield()
-		self.CanFlinch = 1
-		self:DoFlinch(dmginfo, hitgroup)
-		self.CanFlinch = 0
-	end
-end
-
-function ENT:DisperseShield(dmginfo)
-	if (self.ShieldActivated == false) then return false end
-	self.ShieldActivated = false
-	self.Bleeds = true
-	ParticleEffectAttach("hcea_shield_disperse",PATTACH_POINT_FOLLOW,self,self:LookupAttachment("origin"))
-	return true
-end
-
-function ENT:DamageSpecialPart(specialPart, dmginfo)
-	if (self.bodyParts[specialPart]["Removed"]==false) then
-		self.bodyParts[specialPart]["Health"] = math.max(self.bodyParts[specialPart]["Health"] - dmginfo:GetDamage(), 0)
-		if (self.bodyParts[specialPart]["Health"] <= 0) then
-			self.bodyParts[specialPart]["Removed"]=true
-			self:SetBodygroup(self:FindBodygroupByName(self.bodyParts[specialPart]["Bodygroup"]), 0)
-			self:EmitSound("brute/fx/brute_armor_destroyed/cov_damage_small.wav")
-			if (specialPart=="Head") then
-				self:VJ_ACT_PLAYACTIVITY("Hit_Head", true, 1, false)
-				local pos, ang = self:GetBonePosition(14)
-				pos = pos + self:GetRight() * 75
-				helmet = self:CreateGibEntity("obj_vj_metal_gib", {self.helmet}, {Pos = pos, Ang = ang, Vel = dmginfo:GetDamageForce()*0.3 + Vector(0,0,300)})
-				helmet:SetColor(self:GetColor())
-				helmet:SetSkin(self:GetSkin())
-				self:EmitSound("brute/fx/brute_armor_destroyed/cov_damage_small.wav")
-				if (math.abs(self.bodyParts["Head"]["Health"]) >= GetConVar("vj_spv3_PrecisionThreshold"):GetInt()) then
-					dmginfo:SetDamage(self:Health())
-				end
-			end
-		end
-	end
-end
-
-function ENT:CheckForSpecialDeaths(dmginfo, hitgroup)
-	if (hitgroup == 500 and dmginfo:GetDamage() >= GetConVarNumber("vj_spv3_PrecisionThreshold") and self.ShieldActivated==false and self.bodyParts["Head"]["Removed"]==true) then
-		return "Headshot"
-	elseif (dmginfo:GetAttacker():IsPlayer() && dmginfo:GetDamageType()==DMG_CLUB && Vector((dmginfo:GetDamagePosition() - self:GetPos()).x, (dmginfo:GetDamagePosition() - self:GetPos()).y, 0):Dot(Vector(self:GetForward().x, self:GetForward().y, 0)) < 0) then
-		return "BackBreak"
-	elseif (dmginfo:GetDamage() >= self:Health() and (dmginfo:GetDamageType()==DMG_BLAST or dmginfo:GetDamageType()==DMG_CLUB)) then
-		return "LargeForce"
-	else
-		return nil
-	end
-end
-
-function ENT:DoSpecialDeath(typeDeath, dmginfo)
-	if (typeDeath==nil) then
-		return
-	elseif (typeDeath=="BackBreak") then --Do the following when taking damage via DMG_CLUB to the back
-		self.AlertFriendsOnDeath = false
-		self:TakeDamage(self:Health(), dmginfo:GetAttacker(), dmginfo:GetInflictor())
-	elseif (typeDeath=="Headshot") then --Do the following when dying via a headshot (above the precisionThreshold)
-		dmginfo:SetDamage(self:Health())
-	elseif (typeDeath=="LargeForce") then --Do the following when dying to DMG_CLUB with high force or DMG_BLAST
-		self.HasDeathRagdoll = false
-		self.HasDeathAnimation = false
-		self.imposter = ents.Create("obj_vj_imposter")
-		self.imposter:SetOwner(self)
-		self.imposter.Sequence = "Die_Airborne"
-		local velocity = dmginfo:GetDamageForce():GetNormalized() * 1500
-		if (dmginfo:GetDamageType()==DMG_CLUB or dmginfo:GetDamageForce():Length()) then
-			velocity = velocity * 0.3
-		end
-		self.imposter.Velocity = Vector(velocity.x, velocity.y, velocity.z + 500)
-		self.imposter.Angle = Angle(0,dmginfo:GetDamageForce():Angle().y,0)
-		self.imposter:Spawn()
 	end
 end
 
@@ -509,25 +358,6 @@ function ENT:Berserk()
 			end)
 		end
 	end)
-end
-
-ENT.NextTalkTime = 0
-ENT.MouthOpenness = 0
-function ENT:CustomOnThink() //Is pretty much HL:Resurgence talk system. Maybe more complexity in the future?
-	if CurTime() < self.NextTalkTime then
-		if self.MouthOpenness == 0 then
-			self.MouthOpenness = math.random(10,70)
-		else
-			self.MouthOpenness = 0
-		end
-		self:SetPoseParameter("move_mouth", self.MouthOpenness)
-	else
-		self:SetPoseParameter("move_mouth",0)
-	end
-end
-
-function ENT:OnPlayCreateSound(sdData, sdFile)
-	self.NextTalkTime = CurTime() + SoundDuration(sdFile)*3.5 --For some reason the soundduration is wrong. perhaps a bug with .ogg format?
 end
 
 //Brought over from sentinels addon, possibly old/outdated?

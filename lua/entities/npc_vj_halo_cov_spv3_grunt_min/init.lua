@@ -9,17 +9,17 @@ include('entities/npc_vj_halo_shared_spv3/init.lua')
 ENT.HullType = HULL_MEDIUM
 	-- ====Variant Variables==== --
 ENT.Model = {"models/hce/spv3/cov/grunt/grunt.mdl"} -- The game will pick a random model from the table when the SNPC is spawned | Add as many as you want
-ENT.modelColor = Color(127,111,63)
-ENT.bodyGroupTable = {
-	2,
-	1,
+ENT.Appearance = {
+	Color = Color(127,111,63),
+	Bodygroups = {2, 1},
+	Skin = 0,
 }
 ENT.StartHealth = 45
+ENT.HeadHitgroup = 505
 -- ENT.ShieldHealth = 0
 ENT.ExtraShotCount = 0
 ENT.WeaponProfficiency = 30
 	-- ====== Blood-Related Variables ====== --
-ENT.Bleeds = true -- Does the SNPC bleed? (Blood decal, particle, etc.)
 ENT.BloodColor = "Blue" -- The blood type, this will determine what it should use (decal, particle, etc.)
 	-- Types: "Red" || "Yellow" || "Green" || "Orange" || "Blue" || "Purple" || "White" || "Oil"
 -- Use the following variables to customize the blood the way you want it:
@@ -83,8 +83,31 @@ ENT.GrenadeWeps = {
 ENT.EntitiesToRunFrom = {obj_spore=true,obj_vj_grenade=true,obj_grenade=true,obj_handgrenade=true,npc_grenade_frag=true,doom3_grenade=true,fas2_thrown_m67=true,cw_grenade_thrown=true,obj_cpt_grenade=true,cw_flash_thrown=true,ent_hl1_grenade=true, obj_vj_unsc_spv3_frag_nade=true,obj_vj_cov_spv3_plasma_nade=true,obj_vj_cov_spv3_gravity_nade=true,obj_vj_cov_spv3_cluster_nade=true,obj_vj_cov_spv3_needler_nade=true, npc_vj_halo_flood_spv3_carrier=true}
 ENT.HasDeathAnimation = true -- Does it play an animation when it dies?
 ---------------------------------------------------------------------------------------------------------------------------------------------
-ENT.UNSCWeps = {
+ENT.ExtraWeapons = {
 	"weapon_vj_unsc_spv3_magnum",
+}
+ENT.RemovableParts = {
+	[505] = {Health = 15, Bodygroup = "Head", Execute = function(entity, dmginfo) 
+		entity:Flee()
+		entity:VJ_ACT_PLAYACTIVITY("Hit_Head", true, 1, false)
+		entity:EmitSound("grunt/shared/grunt_mask_destroyed/grunt_backpack_steam"..math.random(1,3)..".ogg", 80, 100, 1)
+		local pos, ang = entity:GetBonePosition(13)
+		pos = pos + entity:GetRight()*35
+		helmet = entity:CreateGibEntity("obj_vj_metal_gib", {"models/hce/spv3/cov/grunt/garbage/minor_mask.mdl"}, {Pos = pos, Ang = ang})
+		ParticleEffect("GruntMaskGas", pos - entity:GetRight()*35 , ang, entity)
+		dmginfo:SetDamage(entity:Health())
+	end},
+	[508] = {Health = 15, Bodygroup = "Body", Execute = function(entity, dmginfo)
+		entity:Flee()
+		entity:VJ_ACT_PLAYACTIVITY("h_b_gut", true, 1, false)
+		entity:EmitSound("grunt/shared/grunt_backpack_destroyed/grunt_backpack_steam"..math.random(1,3)..".ogg", 80, 100, 1)
+		local pos = entity:GetAttachment(entity:LookupAttachment("Backpack"))["Pos"] + entity:GetRight()*35 //Corrective position
+		local ang = entity:GetAttachment(entity:LookupAttachment("Backpack"))["Ang"]
+		local backpack = nil
+		backpack = entity:CreateGibEntity("obj_vj_metal_gib", {"models/hce/spv3/cov/grunt/garbage/tank_one.mdl"}, {Pos = pos, Ang = ang})
+		backpack:SetColor(entity:GetColor())
+		ParticleEffectAttach("GruntBackGasTank",PATTACH_POINT_FOLLOW,entity,entity:LookupAttachment("Backpack"))
+	end}
 }
 
 function ENT:CustomOnSetupWeaponHoldTypeAnims(htype)
@@ -231,73 +254,11 @@ self.SoundTbl_WeaponReload = {
 		"grunt/grunt0"..self.voicePermutation.."/cover/cover (4).ogg",
 	}
 end
-
-function ENT:CustomOnInitialize()
-	self:RandomizeTraits()
-	for i=1, #self.bodyGroupTable do
-		self:SetBodygroup(i, self.bodyGroupTable[i])
-	end
-	self.GrenadeAttackEntity = VJ_PICKRANDOMTABLE(self.GrenadeTypes)
-	self:UseConVars()
-	self:SetColor(self.modelColor)
-	for i=1, #self.bodyGroupTable do
-		self:SetBodygroup(i, self.bodyGroupTable[i])
-	end
-	self:SetCollisionBounds(Vector(20, 20, 60), Vector(-20, -20, 0))
-end
-
-function ENT:UseConVars()
-	self.StartHealth = self.StartHealth * GetConVarNumber("vj_spv3_HealthModifier")
-	self:SetHealth(self.StartHealth)
-	timer.Simple(0.01, function() 
-		if (GetConVarNumber("vj_spv3_covUNSCWeps")==1 and math.random(0,1)==1) then
-			self:GetActiveWeapon():Remove()
-			self:Give(VJ_PICKRANDOMTABLE(self.UNSCWeps))
-		end
-	end)
-	self.bodyParts = {
-		Head = {Health = GetConVarNumber("vj_spv3_PrecisionThreshold"), Bodygroup = "Head", Removed = false},
-		Body = {Health = GetConVarNumber("vj_spv3_PrecisionThreshold"), Bodygroup = "Body", Removed = false}
-	}
-end
+ENT.CustomCollision = {Min = Vector(-20,-20,0), Max = Vector(20,20,60)}
 
 function ENT:CustomOnAcceptInput(key,activator,caller,data)
 	if key == "Step" then
 		self:EmitSound("grunt/shared/walk/walk"..math.random(1,6)..".ogg", 80, 100, 1)
-	end
-end
-
-ENT.EvadeCooldown = 0
-function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
-	if (dmginfo:GetDamageType()==DMG_BLAST) then
-		dmginfo:ScaleDamage(3.5)
-	end
-	if (dmginfo:GetAttacker():IsNPC()) then
-		dmginfo:ScaleDamage(GetConVarNumber("vj_spv3_NPCTakeDamageModifier"))
-	end
-	if (math.random(0,2) == 2 and self.EvadeCooldown <= CurTime()) then
-		if (math.random(0,1)==1) then
-			self:VJ_ACT_PLAYACTIVITY(ACT_SIGNAL1,true,1,false)
-		else
-			self:VJ_ACT_PLAYACTIVITY(ACT_SIGNAL2,true,1,false)
-		end
-		self.EvadeCooldown = CurTime() + 4
-	end
-	self.DeathType = self:CheckForSpecialDeaths(dmginfo, hitgroup)
-	if (self.DeathType != nil) then
-		self:DoSpecialDeath(self.DeathType, dmginfo)
-	end
-end
-
-function ENT:CheckForSpecialDeaths(dmginfo, hitgroup)
-	if (hitgroup == 505 and dmginfo:GetDamage() >= GetConVarNumber("vj_spv3_PrecisionThreshold") and (self.bodyGroupTable[2]!=2 or self.bodyParts["Head"]["Removed"]==true)) then
-		return "Headshot"
-	elseif (dmginfo:GetAttacker():IsPlayer() && dmginfo:GetDamageType()==DMG_CLUB && Vector((dmginfo:GetDamagePosition() - self:GetPos()).x, (dmginfo:GetDamagePosition() - self:GetPos()).y, 0):Dot(Vector(self:GetForward().x, self:GetForward().y, 0)) < 0) then
-		return "BackBreak"
-	elseif (dmginfo:GetDamage() >= self:Health() and (dmginfo:GetDamageType()==DMG_BLAST or dmginfo:GetDamageType()==DMG_CLUB)) then
-		return "LargeForce"
-	else
-		return nil
 	end
 end
 
@@ -323,52 +284,6 @@ function ENT:DoSpecialDeath(typeDeath, dmginfo)
 		self.imposter.Velocity = Vector(velocity.x, velocity.y, velocity.z + 500)
 		self.imposter.Angle = Angle(0,dmginfo:GetDamageForce():Angle().y,0)
 		self.imposter:Spawn()
-	end
-end
-
-function ENT:CustomOnTakeDamage_AfterDamage(dmginfo,hitgroup) 
-	if (hitgroup==505) then
-		self:DamageSpecialPart("Head", dmginfo)
-	elseif (hitgroup==508) then
-		self:DamageSpecialPart("Body", dmginfo)
-	end
-end
-
-function ENT:DamageSpecialPart(specialPart, dmginfo)
-	if (self.bodyParts[specialPart]["Removed"]==false) then
-		self.bodyParts[specialPart]["Health"] = math.max(self.bodyParts[specialPart]["Health"] - dmginfo:GetDamage(), 0)
-		if (self.bodyParts[specialPart]["Health"] <= 0) then
-			self.bodyParts[specialPart]["Removed"]=true
-			self:SetBodygroup(self:FindBodygroupByName(self.bodyParts[specialPart]["Bodygroup"]), 0)
-			self:EmitSound("brute/fx/brute_armor_destroyed/cov_damage_small.wav")
-			self:Flee()
-			if (specialPart=="Head") then
-				self:VJ_ACT_PLAYACTIVITY("Hit_Head", true, 1, false)
-				self:EmitSound("grunt/shared/grunt_mask_destroyed/grunt_backpack_steam"..math.random(1,3)..".ogg", 80, 100, 1)
-				local pos, ang = self:GetBonePosition(13)
-				pos = pos + self:GetRight()*35
-				if (self.bodyGroupTable[2]==1) then
-					helmet = self:CreateGibEntity("obj_vj_metal_gib", {"models/hce/spv3/cov/grunt/garbage/minor_mask.mdl"}, {Pos = pos, Ang = ang, Vel = dmginfo:GetDamageForce()*0.3 + Vector(0,0,300), BloodDecal = nil})
-				else
-					helmet = self:CreateGibEntity("obj_vj_metal_gib", {"models/hce/spv3/cov/grunt/garbage/major_mask.mdl"}, {Pos = pos, Ang = ang, Vel = dmginfo:GetDamageForce()*0.3 + Vector(0,0,300), BloodDecal = nil})
-				end
-				ParticleEffect("GruntMaskGas", pos - self:GetRight()*35 , ang, self)
-			elseif (specialPart=="Body") then
-				self:VJ_ACT_PLAYACTIVITY("h_b_gut", true, 1, false)
-				self:EmitSound("grunt/shared/grunt_backpack_destroyed/grunt_backpack_steam"..math.random(1,3)..".ogg", 80, 100, 1)
-				local pos = self:GetAttachment(self:LookupAttachment("Backpack"))["Pos"] + self:GetRight()*35 //Corrective position
-				local ang = self:GetAttachment(self:LookupAttachment("Backpack"))["Ang"]
-				local backpack = nil
-				if (self.bodyGroupTable[1]==1) then
-					backpack = self:CreateGibEntity("obj_vj_metal_gib", {"models/hce/spv3/cov/grunt/garbage/tank_two.mdl"}, {Pos = pos, Ang = ang, Vel = dmginfo:GetDamageForce()*0.3 + Vector(0,0,300)})
-					backpack:SetColor(self:GetColor())
-				else
-					backpack = self:CreateGibEntity("obj_vj_metal_gib", {"models/hce/spv3/cov/grunt/garbage/tank_one.mdl"}, {Pos = pos, Ang = ang, Vel = dmginfo:GetDamageForce()*0.3 + Vector(0,0,300)})
-					backpack:SetColor(self:GetColor())
-				end
-				ParticleEffectAttach("GruntBackGasTank",PATTACH_POINT_FOLLOW,self,self:LookupAttachment("Backpack"))
-			end
-		end
 	end
 end
 

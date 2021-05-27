@@ -7,16 +7,25 @@ include('entities/npc_vj_halo_shared_spv3/init.lua')
 	without the prior written consent of the author, unless otherwise indicated for stand-alone materials.
 -----------------------------------------------*/
 ENT.HullType = HULL_MEDIUM
-
 ENT.Model = {"models/hce/spv3/unsc/marine/marine.mdl"} -- The game will pick a random model from the table when the SNPC is spawned | Add as many as you want
-ENT.modelColor = Color(255,255,255)
 ENT.StartHealth = 90
-ENT.ArmorMaxHealth = 55
-ENT.ArmorCurrentHealth = ENT.ArmorMaxHealth
-ENT.ArmorDelay = 6
-ENT.ArmorRecharge = 1
-ENT.ArmorActivated = true
-//55 Armor
+ENT.HeadHitgroup = 504
+ENT.ShieldMaxHealth = 55
+ENT.ShieldIsArmor = true
+ENT.Skins = {
+	1,
+	2,
+	4,
+	5,
+	6,
+}
+ENT.Appearance = {
+	Color = Color(255,255,255),
+	Bodygroups = {math.random(0,23), math.random(0,2), math.random(0,6), math.random(0,1)},
+	Skin = ENT.Skins[math.random(1, 5)],
+}
+
+//55 Shield
 	-- ====== Blood-Related Variables ====== --
 ENT.Bleeds = true -- Does the SNPC bleed? (Blood decal, particle, etc.)
 ENT.BloodColor = "Red" -- The blood type, this will determine what it should use (decal, particle, etc.)
@@ -79,28 +88,14 @@ ENT.GrenadeTypes = {
 ENT.GrenadeWeps = {
 	"weapon_vj_unsc_spv3_frag_nade"
 }
-ENT.CovWeps = {
+ENT.ExtraWeapons = {
 	"weapon_vj_cov_spv3_plasmarifle",
 	"weapon_vj_cov_spv3_plasmarifleBrute",
 	"weapon_vj_cov_spv3_particleCarbine",
 	"weapon_vj_cov_spv3_shredder",
 	"weapon_vj_cov_spv3_needler",
 }
-ENT.EntitiesToRunFrom = {obj_spore=true,obj_vj_grenade=true,obj_grenade=true,obj_handgrenade=true,npc_grenade_frag=true,doom3_grenade=true,fas2_thrown_m67=true,cw_grenade_thrown=true,obj_cpt_grenade=true,cw_flash_thrown=true,ent_hl1_grenade=true, obj_vj_unsc_spv3_frag_nade=true,obj_vj_cov_spv3_plasma_nade=true,obj_vj_cov_spv3_gravity_nade=true,obj_vj_cov_spv3_cluster_nade=true,obj_vj_cov_spv3_needler_nade=true}
-ENT.BGs = {
-	1,
-	1,
-	1,
-	1,
-}
-ENT.Skins = {
-	1,
-	2,
-	4,
-	5,
-	6,
-}
-ENT.ColorRange = {Vector (255,255,255), Vector(255,255,255)}
+
 ENT.SoundTbl_Step = {
 	"marine/shared/step/step (1).ogg",
 	"marine/shared/step/step (2).ogg",
@@ -109,6 +104,13 @@ ENT.SoundTbl_Step = {
 	"marine/shared/step/step (5).ogg",
 	"marine/shared/step/step (6).ogg",
 }
+ENT.otherInit = function(entity)
+	entity.Appearance = {
+		Color = Color(255,255,255),
+		Bodygroups = {math.random(0,23), math.random(0,2), math.random(0,6), math.random(0,1)},
+		Skin = entity.Skins[math.random(1, 5)],
+	}
+end
 ---------------------------------------------------------------------------------------------------------------------------------------------
 function ENT:CustomOnSetupWeaponHoldTypeAnims(htype)
     if (htype == "pistol" and !string.find(tostring(self:GetActiveWeapon()), "cov")) then
@@ -120,12 +122,6 @@ function ENT:CustomOnSetupWeaponHoldTypeAnims(htype)
 end
 
 function ENT:CustomOnPreInitialize()
-	self.BGs = {
-		math.random(0,23),
-		math.random(0,2),
-		math.random(0,6),
-		math.random(0,1),
-	}
 	self.voicePermutation = tostring(math.random(1,9))
 	self.SoundTbl_OnKilledEnemy = {
 		"marine/marine0"..self.voicePermutation.."/killed_enemy/killed_enemy (1).ogg",
@@ -274,169 +270,12 @@ function ENT:CustomOnPreInitialize()
 		-- "marine/marine0"..self.voicePermutation.."/firing/firing (16).ogg",
 	}
 end
-
-function ENT:CustomOnInitialize()
-	self:RandomizeTraits()
-	self:SetSkin(VJ_PICKRANDOMTABLE(self.Skins))
-	self:SetCollisionBounds(Vector(15, 15, 70), Vector(-15, -15, 0))
-	self:SetColor(Color(math.random(self.ColorRange[1].x, self.ColorRange[2].x),math.random(self.ColorRange[1].y, self.ColorRange[2].y) ,math.random(self.ColorRange[1].z, self.ColorRange[2].z)))
-	for i = 0, #self.BGs-1 do
-		self:SetBodygroup(i, self.BGs[i+1])
-	end
-	self:UseConVars()
-end
-
-function ENT:UseConVars()
-	self.StartHealth = self.StartHealth * GetConVarNumber("vj_spv3_HealthModifier")
-	self.ArmorMaxHealth = self.ArmorMaxHealth * GetConVarNumber("vj_spv3_ShieldModifier")
-	self.ArmorCurrentHealth = self.ArmorMaxHealth
-	self.CurrentHealth = self.StartHealth
-	self:SetHealth(self.ArmorCurrentHealth + self.StartHealth)
-	timer.Simple(0.01, function() 
-		if (GetConVarNumber("vj_spv3_UNSCCovWeps")==1 and math.random(0,1)==1) then
-			self:GetActiveWeapon():Remove()
-			self:Give(VJ_PICKRANDOMTABLE(self.CovWeps))
-		end
-		if (GetConVarNumber("vj_spv3_UNSCCovWeps")==1) then
-			self.GrenadeTypes = {
-				"obj_vj_cov_spv3_gravity_nade",
-				"obj_vj_cov_spv3_plasma_nade",
-				"obj_vj_cov_spv3_cluster_nade",
-				"obj_vj_unsc_spv3_frag_nade",
-				"obj_vj_cov_spv3_needler_nade",
-			}
-			self.GrenadeWeps = {
-				"weapon_vj_cov_spv3_needler_nade",
-				"weapon_vj_cov_spv3_plasma_nade",
-				"weapon_vj_cov_spv3_gravity_nade",
-				"weapon_vj_cov_spv3_cluster_nade",
-				"weapon_vj_unsc_spv3_frag_nade",
-			}
-		end
-		self.GrenadeAttackEntity = VJ_PICKRANDOMTABLE(self.GrenadeTypes)
-	end)
-	if (GetConVarNumber("vj_spv3_ffretal")==0) then 
-		self.BecomeEnemyToPlayer = false -- Should the friendly SNPC become enemy towards the player if it's damaged by a player?
-	end
-end
-
+ENT.CustomCollision = {Min = Vector(-15,-15,0), Max = Vector(15,15,70)}
 function ENT:CustomOnAcceptInput(key,activator,caller,data)
 	if key == "Step" then
 		self:EmitSound(VJ_PICK(self.SoundTbl_Step), 60, 100, 1)
 	end
 end
-
-ENT.EvadeCooldown = 0
-function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
-	if (dmginfo:GetDamageType()==DMG_BLAST) then
-		dmginfo:ScaleDamage(3.5)
-	end
-	if (dmginfo:GetAttacker():IsNPC()) then
-		dmginfo:ScaleDamage(GetConVarNumber("vj_spv3_NPCTakeDamageModifier"))
-	end
-	if (math.random(0,2) == 2) then
-		if (self.EvadeCooldown <= CurTime()) then
-			if (math.random(0,1)==1) then
-				self:VJ_ACT_PLAYACTIVITY(ACT_SIGNAL1,true,1.5,false)
-			else
-				self:VJ_ACT_PLAYACTIVITY(ACT_SIGNAL2,true,1.5,false)
-			end
-			self.EvadeCooldown = CurTime() + 4
-		end
-	end
-	if self.ArmorActivated == true then
-		self:DamageArmor(dmginfo)
-	else
-		self.CurrentHealth = self.CurrentHealth - dmginfo:GetDamage()
-	end
-	self.DeathType = self:CheckForSpecialDeaths(dmginfo, hitgroup)
-	if (self.DeathType != nil) then
-		self:DoSpecialDeath(self.DeathType, dmginfo)
-	end
-end
-
-function ENT:CheckForSpecialDeaths(dmginfo, hitgroup)
-	if (hitgroup == 504 and dmginfo:GetDamage() >= GetConVarNumber("vj_spv3_PrecisionThreshold")) then
-		return "Headshot"
-	elseif (dmginfo:GetAttacker():IsPlayer() && dmginfo:GetDamageType()==DMG_CLUB && Vector((dmginfo:GetDamagePosition() - self:GetPos()).x, (dmginfo:GetDamagePosition() - self:GetPos()).y, 0):Dot(Vector(self:GetForward().x, self:GetForward().y, 0)) < 0) then
-		return "BackBreak"
-	elseif (dmginfo:GetDamage() >= self:Health() and (dmginfo:GetDamageType()==DMG_BLAST or dmginfo:GetDamageType()==DMG_CLUB)) then
-		return "LargeForce"
-	else
-		return nil
-	end
-end
-
-function ENT:DoSpecialDeath(typeDeath, dmginfo)
-	if (typeDeath==nil) then
-		return
-	elseif (typeDeath=="BackBreak") then --Do the following when taking damage via DMG_CLUB to the back
-		self.AlertFriendsOnDeath = false
-		self:TakeDamage(self:Health(), dmginfo:GetAttacker(), dmginfo:GetInflictor())
-		self:VJ_ACT_PLAYACTIVITY("Die_5", true, 2, false)
-	elseif (typeDeath=="Headshot") then --Do the following when dying via a headshot (above the precisionThreshold)
-		dmginfo:SetDamage(self:Health())
-		self:VJ_ACT_PLAYACTIVITY("Die_1", true, 2, false)
-	elseif (typeDeath=="LargeForce") then --Do the following when dying to DMG_CLUB with high force or DMG_BLAST
-		self.HasDeathRagdoll = false
-		self.HasDeathAnimation = false
-		self.imposter = ents.Create("obj_vj_imposter")
-		self.imposter:SetOwner(self)
-		self.imposter.Sequence = "Die_Airborne"
-		local velocity = dmginfo:GetDamageForce():GetNormalized() * 1500
-		if (dmginfo:GetDamageType()==DMG_CLUB or dmginfo:GetDamageForce():Length()) then
-			velocity = velocity * 0.3
-		end
-		self.imposter.Velocity = Vector(velocity.x, velocity.y, velocity.z + 500)
-		self.imposter.Angle = Angle(0,dmginfo:GetDamageForce():Angle().y,0)
-		self.imposter:Spawn()
-	end
-end
-
-function ENT:DamageArmor(dmginfo)
-	self.ArmorCurrentHealth = math.max(self.ArmorCurrentHealth - dmginfo:GetDamage(), 0)
-	timer.Destroy("RegenArmor"..self:GetCreationID())
-	timer.Create("ArmorDelay"..self:GetCreationID(), self.ArmorDelay, 1, function() --Timers will reset everytime damage is applied, no need to adjust
-		if (IsValid(self) and self.ArmorCurrentHealth < self.ArmorMaxHealth) then
-			self:RegenerateArmor()
-		end
-	end)
-end
-
-function ENT:RegenerateArmor()
-	self.ArmorActivated = true
-	timer.Create("RegenArmor"..self:GetCreationID(), 0.1, (self.ArmorMaxHealth - self.ArmorCurrentHealth)/self.ArmorRecharge, function()
-		if (!IsValid(self)) then return end
-		self.ArmorCurrentHealth = math.min(self.ArmorCurrentHealth + self.ArmorRecharge, self.ArmorMaxHealth)
-		self:SetHealth(self.CurrentHealth + self.ArmorCurrentHealth)
-	end)
-end
-
-function ENT:CustomOnTakeDamage_AfterDamage(dmginfo,hitgroup)
-	if (self.ArmorCurrentHealth<=0) then		
-		self.ArmorActivated=false
-	end
-end
-
-ENT.NextTalkTime = 0
-ENT.MouthOpenness = 0
-function ENT:CustomOnThink() //Is pretty much HL:Resurgence talk system. Maybe more complexity in the future?
-	if CurTime() < self.NextTalkTime then
-		if self.MouthOpenness == 0 then
-			self.MouthOpenness = math.random(10,70)
-		else
-			self.MouthOpenness = 0
-		end
-		self:SetPoseParameter("move_mouth", self.MouthOpenness)
-	else
-		self:SetPoseParameter("move_mouth",0)
-	end
-end
-
-function ENT:OnPlayCreateSound(sdData, sdFile)
-	self.NextTalkTime = CurTime() + SoundDuration(sdFile)*3.5 --For some reason the soundduration is wrong. perhaps a bug with .ogg format?
-end
-
 /*-----------------------------------------------
 	*** Copyright (c) 2012-2016 by DrVrej, All rights reserved. ***
 	No parts of this code or any of its contents may be reproduced, copied, modified or adapted,

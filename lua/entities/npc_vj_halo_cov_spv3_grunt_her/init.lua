@@ -8,11 +8,10 @@ include('entities/npc_vj_halo_cov_spv3_grunt_min/init.lua')
 -----------------------------------------------*/
 ENT.Model = {"models/hce/spv3/cov/grunt/grunt2.mdl"} -- The game will pick a random model from the table when the SNPC is spawned | Add as many as you want
 ENT.VJ_NPC_Class = {"CLASS_HER"} -- NPCs with the same class with be allied to each other
-ENT.modelColor = Color(145,160,120)
-ENT.bodyGroupTable = {
-	1,
-	2,
+ENT.Appearance = {
+	Color = Color(145,160,120),
+	Bodygroups = {1, 2},
+	Skin = 0,
 }
 ENT.StartHealth = 75
--- ENT.ShieldHealth = 0
 ENT.ExtraShotCount = 1

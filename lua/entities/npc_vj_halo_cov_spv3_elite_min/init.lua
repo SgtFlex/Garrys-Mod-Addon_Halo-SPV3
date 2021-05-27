@@ -9,21 +9,16 @@ include('entities/npc_vj_halo_shared_spv3/init.lua')
 ENT.HullType = HULL_MEDIUM
 	-- ====Variant Variables==== --
 ENT.Model = {"models/hce/spv3/cov/elite/elite.mdl"} -- The game will pick a random model from the table when the SNPC is spawned | Add as many as you want
-ENT.modelColor = Color(40,60,200)
-ENT.bodyGroupTable = {
-	0,
-	1,
-	2,
-	4,
-}
 ENT.StartHealth = 100
-ENT.CurrentHealth = ENT.StartHealth
 ENT.ShieldMaxHealth = 100
-ENT.ShieldCurrentHealth = ENT.ShieldMaxHealth
 ENT.ShieldDelay = 6
 ENT.ShieldRecharge = 1
-ENT.IsInvis = false
-
+ENT.Appearance = {
+	Color = Color(40,60,200),
+	Bodygroups = {0, 1, 2, 4},
+	Skin = 1,
+}
+ENT.HeadHitgroup = 507
 ENT.ExtraShotCount = 2
 ENT.WeaponProfficiency = 50
 	-- ====== Blood-Related Variables ====== --
@@ -67,9 +62,7 @@ ENT.MeleeAttackDamageAngleRadius = 45 -- What is the damage angle radius? | 100 
 ENT.TimeUntilMeleeAttackDamage = 0.8 -- This counted in seconds | This calculates the time until it hits something
 ENT.NextAnyAttackTime_Melee = 1.3333333333333 -- How much time until it can use any attack again? | Counted in Seconds
 ENT.StopMeleeAttackAfterFirstHit = true -- Should it stop the melee attack from running rest of timers when it hits an enemy?
-
 ENT.DisableFootStepSoundTimer = true -- If set to true, it will disable the time system for the footstep sound code, allowing you to use other ways like model events
-ENT.HasSword = false
 	-- Death ---------------------------------------------------------------------------------------------------------------------------------------------
 ENT.DropWeaponOnDeath = true -- Should it drop its weapon on death?
 ENT.DropWeaponOnDeathAttachment = "Cannon" -- Which attachment should it use for the weapon's position
@@ -104,8 +97,6 @@ ENT.GrenadeWeps = {
 	"weapon_vj_cov_spv3_cluster_nade",
 }
 ENT.EntitiesToRunFrom = {obj_spore=true,obj_vj_grenade=true,obj_grenade=true,obj_handgrenade=true,npc_grenade_frag=true,doom3_grenade=true,fas2_thrown_m67=true,cw_grenade_thrown=true,obj_cpt_grenade=true,cw_flash_thrown=true,ent_hl1_grenade=true, obj_vj_unsc_spv3_frag_nade=true,obj_vj_cov_spv3_plasma_nade=true,obj_vj_cov_spv3_gravity_nade=true,obj_vj_cov_spv3_cluster_nade=true,obj_vj_cov_spv3_needler_nade=true, npc_vj_halo_flood_spv3_carrier=true}
-ENT.Skin = 1
-
 function ENT:CustomOnPreInitialize()
 	self.voicePermutation = tostring(math.random(1,2))
 	self.SoundTbl_Alert = {
@@ -278,32 +269,6 @@ function ENT:CustomOnSetupWeaponHoldTypeAnims(htype)
 	return true
 end
 
-function ENT:CustomOnInitialize()
-	self:RandomizeTraits()
-	self:UseConVars()
-	self:SetSkin(self.Skin)
-	self.GrenadeAttackEntity = VJ_PICKRANDOMTABLE(self.GrenadeTypes)
-	self:SetColor(self.modelColor)
-	for i=1, #self.bodyGroupTable do
-		self:SetBodygroup(i, self.bodyGroupTable[i])
-	end
-	self:SetCollisionBounds(Vector(-18, -18, 0), Vector(18, 18, 85))
-	timer.Simple(0.01, function()
-		self:SetInvisibility(self.IsInvis)
-	end)
-end
-
-function ENT:UseConVars()
-	self.MeleeAttackDamage = self.MeleeAttackDamage * GetConVarNumber("vj_spv3_damageModifier")
-	self.StartHealth = self.StartHealth * GetConVarNumber("vj_spv3_HealthModifier")
-	self.ShieldMaxHealth = self.ShieldMaxHealth * GetConVarNumber("vj_spv3_ShieldModifier")
-	self.ShieldCurrentHealth = self.ShieldMaxHealth
-	self.ShieldActivated = (self.ShieldCurrentHealth > 0)
-	self.Bleeds = (self.ShieldCurrentHealth <= 0)
-	self.CurrentHealth = self.StartHealth
-	self:SetHealth(self.ShieldMaxHealth + self.StartHealth)
-end
-
 ENT.HasStuck=false
 ENT.Berserked=false
 function ENT:Berserk()
@@ -311,173 +276,18 @@ function ENT:Berserk()
 	timer.Simple(0.1, function()
 		self:PlaySoundSystem("GeneralSpeech", self.SoundTbl_Berserk)
 	end)
-	if (self.HasSword == true) then
-		self.MeleeAttackDamage = 300 * GetConVarNumber("vj_spv3_damageModifier")
-		timer.Simple(0.5, function() 
-			if (IsValid(self) and IsValid(self:GetActiveWeapon()) and self:GetActiveWeapon():GetClass()!="weapon_vj_cov_spv3_energysword") then
-				self:DropWeapon()
-				self:Give("weapon_vj_cov_spv3_energysword")
-			end
-		end)
-	end
+	timer.Simple(0.5, function() 
+		if (IsValid(self) and IsValid(self:GetActiveWeapon()) and self:GetActiveWeapon():GetClass()!="weapon_vj_cov_spv3_energysword") then
+			self:DropWeapon()
+			self:Give("weapon_vj_cov_spv3_energysword")
+		end
+	end)
 	self.Berserked=true
 	self.MoveRandomlyWhenShooting = false
 	self.AllowWeaponReloading = false -- If false, the SNPC will no longer reload
 	self.WaitForEnemyToComeOut = false
 	self.NoWeapon_UseScaredBehavior = false
 	self:VJ_ACT_PLAYACTIVITY("Berserk", true, 2, false)
-end
-
-function ENT:DropWeapon()
-	local wep = ents.Create(self:GetActiveWeapon():GetClass())
-	wep:SetPos(self:GetAttachment(self:LookupAttachment("Cannon"))["Pos"])
-	wep:SetAngles(self:GetActiveWeapon():GetAngles())
-	wep:Spawn()
-	self:GetActiveWeapon():Remove()
-end
-
-ENT.EvadeCooldown = 0
-function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
-	if (dmginfo:GetDamageType()==DMG_BLAST) then
-		dmginfo:ScaleDamage(3.5)
-	end
-	if (dmginfo:GetAttacker():IsNPC()) then
-		dmginfo:ScaleDamage(GetConVarNumber("vj_spv3_NPCTakeDamageModifier"))
-	end
-	if (math.random(0,2) == 2) then
-		if (self.EvadeCooldown <= CurTime()) then
-			if (math.random(0,1)==1) then
-				self:VJ_ACT_PLAYACTIVITY(ACT_SIGNAL1,true,1,false)
-			else
-				self:VJ_ACT_PLAYACTIVITY(ACT_SIGNAL2,true,1,false)
-			end
-			self.EvadeCooldown = CurTime() + 4
-		end
-	end
-	if (self.IsInvis==true) then
-		self:SetInvisibility(false)
-		timer.Simple(1, function() 
-			if (!IsValid(self) or self.Dead==true) then return end
-			self:SetInvisibility(true)
-		end)
-	end
-	if self.ShieldActivated == true then
-		self:DamageShield(dmginfo)
-	else
-		self.CurrentHealth = self.CurrentHealth - dmginfo:GetDamage()
-		if (math.random(1,8) == 1) then
-			self:Berserk()
-		end
-	end
-	if (self.ShieldRecharge > 0) then
-		timer.Destroy("RegenShield"..self:GetCreationID())
-		timer.Create("ShieldDelay"..self:GetCreationID(), self.ShieldDelay, 1, function() --Timers will reset everytime damage is applied, no need to adjust
-			if (IsValid(self) and self.ShieldCurrentHealth < self.ShieldMaxHealth) then
-				self:RegenerateShield()
-			end
-		end)
-	end
-	self.DeathType = self:CheckForSpecialDeaths(dmginfo, hitgroup)
-	if (self.DeathType != nil) then
-		self:DoSpecialDeath(self.DeathType, dmginfo)
-	end
-end
-
-function ENT:SetInvisibility(bInvis)
-	if (self.IsInvis!=true) then
-		self.material = self:GetMaterial()
-		self.weaponMaterial = self:GetActiveWeapon():GetMaterial()
-	end
-	if (bInvis==true) then
-		self:GetActiveWeapon():SetMaterial("effects/spv3/cloak")
-		self:SetMaterial("effects/spv3/cloak")
-		self:AddFlags(FL_NOTARGET)
-		self:DrawShadow(false)
-		self:RemoveAllDecals()
-		self.IsInvis = true
-	else
-		self:SetMaterial(self.material)
-		self:RemoveFlags(FL_NOTARGET)
-		self:GetActiveWeapon():SetMaterial(self.weaponMaterial)
-		self:DrawShadow(true)
-		self.IsInvis = false
-	end
-end
-
-function ENT:DamageShield(dmginfo)
-	if (dmginfo:GetDamageType()==DMG_PLASMA or dmginfo:GetDamageType()==DMG_BURN or dmginfo:GetDamageType()==DMG_SLOWBURN) then
-		dmginfo:ScaleDamage(2)
-	end
-	self.ShieldCurrentHealth = math.max(self.ShieldCurrentHealth - dmginfo:GetDamage(), 0)
-	ParticleEffect("hcea_shield_impact", dmginfo:GetDamagePosition(), dmginfo:GetDamageForce():Angle(), self)
-	if (self.ShieldCurrentHealth <= 0 and self.ShieldActivated==true) then
-		self:DisperseShield()
-		self.CanFlinch = 1
-		self:DoFlinch(dmginfo, hitgroup)
-		self.CanFlinch = 0
-	end
-	
-end
-
-function ENT:DisperseShield(dmginfo)
-	if (self.ShieldActivated == false) then return false end
-	self.ShieldActivated = false
-	self.Bleeds = true
-	ParticleEffectAttach("hcea_shield_disperse",PATTACH_POINT_FOLLOW,self,self:LookupAttachment("origin"))
-	if (self.Berserked==false) then
-		self:VJ_TASK_COVER_FROM_ENEMY("TASK_RUN_PATH")
-	end
-	return true
-end
-
-function ENT:RegenerateShield()
-	self.ShieldActivated = true
-	self.Bleeds = false
-	self:StopParticles()
-	ParticleEffectAttach("hcea_shield_recharged",PATTACH_POINT_FOLLOW,self,self:LookupAttachment("origin"))
-	timer.Create("RegenShield"..self:GetCreationID(), 0.1, (self.ShieldMaxHealth - self.ShieldCurrentHealth)/self.ShieldRecharge, function()
-		if (!IsValid(self)) then return end
-		self.ShieldCurrentHealth = math.min(self.ShieldCurrentHealth + self.ShieldRecharge, self.ShieldMaxHealth)
-		self:SetHealth(self.CurrentHealth + self.ShieldCurrentHealth)
-	end)
-
-end
-
-function ENT:CheckForSpecialDeaths(dmginfo, hitgroup)
-	if (hitgroup == 507 and dmginfo:GetDamage() >= GetConVarNumber("vj_spv3_PrecisionThreshold") and self.ShieldActivated==false) then
-		return "Headshot"
-	elseif (dmginfo:GetAttacker():IsPlayer() && dmginfo:GetDamageType()==DMG_CLUB && Vector((dmginfo:GetDamagePosition() - self:GetPos()).x, (dmginfo:GetDamagePosition() - self:GetPos()).y, 0):Dot(Vector(self:GetForward().x, self:GetForward().y, 0)) < 0) then
-		return "BackBreak"
-	elseif (dmginfo:GetDamage() >= self:Health() and (dmginfo:GetDamageType()==DMG_BLAST or dmginfo:GetDamageType()==DMG_CLUB)) then
-		return "LargeForce"
-	else
-		return nil
-	end
-end
-
-function ENT:DoSpecialDeath(typeDeath, dmginfo)
-	if (typeDeath==nil) then
-		return
-	elseif (typeDeath=="BackBreak") then --Do the following when taking damage via DMG_CLUB to the back
-		self.AlertFriendsOnDeath = false
-		self:TakeDamage(self:Health(), dmginfo:GetAttacker(), dmginfo:GetInflictor())
-		self:VJ_ACT_PLAYACTIVITY("Die_1", true, 2, false)
-	elseif (typeDeath=="Headshot") then --Do the following when dying via a headshot (above the precisionThreshold)
-		dmginfo:SetDamage(self:Health())
-	elseif (typeDeath=="LargeForce") then --Do the following when dying to DMG_CLUB with high force or DMG_BLAST
-		self.HasDeathRagdoll = false
-		self.HasDeathAnimation = false
-		self.imposter = ents.Create("obj_vj_imposter")
-		self.imposter:SetOwner(self)
-		self.imposter.Sequence = "Die_Airborne"
-		local velocity = dmginfo:GetDamageForce():GetNormalized() * 1500
-		if (dmginfo:GetDamageType()==DMG_CLUB or dmginfo:GetDamageForce():Length()) then
-			velocity = velocity * 0.3
-		end
-		self.imposter.Velocity = Vector(velocity.x, velocity.y, velocity.z + 500)
-		self.imposter.Angle = Angle(0,dmginfo:GetDamageForce():Angle().y,0)
-		self.imposter:Spawn()
-	end
 end
 
 function ENT:CustomOnAcceptInput(key,activator,caller,data)
@@ -491,7 +301,6 @@ function ENT:CustomOnAcceptInput(key,activator,caller,data)
 	elseif key == "EvadeR" then
 		self:EmitSound("elite/shared/stand_pistol_evade_right/stand_pistol_evade_right.ogg", 80, 100, 1)
 		self:EmitSound("elite/elite0"..self.voicePermutation.."/dodge/dodge ("..math.random(1,4)..").ogg", 80, 100, 1)
-	
 	elseif key == "EvadeL" then
 		self:EmitSound("elite/shared/stand_pistol_evade_left/stand_pistol_evade_left.ogg", 80, 100, 1)
 		self:EmitSound("elite/elite0"..self.voicePermutation.."/dodge/dodge ("..math.random(1,4)..").ogg", 80, 100, 1)
@@ -504,25 +313,6 @@ function ENT:CustomOnAlert(ent)
 	if (self:GetActiveWeapon():GetClass()=="weapon_vj_cov_spv3_energysword") then
 		self:Berserk()
 	end
-end
-
-ENT.MouthOpenness = 0
-ENT.NextTalkTime = 0
-function ENT:CustomOnThink() //Is pretty much HL:Resurgence talk system. Maybe more complexity in the future?
-	if CurTime() < self.NextTalkTime then
-		if self.MouthOpenness == 0 then
-			self.MouthOpenness = math.random(20,100)
-		else
-			self.MouthOpenness = 0
-		end
-		self:SetPoseParameter("move_mouth", self.MouthOpenness)
-	else
-		self:SetPoseParameter("move_mouth",0)
-	end
-end
-
-function ENT:OnPlayCreateSound(sdData, sdFile)
-	self.NextTalkTime = CurTime() + SoundDuration(sdFile)*3.5 --For some reason the soundduration is wrong. perhaps a bug with .ogg format?
 end
 
 function ENT:MeleeAttackCode() //Setting melee damage type to DMG_CLUB

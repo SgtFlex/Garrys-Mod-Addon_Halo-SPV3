@@ -1,17 +1,18 @@
 AddCSLuaFile("shared.lua")
 include('shared.lua')
+include('entities/npc_vj_halo_shared_spv3/init.lua')
 /*-----------------------------------------------
 	*** Copyright (c) 2012-2016 by DrVrej, All rights reserved. ***
 	No parts of this code or any of its contents may be reproduced, copied, modified or adapted,
 	without the prior written consent of the author, unless otherwise indicated for stand-alone materials.
 -----------------------------------------------*/
 ENT.HullType = HULL_MEDIUM
-
 ENT.Model = {"models/hce/spv3/flood/jackal/floodjackal.mdl"} -- The game will pick a random model from the table when the SNPC is spawned | Add as many as you want
 ENT.StartHealth = 20
 ---------------------------------------------------------------------------------------------------------------------------------------------
+ENT.DisableBackBreak = true
+ENT.DisableForceDeath = true
 	-- ====== Blood-Related Variables ====== --
-ENT.Bleeds = true -- Does the SNPC bleed? (Blood decal, particle, etc.)
 ENT.BloodColor = "Yellow" -- The blood type, this will detemine what it should use (decal, particle, etc.)
 ENT.Immune_Dissolve = true -- Immune to Dissolving | Example: Combine Ball
 ENT.HasBloodPool = false -- Does it have a blood pool?
@@ -25,6 +26,7 @@ ENT.HasDeathAnimation = true -- Does it play an animation when it dies?
 ENT.AnimTbl_Death = {} -- Death Animations
 ENT.DeathAnimationTime = 1.65 -- Time until the SNPC spawns its corpse and gets removed
 ENT.DisableDeathAnimationSCHED = true -- If set to true, it will disable the setschedule code
+ENT.HasItemDropsOnDeath = false
 ENT.EntitiesToNoCollide = //Player no collide does affect how it behaves, even though the wiki states it doesn't
 {
 	"npc_vj_halo_flood_spv3_infection",
@@ -113,37 +115,14 @@ ENT.SoundTbl_Expl = {
 	"infected_jackal/explode/mutilation_2.ogg",
 	"infected_jackal/explode/mutilation_3.ogg",
 }
-
 ---------------------------------------------------------------------------------------------------------------------------------------------
 ENT.SpawnedFromInf=false
-function ENT:CustomOnInitialize()
-	self.MeleeAttackDamage = self.MeleeAttackDamage * GetConVarNumber("vj_spv3_damageModifier")
-	if (self.SpawnedFromInf==false) then
-	self.StartHealth = self.StartHealth * GetConVarNumber("vj_spv3_healthModifier")
-end
-	self:SetHealth(self.StartHealth)
-	self:CapabilitiesAdd(bit.bor(CAP_MOVE_CLIMB))
-	self:SetColor(self.modelColor)
-	self:SetCollisionBounds(Vector(-16, -16, 0), Vector(16, 16, 25))
-	self:SetAngles(self:GetAngles() + Angle(0, 180, 0))
+
+ENT.CustomCollision = {Min = Vector(-16,-16,0), Max = Vector(16,16,25)}
+ENT.otherInit = function(entity)
+	entity:SetAngles(entity:GetAngles() + Angle(0, 180, 0))
 end
 
-function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
-	if (dmginfo:GetDamageType()==DMG_BLAST) then
-		dmginfo:ScaleDamage(3.5)
-	end
-	if (dmginfo:GetAttacker():IsNPC()) then
-		dmginfo:ScaleDamage(GetConVarNumber("vj_spv3_NPCTakeDamageModifier"))
-	end
-end
-
-function ENT:CustomOnMeleeAttack_AfterChecks(hitEnt)
-	if (hitEnt.MeleeAttacking==true) then
-		hitEnt:SetAngles(hitEnt:GetAngles() + Angle(0,180,0))
-	end
-	return false 
-end -- return true to disable the attack and move onto the next entity!
----------------------------------------------------------------------------------------------------------------------------------------------
 ENT.infFormCount = 5
 local spreadRadius = 50
 function ENT:CustomDeathAnimationCode(dmginfo,hitgroup)
@@ -181,50 +160,6 @@ function ENT:CustomDeathAnimationCode(dmginfo,hitgroup)
 		self.infForm:SetAngles(Angle(self.infForm:GetAngles().x, velocity:Angle().y, self.infForm:GetAngles().z))
 		self.infForm:VJ_ACT_PLAYACTIVITY("Melee_1",true,1.3,false)		
 	end
-	-- local posone = self:LocalToWorld(Vector(math.random(-20, 20),math.random(-20,20),0))
-	-- local infector1 = ents.Create("npc_vj_halo_flood_spv3_infection")
-	-- infector1:SetPos(posone)
-	-- infector1:SetAngles(self:GetAngles())
-	-- infector1:Spawn()
-	-- infector1:Activate()
-	-- infector1:SetOwner(self)
-	-- infector1:SetVelocity(Vector(math.random(-100,100), math.random(-100, 100), math.random(200, 500)))
-	
-	-- local postwo = self:LocalToWorld(Vector(math.random(-20, 20),math.random(-20,20),0))
-	-- local infector2 = ents.Create("npc_vj_halo_flood_spv3_infection")
-	-- infector2:SetPos(postwo)
-	-- infector2:SetAngles(self:GetAngles())
-	-- infector2:Spawn()
-	-- infector2:Activate()
-	-- infector2:SetOwner(self)
-	-- infector2:SetVelocity(Vector(math.random(-100,100), math.random(-100, 100), math.random(200, 500)))
-	
-	-- local posthree = self:LocalToWorld(Vector(math.random(-20, 20),math.random(-20,20),0))
-	-- local infector3 = ents.Create("npc_vj_halo_flood_spv3_infection")
-	-- infector3:SetPos(posthree)
-	-- infector3:SetAngles(self:GetAngles())
-	-- infector3:Spawn()
-	-- infector3:Activate()
-	-- infector3:SetOwner(self)
-	-- infector3:SetVelocity(Vector(math.random(-100,100), math.random(-100, 100), math.random(200, 500)))
-	
-	-- local posfour = self:LocalToWorld(Vector(math.random(-20, 20),math.random(-20,20),0))
-	-- local infector4 = ents.Create("npc_vj_halo_flood_spv3_infection")
-	-- infector4:SetPos(posfour)
-	-- infector4:SetAngles(self:GetAngles())
-	-- infector4:Spawn()
-	-- infector4:Activate()
-	-- infector4:SetOwner(self)
-	-- infector4:SetVelocity(Vector(math.random(-100,100), math.random(-100, 100), math.random(200, 500)))
-	
-	-- local posfive = self:LocalToWorld(Vector(math.random(-20, 20),math.random(-20,20),0))
-	-- local infector5 = ents.Create("npc_vj_halo_flood_spv3_infection")
-	-- infector5:SetPos(posfive)
-	-- infector5:SetAngles(self:GetAngles())
-	-- infector5:Spawn()
-	-- infector5:Activate()
-	-- infector5:SetOwner(self)
-	-- infector5:SetVelocity(Vector(math.random(-100,100), math.random(-100, 100), math.random(200, 500)))
 end
 ---------------------------------------------------------------------------------------------------------------------------------------------
 function ENT:CustomOnAcceptInput(key,activator,caller,data)

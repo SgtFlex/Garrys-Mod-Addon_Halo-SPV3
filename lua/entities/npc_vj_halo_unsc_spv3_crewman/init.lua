@@ -7,16 +7,21 @@ include('entities/npc_vj_halo_unsc_spv3_marine/init.lua')
 	without the prior written consent of the author, unless otherwise indicated for stand-alone materials.
 -----------------------------------------------*/
 ENT.StartHealth = 70
-ENT.BGs = {
-	0,
-	0,
-}
-ENT.CovWeps = {
+ENT.ShieldMaxHealth = 25
+local headsOnly = {1, 12, 17}
+ENT.otherInit = function(entity)
+	entity.Appearance = {
+		Color = Color(math.random(0, 255),math.random(0, 255),math.random(0, 255)),
+		Bodygroups = {headsOnly[math.random(1, 3)], 3, 7, 2},
+		Skin = entity.Skins[math.random(1, 5)],
+	}
+end
+
+ENT.ExtraWeapons = {
 	"weapon_vj_cov_spv3_plasmapistol",
 	"weapon_vj_cov_spv3_plasmapistolBrute",
 	"weapon_vj_cov_spv3_piercer"
 }
-ENT.ColorRange = {Vector (0,0,0), Vector(255,255,255)}
 ENT.Cooldown = 0
 function ENT:CustomOnThink()
 	if CurTime() < self.NextTalkTime then
@@ -37,13 +42,6 @@ function ENT:CustomOnThink()
 	end
 end
 function ENT:CustomOnPreInitialize()
-	local headsOnly = {1, 12, 17}
-	self.BGs = {
-		headsOnly[math.random(1, #headsOnly)],
-		3,
-		7,
-		2,
-	}
 	self.SoundTbl_OnKilledEnemy = {
 		"crewman/killed_enemy/killed_enemy (1).ogg",
 		"crewman/killed_enemy/killed_enemy (2).ogg",

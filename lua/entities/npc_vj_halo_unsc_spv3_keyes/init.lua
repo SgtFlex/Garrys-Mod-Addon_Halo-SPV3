@@ -7,14 +7,13 @@ include('entities/npc_vj_halo_unsc_spv3_marine/init.lua')
 	without the prior written consent of the author, unless otherwise indicated for stand-alone materials.
 -----------------------------------------------*/
 ENT.StartHealth = 160
-ENT.BGs = {
-	3,
-	3,
+ENT.Appearance = {
+	Color = Color(255,255,255),
+	Bodygroups = {24, 4, 8, 3},
+	Skin = 9,
 }
-ENT.Skins = {
-	9
-}
-ENT.CovWeps = {
+ENT.otherInit = function(entity) end
+ENT.ExtraWeapons = {
 	"weapon_vj_cov_spv3_plasmarifle",
 	"weapon_vj_cov_spv3_plasmarifleBrute",
 	"weapon_vj_cov_spv3_plasmapistol",
@@ -24,7 +23,6 @@ ENT.CovWeps = {
 	"weapon_vj_cov_spv3_shredder",
 	"weapon_vj_cov_spv3_needler",
 }
-ENT.ColorRange = {Vector (255,255,255), Vector(255,255,255)}
 ENT.Cooldown = 0
 function ENT:CustomOnThink()
 	if CurTime() < self.NextTalkTime then
@@ -71,57 +69,50 @@ function ENT:CustomOnInitialKilled(dmginfo, hitgroup)
 end
 
 function ENT:CustomOnPreInitialize()
-		self.BGs = {
-		24,
-		4,
-		8,
-		3,
+	self.SoundTbl_OnKilledEnemy = {
+
 	}
-self.SoundTbl_OnKilledEnemy = {
+	self.SoundTbl_Alert = {
 
-}
-self.SoundTbl_Alert = {
+	}
+	self.SoundTbl_Pain = {
+		"keyes/pain/pain (1).ogg",
+		"keyes/pain/pain (2).ogg",
+		"keyes/pain/pain (3).ogg",
+		"keyes/pain/pain (4).ogg",
+		"keyes/pain/pain (5).ogg",
 
-}
-self.SoundTbl_Pain = {
-	"keyes/pain/pain (1).ogg",
-	"keyes/pain/pain (2).ogg",
-	"keyes/pain/pain (3).ogg",
-	"keyes/pain/pain (4).ogg",
-	"keyes/pain/pain (5).ogg",
+	}
+	self.SoundTbl_Death = {
+		"keyes/death/death (1).ogg",
+		"keyes/death/death (2).ogg",
+		"keyes/death/death (3).ogg",
+		"keyes/death/death (4).ogg",
+		"keyes/death/death (5).ogg",
+		"keyes/death/death (6).ogg",
+		"keyes/death/death (7).ogg",
+	}
+	self.SoundTbl_OnGrenadeSight = {
 
-}
-self.SoundTbl_Death = {
-	"keyes/death/death (1).ogg",
-	"keyes/death/death (2).ogg",
-	"keyes/death/death (3).ogg",
-	"keyes/death/death (4).ogg",
-	"keyes/death/death (5).ogg",
-	"keyes/death/death (6).ogg",
-	"keyes/death/death (7).ogg",
-}
-self.SoundTbl_OnGrenadeSight = {
+	}
+	self.SoundTbl_GrenadeAttack = {
 
-}
-self.SoundTbl_GrenadeAttack = {
-
-}
-self.SoundTbl_LostEnemy = {
-	
-}
-self.SoundTbl_Investigate = {
-	
-}
-self.SoundTbl_WeaponReload = {
+	}
+	self.SoundTbl_LostEnemy = {
+		
+	}
+	self.SoundTbl_Investigate = {
+		
+	}
+	self.SoundTbl_WeaponReload = {
 
 
-}
-self.SoundTbl_AllyDeath = {
+	}
+	self.SoundTbl_AllyDeath = {
 
-}
-self.SoundTbl_Stuck = nil
-self.SoundTbl_Transform = nil
-self.SoundTbl_Suppressing = {
-
-}
+	}
+	self.SoundTbl_Stuck = nil
+	self.SoundTbl_Transform = nil
+	self.SoundTbl_Suppressing = {
+	}
 end

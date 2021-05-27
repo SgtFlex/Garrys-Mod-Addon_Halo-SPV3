@@ -1,18 +1,16 @@
 AddCSLuaFile("shared.lua")
 include('shared.lua')
+include('entities/npc_vj_halo_shared_spv3/init.lua')
 /*-----------------------------------------------
 	*** Copyright (c) 2012-2016 by DrVrej, All rights reserved. ***
 	No parts of this code or any of its contents may be reproduced, copied, modified or adapted,
 	without the prior written consent of the author, unless otherwise indicated for stand-alone materials.
 -----------------------------------------------*/
 ENT.HullType = HULL_MEDIUM
-
+ENT.Faction = "Flood"
 ENT.Model = {"models/hce/spv3/flood/human/floodmarine.mdl"} -- The game will pick a random model from the table when the SNPC is spawned | Add as many as you want
-ENT.modelColor = Color(255,255,255)
-ENT.bodyGroups = {0,0,0,0,0}
 ENT.StartHealth = 75
-ENT.CanOpenDoors = true -- Can it open doors?
----------------------------------------------------------------------------------------------------------------------------------------------
+ENT.DisableBackBreak = true
 	-- ====== Blood-Related Variables ====== --
 ENT.Bleeds = true -- Does the SNPC bleed? (Blood decal, particle, etc.)
 ENT.BloodColor = "Yellow" -- The blood type, this will detemine what it should use (decal, particle, etc.)
@@ -53,13 +51,41 @@ ENT.LeapAttackVelocityForward = 200 -- How much forward force should it apply?
 ENT.LeapAttackVelocityUp = 500 -- How much upward force should it apply?
 ENT.LeapToMeleeDistance = 600 -- How close does it have to be until it uses melee?
 ENT.NextLeapAttackTime = 2.5 -- How much time until it can use a leap attack?
-ENT.bodyParts = {
-	Head = {Health = 15, Bodygroup = "Head", Removed = false},
-	Right_Arm = {Health = 25, Bodygroup = "Right Arm", Removed = false},
-	Left_Arm = {Health = 25, Bodygroup = "Left Arm", Removed = false},
-	Inf_Form = {Health = 20, Bodygroup = "Torso", Removed = false},
+ENT.RemovableParts = {
+	[500] = {Health = 15, Bodygroup = "Head", Execute = function(entity, dmginfo) 
+		entity:CreateGibEntity("obj_vj_gib", {"models/hce/spv3/flood/human/floodskin_xl.mdl", "models/hce/spv3/flood/human/floodskin_lg.mdl", "models/hce/spv3/flood/human/floodskin_md.mdl", "models/hce/spv3/flood/human/floodskin_sm.mdl"}, {Pos = pos, Ang = ang, BloodType = "Yellow"})
+		entity:CreateGibEntity("obj_vj_gib", {"models/hce/spv3/flood/human/floodinnard_bone.mdl", "models/hce/spv3/flood/human/floodinnard_large.mdl", "models/hce/spv3/flood/human/floodinnard_largest.mdl"}, {Pos = pos, Ang = ang, BloodType = "Yellow"})
+		entity:RemoveAllDecals()
+		entity:SetBodygroup(entity:FindBodygroupByName(entity.RemovableParts[500]["Bodygroup"]), 2)
+	end},
+	[502] = {Health = 25, Bodygroup = "Right Arm", Execute = function(entity, dmginfo)
+		local pos, ang = entity:GetBonePosition(27)
+		entity:CreateGibEntity("obj_vj_gib", "models/hce/spv3/flood/human/floodHuman_rightArm.mdl", {Pos = pos, Ang = ang, BloodType = "Yellow"})
+		entity:CreateGibEntity("obj_vj_gib", {"models/hce/spv3/flood/human/floodskin_xl.mdl", "models/hce/spv3/flood/human/floodskin_lg.mdl", "models/hce/spv3/flood/human/floodskin_md.mdl", "models/hce/spv3/flood/human/floodskin_sm.mdl"}, {Pos = pos, Ang = ang, BloodType = "Yellow"})
+		entity:CreateGibEntity("obj_vj_gib", {"models/hce/spv3/flood/human/floodinnard_bone.mdl", "models/hce/spv3/flood/human/floodinnard_large.mdl", "models/hce/spv3/flood/human/floodinnard_largest.mdl"}, {Pos = pos, Ang = ang, BloodType = "Yellow"})
+		entity:RemoveAllDecals()
+		entity:SetBodygroup(entity:FindBodygroupByName(entity.RemovableParts[502]["Bodygroup"]), 2)
+		entity:DropWeapon()
+	end},
+	[503] = {Health = 25, Bodygroup = "Left Arm", Execute = function(entity, dmginfo)
+		local pos, ang = entity:GetBonePosition(11)
+		entity:CreateGibEntity("obj_vj_gib", "models/hce/spv3/flood/human/floodHuman_leftArm.mdl", {Pos = pos, Ang = ang, BloodType = "Yellow"})
+		entity:CreateGibEntity("obj_vj_gib", {"models/hce/spv3/flood/human/floodskin_xl.mdl", "models/hce/spv3/flood/human/floodskin_lg.mdl", "models/hce/spv3/flood/human/floodskin_md.mdl", "models/hce/spv3/flood/human/floodskin_sm.mdl"}, {Pos = pos, Ang = ang, BloodType = "Yellow"})
+		entity:CreateGibEntity("obj_vj_gib", {"models/hce/spv3/flood/human/floodinnard_bone.mdl", "models/hce/spv3/flood/human/floodinnard_large.mdl", "models/hce/spv3/flood/human/floodinnard_largest.mdl"}, {Pos = pos, Ang = ang, BloodType = "Yellow"})
+		entity:RemoveAllDecals()
+		entity:SetBodygroup(entity:FindBodygroupByName(entity.RemovableParts[503]["Bodygroup"]), 1)
+		entity.HasMeleeAttack = false
+	end},
+	[501] = {Health = 20, Bodygroup = "Body", Execute = function(entity, dmginfo)
+		entity:CreateGibEntity("obj_vj_gib", {"models/hce/spv3/flood/human/floodskin_xl.mdl", "models/hce/spv3/flood/human/floodskin_lg.mdl", "models/hce/spv3/flood/human/floodskin_md.mdl", "models/hce/spv3/flood/human/floodskin_sm.mdl"}, {Pos = pos, Ang = ang, BloodType = "Yellow"})
+		entity:CreateGibEntity("obj_vj_gib", {"models/hce/spv3/flood/human/floodinnard_bone.mdl", "models/hce/spv3/flood/human/floodinnard_large.mdl", "models/hce/spv3/flood/human/floodinnard_largest.mdl"}, {Pos = pos, Ang = ang, BloodType = "Yellow"})
+		entity:RemoveAllDecals()
+		entity:SetBodygroup(entity:FindBodygroupByName(entity.RemovableParts[501]["Bodygroup"]), 2)
+		entity:EmitSound("infection_form/infection_pop/pop1.ogg")
+		ParticleEffect("InfDeath", entity:GetPos() + Vector(0,0,50), entity:GetAngles(), nil)
+		dmginfo:SetDamage(entity:Health())
+	end},
 }
-
 	-- ====== Sound File Paths ====== --
 -- Leave blank if you don't want any sounds to play
 ENT.SoundTbl_Idle = {
@@ -136,7 +162,7 @@ ENT.SoundTbl_Death = {
 }
 ENT.WeaponSpread = 0
 ENT.Weapon_ShotsSinceLastReload = 0
-ENT.WeaponTable = {
+ENT.ExtraWeapons = {
 	"weapon_vj_unsc_spv3_ar",
 	"weapon_vj_unsc_spv3_br",
 	"weapon_vj_unsc_spv3_dmr",
@@ -159,116 +185,7 @@ ENT.WeaponTable = {
 }
 ---------------------------------------------------------------------------------------------------------------------------------------------
 ENT.SpawnedFromInf=false
-function ENT:CustomOnInitialize()
-	self:SetCollisionBounds(Vector(-15, -15, 0), Vector(15, 15, 75))
-	self.MeleeAttackDamage = self.MeleeAttackDamage * GetConVarNumber("vj_spv3_damageModifier")
-	timer.Simple(0.1, function() 
-		if (math.random(0,100) <= GetConVarNumber("vj_spv3_floodWeps")) then
-			self:Give(VJ_PICKRANDOMTABLE(self.WeaponTable))
-		end
-	end)
-	self:CapabilitiesAdd(bit.bor(CAP_MOVE_CLIMB))
-	self:SetColor(self.modelColor)
-	self:SetBodygroup(0, self.bodyGroups[1])
-	self:SetBodygroup(1, self.bodyGroups[2])
-	self:SetBodygroup(2, self.bodyGroups[3])
-	self:SetBodygroup(4, self.bodyGroups[3])
-		if (self.SpawnedFromInf==false) then
-			self.StartHealth = self.StartHealth * GetConVarNumber("vj_spv3_HealthModifier")
-		end
-	self:SetHealth(self.StartHealth)
-end
----------------------------------------------------------------------------------------------------------------------------------------------
-function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
-	if (dmginfo:GetDamageType()==DMG_BLAST) then
-		dmginfo:ScaleDamage(3.5)
-	end
-	if (dmginfo:GetAttacker():IsNPC()) then
-		dmginfo:ScaleDamage(GetConVarNumber("vj_spv3_NPCTakeDamageModifier"))
-	end
-	self:EmitSound("infested_shared/hit/floodflesh_hit_small"..math.random(1,11)..".ogg", 80, 100, 1)
-	if (dmginfo:GetDamage() >= self:Health()) then
-		if (dmginfo:GetDamageType()==DMG_BLAST or dmginfo:GetDamageType()==DMG_CLUB or dmginfo:GetDamageForce():Length()>=10000) then
-			self:FlyingDeath(dmginfo)
-		end
-	end
-	if (hitgroup==502 and self.bodyParts["Right_Arm"]["Removed"]==false) then
-		self.bodyParts["Right_Arm"]["Health"] = self.bodyParts["Right_Arm"]["Health"] - dmginfo:GetDamage()
-		if (self.bodyParts["Right_Arm"]["Health"] <= 0) then
-			self.bodyParts["Right_Arm"]["Removed"]=true
-			local pos, ang = self:GetBonePosition(27)
-			self:CreateGibEntity("obj_vj_gib", "models/hce/spv3/flood/human/floodHuman_rightArm.mdl", {Pos = pos, Ang = ang, Vel = dmginfo:GetDamageForce()*0.3, BloodType = "Yellow"})
-			self:CreateGibEntity("obj_vj_gib", {"models/hce/spv3/flood/human/floodskin_xl.mdl", "models/hce/spv3/flood/human/floodskin_lg.mdl", "models/hce/spv3/flood/human/floodskin_md.mdl", "models/hce/spv3/flood/human/floodskin_sm.mdl"}, {Pos = pos, Ang = ang, Vel = dmginfo:GetDamageForce()*0.3, BloodType = "Yellow"})
-			self:CreateGibEntity("obj_vj_gib", {"models/hce/spv3/flood/human/floodinnard_bone.mdl", "models/hce/spv3/flood/human/floodinnard_large.mdl", "models/hce/spv3/flood/human/floodinnard_largest.mdl"}, {Pos = pos, Ang = ang, Vel = dmginfo:GetDamageForce()*0.3, BloodType = "Yellow"})
-			self:RemoveAllDecals()
-			self:SetBodygroup(self:FindBodygroupByName(self.bodyParts["Right_Arm"]["Bodygroup"]), 2)
-			if (IsValid(self:GetActiveWeapon())) then
-				local wep = ents.Create(self:GetActiveWeapon():GetClass())
-				wep:SetPos(self:GetActiveWeapon():GetPos())
-				wep:SetAngles(self:GetActiveWeapon():GetAngles())
-				wep:Spawn()
-				wep:GetPhysicsObject():SetVelocity(dmginfo:GetDamageForce()*0.3)
-				self:GetActiveWeapon():Remove()
-			end
-		end
-	elseif (hitgroup==503 and self.bodyParts["Left_Arm"]["Removed"]==false) then
-		self.bodyParts["Left_Arm"]["Health"] = self.bodyParts["Left_Arm"]["Health"] - dmginfo:GetDamage()
-		if (self.bodyParts["Left_Arm"]["Health"] <= 0) then
-			self.bodyParts["Left_Arm"]["Removed"]=true
-			
-			local pos, ang = self:GetBonePosition(11)
-			self:CreateGibEntity("obj_vj_gib", "models/hce/spv3/flood/human/floodHuman_leftArm.mdl", {Pos = pos, Ang = ang, Vel = dmginfo:GetDamageForce()*0.3, BloodType = "Yellow"})
-			self:CreateGibEntity("obj_vj_gib", {"models/hce/spv3/flood/human/floodskin_xl.mdl", "models/hce/spv3/flood/human/floodskin_lg.mdl", "models/hce/spv3/flood/human/floodskin_md.mdl", "models/hce/spv3/flood/human/floodskin_sm.mdl"}, {Pos = pos, Ang = ang, Vel = dmginfo:GetDamageForce()*0.3, BloodType = "Yellow"})
-			self:CreateGibEntity("obj_vj_gib", {"models/hce/spv3/flood/human/floodinnard_bone.mdl", "models/hce/spv3/flood/human/floodinnard_large.mdl", "models/hce/spv3/flood/human/floodinnard_largest.mdl"}, {Pos = pos, Ang = ang, Vel = dmginfo:GetDamageForce()*0.3, BloodType = "Yellow"})
-			self:RemoveAllDecals()
-			self:SetBodygroup(self:FindBodygroupByName(self.bodyParts["Left_Arm"]["Bodygroup"]), 1)
-			self.HasMeleeAttack = false
-		end
-	elseif (hitgroup==500 and self.bodyParts["Head"]["Removed"]==false) then
-		self.bodyParts["Head"]["Health"] = self.bodyParts["Head"]["Health"] - dmginfo:GetDamage()
-		if (self.bodyParts["Head"]["Health"] <= 0) then
-			self.bodyParts["Head"]["Removed"]=true
-			self:CreateGibEntity("obj_vj_gib", {"models/hce/spv3/flood/human/floodskin_xl.mdl", "models/hce/spv3/flood/human/floodskin_lg.mdl", "models/hce/spv3/flood/human/floodskin_md.mdl", "models/hce/spv3/flood/human/floodskin_sm.mdl"}, {Pos = pos, Ang = ang, Vel = dmginfo:GetDamageForce()*0.3, BloodType = "Yellow"})
-			self:CreateGibEntity("obj_vj_gib", {"models/hce/spv3/flood/human/floodinnard_bone.mdl", "models/hce/spv3/flood/human/floodinnard_large.mdl", "models/hce/spv3/flood/human/floodinnard_largest.mdl"}, {Pos = pos, Ang = ang, Vel = dmginfo:GetDamageForce()*0.3, BloodType = "Yellow"})
-			self:RemoveAllDecals()
-			self:SetBodygroup(self:FindBodygroupByName(self.bodyParts["Head"]["Bodygroup"]), 2)
-		end
-	elseif (hitgroup==501 and self.bodyParts["Inf_Form"]["Removed"]==false) then
-		self.bodyParts["Inf_Form"]["Health"] = self.bodyParts["Inf_Form"]["Health"] - dmginfo:GetDamage()
-		if (self.bodyParts["Inf_Form"]["Health"] <= 0) then
-			self.bodyParts["Inf_Form"]["Removed"]=true
-			self:CreateGibEntity("obj_vj_gib", {"models/hce/spv3/flood/human/floodskin_xl.mdl", "models/hce/spv3/flood/human/floodskin_lg.mdl", "models/hce/spv3/flood/human/floodskin_md.mdl", "models/hce/spv3/flood/human/floodskin_sm.mdl"}, {Pos = pos, Ang = ang, Vel = dmginfo:GetDamageForce()*0.3, BloodType = "Yellow"})
-			self:CreateGibEntity("obj_vj_gib", {"models/hce/spv3/flood/human/floodinnard_bone.mdl", "models/hce/spv3/flood/human/floodinnard_large.mdl", "models/hce/spv3/flood/human/floodinnard_largest.mdl"}, {Pos = pos, Ang = ang, Vel = dmginfo:GetDamageForce()*0.3, BloodType = "Yellow"})
-			self:RemoveAllDecals()
-			self:SetBodygroup(self:FindBodygroupByName(self.bodyParts["Inf_Form"]["Bodygroup"]), 2)
-			self:EmitSound("infection_form/infection_pop/pop1.ogg")
-			ParticleEffect("InfDeath", self:GetPos() + Vector(0,0,50), self:GetAngles(), nil)
-			dmginfo:SetDamage(self:Health())
-		end
-	end
-end
-
-function ENT:CustomOnMeleeAttack_AfterChecks(hitEnt)
-	if (hitEnt.MeleeAttacking==true) then
-		hitEnt:SetAngles(hitEnt:GetAngles() + Angle(0,180,0))
-	end
-	return false 
-end -- return true to disable the attack and move onto the next entity!
-
-function ENT:FlyingDeath(dmginfo)
-	self.HasDeathRagdoll = false
-	self.HasDeathAnimation = false
-	self.imposter = ents.Create("obj_vj_imposter")
-	self.imposter:SetOwner(self)
-	self.imposter.Sequence = "Die_Airborne"
-	local velocity = dmginfo:GetDamageForce():GetNormalized() * 1500
-	if (dmginfo:GetDamageType()==DMG_CLUB or dmginfo:GetDamageForce():Length()) then
-		velocity = velocity * 0.3
-	end
-	self.imposter.Velocity = Vector(velocity.x, velocity.y, velocity.z + 500)
-	self.imposter.Angle = Angle(0,dmginfo:GetDamageForce():Angle().y,0)
-	self.imposter:Spawn()
-end
+ENT.CustomCollision = {Min = Vector(-15,-15,0), Max = Vector(15,15,75)}
 ---------------------------------------------------------------------------------------------------------------------------------------------
 function ENT:CustomOnAcceptInput(key,activator,caller,data)
 	if key == "Step" then
@@ -290,44 +207,8 @@ function ENT:CustomOnAcceptInput(key,activator,caller,data)
 	end
 end
 
-function ENT:RunItemDropsOnDeathCode(dmginfo,hitgroup)
-	if self.HasItemDropsOnDeath == false || GetConVarNumber("vj_spv3_dropGrenades")==0 then return end
-	for i=1, math.random(1,4) do
-		self.ThingsToDrop[i] = self.GrenadeWeps[math.random(1,5)]
-	end
-	if math.random(1,self.ItemDropsOnDeathChance) == 1 then
-		self:CustomRareDropsOnDeathCode(dmginfo,hitgroup)
-		for k,v in pairs(self.ThingsToDrop) do
-			local entlist = self.ThingsToDrop[k]
-			if entlist != false then
-				local randdrop = ents.Create(entlist)
-				randdrop:SetPos(self:GetPos() + self:OBBCenter())
-				randdrop:SetAngles(self:GetAngles())
-				randdrop:Spawn()
-				randdrop:Activate()
-				local phys = randdrop:GetPhysicsObject()
-				if IsValid(phys) then
-					phys:SetMass(60)
-					phys:ApplyForceCenter(dmginfo:GetDamageForce()*.01)
-				end
-			end
-		end
-	end
-end
-
 function ENT:CustomOnInitialKilled(dmginfo,hitgroup) 
-	if !(IsValid(self:GetActiveWeapon())) then return end
-	local randdrop = ents.Create(self:GetActiveWeapon():GetClass())
-	randdrop:SetPos(self:GetPos() + self:OBBCenter())
-	randdrop:SetAngles(self:GetAngles())
-	randdrop:Spawn()
-	randdrop:Activate()
-	local phys = randdrop:GetPhysicsObject()
-	if IsValid(phys) then
-		phys:SetMass(60)
-		phys:ApplyForceCenter(dmginfo:GetDamageForce()*.01)
-	end
-	self:GetActiveWeapon():Remove()
+	self:DropWeapon()
 end
 
 function ENT:CustomOnThink() 

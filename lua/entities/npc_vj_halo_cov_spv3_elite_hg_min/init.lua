@@ -6,18 +6,14 @@ include('entities/npc_vj_halo_cov_spv3_elite_min/init.lua')
 	No parts of this code or any of its contents may be reproduced, copied, modified or adapted,
 	without the prior written consent of the author, unless otherwise indicated for stand-alone materials.
 -----------------------------------------------*/
-ENT.modelColor = Color(40,60,200)
-ENT.bodyGroupTable = {
-	3,
-	2,
-	2,
-	3,
+ENT.Appearance = {
+	Color = Color(40,60,200),
+	Bodygroups = {3, 2, 2, 3},
+	Skin = 1,
 }
 ENT.StartHealth = 100
 ENT.ShieldMaxHealth = 150
 //In SPV3 their shields are immune to ballistic weapons but the same as a sheild minor aside from that
 //I think it would be better to just have 1.5x shields perhaps?
-ENT.Skin=1
-ENT.HasSword = true
 ENT.ExtraShotCount = 3
 ENT.WeaponProfficiency = 100
