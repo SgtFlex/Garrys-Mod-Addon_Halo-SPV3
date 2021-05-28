@@ -177,6 +177,7 @@ ENT.Berserked=false
 function ENT:Berserk()
 	if self.Berserked==true or self.Dead==true then return end
 	timer.Simple(0.1, function()
+		if (!IsValid(self)) then return end
 		self:PlaySoundSystem("GeneralSpeech", self.SoundTbl_Berserk)
 	end)
 	if (self.HasSword == true) then
