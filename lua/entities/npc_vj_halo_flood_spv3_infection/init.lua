@@ -168,10 +168,9 @@ ENT.combatForm =""
 ENT.enemyModel = ""
 ENT.enemyPos = ""
 ENT.enemyHealth = 150
-ENT.enemyShields = 0
-ENT.enemySeqDur = 0
 ENT.imposter = ""
 function ENT:CustomOnDoKilledEnemy(argent,attacker,inflictor)
+	self.AttachedTo.HasDeathSounds = false
 	table.RemoveByValue(self.AttachedTo.AttachedInfectForms, self)
 	table.insert(self.AttachedTo.AttachedInfectForms, 1, self) //We put the killing infection form at the front of the table
 	if (self.AttachedTo.AttachedInfectForms) then
@@ -201,7 +200,7 @@ end
 ENT.AttachedTo = nil
 ENT.HitShield = false
 function ENT:CustomOnLeapAttack_AfterChecks(TheHitEntity) 
-	if ((TheHitEntity.ShieldCurrentHealth && TheHitEntity.ShieldCurrentHealth > 0 && !(string.find(tostring(TheHitEntity), "jackal") || string.find(tostring(TheHitEntity), "skirm"))) || (TheHitEntity:IsPlayer() && TheHitEntity:Armor() > 0)) then
+	if ((TheHitEntity.ShieldCurrentHealth && TheHitEntity.ShieldIsArmor==false && TheHitEntity.ShieldCurrentHealth > 0) || (TheHitEntity:IsPlayer() && TheHitEntity:Armor() > 0)) then
 		if (GetConVarNumber("vj_spv3_InfFormsExplode")==0) then
 			TheHitEntity:TakeDamage(self.LeapAttackDamage, self, self)
 		end
@@ -233,6 +232,46 @@ function ENT:CustomOnLeapAttack_AfterChecks(TheHitEntity)
 	end
 end
 
+function ENT:GetTransformUnit(host)
+	if (GetConVarString("vj_spv3_floodOption") == "infect_nothing") then return false end
+	if ((GetConVarString("vj_spv3_floodOption") == "infect_onlyHalo") or (GetConVarString("vj_spv3_floodOption") == "infect_anything")) then
+		if (string.find(tostring(self.AttachedTo), "marine") or string.find(tostring(self.AttachedTo), "crewman")) then
+			return ("npc_vj_halo_flood_spv3_marine")
+		elseif (string.find(tostring(self.AttachedTo), "odst")) then
+			return ("npc_vj_halo_flood_spv3_odst")
+		end
+		if (string.find(tostring(self.AttachedTo), "elite")) and (string.find(tostring(self.AttachedTo), "hg")) then
+			return ("npc_vj_halo_flood_spv3_elite_hg")
+		elseif (string.find(tostring(self.AttachedTo), "elite")) and (string.find(tostring(self.AttachedTo), "oss")) then
+			return ("npc_vj_halo_flood_spv3_elite_oss")
+		elseif (string.find(tostring(self.AttachedTo), "elite")) then
+			local random = math.random(0,100)
+			if (random > 90) then
+				return ("npc_vj_halo_flood_spv3_elite_runner")
+			elseif (random <=90 and random >= 75) then
+				return ("npc_vj_halo_flood_spv3_elite_suicide")
+			else
+				return ("npc_vj_halo_flood_spv3_elite")
+			end
+		elseif (string.find(tostring(self.AttachedTo), "grunt")) then
+			return ("npc_vj_halo_flood_spv3_carrier")
+		elseif (string.find(tostring(self.AttachedTo), "jackal") or string.find(tostring(self.AttachedTo), "skirm")) then
+			return ("npc_vj_halo_flood_spv3_jackal")
+		elseif (string.find(tostring(self.AttachedTo), "brute")) then
+			return ("npc_vj_halo_flood_spv3_brute")
+		end
+		if (string.find(tostring(self.AttachedTo), "nat")) then
+			if (string.find(tostring(self.AttachedTo), "wolf")) then
+				return ("npc_vj_halo_flood_spv3_wolf")
+			end
+		end
+		if (GetConVarString("vj_spv3_floodOption") == "infect_anything") then
+			return ("npc_vj_halo_flood_spv3_marine")
+		end
+		return false
+	end
+end
+
 function ENT:TransformHost()
 	if (self.AttachedTo:IsPlayer()==true) then self:Remove() return end
 	self.enemyModel = self.AttachedTo:GetModel()
@@ -241,139 +280,85 @@ function ENT:TransformHost()
 	self.enemyCol = self.AttachedTo:GetColor()
 	self.enemySkin = self.AttachedTo:GetSkin()
 	if (IsValid(self.AttachedTo:GetActiveWeapon())) then self.enemyWep = self.AttachedTo:GetActiveWeapon():GetClass() end
-	if (self.AttachedTo.StartHealth) then 
-		self.enemyHealth = self.AttachedTo.StartHealth 
-	else 
-		self.enemyHealth = self.AttachedTo:GetMaxHealth() 
+	self.enemyHealth = self.AttachedTo.StartHealth or self.AttachedTo:GetMaxHealth()
+	if (self.AttachedTo.ShieldIsArmor == false) then
+		self.enemyShields = self.AttachedTo.ShieldMaxHealth
+	elseif (self.AttachedTo.ShieldIsArmor == true) then
+		self.enemyHealth = self.enemyHealth + self.AttachedTo.ShieldMaxHealth
+		self.enemyShields = 0
+	else
+		self.enemyShields = 0
 	end
-	if (self.AttachedTo.ShieldHealth) then 
-		self.enemyShields = self.AttachedTo.ShieldHealth 
-	end
-	if (GetConVarString("vj_spv3_floodOption") == "infect_nothing") then return end
-	if ((GetConVarString("vj_spv3_floodOption") == "infect_onlyHalo") or (GetConVarString("vj_spv3_floodOption") == "infect_anything")) then
-		if (string.find(tostring(self.AttachedTo), "marine") or string.find(tostring(self.AttachedTo), "crewman")) then
-			self.combatForm = ents.Create("npc_vj_halo_flood_spv3_marine")
-			self.enemyHealth = self.AttachedTo.StartHealth * 1.25
-		elseif (string.find(tostring(self.AttachedTo), "odst")) then
-			self.combatForm = ents.Create("npc_vj_halo_flood_spv3_odst")
-			self.enemyHealth = self.AttachedTo.StartHealth * 1.25
-		end
-		if (string.find(tostring(self.AttachedTo), "elite")) and (string.find(tostring(self.AttachedTo), "hg")) then
-			self.combatForm = ents.Create("npc_vj_halo_flood_spv3_elite_hg")
-			self.Skin = self.AttachedTo:GetSkin()
-			self.enemyHealth = self.AttachedTo.StartHealth * 1.25
-			self.enemyShields = self.AttachedTo.ShieldHealth
-		elseif (string.find(tostring(self.AttachedTo), "elite")) and (string.find(tostring(self.AttachedTo), "oss")) then
-			self.combatForm = ents.Create("npc_vj_halo_flood_spv3_elite_oss")
-			self.enemyHealth = self.AttachedTo.StartHealth * 1.25
-			self.enemyShields = self.AttachedTo.ShieldHealth
-		elseif (string.find(tostring(self.AttachedTo), "elite")) then
-			local random = math.random(0,100)
-			if (random > 90) then
-				self.combatForm = ents.Create("npc_vj_halo_flood_spv3_elite_runner")
-				self.enemyHealth = self.AttachedTo.StartHealth * 1.25
-				self.enemyShields = self.AttachedTo.ShieldHealth
-			elseif (random <=90 and random >= 75) then
-				self.combatForm = ents.Create("npc_vj_halo_flood_spv3_elite_suicide")
-				self.enemyHealth = self.AttachedTo.StartHealth * 1.25
-				self.enemyShields = self.AttachedTo.ShieldHealth
-				self.Skin = self.AttachedTo:GetSkin()
-			else
-				self.combatForm = ents.Create("npc_vj_halo_flood_spv3_elite")
-				self.enemyHealth = self.AttachedTo.StartHealth * 1.25
-				self.enemyShields = self.AttachedTo.ShieldHealth
-				self.Skin = self.AttachedTo:GetSkin()
-			end
-		elseif (string.find(tostring(self.AttachedTo), "grunt")) then
-			self.combatForm = ents.Create("npc_vj_halo_flood_spv3_carrier")
-			self.enemyHealth = self.AttachedTo.StartHealth * .35
-		elseif (string.find(tostring(self.AttachedTo), "jackal") or string.find(tostring(self.AttachedTo), "skirm")) then
-			self.combatForm = ents.Create("npc_vj_halo_flood_spv3_jackal")
-			self.enemyHealth = self.AttachedTo.StartHealth * .35
-		elseif (string.find(tostring(self.AttachedTo), "brute")) then
-			self.combatForm = ents.Create("npc_vj_halo_flood_spv3_brute")
-			self.enemyHealth = self.AttachedTo.StartHealth * 1.25
-		end
-		if (string.find(tostring(self.AttachedTo), "nat")) then
-			if (string.find(tostring(self.AttachedTo), "wolf")) then
-				self.combatForm = ents.Create("npc_vj_halo_flood_spv3_wolf")
-				self.enemyHealth = self.AttachedTo.StartHealth * 1.25
+	self.enemyHasCloak = self.AttachedTo.HasCloak or false
+	self.combatForm = self:GetTransformUnit(self.AttachedTo:GetClass())
+	if (self.combatForm == false) then return end
+	self:SetHealth(999999)
+	self:SetNoDraw(true)
+	timer.Simple(0.01, function()
+		if (IsValid(self)) then
+			for _,v in pairs(ents.FindInSphere(self:GetPos(),150)) do
+				if (v:GetClass()=="prop_ragdoll" and v:GetModel()==self.enemyModel) then
+					v:Remove()
+				end
 			end
 		end
+    end)
+    if (self.AttachedTo.HasDeathRagdoll) then
+		self.AttachedTo.HasDeathRagdoll=false
+		self.AttachedTo.HasDeathAnimation=false
 	end
-	if ((GetConVarString("vj_spv3_floodOption") == "infect_anything")) and (self.combatForm == "") then
-		self.combatForm = ents.Create("npc_vj_halo_flood_spv3_marine")
-	end
-	if (self.combatForm!="" and IsValid(self.combatForm)) then
-		self:SetHealth(999999)
-		self:SetNoDraw(true)
-		timer.Simple(0.01, function()
+	if (self.AttachedTo:LookupSequence("Transform")!=-1) then
+		
+		self:CreateImposter()
+		if (self.AttachedTo.SoundTbl_Transform) then
+			self.AttachedTo:EmitSound(VJ_PICKRANDOMTABLE(self.AttachedTo.SoundTbl_Transform))
+		end
+		self:SetParent(self.imposter)
+		timer.Create("Transform"..self:GetCreationID(), self.AttachedTo:SequenceDuration(self.AttachedTo:LookupSequence("Transform")), 1, function()
+			if (IsValid(self.imposter)) then 
+				self.imposter:Remove() 
+			end
 			if (IsValid(self)) then
-				for _,v in pairs(ents.FindInSphere(self:GetPos(),150)) do
-					if (v:GetClass()=="prop_ragdoll" and v:GetModel()==self.enemyModel) then
-						v:Remove()
-					end
-				end
+				self:SpawnInfected()
+				self:Remove()
 			end
-	    end)
-	    if (self.AttachedTo.HasDeathRagdoll) then
-			self.AttachedTo.HasDeathRagdoll=false
-			self.AttachedTo.HasDeathAnimation=false
-		end
-		if (self.AttachedTo:LookupSequence("Transform")!=-1) then
-			self.enemySeqDur = self.AttachedTo:SequenceDuration(self.AttachedTo:LookupSequence("Transform"))
-			self.imposter = ents.Create("prop_dynamic")
-			if (self.AttachedTo.SoundTbl_Transform) then
-				self.AttachedTo:EmitSound(VJ_PICKRANDOMTABLE(self.AttachedTo.SoundTbl_Transform))
-			end
-			self.imposter:SetModel(self.enemyModel)
-			self.imposter:SetSkin(self.enemySkin)
-			self.imposter:SetAngles(self.enemyAng)
-			self.imposter:SetPos(self.enemyPos)
-			self.imposter:Spawn()
-			local bodygroups = self.AttachedTo:GetBodyGroups()
-			for k, v in pairs(bodygroups) do
-				self.imposter:SetBodygroup(bodygroups[k]["id"], self.AttachedTo:GetBodygroup(bodygroups[k]["id"]))
-			end
-			self.imposter:SetColor(self.enemyCol)
-			self:SetParent(self.imposter)
-			self.imposter:ResetSequenceInfo()
-			self.imposter:SetSequence("Transform")
-			timer.Create("Transform"..self:GetCreationID(), self.enemySeqDur, 1, function()
-				if (IsValid(self.imposter)) then self.imposter:Remove() end
-				if (IsValid(self)) then
-					ParticleEffect("hcea_flood_car_death", self.enemyPos, self.enemyAng, nil)
-					self.combatForm = ents.Create(self.combatForm:GetClass()) //Has to be initialized again, otherwise spawned combat form doesn't attack
-					self.combatForm.WeaponTable = {}
-					table.insert(self.combatForm.WeaponTable, self.enemyWep)
-					self.combatForm.SpawnedFromInf = true
-					self.combatForm.StartHealth = self.enemyHealth
-					self.combatForm.ShieldHealth = self.enemyShields
-					self.combatForm:Spawn()
-					self.combatForm:SetAngles(self.enemyAng)
-					self.combatForm:SetPos(self.enemyPos)
-					self.combatForm:SetColor(self.enemyCol)
-					if (self.Skin!=nil) then self.combatForm:SetSkin(self.Skin) end
-					self.combatForm:VJ_ACT_PLAYACTIVITY(ACT_COVER_PISTOL_LOW,true,1.5,false)
-					self:Remove()
-				end
-			end)
-		else
-			ParticleEffect("hcea_flood_car_death", self:LocalToWorld(Vector(0,0,20)), Angle(0,90,0), nil)
-			self.combatForm = ents.Create(self.combatForm:GetClass()) //Has to be initialized again, otherwise spawned combat form doesn't attack
-			self.combatForm.WeaponTable = {}
-			table.insert(self.combatForm.WeaponTable, self.enemyWep)
-			self.combatForm.SpawnedFromInf = true
-			self.combatForm.StartHealth = self.enemyHealth
-			self.combatForm.ShieldHealth = self.enemyShields
-			self.combatForm:Spawn()
-			self.combatForm:SetAngles(self.enemyAng)
-			self.combatForm:SetPos(self.enemyPos)
-			self.combatForm:SetColor(self.enemyCol)
-			self.combatForm:VJ_ACT_PLAYACTIVITY(ACT_COVER_PISTOL_LOW,false,1.5,false)
-			self:Remove()
-		end
+		end)
+	else
+		self:SpawnInfected()
+		self:Remove()
 	end
+end
+
+function ENT:CreateImposter(npc)
+	self.imposter = ents.Create("prop_dynamic")
+	self.imposter:SetModel(self.enemyModel)
+	self.imposter:SetSkin(self.enemySkin)
+	self.imposter:SetAngles(self.enemyAng)
+	self.imposter:SetPos(self.enemyPos)
+	self.imposter:Spawn()
+	local bodygroups = self.AttachedTo:GetBodyGroups()
+	for k, v in pairs(bodygroups) do
+		self.imposter:SetBodygroup(bodygroups[k]["id"], self.AttachedTo:GetBodygroup(bodygroups[k]["id"]))
+	end
+	self.imposter:SetColor(self.enemyCol)
+	self.imposter:ResetSequenceInfo()
+	self.imposter:SetSequence("Transform")
+end
+
+function ENT:SpawnInfected()
+	self.combatForm = ents.Create(self.combatForm) //Has to be initialized again, otherwise spawned combat form doesn't attack
+	self.combatForm.Appearance["Color"] = self.enemyCol
+	self.combatForm.Appearance["Skin"] = self.enemySkin
+	self.combatForm.ExtraWeapons = {}
+	table.insert(self.combatForm.ExtraWeapons, self.enemyWep)
+	self.combatForm.SpawnedFromInf = true
+	self.combatForm.StartHealth = self.enemyHealth * 0.75
+	self.combatForm.ShieldMaxHealth = self.enemyShields
+	self.combatForm.IsInvis = self.enemyHasCloak
+	self.combatForm:Spawn()
+	self.combatForm:SetAngles(self.enemyAng)
+	self.combatForm:SetPos(self.enemyPos)
+	self.combatForm:VJ_ACT_PLAYACTIVITY(ACT_COVER_PISTOL_LOW,true,1.5,false)
 end
 
 function ENT:Latch()
@@ -432,15 +417,9 @@ function ENT:Unlatch()
 	
 end
 
-//Experimental, makes it harder with NPCs with full-auto guns to negate a swarm
 function ENT:CustomOnInitialKilled(dmginfo, hitgroup) 
 	if (self.AttachedTo!=nil) then
 		self:Unlatch()
-	end	
-	for k, v in pairs(ents.FindInSphere(dmginfo:GetDamagePosition(), 100)) do
-		if (v:GetClass()=="npc_vj_halo_flood_spv3_infection") then
-			v:RemoveFlags(FL_NOTARGET)
-		end
 	end
 end -- Ran the moment the NPC dies!
 

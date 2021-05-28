@@ -7,7 +7,7 @@ include('entities/npc_vj_halo_cov_spv3_elite_min/init.lua')
 	without the prior written consent of the author, unless otherwise indicated for stand-alone materials.
 -----------------------------------------------*/
 ENT.Appearance = {
-	Color = Color(255,0,0),
+	Color = Color(0,0,0),
 	Bodygroups = {1, 2, 0, 7},
 	Skin = 0,
 }

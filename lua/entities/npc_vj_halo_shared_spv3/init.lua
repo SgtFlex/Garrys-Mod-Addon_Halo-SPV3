@@ -9,6 +9,7 @@ ENT.ShieldProjCurrentHealth = ENT.ShieldProjMaxHealth
 ENT.ShieldProjDelay = 6
 ENT.ShieldProjRecharge = 1
 ENT.IsInvis = false
+ENT.HasCloak = ENT.IsInvis
 ENT.ShieldIsArmor = false
 ENT.DisableBackBreak = false
 ENT.DisableForceDeath = false
@@ -53,6 +54,7 @@ function ENT:UseConVars()
 	self.ShieldCurrentHealth = self.ShieldMaxHealth
 	self.CurrentHealth = self.StartHealth
 	self.ShieldActivated = (self.ShieldCurrentHealth > 0)
+	self.HasCloak = self.IsInvis
 	if (self.IsCarrier) then self.HasDeathRagdoll = false end
 	self.Bleeds = (self.ShieldCurrentHealth <= 0 or self.ShieldIsArmor == true)
 	self:SetHealth(self.ShieldMaxHealth + self.StartHealth)
@@ -230,9 +232,11 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 			self.EvadeCooldown = CurTime() + 4
 		end
 	end
-	if (self.IsInvis==true) then
-		self:SetInvisibility(false)
-		timer.Simple(1, function() 
+	if (self.HasCloak) then
+		if (self.IsInvis==true) then
+			self:SetInvisibility(false)
+		end
+		timer.Create("Recloak"..self:GetCreationID(), 1, 1, function() 
 			if (!IsValid(self) or self.Dead==true) then return end
 			self:SetInvisibility(true)
 		end)
@@ -282,6 +286,7 @@ function ENT:SetInvisibility(bInvis)
 		self:RemoveAllDecals()
 		self.IsInvis = true
 	else
+		hook.Remove("EntityFireBullets", "RevealPos")
 		self:SetMaterial(self.material)
 		self:RemoveFlags(FL_NOTARGET)
 		if (IsValid(self:GetActiveWeapon())) then
@@ -562,4 +567,13 @@ function ENT:CreateGibEntity(Ent,Models,Tbl_Features,CustomCode)
 	end
 	if (CustomCode) then CustomCode(gib) end
 	return gib
+end
+
+function ENT:CustomOnMeleeAttack_BeforeStartTimer(seed) 
+	if (self.IsInvis) then
+		self:RemoveFlags(FL_NOTARGET)
+		timer.Simple(0.5, function()
+			self:AddFlags(FL_NOTARGET)
+		end)
+	end
 end

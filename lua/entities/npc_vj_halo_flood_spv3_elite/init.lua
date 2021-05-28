@@ -14,6 +14,7 @@ ENT.Appearance = {
 	Bodygroups = {0, 1, 1, 1, 1, 0},
 	Skin = 1,
 }
+ENT.Faction = "Flood"
 ENT.StartHealth = 100
 ENT.ShieldMaxHealth = 75
 ENT.DisableBackBreak = true

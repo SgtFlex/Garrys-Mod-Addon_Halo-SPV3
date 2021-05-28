@@ -87,7 +87,7 @@ ENT.ExtraWeapons = {
 	"weapon_vj_unsc_spv3_magnum",
 }
 ENT.RemovableParts = {
-	[505] = {Health = 15, Bodygroup = "Head", Execute = function(entity, dmginfo) 
+	[505] = {Health = GetConVarNumber("vj_spv3_PrecisionThreshold"), Bodygroup = "Head", Execute = function(entity, dmginfo) 
 		entity:Flee()
 		entity:VJ_ACT_PLAYACTIVITY("Hit_Head", true, 1, false)
 		entity:EmitSound("grunt/shared/grunt_mask_destroyed/grunt_backpack_steam"..math.random(1,3)..".ogg", 80, 100, 1)
