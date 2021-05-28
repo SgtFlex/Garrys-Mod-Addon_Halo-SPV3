@@ -11,6 +11,7 @@ ENT.Appearance = {
 	Bodygroups = {3, 2, 2, 3},
 	Skin = 0,
 }
+ENT.HasSword = true
 ENT.StartHealth = 100
 ENT.ShieldMaxHealth = 300
 //Exception here, 375 just seems too high

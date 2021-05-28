@@ -58,9 +58,9 @@ function ENT:UseConVars()
 	if (self.IsCarrier) then self.HasDeathRagdoll = false end
 	self.Bleeds = (self.ShieldCurrentHealth <= 0 or self.ShieldIsArmor == true)
 	self:SetHealth(self.ShieldMaxHealth + self.StartHealth)
-	for k, v in pairs(self.RemovableParts) do
-		v["Health"] = v["Health"] * GetConVar("vj_spv3_HealthModifier"):GetInt()
-	end
+	-- for k, v in pairs(self.RemovableParts) do
+	-- 	v["Health"] = v["Health"] * GetConVar("vj_spv3_HealthModifier"):GetInt()
+	-- end
 	self.ShieldProjMaxHealth = self.ShieldProjMaxHealth * GetConVarNumber("vj_spv3_ShieldModifier")
 	self.ShieldProjCurrentHealth = self.ShieldProjMaxHealth
 	self.ShieldProjActivated = (self.ShieldProjCurrentHealth > 0)
@@ -192,7 +192,7 @@ function ENT:Berserk()
 	if (self.HasSword == true) then
 		self.MeleeAttackDamage = 300 * GetConVarNumber("vj_spv3_damageModifier")
 		timer.Simple(0.5, function() 
-			if (IsValid(self) and IsValid(self:GetActiveWeapon()) and self:GetActiveWeapon():GetClass()!="weapon_vj_cov_spv3_energysword") then
+			if (IsValid(self) and IsValid(self:GetActiveWeapon()) and self:GetActiveWeapon():GetClass()!="weapon_vj_cov_spv3_energysword") and self.HasSword then
 				self:DropWeapon()
 				self:Give("weapon_vj_cov_spv3_energysword")
 			end
@@ -255,7 +255,7 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 		if (self.RemovableParts[hitgroup]) then
 			self:DamageSpecialPart(hitgroup, dmginfo)
 		end
-		if (math.random(1,8) == 1) then
+		if (math.random(1,20) == 1) then
 			self:Berserk()
 		end
 	end

@@ -11,6 +11,7 @@ ENT.Appearance = {
 	Bodygroups = {1, 2, 0, 0},
 	Skin = 0,
 }
+ENT.HasSword = true
 ENT.StartHealth = 150
 ENT.ShieldMaxHealth = 200
 ENT.ExtraShotCount = 2

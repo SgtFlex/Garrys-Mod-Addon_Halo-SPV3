@@ -23,4 +23,9 @@ ENT.otherInit = function(entity)
 	else
 		entity.IsInvis = false
 	end
+	if (math.random(0,1)==0) then
+		entity.HasSword = true
+	else
+		entity.HasSword = false
+	end
 end

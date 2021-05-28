@@ -11,6 +11,7 @@ ENT.Appearance = {
 	Bodygroups = {3, 2, 2, 3},
 	Skin = 1,
 }
+ENT.HasSword = true
 ENT.StartHealth = 100
 ENT.ShieldMaxHealth = 150
 //In SPV3 their shields are immune to ballistic weapons but the same as a sheild minor aside from that

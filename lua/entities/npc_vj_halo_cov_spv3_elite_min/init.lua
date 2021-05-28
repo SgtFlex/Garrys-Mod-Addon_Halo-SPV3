@@ -18,6 +18,7 @@ ENT.Appearance = {
 	Bodygroups = {0, 1, 2, 4},
 	Skin = 1,
 }
+ENT.HasSword = false
 ENT.HeadHitgroup = 507
 ENT.ExtraShotCount = 2
 ENT.WeaponProfficiency = 50

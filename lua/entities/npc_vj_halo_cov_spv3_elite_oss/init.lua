@@ -11,6 +11,7 @@ ENT.Appearance = {
 	Bodygroups = {1, 2, 0, 7},
 	Skin = 0,
 }
+ENT.HasSword = true
 ENT.StartHealth = 120
 ENT.ShieldMaxHealth = 0
 ENT.IsInvis = true
