@@ -28,8 +28,9 @@ ENT.EntitiesToNoCollide = //Player no collide does affect how it behaves, even t
 	"npc_vj_halo_flood_spv3_infection",
 }
 	-- Death ---------------------------------------------------------------------------------------------------------------------------------------------
-ENT.HasDeathRagdoll = false -- If set to false, it will not spawn the regular ragdoll of the SNPC
-ENT.HasDeathAnimation = true -- Does it play an animation when it dies?
+ENT.IsCarrier = true
+ENT.HasDeathAnimation = true
+ENT.DeathAnimationTime = 0.3
 ENT.AnimTbl_Death = {"Melee_1"} -- Death Animations
 ENT.HasItemDropsOnDeath = false
 	-- Melee Attack ---------------------------------------------------------------------------------------------------------------------------------------------
@@ -84,49 +85,18 @@ ENT.SpawnedFromInf=false
 ENT.CustomCollision = {Min = Vector(-17,-17,0), Max = Vector(17,17,75)}
 ---------------------------------------------------------------------------------------------------------------------------------------------
 ENT.infFormCount = 25
-ENT.infForm = nil
-local spreadRadius = 275
+ENT.spreadRadius = 275
 function ENT:CustomDeathAnimationCode(dmginfo,hitgroup)
-	self.infFormCount = math.Round(self.infFormCount*(GetConVarNumber("vj_spv3_infModifier")))
 	local inflation = Vector(1,1,1)
-	local deathTime = 1.3
 	if (self.KilledBySelf == false) then
-		deathTime = 0.3
-		self.DeathAnimationTime = 0.3
 		self.AnimTbl_Death = {ACT_IDLE}
 	end
 	timer.Create("bonescale"..self:GetCreationID(), 0.05, 0, function()
-		inflation = inflation + Vector(0.10 / deathTime,0.13 / deathTime,0.13 / deathTime)
 		if (IsValid(self)) then
+			inflation = inflation + Vector(0.10 / self.DeathAnimationTime,0.13 / self.DeathAnimationTime,0.13 / self.DeathAnimationTime)
 			self:ManipulateBoneScale(self:LookupBone("frame sack center"), inflation)
 			self:ManipulateBoneScale(self:LookupBone("frame sack left"), inflation)
 			self:ManipulateBoneScale(self:LookupBone("frame sack right"), inflation)
-		end
-	end)
-	timer.Simple(deathTime,function() 
-		if self:IsValid() then
-			self:SetNoDraw(true)
-			local BlastInfo = DamageInfo()
-			self:EmitSound("carrier/kill_instant/kill_instant ("..math.random(1, 6)..").ogg")
-			BlastInfo:SetDamageType(DMG_BLAST)
-			BlastInfo:SetDamage(60 * GetConVarNumber("vj_spv3_damageModifier"))
-			BlastInfo:SetDamagePosition(self:GetPos())
-			BlastInfo:SetInflictor(self)
-			BlastInfo:SetReportedPosition(self:GetPos())
-			util.BlastDamageInfo(BlastInfo, self:GetPos(), 250)
-			util.ScreenShake(self:GetPos(),16,100,1,800)
-			ParticleEffect("CarrierDeath", self:GetPos() + self:OBBCenter(), self:GetAngles(), nil)
-			//ParticleEffectAttach("hcea_flood_inf_death",PATTACH_POINT_FOLLOW,self,0)
-			for k=1, self.infFormCount do
-				self.infForm = ents.Create("npc_vj_halo_flood_spv3_infection")
-				self.infForm:SetPos(self:GetPos())
-				self.infForm:SetOwner(self)
-				self.infForm:Spawn()
-				local velocity = Vector(math.random(-spreadRadius, spreadRadius),math.random(-spreadRadius, spreadRadius),math.random(100, 300))
-				self.infForm:SetVelocity(velocity)
-				self.infForm:SetAngles(Angle(self.infForm:GetAngles().x, velocity:Angle().y, self.infForm:GetAngles().z))
-				self.infForm:VJ_ACT_PLAYACTIVITY("Melee_1",true,1.3,false)		
-			end
 		end
 	end)
 end
@@ -134,13 +104,10 @@ end
 function ENT:CustomOnAcceptInput(key,activator,caller,data)
 	if key == "Step" then
 		self:EmitSound("carrier/carrier_move/carrier_form_move/carrier_walk"..math.random(1,10)..".ogg", 60, 100, 1)
-	
 	elseif key == "Melee" then
 		self:EmitSound("carrier/hkillbackgut/hkillbackgut.ogg", 70, 100, 1)
-		
 	elseif key == "Hit" then
 		self:MeleeAttackCode()
-	
 	end
 end
 
@@ -160,13 +127,13 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 		self:SetVelocity(Vector(dmginfo:GetDamageForce():GetNormalized().x*1000,dmginfo:GetDamageForce():GetNormalized().y*1000,500))
 		timer.Simple(1.5, function() if(IsValid(self)) then self:TakeDamage(999999999999999,self,self) end end)
 		 //end end)
-
 	end
 end
 
 ENT.KilledBySelf = false
 function ENT:CustomOnMeleeAttack_BeforeStartTimer(seed) 
 	self.KilledBySelf = true
+	self.DeathAnimationTime = 1.3
 end
 /*-----------------------------------------------
 	*** Copyright (c) 2012-2016 by DrVrej, All rights reserved. ***

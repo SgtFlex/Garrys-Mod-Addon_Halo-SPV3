@@ -53,6 +53,7 @@ function ENT:UseConVars()
 	self.ShieldCurrentHealth = self.ShieldMaxHealth
 	self.CurrentHealth = self.StartHealth
 	self.ShieldActivated = (self.ShieldCurrentHealth > 0)
+	if (self.IsCarrier) then self.HasDeathRagdoll = false end
 	self.Bleeds = (self.ShieldCurrentHealth <= 0 or self.ShieldIsArmor == true)
 	self:SetHealth(self.ShieldMaxHealth + self.StartHealth)
 	for k, v in pairs(self.RemovableParts) do
@@ -447,6 +448,45 @@ function ENT:CustomOnInitialKilled(dmginfo, hitgroup)
 	end
 end
 
+function ENT:CustomOnDeath_BeforeCorpseSpawned(dmginfo, hitgroup)
+	if (!self.IsCarrier or self.DeathType=="LargeForce") then return end
+	if (GetConVarNumber("vj_spv3_bonusInfForms")==0) then
+		self.HasDeathRagdoll = true
+		return
+	end
+	self:DropInfForms()
+	for k, v in pairs(self.RemovableParts) do
+		if (v["Health"] > 0) then
+			v["Execute"](self)
+		end
+	end
+end
+
+ENT.infFormCount = 5
+ENT.spreadRadius = 50
+function ENT:DropInfForms()
+	self.infFormCount = math.Round(self.infFormCount*(GetConVarNumber("vj_spv3_infModifier")))
+	self:EmitSound("carrier/kill_instant/kill_instant ("..math.random(1, 6)..").ogg")
+	local BlastInfo = DamageInfo()
+	BlastInfo:SetDamageType(DMG_BLAST)
+	BlastInfo:SetDamage(20 * GetConVarNumber("vj_spv3_damageModifier"))
+	BlastInfo:SetDamagePosition(self:GetPos())
+	BlastInfo:SetInflictor(self)
+	BlastInfo:SetReportedPosition(self:GetPos())
+	util.BlastDamageInfo(BlastInfo, self:GetPos(), 250)
+	util.ScreenShake(self:GetPos(),16,100,1,800)
+	ParticleEffect("CarrierDeath", self:GetPos() + self:OBBCenter(), self:GetAngles(), nil)
+	for k=1, self.infFormCount do
+		self.infForm = ents.Create("npc_vj_halo_flood_spv3_infection")
+		self.infForm:SetPos(self:GetPos())
+		self.infForm:SetOwner(self)
+		self.infForm:Spawn()
+		local velocity = Vector(math.random(-self.spreadRadius, self.spreadRadius),math.random(-self.spreadRadius, self.spreadRadius),math.random(100, 200))
+		self.infForm:SetVelocity(velocity)
+		self.infForm:SetAngles(Angle(self.infForm:GetAngles().x, velocity:Angle().y, self.infForm:GetAngles().z))
+		self.infForm:VJ_ACT_PLAYACTIVITY("Melee_1",true,1.3,false)		
+	end
+end
 
 --------------------------------------------------------------------------------------------------------------------------------------------------
 //Brought over from sentinels addon, possibly old/outdated?

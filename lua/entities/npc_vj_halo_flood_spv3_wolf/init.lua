@@ -1,14 +1,22 @@
 AddCSLuaFile("shared.lua")
 include('shared.lua')
+include('entities/npc_vj_halo_shared_spv3/init.lua')
 /*-----------------------------------------------
 	*** Copyright (c) 2012-2016 by DrVrej, All rights reserved. ***
 	No parts of this code or any of its contents may be reproduced, copied, modified or adapted,
 	without the prior written consent of the author, unless otherwise indicated for stand-alone materials.
 -----------------------------------------------*/
 ENT.HullType = HULL_MEDIUM
-
 ENT.Model = {"models/hce/spv3/nature/blindwolf/blindwolf.mdl"} -- The game will pick a random model from the table when the SNPC is spawned | Add as many as you want
-ENT.StartHealth = 100 * GetConVarNumber("vj_spv3_HealthModifier")
+
+ENT.StartHealth = 100
+ENT.Appearance = {
+	Color = Color(255,255, 255),
+	Bodygroups = {1, 1},
+	Skin = 0,
+}
+ENT.IsCarrier = true
+ENT.DisableBackBreak = true
 ---------------------------------------------------------------------------------------------------------------------------------------------
 	-- ====== Blood-Related Variables ====== --
 ENT.Bleeds = true -- Does the SNPC bleed? (Blood decal, particle, etc.)
@@ -40,9 +48,7 @@ ENT.DropWeaponOnDeath = true -- Should it drop its weapon on death?
 ENT.HasItemDropsOnDeath = true -- Should it drop items on death?
 ENT.ItemDropsOnDeathChance = 3 -- If set to 1, it will always drop it
 ENT.ThingsToDrop = {}
-ENT.GrenadeWeps = {
-	"weapon_vj_unsc_spv3_frag_nade",
-}
+ENT.GrenadeWeps = {}
 ENT.NoChaseAfterCertainRange = true -- Should the SNPC not be able to chase when it's between number x and y?
 ENT.NoChaseAfterCertainRange_FarDistance = "UseRangeDistance" -- How far until it can chase again? | "UseRangeDistance" = Use the number provided by the range attack instead
 ENT.NoChaseAfterCertainRange_CloseDistance = 300 -- How near until it can chase again? | "UseRangeDistance" = Use the number provided by the range attack instead
@@ -65,107 +71,6 @@ ENT.RangeAttackReps = 10
 ENT.NextAnyAttackTime_Range = 3
 ENT.NextRangeAttackTime = 0
 ENT.NextRangeAttackTime_DoRand = 4 -- False = Don't use random time | Number = Picks a random number between the regular timer and this timer
-ENT.HasDeathRagdoll = false
-function ENT:CustomOnInitialize()
-	self:SetBodygroup(1, 1)
-	self:SetBodygroup(0, 1)
-
-end
-
-ENT.infFormCount = 5
-local spreadRadius = 175
-
-function ENT:CustomDeathAnimationCode(dmginfo,hitgroup)
-	if (GetConVarNumber("vj_spv3_bonusInfForms")==0) then
-		self.HasDeathRagdoll = true
-		return
-	end
-	self.infFormCount = math.Round(self.infFormCount*(GetConVarNumber("vj_spv3_infModifier")))
-	self:EmitSound("carrier/hkillbackgut/hkillbackgut.ogg")
-	timer.Simple(0.5,function() if self:IsValid() then
-	local BlastInfo = DamageInfo()
-	BlastInfo:SetDamageType(DMG_BLAST)
-	BlastInfo:SetDamage(20 * GetConVarNumber("vj_spv3_damageModifier"))
-	BlastInfo:SetDamagePosition(self:GetPos())
-	BlastInfo:SetInflictor(self)
-	BlastInfo:SetReportedPosition(self:GetPos())
-	util.BlastDamageInfo(BlastInfo, self:GetPos(), 250)
-	util.ScreenShake(self:GetPos(),16,100,1,800)
-	ParticleEffect("CarrierDeath", self:GetPos() + self:OBBCenter(), self:GetAngles(), nil)
-	//ParticleEffectAttach("hcea_flood_inf_death",PATTACH_POINT_FOLLOW,self,0)
-	for k=1, self.infFormCount do
-		self.infForm = ents.Create("npc_vj_halo_flood_spv3_infection")
-		self.infForm:SetPos(self:GetPos())
-		self.infForm:SetOwner(self)
-		self.infForm:Spawn()
-		local velocity = Vector(math.random(-spreadRadius, spreadRadius),math.random(-spreadRadius, spreadRadius),math.random(100, 200))
-		self.infForm:SetVelocity(velocity)
-		self.infForm:SetAngles(Angle(self.infForm:GetAngles().x, velocity:Angle().y, self.infForm:GetAngles().z))
-		self.infForm:VJ_ACT_PLAYACTIVITY("Melee_1",true,1.3,false)		
-	end
-	self:CreateGibEntity("obj_vj_gib", {"models/hce/spv3/flood/human/floodskin_xl.mdl", "models/hce/spv3/flood/human/floodskin_lg.mdl", "models/hce/spv3/flood/human/floodskin_md.mdl", "models/hce/spv3/flood/human/floodskin_sm.mdl"}, {Pos = pos, Ang = ang, Vel = Vector(math.random(-150, 150), math.random(-150, 150), math.random(150, 300)), BloodType = "Yellow"})
-	self:CreateGibEntity("obj_vj_gib", {"models/hce/spv3/flood/human/floodinnard_bone.mdl", "models/hce/spv3/flood/human/floodinnard_large.mdl", "models/hce/spv3/flood/human/floodinnard_largest.mdl"}, {Pos = pos, Ang = ang, Vel = Vector(math.random(-150, 150), math.random(-150, 150), math.random(150, 300)), BloodType = "Yellow"})
-	self:CreateGibEntity("obj_vj_gib", {"models/hce/spv3/flood/human/floodskin_xl.mdl", "models/hce/spv3/flood/human/floodskin_lg.mdl", "models/hce/spv3/flood/human/floodskin_md.mdl", "models/hce/spv3/flood/human/floodskin_sm.mdl"}, {Pos = pos, Ang = ang, Vel = Vector(math.random(-150, 150), math.random(-150, 150), math.random(150, 300)), BloodType = "Yellow"})
-	self:CreateGibEntity("obj_vj_gib", {"models/hce/spv3/flood/human/floodinnard_bone.mdl", "models/hce/spv3/flood/human/floodinnard_large.mdl", "models/hce/spv3/flood/human/floodinnard_largest.mdl"}, {Pos = pos, Ang = ang, Vel = Vector(math.random(-150, 150), math.random(-150, 150), math.random(150, 300)), BloodType = "Yellow"})
-	self:CreateGibEntity("obj_vj_gib", {"models/hce/spv3/flood/human/floodskin_xl.mdl", "models/hce/spv3/flood/human/floodskin_lg.mdl", "models/hce/spv3/flood/human/floodskin_md.mdl", "models/hce/spv3/flood/human/floodskin_sm.mdl"}, {Pos = pos, Ang = ang, Vel = Vector(math.random(-150, 150), math.random(-150, 150), math.random(150, 300)), BloodType = "Yellow"})
-	self:CreateGibEntity("obj_vj_gib", {"models/hce/spv3/flood/human/floodinnard_bone.mdl", "models/hce/spv3/flood/human/floodinnard_large.mdl", "models/hce/spv3/flood/human/floodinnard_largest.mdl"}, {Pos = pos, Ang = ang, Vel = Vector(math.random(-150, 150), math.random(-150, 150), math.random(150, 300)), BloodType = "Yellow"})
-	self:CreateGibEntity("obj_vj_gib", {"models/hce/spv3/flood/human/floodskin_xl.mdl", "models/hce/spv3/flood/human/floodskin_lg.mdl", "models/hce/spv3/flood/human/floodskin_md.mdl", "models/hce/spv3/flood/human/floodskin_sm.mdl"}, {Pos = pos, Ang = ang, Vel = Vector(math.random(-150, 150), math.random(-150, 150), math.random(150, 300)), BloodType = "Yellow"})
-	self:CreateGibEntity("obj_vj_gib", {"models/hce/spv3/flood/human/floodinnard_bone.mdl", "models/hce/spv3/flood/human/floodinnard_large.mdl", "models/hce/spv3/flood/human/floodinnard_largest.mdl"}, {Pos = pos, Ang = ang, Vel = Vector(math.random(-150, 150), math.random(-150, 150), math.random(150, 300)), BloodType = "Yellow"})
-	
-	-- local posone = self:LocalToWorld(Vector(math.random(-20, 20),math.random(-20,20),0))
-	-- local infector1 = ents.Create("npc_vj_halo_flood_spv3_infection")
-	-- infector1:SetPos(posone)
-	-- infector1:SetAngles(self:GetAngles())
-	-- infector1:Spawn()
-	-- infector1:Activate()
-	-- infector1:SetOwner(self)
-	-- infector1:SetVelocity(Vector(math.random(-100,100), math.random(-100, 100), math.random(200, 500)))
-	
-	-- local postwo = self:LocalToWorld(Vector(math.random(-20, 20),math.random(-20,20),0))
-	-- local infector2 = ents.Create("npc_vj_halo_flood_spv3_infection")
-	-- infector2:SetPos(postwo)
-	-- infector2:SetAngles(self:GetAngles())
-	-- infector2:Spawn()
-	-- infector2:Activate()
-	-- infector2:SetOwner(self)
-	-- infector2:SetVelocity(Vector(math.random(-100,100), math.random(-100, 100), math.random(200, 500)))
-	
-	-- local posthree = self:LocalToWorld(Vector(math.random(-20, 20),math.random(-20,20),0))
-	-- local infector3 = ents.Create("npc_vj_halo_flood_spv3_infection")
-	-- infector3:SetPos(posthree)
-	-- infector3:SetAngles(self:GetAngles())
-	-- infector3:Spawn()
-	-- infector3:Activate()
-	-- infector3:SetOwner(self)
-	-- infector3:SetVelocity(Vector(math.random(-100,100), math.random(-100, 100), math.random(200, 500)))
-	
-	-- local posfour = self:LocalToWorld(Vector(math.random(-20, 20),math.random(-20,20),0))
-	-- local infector4 = ents.Create("npc_vj_halo_flood_spv3_infection")
-	-- infector4:SetPos(posfour)
-	-- infector4:SetAngles(self:GetAngles())
-	-- infector4:Spawn()
-	-- infector4:Activate()
-	-- infector4:SetOwner(self)
-	-- infector4:SetVelocity(Vector(math.random(-100,100), math.random(-100, 100), math.random(200, 500)))
-	
-	-- local posfive = self:LocalToWorld(Vector(math.random(-20, 20),math.random(-20,20),0))
-	-- local infector5 = ents.Create("npc_vj_halo_flood_spv3_infection")
-	-- infector5:SetPos(posfive)
-	-- infector5:SetAngles(self:GetAngles())
-	-- infector5:Spawn()
-	-- infector5:Activate()
-	-- infector5:SetOwner(self)
-	-- infector5:SetVelocity(Vector(math.random(-100,100), math.random(-100, 100), math.random(200, 500)))
-		end
-	end)
-end
-
-function ENT:CustomOnMeleeAttack_AfterChecks(hitEnt)
-	if (hitEnt.MeleeAttacking==true) then
-		hitEnt:SetAngles(hitEnt:GetAngles() + Angle(0,180,0))
-	end
-	return false 
-end -- return true to disable the attack and move onto the next entity!
 
 function ENT:RangeAttackCode_OverrideProjectilePos(TheProjectile) -- return other value then 0 to override the projectile's position
 	return self:GetPos() + Vector(0,0,50) + self:GetRight()*math.random(-10,10) + self:GetUp()*math.random(-10,10)

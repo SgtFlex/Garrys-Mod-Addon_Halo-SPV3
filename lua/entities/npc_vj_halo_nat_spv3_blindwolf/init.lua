@@ -1,17 +1,22 @@
 AddCSLuaFile("shared.lua")
 include('shared.lua')
+include('entities/npc_vj_halo_shared_spv3/init.lua')
 /*-----------------------------------------------
 	*** Copyright (c) 2012-2016 by DrVrej, All rights reserved. ***
 	No parts of this code or any of its contents may be reproduced, copied, modified or adapted,
 	without the prior written consent of the author, unless otherwise indicated for stand-alone materials.
 -----------------------------------------------*/
-ENT.HullType = HULL_LARGE
-
 ENT.Model = {"models/hce/spv3/nature/blindwolf/blindwolf.mdl"} -- The game will pick a random model from the table when the SNPC is spawned | Add as many as you want
-ENT.StartHealth = 60 * GetConVarNumber("vj_spv3_HealthModifier")
+ENT.HullType = HULL_MEDIUM
+ENT.Appearance = {
+	Color = Color(255,255, 255),
+	Bodygroups = {0, 0},
+	Skin = 0,
+}
+ENT.DisableBackBreak = true
+ENT.StartHealth = 60
 ---------------------------------------------------------------------------------------------------------------------------------------------
 	-- ====== Blood-Related Variables ====== --
-ENT.Bleeds = true -- Does the SNPC bleed? (Blood decal, particle, etc.)
 ENT.BloodColor = "Red" -- The blood type, this will detemine what it should use (decal, particle, etc.)
 ENT.Immune_Dissolve = true -- Immune to Dissolving | Example: Combine Ball
 ENT.HasBloodPool = true -- Does it have a blood pool?
@@ -23,8 +28,6 @@ ENT.HasDeathAnimation = true -- Does it play an animation when it dies?
 ENT.AnimTbl_Death = {"Die_Front", "Die_Left", "Die_Right"} -- Death Animations
 ENT.FriendsWithAllPlayerAllies = true -- Should this SNPC be friends with all other player allies that are running on VJ Base?
 	-- Death ---------------------------------------------------------------------------------------------------------------------------------------------
-ENT.HasDeathRagdoll = true -- If set to false, it will not spawn the regular ragdoll of the SNPC
-ENT.DeathAnimationTime = 0.5 -- Time until the SNPC spawns its corpse and gets removed
 ENT.Behavior = VJ_BEHAVIOR_NEUTRAL
 	-- Melee Attack ---------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -52,7 +55,6 @@ ENT.LeapToMeleeDistance = 600 -- How close does it have to be until it uses mele
 ENT.canFlinch = 0
 ENT.NextLeapAttackTime = 0 -- How much time until it can use a leap attack?
 
-
 function ENT:CustomOnAcceptInput(key,activator,caller,data)
 	if key == "Step" then
 		self:EmitSound("infested_shared/walk/walk"..math.random(1,6)..".ogg", 70, 100, 1)
@@ -60,11 +62,6 @@ function ENT:CustomOnAcceptInput(key,activator,caller,data)
 		self:EmitSound((self.SoundTbl_Pain[math.random(1, #(self.SoundTbl_Pain))]))
 	end
 end
-/*-----------------------------------------------
-	*** Copyright (c) 2012-2016 by DrVrej, All rights reserved. ***
-	No parts of this code or any of its contents may be reproduced, copied, modified or adapted,
-	without the prior written consent of the author, unless otherwise indicated for stand-alone materials.
------------------------------------------------*/
 
 ENT.SoundTbl_Idle = {
 "blindwolf/idle/idle (1).ogg",
@@ -82,5 +79,9 @@ ENT.SoundTbl_Death = {
 	"blindwolf/death/death (1).ogg",
 	"blindwolf/death/death (2).ogg",
 	"blindwolf/death/death (3).ogg",
-
 }
+/*-----------------------------------------------
+	*** Copyright (c) 2012-2016 by DrVrej, All rights reserved. ***
+	No parts of this code or any of its contents may be reproduced, copied, modified or adapted,
+	without the prior written consent of the author, unless otherwise indicated for stand-alone materials.
+-----------------------------------------------*/
