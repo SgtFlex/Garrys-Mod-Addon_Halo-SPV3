@@ -270,27 +270,6 @@ function ENT:CustomOnSetupWeaponHoldTypeAnims(htype)
 	return true
 end
 
-ENT.HasStuck=false
-ENT.Berserked=false
-function ENT:Berserk()
-	if self.Berserked==true or self.Dead==true then return end
-	timer.Simple(0.1, function()
-		self:PlaySoundSystem("GeneralSpeech", self.SoundTbl_Berserk)
-	end)
-	timer.Simple(0.5, function() 
-		if (IsValid(self) and IsValid(self:GetActiveWeapon()) and self:GetActiveWeapon():GetClass()!="weapon_vj_cov_spv3_energysword") then
-			self:DropWeapon()
-			self:Give("weapon_vj_cov_spv3_energysword")
-		end
-	end)
-	self.Berserked=true
-	self.MoveRandomlyWhenShooting = false
-	self.AllowWeaponReloading = false -- If false, the SNPC will no longer reload
-	self.WaitForEnemyToComeOut = false
-	self.NoWeapon_UseScaredBehavior = false
-	self:VJ_ACT_PLAYACTIVITY("Berserk", true, 2, false)
-end
-
 function ENT:CustomOnAcceptInput(key,activator,caller,data)
 	if key == "Step" then
 		self:EmitSound("elite/shared/walk/walk ("..math.random(1,6)..").ogg", 80, 100, 1)

@@ -190,7 +190,6 @@ function ENT:Berserk()
 		self:PlaySoundSystem("GeneralSpeech", self.SoundTbl_Berserk)
 	end)
 	if (self.HasSword == true) then
-		self.MeleeAttackDamage = 300 * GetConVarNumber("vj_spv3_damageModifier")
 		timer.Simple(0.5, function() 
 			if (IsValid(self) and IsValid(self:GetActiveWeapon()) and self:GetActiveWeapon():GetClass()!="weapon_vj_cov_spv3_energysword") and self.HasSword then
 				self:DropWeapon()
