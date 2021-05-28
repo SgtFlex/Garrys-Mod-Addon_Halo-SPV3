@@ -15,6 +15,6 @@ ENT.ExtraShotCount = 2
 ENT.ShieldProjMaxHealth = 100
 ENT.Appearance = {
 	Color = Color(255,255,255),
-	Bodygroups = {1, 1},
+	Bodygroups = {0, 1},
 	Skin = 0,
 }

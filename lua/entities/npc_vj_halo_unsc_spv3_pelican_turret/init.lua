@@ -1,5 +1,6 @@
 AddCSLuaFile("shared.lua")
 include('shared.lua')
+include('entities/npc_vj_halo_shared_spv3/init.lua')
 /*-----------------------------------------------
 	*** Copyright (c) 2012-2016 by DrVrej, All rights reserved. ***
 	No parts of this code or any of its contents may be reproduced, copied, modified or adapted,
@@ -8,11 +9,17 @@ include('shared.lua')
 ENT.HullType = HULL_MEDIUM_TALL
 	-- ====Variant Variables==== --
 ENT.Model = {"models/hce/spv3/unsc/pelican/pelicanturret.mdl"} -- The game will pick a random model from the table when the SNPC is spawned | Add as many as you want
-ENT.StartHealth = 500 * GetConVarNumber("vj_spv3_HealthModifier")
+ENT.StartHealth = 500
+ENT.Appearance = {
+	Color = Color(255,255,255),
+	Bodygroups = {},
+	Skin = 0,
+}
+ENT.DisableBackBreak = true
+ENT.DisableForceDeath = true
 	-- ====== Blood-Related Variables ====== --
 ENT.Bleeds = false-- Does the SNPC bleed? (Blood decal, particle, etc.)
 ENT.Immune_Dissolve = true -- Immune to Dissolving | Example: Combine Ball
-
 	-- Relationships ---------------------------------------------------------------------------------------------------------------------------------------------
 ENT.HasAllies = true -- Put to false if you want it not to have any allies
 ENT.VJ_NPC_Class = {"CLASS_UNSC", "CLASS_PLAYER_ALLY"} -- NPCs with the same class with be allied to each other
@@ -49,38 +56,32 @@ ENT.ConstantlyFaceEnemy = true
 ENT.ConstantlyFaceEnemy_IfAttacking = true -- Should it face the enemy when attacking?
 ENT.RangeAttackAnimationFaceEnemy = false
 ENT.UnreachableByMelee = false
-function ENT:CustomOnInitialize()
-	self:SetCollisionBounds(Vector(30,30,70), Vector(-30, -30, 10))
-	self:SetHullSizeNormal()
-	self.eyeLight = ents.Create("env_sprite")
-	self.eyeLight:SetParent(self,self:LookupAttachment("Light"))
-	self.eyeLight:SetPos(self:GetAttachment(self:LookupAttachment("Light"))["Pos"])
-	self.eyeLight:SetKeyValue("rendermode", "9")
-	self.eyeLight:SetKeyValue("renderamt", "255")
-	self.eyeLight:SetKeyValue("model","blueflare1_noz.vmt")
-	self.eyeLight:SetKeyValue("GlowProxySize","3")
-	self.eyeLight:SetKeyValue("rendercolor",tostring("0 255 50"))
-	self.eyeLight:SetKeyValue("scale", "0.3")
-	self.eyeLight:Spawn()
-	self.eyeLight:Activate()
+ENT.CustomCollision = {Min = Vector(-30,-30,10), Max = Vector(30,30,70)}
+ENT.otherInit = function(entity)
+	entity.eyeLight = ents.Create("env_sprite")
+	entity.eyeLight:SetParent(entity,entity:LookupAttachment("Light"))
+	entity.eyeLight:SetPos(entity:GetAttachment(entity:LookupAttachment("Light"))["Pos"])
+	entity.eyeLight:SetKeyValue("rendermode", "9")
+	entity.eyeLight:SetKeyValue("renderamt", "255")
+	entity.eyeLight:SetKeyValue("model","blueflare1_noz.vmt")
+	entity.eyeLight:SetKeyValue("GlowProxySize","3")
+	entity.eyeLight:SetKeyValue("rendercolor",tostring("0 255 50"))
+	entity.eyeLight:SetKeyValue("scale", "0.3")
+	entity.eyeLight:Spawn()
+	entity.eyeLight:Activate()
 	timer.Simple(0.01, function() //Need a small delay or wont work
-	if (!IsValid(self:GetParent())) then
-		local trace = util.TraceLine({
-		start = self:GetPos() + Vector(0,0,30),
-		endpos = self:GetPos() + self:GetUp()*1000,
-		filter = self,
-		ignoreworld = false,
-		})
-		-- if (trace.HitPos:Distance(self:GetPos()) >= 150) then
-		-- end
-		if (trace.Hit) then
-			self:SetPos(trace.HitPos + Vector(0,0,-70))
+		if (!IsValid(entity:GetParent())) then
+			local trace = util.TraceLine({
+				start = entity:GetPos() + Vector(0,0,30),
+				endpos = entity:GetPos() + entity:GetUp()*1000,
+				filter = entity,
+				ignoreworld = false,
+			})
+			if (trace.Hit) then
+				entity:SetPos(trace.HitPos + Vector(0,0,-70))
+			end
 		end
-
-		
-	end
-end)
-	
+	end)
 end
 
 function ENT:CustomOn_PoseParameterLookingCode(pitch,yaw,roll) 
@@ -90,15 +91,9 @@ function ENT:CustomOn_PoseParameterLookingCode(pitch,yaw,roll)
 
 end
 
-function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
-	if (dmginfo:GetDamageType()==DMG_BLAST) then
-		dmginfo:ScaleDamage(3.5)
-	end
-end
-
 function ENT:CustomRangeAttackCode() 
 	self:FireBullets({
-		Damage = 5 * GetConVarNumber("vj_spv3_DamageModifier"),
+		Damage = 5 * GetConVar("vj_spv3_DamageModifier"):GetInt(),
 		Dir = self:GetAimVector(),
 		Src = self:GetPos(),
 		Spread = Vector(0.03, 0.03, 0)

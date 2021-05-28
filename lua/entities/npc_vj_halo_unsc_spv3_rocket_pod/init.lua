@@ -1,5 +1,6 @@
 AddCSLuaFile("shared.lua")
 include('shared.lua')
+include('entities/npc_vj_halo_shared_spv3/init.lua')
 /*-----------------------------------------------
 	*** Copyright (c) 2012-2016 by DrVrej, All rights reserved. ***
 	No parts of this code or any of its contents may be reproduced, copied, modified or adapted,
@@ -8,16 +9,21 @@ include('shared.lua')
 ENT.HullType = HULL_MEDIUM
 	-- ====Variant Variables==== --
 ENT.Model = {"models/hce/spv3/unsc/pelican/pelican_rocket_pod.mdl"} -- The game will pick a random model from the table when the SNPC is spawned | Add as many as you want
-ENT.StartHealth = 500 * GetConVarNumber("vj_spv3_HealthModifier")
+ENT.StartHealth = 500
+ENT.Appearance = {
+	Color = Color(255,255,255),
+	Bodygroups = {},
+	Skin = 0,
+}
+ENT.DisableBackBreak = true
+ENT.DisableForceDeath = true
 	-- ====== Blood-Related Variables ====== --
 ENT.Bleeds = false-- Does the SNPC bleed? (Blood decal, particle, etc.)
 ENT.Immune_Dissolve = true -- Immune to Dissolving | Example: Combine Ball
-
 	-- Relationships ---------------------------------------------------------------------------------------------------------------------------------------------
 ENT.HasAllies = true -- Put to false if you want it not to have any allies
 ENT.VJ_NPC_Class = {"CLASS_UNSC", "CLASS_PLAYER_ALLY"} -- NPCs with the same class with be allied to each other
 ENT.FriendsWithAllPlayerAllies = true -- Should this SNPC be friends with all other player allies that are running on VJ Base?
-
 -- ENT.AnimTbl_WeaponAttackFiringGesture = {} -- Firing Gesture animations used when the SNPC is firing the weapon
 -- ENT.AnimTbl_TakingCover = {} -- The animation it plays when hiding in a covered position
 ENT.DisableFootStepSoundTimer = true -- If set to true, it will disable the time system for the footstep sound code, allowing you to use other ways like model events
@@ -58,30 +64,29 @@ function ENT:CustomRangeAttackCode_AfterProjectileSpawn(TheProjectile)
 	end
 end
 
-
-function ENT:CustomOnInitialize()
-	self:SetCollisionBounds(Vector(-20, -20, 5), Vector(20, 20, -30))
-	self.eyeLight = ents.Create("env_sprite")
-	self.eyeLight:SetParent(self,self:LookupAttachment("Light"))
-	self.eyeLight:SetPos(self:GetAttachment(self:LookupAttachment("light"))["Pos"])
-	self.eyeLight:SetKeyValue("rendermode", "9")
-	self.eyeLight:SetKeyValue("renderamt", "255")
-	self.eyeLight:SetKeyValue("model","blueflare1_noz.vmt")
-	self.eyeLight:SetKeyValue("GlowProxySize","3")
-	self.eyeLight:SetKeyValue("rendercolor",tostring("0 255 50"))
-	self.eyeLight:SetKeyValue("scale", "0.3")
-	self.eyeLight:Spawn()
-	self.eyeLight:Activate()
+ENT.CustomCollision = {Min = Vector(-20,-20,5), Max = Vector(20,20,-30)}
+ENT.otherInit = function(entity)
+	entity.eyeLight = ents.Create("env_sprite")
+	entity.eyeLight:SetParent(entity,entity:LookupAttachment("Light"))
+	entity.eyeLight:SetPos(entity:GetAttachment(entity:LookupAttachment("light"))["Pos"])
+	entity.eyeLight:SetKeyValue("rendermode", "9")
+	entity.eyeLight:SetKeyValue("renderamt", "255")
+	entity.eyeLight:SetKeyValue("model","blueflare1_noz.vmt")
+	entity.eyeLight:SetKeyValue("GlowProxySize","3")
+	entity.eyeLight:SetKeyValue("rendercolor",tostring("0 255 50"))
+	entity.eyeLight:SetKeyValue("scale", "0.3")
+	entity.eyeLight:Spawn()
+	entity.eyeLight:Activate()
 	timer.Simple(0.01, function()
-		if (!IsValid(self:GetParent())) then
+		if (!IsValid(entity:GetParent())) then
 			local trace = util.TraceLine({
-			start = self:GetPos() + Vector(0,0,30),
-			endpos = self:GetPos() + self:GetUp()*1000,
-			filter = self,
-			ignoreworld = false,
+				start = entity:GetPos() + Vector(0,0,30),
+				endpos = entity:GetPos() + entity:GetUp()*1000,
+				filter = entity,
+				ignoreworld = false,
 			})
 			if (trace.Hit) then
-				self:SetPos(trace.HitPos + Vector(0,0,-5))
+				entity:SetPos(trace.HitPos + Vector(0,0,-5))
 			end
 		end
 	end)

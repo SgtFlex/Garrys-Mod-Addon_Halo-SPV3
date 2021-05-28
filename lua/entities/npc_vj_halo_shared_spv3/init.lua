@@ -62,6 +62,13 @@ function ENT:UseConVars()
 	self.ShieldProjMaxHealth = self.ShieldProjMaxHealth * GetConVarNumber("vj_spv3_ShieldModifier")
 	self.ShieldProjCurrentHealth = self.ShieldProjMaxHealth
 	self.ShieldProjActivated = (self.ShieldProjCurrentHealth > 0)
+	if (self.ShieldProjActivated) then
+		self:SetBodygroup(self:FindBodygroupByName("Shield"), 1)
+		self:SetHitboxSet("Shielded")
+	else
+		self:SetBodygroup(self:FindBodygroupByName("Shield"), 0)
+		self:SetHitboxSet("noShield")
+	end
 	self:SetHealth(self.ShieldMaxHealth + self.StartHealth)
 	timer.Simple(0.01, function() 
 		if (math.random(0,100) <= GetConVar("vj_spv3_"..self.Faction.."ExtraWeaponChance"):GetInt() and #self.ExtraWeapons > 0) then

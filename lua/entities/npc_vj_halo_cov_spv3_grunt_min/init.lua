@@ -95,7 +95,9 @@ ENT.RemovableParts = {
 		pos = pos + entity:GetRight()*35
 		helmet = entity:CreateGibEntity("obj_vj_metal_gib", {"models/hce/spv3/cov/grunt/garbage/minor_mask.mdl"}, {Pos = pos, Ang = ang})
 		ParticleEffect("GruntMaskGas", pos - entity:GetRight()*35 , ang, entity)
-		dmginfo:SetDamage(entity:Health())
+		if (dmginfo:GetDamage() >= GetConVar("vj_spv3_PrecisionThreshold"):GetInt()) then
+			dmginfo:SetDamage(entity:Health())
+		end
 	end},
 	[508] = {Health = 15, Bodygroup = "Body", Execute = function(entity, dmginfo)
 		entity:Flee()

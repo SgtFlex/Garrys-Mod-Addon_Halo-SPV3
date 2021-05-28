@@ -51,6 +51,7 @@ if VJExists == true then
 	VJ.AddNPC_HUMAN("[Cov] Brute Ultra","npc_vj_halo_cov_spv3_brute_ult",{"weapon_vj_cov_spv3_focusrifle", "weapon_vj_cov_spv3_bruteshot", "weapon_vj_cov_spv3_plasmarifleBrute", "weapon_vj_cov_spv3_shredder", "weapon_vj_cov_spv3_piercer"},vCat)
 	VJ.AddNPC_HUMAN("[Cov] Brute Chieftain","npc_vj_halo_cov_spv3_brute_chf",{"weapon_vj_cov_spv3_bruteshot"},vCat)
 	VJ.AddNPC_HUMAN("[Cov] Brute War Chieftain","npc_vj_halo_cov_spv3_brute_wchf",{"weapon_vj_cov_spv3_bruteshot"},vCat)
+	VJ.AddNPC_HUMAN("[Cov] Brute Random","npc_vj_halo_cov_spv3_brute_ran",{"weapon_vj_cov_spv3_focusrifle", "weapon_vj_cov_spv3_particleCarbine", "weapon_vj_cov_spv3_bruteshot", "weapon_vj_cov_spv3_plasmarifleBrute", "weapon_vj_cov_spv3_shredder"},vCat)
 	VJ.AddNPC_HUMAN("[Her] Elite ","npc_vj_halo_cov_spv3_elite_her",{"weapon_vj_cov_spv3_plasmarifle","weapon_vj_cov_spv3_particleCarbine","weapon_vj_cov_spv3_needler"},vCat)
 	VJ.AddNPC_HUMAN("[Her] Grunt","npc_vj_halo_cov_spv3_grunt_her",{"weapon_vj_cov_spv3_plasmapistol","weapon_vj_cov_spv3_needler"},vCat)
 	VJ.AddNPC_HUMAN("[Cov] Elite Minor","npc_vj_halo_cov_spv3_elite_min",{"weapon_vj_cov_spv3_plasmarifle","weapon_vj_cov_spv3_plasmapistol","weapon_vj_cov_spv3_particleCarbine","weapon_vj_cov_spv3_needler"},vCat)

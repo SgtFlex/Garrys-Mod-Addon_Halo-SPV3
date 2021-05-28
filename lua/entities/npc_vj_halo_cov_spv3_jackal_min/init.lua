@@ -14,7 +14,7 @@ ENT.ShieldProjMaxHealth = 125
 ENT.HullType = HULL_MEDIUM
 ENT.Appearance = {
 	Color = Color(100,100,140),
-	Bodygroups = {1, 0},
+	Bodygroups = {0, 0},
 	Skin = 0,
 }
 ENT.AnimTbl_Death = {"Die_1", "Die_2", "Die_3", "Die_4"}
