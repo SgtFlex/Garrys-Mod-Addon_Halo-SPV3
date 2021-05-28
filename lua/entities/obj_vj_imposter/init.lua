@@ -46,8 +46,6 @@ function ENT:CustomOnInitialize()
 	self:SetAngles(self.Angle)
 end
 
-
-
 ENT.FirstCollision = true
 ENT.infFormCount = 6
 local spreadRadius = 50
@@ -84,14 +82,13 @@ local spreadRadius = 50
 		self:Remove()
 	else
 		self:SetNoDraw(true)
-		self:EmitSound("carrier/hkillbackgut/hkillbackgut.ogg")
 		timer.Simple(1, function()
 			if (GetConVarNumber("vj_spv3_bonusInfForms")==0) then
 				self.HasDeathRagdoll = true 
 				return
 			end
 			self.infFormCount = math.Round(self.infFormCount*(GetConVarNumber("vj_spv3_infModifier")))
-			
+			self:EmitSound("carrier/kill_instant/kill_instant ("..math.random(1, 6)..").ogg")
 			local BlastInfo = DamageInfo()
 			BlastInfo:SetDamageType(DMG_BLAST)
 			BlastInfo:SetDamage(20 * GetConVarNumber("vj_spv3_damageModifier"))

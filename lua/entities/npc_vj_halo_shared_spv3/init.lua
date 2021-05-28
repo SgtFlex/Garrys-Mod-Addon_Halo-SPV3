@@ -359,6 +359,9 @@ function ENT:DoSpecialDeath(typeDeath, dmginfo)
 		if (self.ShieldProjActivated==true) then
 			self:DisperseShieldProj()
 		end
+		self:StopAllCommonSpeechSounds()
+		self.HasPainSounds = false
+		self.HasDeathSounds = false
 		self:DropWeapon()
 		self.HasDeathRagdoll = false
 		self.HasDeathAnimation = false
