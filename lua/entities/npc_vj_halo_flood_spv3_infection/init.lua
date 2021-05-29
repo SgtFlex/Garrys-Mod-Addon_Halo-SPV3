@@ -364,22 +364,32 @@ function ENT:Latch()
 	end
 	table.insert(self.AttachedTo.AttachedInfectForms, self)
 	if (#self.AttachedTo.AttachedInfectForms<=1) then
-		if (data.HitEntity.SoundTbl_Stuck) then
-			data.HitEntity:EmitSound(VJ_PICKRANDOMTABLE(data.HitEntity.SoundTbl_Stuck))
+		if (self.AttachedTo.SoundTbl_Stuck) then
+			self.AttachedTo:EmitSound(VJ_PICKRANDOMTABLE(self.AttachedTo.SoundTbl_Stuck))
 		end
-		if (data.HitEntity:LookupSequence("Transform")!=-1) then
-			data.HitEntity:VJ_ACT_PLAYACTIVITY("Transform", true, 4, false)
+		if (self.AttachedTo:LookupSequence("Transform")!=-1) then
+			self.AttachedTo:VJ_ACT_PLAYACTIVITY("Transform", true, 4, false)
 		end
 	end
 	self:VJ_ACT_PLAYACTIVITY("Melee_1",true,30,false)	
 	self:SetMoveType(MOVETYPE_NONE)
-	self:SetAngles(self:GetEnemy():GetAngles() + Angle(-90,0,0))
-	self.BoneToFollow = VJ_PICKRANDOMTABLE(math.random(0, self:GetEnemy():GetBoneCount()-1))
-	self.BonePos, self.BoneAng = self:GetEnemy():GetBonePosition(self.BoneToFollow)
-	self:FollowBone(self:GetEnemy(), self.BoneToFollow)
-	self:SetPos(self.BonePos)
-	self:SetAngles(self.BoneAng + Angle(90, 0, 0))
-	self:SetVelocity(Vector(0,0,0))
+	if (self.AttachedTo:GetBoneCount() > 0) then
+		local closestBone
+		for i=0, self.AttachedTo:GetBoneCount()-1 do
+			if (closestBone == nil or self.AttachedTo:GetBonePosition(i):Distance(self:GetPos()) < self.AttachedTo:GetBonePosition(closestBone):Distance(self:GetPos())) then
+				closestBone = i
+			end
+		end
+		closestBone = math.Clamp(closestBone + math.random(-1, 1), 0, self.AttachedTo:GetBoneCount()-1)
+		self:SetMoveType(MOVETYPE_NONE)
+		self:FollowBone(self.AttachedTo, closestBone)
+		self:SetPos(select(1, self.AttachedTo:GetBonePosition(closestBone)))
+		self:SetAngles(select(2, self.AttachedTo:GetBonePosition(closestBone)) + Angle(90, 0, 0))
+		self:SetVelocity(Vector(0,0,0))
+	else
+		self:SetParent(self.AttachedTo)
+		self:SetMoveType(8)
+	end
 	self:GetEnemy():SetSequence(27)
 	if (self.AttachedTo:IsPlayer()) then
 		timer.Simple(3, function()
