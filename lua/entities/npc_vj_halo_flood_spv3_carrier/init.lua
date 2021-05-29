@@ -35,18 +35,17 @@ ENT.AnimTbl_Death = {"Melee_1"} -- Death Animations
 ENT.HasItemDropsOnDeath = false
 	-- Melee Attack ---------------------------------------------------------------------------------------------------------------------------------------------
 ENT.HasMeleeAttack = true -- Should the SNPC have a melee attack?
-ENT.MeleeAttackDistance = 70
-ENT.MeleeAttackDamageType = DMG_BLAST
+ENT.TimeUntilMeleeAttackDamage = 0.5
+ENT.HasMeleeAttackKnockBack = true -- If true, it will cause a knockback to its enemy
+ENT.MeleeAttackKnockBack_Up1 = 300 -- How far it will push you up | Second in math.random
+ENT.MeleeAttackKnockBack_Up2 = 300 -- How far it will push you up | Second in math.random
+ENT.MeleeAttackDamage = 0
+ENT.MeleeAttackDamageDistance = 100
 ENT.MeleeAttack_NoProps = true -- If set to true, it won't attack or push any props (Mostly used with multiple melee attacks)
 ENT.AnimTbl_MeleeAttack = {""}
-ENT.MeleeAttackAngleRadius = 70 -- What is the attack angle radius? | 100 = In front of the SNPC | 180 = All around the SNPC
-ENT.MeleeAttackDamageAngleRadius = 70 -- What is the damage angle radius? | 100 = In front of the SNPC | 180 = All around the SNPC
-ENT.MeleeAttackDamageDistance = 0
 ENT.MeleeAttackExtraTimers = {}
-ENT.TimeUntilMeleeAttackDamage = 0
+
 ENT.NextAnyAttackTime_Melee = 1.7
-ENT.MeleeAttackDamage = 0
-ENT.MeleeAttackDamageType = DMG_SLASH
 	-- ====== Sound File Paths ====== --
 -- Leave blank if you don't want any sounds to play
 ENT.SoundTbl_Idle = {
@@ -76,7 +75,7 @@ ENT.SoundTbl_Impact = {
 "infested_shared/hit/floodflesh_hit_small11.ogg"
 }
 
-function ENT:CustomOnMeleeAttack_BeforeChecks()
+function ENT:CustomOnMeleeAttack_AfterStartTimer(seed)
 	if self.Dead == true or self:GetEnemy() == nil then return end
 	self:TakeDamage(999999999999999,self,self)
 end
@@ -85,7 +84,7 @@ ENT.SpawnedFromInf=false
 ENT.CustomCollision = {Min = Vector(-17,-17,0), Max = Vector(17,17,75)}
 ---------------------------------------------------------------------------------------------------------------------------------------------
 ENT.infFormCount = 25
-ENT.spreadRadius = 275
+ENT.spreadRadius = 200
 function ENT:CustomDeathAnimationCode(dmginfo,hitgroup)
 	local inflation = Vector(1,1,1)
 	if (self.KilledBySelf == false) then

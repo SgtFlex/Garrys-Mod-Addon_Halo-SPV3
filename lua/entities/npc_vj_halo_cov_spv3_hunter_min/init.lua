@@ -163,9 +163,6 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 			self:FlyingDeath(dmginfo)
 		end
 	end
-	-- if (dmginfo:GetDamageType()!=DMG_BLAST and dmginfo:GetDamageForce():Length()>=5000) then
-	-- 	dmginfo:SetDamage(5)
-	-- end
 end
 
 function ENT:FlyingDeath(dmginfo)
@@ -273,11 +270,10 @@ ENT.SoundTbl_Investigate = {
 	"hunter/tnt/rmd35.ogg",
 	"hunter/tnt/rmd5.ogg",
 }
----------------------------------------------------------------------------------------------------------------------------------------------
 function ENT:RangeAttackCode_GetShootPos(TheProjectile)
 	return (self:GetEnemy():GetPos()+self:GetEnemy():OBBCenter()-self:GetAttachment(self:LookupAttachment(self.RangeUseAttachmentForPosID)).Pos):GetNormal()*1500
 end
----------------------------------------------------------------------------------------------------------------------------------------------
+
 function ENT:CustomOnAcceptInput(key,activator,caller,data)
 	if key == "Step" then
 		self:EmitSound("hunter/run/walk"..math.random(1,6)..".ogg", 80, 90, 1)
@@ -301,14 +297,11 @@ function ENT:CustomOnInitialize()
 	end
 end
 
-
 function ENT:CustomOnInitialKilled(dmginfo, hitgroup)
 	if (IsValid(self.HunterBro)) then
 		self.HunterBro:Berserk()
 	end
 end
-
-
 
 ENT.RunFromGrenadeDistance = 400
 function ENT:CheckForGrenades()
@@ -347,10 +340,6 @@ function ENT:CheckForGrenades()
 		end
 	end
 end
-
-
-
-
 /*-----------------------------------------------
 	*** Copyright (c) 2012-2016 by DrVrej, All rights reserved. ***
 	No parts of this code or any of its contents may be reproduced, copied, modified or adapted,

@@ -56,17 +56,11 @@ ENT.HasLostWeaponSightAnimation = true -- Set to true if you would like the SNPC
 ENT.AnimTbl_LostWeaponSight = {} -- The animations that it will play if the variable above is set to true
 	-- Melee Attack ---------------------------------------------------------------------------------------------------------------------------------------------
 ENT.HasMeleeAttack = true -- Should the SNPC have a melee attack?
-ENT.MeleeAttackDamage = 70
-ENT.DisableMeleeAttackAnimation = false -- if true, it will disable the animation code
 ENT.AnimTbl_MeleeAttack = {ACT_MELEE_ATTACK1} -- Melee Attack Animations
-ENT.MeleeAttackAnimationFaceEnemy = true -- Should it face the enemy while playing the melee attack animation?
-ENT.MeleeAttackDistance = 80 -- How close does it have to be until it attacks?
-ENT.MeleeAttackAngleRadius = 70 -- What is the attack angle radius? | 100 = In front of the SNPC | 180 = All around the SNPC
-ENT.MeleeAttackDamageDistance = 120 -- How far does the damage go?
-ENT.MeleeAttackDamageAngleRadius = 70 -- What is the damage angle radius? | 100 = In front of the SNPC | 180 = All around the SNPC
 ENT.TimeUntilMeleeAttackDamage = 0.8 -- This counted in seconds | This calculates the time until it hits something
-ENT.NextAnyAttackTime_Melee = 1.3333333333333 -- How much time until it can use any attack again? | Counted in Seconds
+ENT.NextAnyAttackTime_Melee = 1.33 -- How much time until it can use any attack again? | Counted in Seconds
 ENT.StopMeleeAttackAfterFirstHit = true -- Should it stop the melee attack from running rest of timers when it hits an enemy?
+
 ENT.AnimTbl_ShootWhileMovingRun = {ACT_RUN} -- Animations it will play when shooting while running | NOTE: Weapon may translate the animation that they see fit!
 ENT.AnimTbl_ShootWhileMovingWalk = {ACT_RUN} -- Animations it will play when shooting while walking | NOTE: Weapon may translate the animation that they see fit!
 ENT.AnimTbl_Run = {ACT_RUN}
@@ -321,12 +315,6 @@ function ENT:CustomOnAcceptInput(key,activator,caller,data)
 	end
 end
 
-function ENT:CustomOnTakeDamage_AfterDamage(dmginfo,hitgroup) 
-	if (self:Health()<self:GetMaxHealth()*.4 and self.Berserked==false) then
-		self:Berserk()
-	end
-end
-
 ENT.HasStuck=false
 function ENT:Berserk()
 	if self.Berserked==true or self.Dead==true then return end
@@ -358,68 +346,4 @@ function ENT:Berserk()
 			end)
 		end
 	end)
-end
-
-//Brought over from sentinels addon, possibly old/outdated?
-function ENT:CreateGibEntity(Ent,Models,Tbl_Features,CustomCode)
-	// self:CreateGibEntity("prop_ragdoll","",{Pos=self:LocalToWorld(Vector(0,3,0)),Ang=self:GetAngles(),Vel=})
-	if self.AllowedToGib == false then return end
-	Ent = Ent or "prop_ragdoll"
-	if Models == "UseAlien_Small" then Models = {"models/gibs/xenians/sgib_01.mdl","models/gibs/xenians/sgib_02.mdl","models/gibs/xenians/sgib_03.mdl"} end
-	if Models == "UseAlien_Big" then Models = {"models/gibs/xenians/mgib_01.mdl","models/gibs/xenians/mgib_02.mdl","models/gibs/xenians/mgib_03.mdl","models/gibs/xenians/mgib_04.mdl","models/gibs/xenians/mgib_05.mdl","models/gibs/xenians/mgib_06.mdl","models/gibs/xenians/mgib_07.mdl"} end
-	if Models == "UseHuman_Small" then Models = {"models/gibs/humans/sgib_01.mdl","models/gibs/humans/sgib_02.mdl","models/gibs/humans/sgib_03.mdl"} end
-	if Models == "UseHuman_Big" then Models = {"models/gibs/humans/mgib_01.mdl","models/gibs/humans/mgib_02.mdl","models/gibs/humans/mgib_03.mdl","models/gibs/humans/mgib_04.mdl","models/gibs/humans/mgib_05.mdl","models/gibs/humans/mgib_06.mdl","models/gibs/humans/mgib_07.mdl"} end
-	Models = VJ_PICKRANDOMTABLE(Models)
-	local vTbl_BloodType = "Green"
-	if VJ_HasValue({"models/gibs/xenians/sgib_01.mdl","models/gibs/xenians/sgib_02.mdl","models/gibs/xenians/sgib_03.mdl","models/gibs/xenians/mgib_01.mdl","models/gibs/xenians/mgib_02.mdl","models/gibs/xenians/mgib_03.mdl","models/gibs/xenians/mgib_04.mdl","models/gibs/xenians/mgib_05.mdl","models/gibs/xenians/mgib_06.mdl","models/gibs/xenians/mgib_07.mdl"},Models) then
-		vTbl_BloodType = "Yellow"
-	end
-	vTbl_Features = Tbl_Features or {}
-	vTbl_Position = vTbl_Features.Pos or self:GetPos() +self:OBBCenter()
-	vTbl_Angle = vTbl_Features.Ang or Angle(math.Rand(-180,180),math.Rand(-180,180),math.Rand(-180,180)) //self:GetAngles()
-	vTbl_Velocity_NoDamageForce = vTbl_Features.Vel_NoDmgForce or false -- If set to true, it won't add the damage force to the given velocity
-	vTbl_Velocity = vTbl_Features.Vel or Vector(math.Rand(-100,100),math.Rand(-100,100),math.Rand(150,250)) -- Used to set the velocity | "UseDamageForce" = To use the damage's force only
-	if self.LatestDmgInfo != nil then
-		local dmgforce = self.LatestDmgInfo:GetDamageForce()/70
-		if vTbl_Velocity_NoDamageForce == false && vTbl_Features.Vel != "UseDamageForce" then
-			vTbl_Velocity = vTbl_Velocity + dmgforce
-		end
-		if vTbl_Features.Vel == "UseDamageForce" then
-			vTbl_Velocity = dmgforce
-		end
-	end
-	vTbl_AngleVelocity = vTbl_Features.AngVel or Vector(math.Rand(-200,200),math.Rand(-200,200),math.Rand(-200,200)) -- Angle velocity, how fast it rotates as it's flying
-	vTbl_BloodType = vTbl_Features.BloodType or vTbl_BloodType -- Certain entities such as the VJ Gib entity, you can use this to set its gib type
-	vTbl_BloodDecal = vTbl_Features.BloodDecal or "Default" -- The decal it spawns when it collides with something, leave empty to let the base decide
-	vTbl_NoFade = vTbl_Features.NoFade or false -- Should it fade away and delete?
-	vTbl_RemoveOnCorpseDelete = vTbl_Features.RemoveOnCorpseDelete or false -- Should the entity get removed if the corpse is removed?
-	local gib = ents.Create(Ent)
-	gib:SetModel(Models)
-	gib:SetPos(vTbl_Position)
-	gib:SetAngles(vTbl_Angle)
-	if gib:GetClass() == "obj_vj_gib" then
-		gib.BloodType = vTbl_BloodType
-		gib.Collide_Decal = vTbl_BloodDecal
-	end
-	gib:Spawn()
-	gib:Activate()
-	gib.IsVJBase_Gib = true
-	gib.RemoveOnCorpseDelete = vTbl_RemoveOnCorpseDelete
-	if GetConVarNumber("vj_npc_gibcollidable") == 0 then gib:SetCollisionGroup(1) end
-	local phys = gib:GetPhysicsObject()
-	if IsValid(phys) then
-		//phys:SetMass(60)
-		phys:AddVelocity(vTbl_Velocity)
-		phys:AddAngleVelocity(vTbl_AngleVelocity)
-	end
-	cleanup.ReplaceEntity(gib)
-	if GetConVarNumber("vj_npc_fadegibs") == 1 && vTbl_NoFade == false then
-		if gib:GetClass() == "prop_ragdoll" then gib:Fire("FadeAndRemove","",GetConVarNumber("vj_npc_fadegibstime")) end
-		if gib:GetClass() == "prop_physics" then gib:Fire("kill","",GetConVarNumber("vj_npc_fadegibstime")) end
-	end
-	if vTbl_RemoveOnCorpseDelete == true then//self.Corpse:DeleteOnRemove(extraent)
-		self.ExtraCorpsesToRemove_Transition[#self.ExtraCorpsesToRemove_Transition+1] = gib
-	end
-	if (CustomCode) then CustomCode(gib) end
-	return gib
 end

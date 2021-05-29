@@ -27,16 +27,12 @@ ENT.EntitiesToNoCollide = //Player no collide does affect how it behaves, even t
 }
 	-- Melee Attack ---------------------------------------------------------------------------------------------------------------------------------------------
 ENT.HasMeleeAttack = true -- Should the SNPC have a melee attack?
-ENT.MeleeAttackDamage = 50
+ENT.MeleeAttackDamage = 80
 ENT.AnimTbl_MeleeAttack = {ACT_MELEEATTACK1}
 ENT.TimeUntilMeleeAttackDamage = 0.6
 ENT.NextAnyAttackTime_Melee = 1.2
-ENT.MeleeAttackReps = 1 -- How many times does it run the melee attack code?
 ENT.StopMeleeAttackAfterFirstHit = true -- Should it stop the melee attack from running rest of timers when it hits an enemy?
-ENT.MeleeAttackDamageType = DMG_CLUB	
-ENT.MeleeAttackAngleRadius = 70 -- What is the attack angle radius? | 100 = In front of the SNPC | 180 = All around the SNPC
-ENT.MeleeAttackDamageAngleRadius = 70 -- What is the damage angle radius? | 100 = In front of the SNPC | 180 = All around the SNPC
-ENT.MeleeAttackDamageDistance = 90
+
 ENT.HasPoseParameterLooking = false -- Does it look at its enemy using poseparameters?
 ENT.DropWeaponOnDeath = true -- Should it drop its weapon on death?
 ENT.HasItemDropsOnDeath = true -- Should it drop items on death?

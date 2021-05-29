@@ -16,7 +16,7 @@ ENT.Appearance = {
 }
 ENT.StartHealth = 45
 ENT.HeadHitgroup = 505
--- ENT.ShieldHealth = 0
+ENT.CanFlee = true
 ENT.ExtraShotCount = 0
 ENT.WeaponProfficiency = 30
 	-- ====== Blood-Related Variables ====== --
@@ -257,133 +257,10 @@ self.SoundTbl_WeaponReload = {
 	}
 end
 ENT.CustomCollision = {Min = Vector(-20,-20,0), Max = Vector(20,20,60)}
-
 function ENT:CustomOnAcceptInput(key,activator,caller,data)
 	if key == "Step" then
 		self:EmitSound("grunt/shared/walk/walk"..math.random(1,6)..".ogg", 80, 100, 1)
 	end
-end
-
-function ENT:DoSpecialDeath(typeDeath, dmginfo)
-	if (typeDeath==nil) then
-		return
-	elseif (typeDeath=="BackBreak") then --Do the following when taking damage via DMG_CLUB to the back
-		self.AlertFriendsOnDeath = false
-		self:TakeDamage(self:Health(), dmginfo:GetAttacker(), dmginfo:GetInflictor())
-		self:VJ_ACT_PLAYACTIVITY("Die_5", true, 2, false)
-	elseif (typeDeath=="Headshot") then --Do the following when dying via a headshot (above the precisionThreshold)
-		dmginfo:SetDamage(self:Health())
-	elseif (typeDeath=="LargeForce") then --Do the following when dying to DMG_CLUB with high force or DMG_BLAST
-		self.HasDeathRagdoll = false
-		self.HasDeathAnimation = false
-		self.imposter = ents.Create("obj_vj_imposter")
-		self.imposter:SetOwner(self)
-		self.imposter.Sequence = "Die_Airborne"
-		local velocity = dmginfo:GetDamageForce():GetNormalized() * 1500
-		if (dmginfo:GetDamageType()==DMG_CLUB or dmginfo:GetDamageForce():Length()) then
-			velocity = velocity * 0.3
-		end
-		self.imposter.Velocity = Vector(velocity.x, velocity.y, velocity.z + 500)
-		self.imposter.Angle = Angle(0,dmginfo:GetDamageForce():Angle().y,0)
-		self.imposter:Spawn()
-	end
-end
-
-function ENT:CustomOnAllyDeath(argent) 
-	self.HasProtector = self:CheckForProtector()
-	if (self.HasProtector == false) then
-		self:Flee()
-	end
-end
-
-function ENT:CheckForProtector()
-	for k, v in pairs(ents.FindInSphere(self:GetPos(), 1000)) do
-		if (string.find(tostring(v), "elite") or string.find(tostring(v), "brute")) and (v:IsNPC()) then
-			return true
-		end
-	end
-	return false
-end
-
-function ENT:Flee()
-	self.ScaredSound = CreateSound(self, VJ_PICKRANDOMTABLE(self.SoundTbl_Scared))
-	self.ScaredSound:Play()
-	self.Behavior = VJ_BEHAVIOR_PASSIVE
-	self:SetupWeaponHoldTypeAnims("passive")
-	timer.Create("Scared"..self:GetCreationID(), math.random(1.5,3), 5, function()
-		if !(IsValid(self)) then return end 
-		self.ScaredSound = CreateSound(self, VJ_PICKRANDOMTABLE(self.SoundTbl_Scared))
-		self.ScaredSound:Play()
-		self:VJ_TASK_COVER_FROM_ENEMY("TASK_RUN_PATH")
-		if (timer.RepsLeft("Scared"..self:GetCreationID())==0) then
-			self.Behavior = VJ_BEHAVIOR_AGGRESSIVE
-			self:SetupWeaponHoldTypeAnims(self:GetActiveWeapon():GetHoldType())
-		end
-	end)
-end
-
---Brought over from sentinels addon, possibly old/outdated?
-function ENT:CreateGibEntity(Ent,Models,Tbl_Features,CustomCode)
-	// self:CreateGibEntity("prop_ragdoll","",{Pos=self:LocalToWorld(Vector(0,3,0)),Ang=self:GetAngles(),Vel=})
-	if self.AllowedToGib == false then return end
-	Ent = Ent or "prop_ragdoll"
-	if Models == "UseAlien_Small" then Models = {"models/gibs/xenians/sgib_01.mdl","models/gibs/xenians/sgib_02.mdl","models/gibs/xenians/sgib_03.mdl"} end
-	if Models == "UseAlien_Big" then Models = {"models/gibs/xenians/mgib_01.mdl","models/gibs/xenians/mgib_02.mdl","models/gibs/xenians/mgib_03.mdl","models/gibs/xenians/mgib_04.mdl","models/gibs/xenians/mgib_05.mdl","models/gibs/xenians/mgib_06.mdl","models/gibs/xenians/mgib_07.mdl"} end
-	if Models == "UseHuman_Small" then Models = {"models/gibs/humans/sgib_01.mdl","models/gibs/humans/sgib_02.mdl","models/gibs/humans/sgib_03.mdl"} end
-	if Models == "UseHuman_Big" then Models = {"models/gibs/humans/mgib_01.mdl","models/gibs/humans/mgib_02.mdl","models/gibs/humans/mgib_03.mdl","models/gibs/humans/mgib_04.mdl","models/gibs/humans/mgib_05.mdl","models/gibs/humans/mgib_06.mdl","models/gibs/humans/mgib_07.mdl"} end
-	Models = VJ_PICKRANDOMTABLE(Models)
-	local vTbl_BloodType = "Green"
-	if VJ_HasValue({"models/gibs/xenians/sgib_01.mdl","models/gibs/xenians/sgib_02.mdl","models/gibs/xenians/sgib_03.mdl","models/gibs/xenians/mgib_01.mdl","models/gibs/xenians/mgib_02.mdl","models/gibs/xenians/mgib_03.mdl","models/gibs/xenians/mgib_04.mdl","models/gibs/xenians/mgib_05.mdl","models/gibs/xenians/mgib_06.mdl","models/gibs/xenians/mgib_07.mdl"},Models) then
-		vTbl_BloodType = "Yellow"
-	end
-	vTbl_Features = Tbl_Features or {}
-	vTbl_Position = vTbl_Features.Pos or self:GetPos() +self:OBBCenter()
-	vTbl_Angle = vTbl_Features.Ang or Angle(math.Rand(-180,180),math.Rand(-180,180),math.Rand(-180,180)) //self:GetAngles()
-	vTbl_Velocity_NoDamageForce = vTbl_Features.Vel_NoDmgForce or false -- If set to true, it won't add the damage force to the given velocity
-	vTbl_Velocity = vTbl_Features.Vel or Vector(math.Rand(-100,100),math.Rand(-100,100),math.Rand(150,250)) -- Used to set the velocity | "UseDamageForce" = To use the damage's force only
-	if self.LatestDmgInfo != nil then
-		local dmgforce = self.LatestDmgInfo:GetDamageForce()/70
-		if vTbl_Velocity_NoDamageForce == false && vTbl_Features.Vel != "UseDamageForce" then
-			vTbl_Velocity = vTbl_Velocity + dmgforce
-		end
-		if vTbl_Features.Vel == "UseDamageForce" then
-			vTbl_Velocity = dmgforce
-		end
-	end
-	vTbl_AngleVelocity = vTbl_Features.AngVel or Vector(math.Rand(-200,200),math.Rand(-200,200),math.Rand(-200,200)) -- Angle velocity, how fast it rotates as it's flying
-	vTbl_BloodType = vTbl_Features.BloodType or vTbl_BloodType -- Certain entities such as the VJ Gib entity, you can use this to set its gib type
-	vTbl_BloodDecal = vTbl_Features.BloodDecal or "Default" -- The decal it spawns when it collides with something, leave empty to let the base decide
-	vTbl_NoFade = vTbl_Features.NoFade or false -- Should it fade away and delete?
-	vTbl_RemoveOnCorpseDelete = vTbl_Features.RemoveOnCorpseDelete or false -- Should the entity get removed if the corpse is removed?
-	local gib = ents.Create(Ent)
-	gib:SetModel(Models)
-	gib:SetPos(vTbl_Position)
-	gib:SetAngles(vTbl_Angle)
-	if gib:GetClass() == "obj_vj_gib" then
-		gib.BloodType = vTbl_BloodType
-		gib.Collide_Decal = vTbl_BloodDecal
-	end
-	gib:Spawn()
-	gib:Activate()
-	gib.IsVJBase_Gib = true
-	gib.RemoveOnCorpseDelete = vTbl_RemoveOnCorpseDelete
-	if GetConVarNumber("vj_npc_gibcollidable") == 0 then gib:SetCollisionGroup(1) end
-	local phys = gib:GetPhysicsObject()
-	if IsValid(phys) then
-		//phys:SetMass(60)
-		phys:AddVelocity(vTbl_Velocity)
-		phys:AddAngleVelocity(vTbl_AngleVelocity)
-	end
-	cleanup.ReplaceEntity(gib)
-	if GetConVarNumber("vj_npc_fadegibs") == 1 && vTbl_NoFade == false then
-		if gib:GetClass() == "prop_ragdoll" then gib:Fire("FadeAndRemove","",GetConVarNumber("vj_npc_fadegibstime")) end
-		if gib:GetClass() == "prop_physics" then gib:Fire("kill","",GetConVarNumber("vj_npc_fadegibstime")) end
-	end
-	if vTbl_RemoveOnCorpseDelete == true then//self.Corpse:DeleteOnRemove(extraent)
-		self.ExtraCorpsesToRemove_Transition[#self.ExtraCorpsesToRemove_Transition+1] = gib
-	end
-	if (CustomCode) then CustomCode(gib) end
-	return gib
 end
 
 /*-----------------------------------------------

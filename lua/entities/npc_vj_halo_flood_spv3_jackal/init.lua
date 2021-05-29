@@ -35,16 +35,10 @@ ENT.HasMeleeAttack = true -- Should the SNPC have a melee attack?
 ENT.MeleeAttackDistance = 20
 ENT.MeleeAttackDamageType = DMG_SLASH
 ENT.TimeUntilMeleeAttackDamage = 0.6 -- This counted in seconds | This calculates the time until it hits something
-ENT.MeleeAttack_NoProps = true -- If set to true, it won't attack or push any props (Mostly used with multiple melee attacks)
 ENT.MeleeAttackDamage = 25
 ENT.AnimTbl_MeleeAttack = {ACT_MELEE_ATTACK1}
-ENT.MeleeAttackAngleRadius = 70 -- What is the attack angle radius? | 100 = In front of the SNPC | 180 = All around the SNPC
-ENT.MeleeAttackDamageAngleRadius = 70 -- What is the damage angle radius? | 100 = In front of the SNPC | 180 = All around the SNPC
-ENT.MeleeAttackDamageDistance = 60
-ENT.MeleeAttackExtraTimers = {}
 ENT.TimeUntilMeleeAttackDamage = 0.6
 ENT.NextAnyAttackTime_Melee = 1.7
-ENT.MeleeAttackDamageType = DMG_SLASH
 
 ENT.HasLeapAttack = true -- Should the SNPC have a leap attack?
 ENT.AnimTbl_LeapAttack = {ACT_JUMP} -- Melee Attack Animations

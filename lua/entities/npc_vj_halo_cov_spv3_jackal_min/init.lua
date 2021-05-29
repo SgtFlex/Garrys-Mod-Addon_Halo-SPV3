@@ -10,6 +10,7 @@ ENT.Model = {"models/hce/spv3/cov/jackal/jackal.mdl"} -- The game will pick a ra
 ENT.StartHealth = 50
 ENT.HeadHitgroup = 506
 ENT.ShieldProjMaxHealth = 125
+ENT.CanFlee = true
 //125 shieldProjs
 ENT.HullType = HULL_MEDIUM
 ENT.Appearance = {
@@ -149,6 +150,10 @@ function ENT:CustomOnSetupWeaponHoldTypeAnims(htype)
     elseif (htype == "ar2") then
     	self.WeaponAnimTranslations[ACT_RUN]						= ACT_RUN_RIFLE
     	self.WeaponAnimTranslations[ACT_IDLE_AGITATED]				= ACT_IDLE_RIFLE
+    elseif (htype == "normal" or htype == "passive") then
+    	self.AnimTbl_Walk = {ACT_RUN_SCARED} -- Set the walking animations | Put multiple to let the base pick a random animation when it moves
+		self.AnimTbl_Run = {ACT_RUN_SCARED} -- Set the running animations | Put multiple to let the base pick a random animation when it moves
+		self.AnimTbl_MoveToCover = {ACT_RUN_SCARED}
     end
 	return true
 end
@@ -159,37 +164,4 @@ function ENT:CustomOnAcceptInput(key,activator,caller,data)
 	elseif key == "Pain" then
 		self:PlaySoundSystem("Pain")
 	end
-end
-
-function ENT:CustomOnAllyDeath(argent) 
-	self.HasProtector = self:CheckForProtector()
-	if (self.HasProtector == false) then
-		self:Flee()
-	end
-end
-
-function ENT:CheckForProtector()
-	for k, v in pairs(ents.FindInSphere(self:GetPos(), 1000)) do
-		if (string.find(tostring(v), "elite") or string.find(tostring(v), "brute")) and (v:IsNPC()) then
-			return true
-		end
-	end
-	return false
-end
-
-function ENT:Flee()
-	self.Behavior = VJ_BEHAVIOR_PASSIVE
-	self.AnimTbl_Walk = {ACT_RUN_SCARED} -- Set the walking animations | Put multiple to let the base pick a random animation when it moves
-	self.AnimTbl_Run = {ACT_RUN_SCARED} -- Set the running animations | Put multiple to let the base pick a random animation when it moves
-	self.AnimTbl_MoveToCover = {ACT_RUN_SCARED}
-	timer.Create("Scared"..self:GetCreationID(), math.random(1.5,3), 5, function()
-		if !(IsValid(self)) then return end 
-		self:VJ_TASK_COVER_FROM_ENEMY("TASK_RUN_PATH")
-		if (timer.RepsLeft("Scared"..self:GetCreationID())==0) then
-			self.Behavior = VJ_BEHAVIOR_AGGRESSIVE
-			self.AnimTbl_Walk = {ACT_WALK} -- Set the walking animations | Put multiple to let the base pick a random animation when it moves
-			self.AnimTbl_Run = {ACT_RUN} -- Set the running animations | Put multiple to let the base pick a random animation when it moves
-			self.AnimTbl_MoveToCover = {ACT_RUN}
-		end
-	end)
 end

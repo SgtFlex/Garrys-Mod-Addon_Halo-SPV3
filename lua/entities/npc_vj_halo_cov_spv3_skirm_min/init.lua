@@ -14,6 +14,7 @@ ENT.ExtraWeapons = {
 }
 ENT.WeaponProfficiency = 70
 ENT.ExtraShotCount = 1
+ENT.CanFlee = false
 ENT.StartHealth = 45
 ENT.ShieldProjMaxHealth = 0
 ENT.Appearance = {

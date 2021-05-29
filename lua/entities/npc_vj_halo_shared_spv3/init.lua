@@ -10,12 +10,20 @@ ENT.ShieldProjDelay = 6
 ENT.ShieldProjRecharge = 1
 ENT.IsInvis = false
 ENT.HasCloak = ENT.IsInvis
+ENT.CanFlee = false
 ENT.ShieldIsArmor = false
 ENT.DisableBackBreak = false
 ENT.DisableForceDeath = false
 ENT.HeadHitgroup = nil
 ENT.IsCarrier = false
 ENT.ItemDropsOnDeathChance = 3 -- If set to 1, it will always drop it
+
+ENT.MeleeAttackAnimationFaceEnemy = false -- Should it face the enemy while playing the melee attack animation?ENT.MeleeAttackDamage = 70
+ENT.MeleeAttackAngleRadius = 70 -- What is the attack angle radius? | 100 = In front of the SNPC | 180 = All around the SNPC
+ENT.MeleeAttackDamageAngleRadius = 70 -- What is the damage angle radius? | 100 = In front of the SNPC | 180 = All around the SNPC
+ENT.MeleeAttackDamageDistance = 90
+ENT.MeleeAttackDistance = 70
+ENT.MeleeAttackDamageType = DMG_CLUB
 ENT.ExtraWeapons = {}
 ENT.GrenadeWeps = {
 	"weapon_vj_unsc_spv3_frag_nade",
@@ -420,6 +428,7 @@ end
 
 function ENT:DisperseShieldProj()
 	if (self.ShieldProjActivated == false) then return false end
+	if (math.random(0, 1)==0) then self:Flee() end
 	self.ShieldProjActivated = false
 	self:SetHitboxSet("noShield")
 	self:SetBodygroup(1, 0)
@@ -478,7 +487,7 @@ function ENT:CustomOnDeath_BeforeCorpseSpawned(dmginfo, hitgroup)
 end
 
 ENT.infFormCount = 5
-ENT.spreadRadius = 50
+ENT.spreadRadius = 75
 function ENT:DropInfForms()
 	self.infFormCount = math.Round(self.infFormCount*(GetConVarNumber("vj_spv3_infModifier")))
 	self:EmitSound("carrier/kill_instant/kill_instant ("..math.random(1, 6)..").ogg")
@@ -491,16 +500,63 @@ function ENT:DropInfForms()
 	util.BlastDamageInfo(BlastInfo, self:GetPos(), 250)
 	util.ScreenShake(self:GetPos(),16,100,1,800)
 	ParticleEffect("CarrierDeath", self:GetPos() + self:OBBCenter(), self:GetAngles(), nil)
+	local spawnSpots = {
+		Vector(self:OBBMins().x*1.5, self:OBBMins().y *1.5, self:OBBCenter().z), 
+		Vector(self:OBBMaxs().x*1.5, self:OBBMaxs().y*1.5, self:OBBMaxs().z),
+	}
 	for k=1, self.infFormCount do
 		self.infForm = ents.Create("npc_vj_halo_flood_spv3_infection")
-		self.infForm:SetPos(self:GetPos())
+		local pos = self:GetPos() + Vector(math.random(spawnSpots[1].x, spawnSpots[2].x), math.random(spawnSpots[1].y, spawnSpots[2].y), math.random(spawnSpots[1].z, spawnSpots[2].z))
+		local velocity = (pos - (self:GetPos() + self:OBBCenter())):GetNormalized() * self.spreadRadius
+		self.infForm:SetPos(pos) --Returns a random point within the upper bounds of the model
 		self.infForm:SetOwner(self)
 		self.infForm:Spawn()
-		local velocity = Vector(math.random(-self.spreadRadius, self.spreadRadius),math.random(-self.spreadRadius, self.spreadRadius),math.random(100, 200))
 		self.infForm:SetVelocity(velocity)
 		self.infForm:SetAngles(Angle(self.infForm:GetAngles().x, velocity:Angle().y, self.infForm:GetAngles().z))
-		self.infForm:VJ_ACT_PLAYACTIVITY("Melee_1",true,1.3,false)		
+		self.infForm:VJ_ACT_PLAYACTIVITY("Melee_1",true,1.3,false)	
 	end
+end
+
+function ENT:CustomOnAllyDeath(argent) 
+	if (self.CanFlee!=true) then return end
+	self.HasProtector = self:CheckForProtector()
+	if (self.HasProtector == false) then
+		if (math.random(1, 4)==1) then
+			self:Flee()
+		end
+	end
+end
+
+function ENT:CheckForProtector()
+	for k, v in pairs(ents.FindInSphere(self:GetPos(), 1000)) do
+		if (string.find(tostring(v), "elite") or string.find(tostring(v), "brute")) and (v:IsNPC()) then
+			return true
+		end
+	end
+	return false
+end
+
+function ENT:Flee()
+	if (self.CanFlee!=true) then return end
+	self:SetEnemy(nil)
+	if (self.ScaredSound!=nil) then
+		self.ScaredSound = CreateSound(self, VJ_PICKRANDOMTABLE(self.SoundTbl_Scared))
+		self.ScaredSound:Play()
+	end
+	self.Behavior = VJ_BEHAVIOR_PASSIVE
+	self:SetupWeaponHoldTypeAnims("passive")
+	timer.Create("Scared"..self:GetCreationID(), math.random(1.5,3), 5, function()
+		if !(IsValid(self)) then return end 
+		if (self.ScaredSound!=nil) then
+			self.ScaredSound = CreateSound(self, VJ_PICKRANDOMTABLE(self.SoundTbl_Scared))
+			self.ScaredSound:Play()
+		end
+		self:VJ_TASK_COVER_FROM_ENEMY("TASK_RUN_PATH")
+		if (timer.RepsLeft("Scared"..self:GetCreationID())==0) then
+			self.Behavior = VJ_BEHAVIOR_AGGRESSIVE
+			self:SetupWeaponHoldTypeAnims(self:GetActiveWeapon():GetHoldType())
+		end
+	end)
 end
 
 --------------------------------------------------------------------------------------------------------------------------------------------------
