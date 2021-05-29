@@ -364,7 +364,6 @@ function ENT:Latch(entity)
 			end
 		end
 		self.LatchedBone = closestBone
-		PrintMessage(3, tostring(self.LatchedBone))
 		self:SetMoveType(MOVETYPE_NONE)
 		self:FollowBone(self.AttachedTo, self.LatchedBone)
 		self:SetPos(select(1, self.AttachedTo:GetBonePosition(self.LatchedBone)))
