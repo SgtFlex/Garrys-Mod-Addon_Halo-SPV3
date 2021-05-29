@@ -170,6 +170,7 @@ ENT.enemyPos = ""
 ENT.enemyHealth = 150
 ENT.imposter = ""
 function ENT:CustomOnDoKilledEnemy(argent,attacker,inflictor)
+	self.AttachedTo = argent
 	self.AttachedTo.HasDeathSounds = false
 	table.RemoveByValue(self.AttachedTo.AttachedInfectForms, self)
 	table.insert(self.AttachedTo.AttachedInfectForms, 1, self) //We put the killing infection form at the front of the table
@@ -208,25 +209,7 @@ function ENT:CustomOnLeapAttack_AfterChecks(TheHitEntity)
 		self.HitShield = true
 		return
 	end
-	if (IsValid(self) and IsValid(self:GetEnemy())  and self:GetEnemy():Health() < self:GetEnemy():GetMaxHealth()*.4) then
-		self.AttachedTo = self:GetEnemy()
-		if (self.AttachedTo.AttachedInfectForms==nil) then
-			self.AttachedTo.AttachedInfectForms = {}
-		end
-		if (#self.AttachedTo.AttachedInfectForms >= 7) then
-			return
-		end
-		if (#self.AttachedTo.AttachedInfectForms<=0) then
-			timer.Create("Terror"..self.AttachedTo:GetCreationID(), 2, 0, function()
-			if (IsValid(self) and IsValid(self.AttachedTo)) then
-				if (self.AttachedTo.SoundTbl_Stuck) then
-					self.AttachedTo:EmitSound(VJ_PICKRANDOMTABLE(self.AttachedTo.SoundTbl_Stuck))
-				end
-			end
-		end)
-		end
-		self:Latch()
-	end
+	self:Latch(TheHitEntity)
 end
 
 function ENT:GetTransformUnit(host)
@@ -358,21 +341,12 @@ function ENT:SpawnInfected()
 	self.combatForm:VJ_ACT_PLAYACTIVITY(ACT_COVER_PISTOL_LOW,true,1.5,false)
 end
 
-function ENT:Latch()
-	if (string.find(tostring(self.AttachedTo), "npc_vj_halo_cov_spv3_grunt_")) then
-		self.AttachedTo:Flee()
+function ENT:Latch(entity)
+	self.AttachedTo = entity
+
+	if (self.AttachedTo.AttachedInfectForms==nil) then
+		self.AttachedTo.AttachedInfectForms = {}
 	end
-	table.insert(self.AttachedTo.AttachedInfectForms, self)
-	if (#self.AttachedTo.AttachedInfectForms<=1) then
-		if (self.AttachedTo.SoundTbl_Stuck) then
-			self.AttachedTo:EmitSound(VJ_PICKRANDOMTABLE(self.AttachedTo.SoundTbl_Stuck))
-		end
-		if (self.AttachedTo:LookupSequence("Transform")!=-1) then
-			self.AttachedTo:VJ_ACT_PLAYACTIVITY("Transform", true, 4, false)
-		end
-	end
-	self:VJ_ACT_PLAYACTIVITY("Melee_1",true,30,false)	
-	self:SetMoveType(MOVETYPE_NONE)
 	if (self.AttachedTo:GetBoneCount() > 0) then
 		local closestBone
 		for i=0, self.AttachedTo:GetBoneCount()-1 do
@@ -381,6 +355,16 @@ function ENT:Latch()
 			end
 		end
 		closestBone = math.Clamp(closestBone + math.random(-1, 1), 0, self.AttachedTo:GetBoneCount()-1)
+		for k, v in pairs(self.AttachedTo.AttachedInfectForms) do
+			if (closestBone < 0 or closestBone >= self.AttachedTo:GetBoneCount()-1) then
+				closestBone = self.AttachedTo:GetBoneCount()-1
+			end
+			if v.LatchedBone == closestBone then
+				closestBone = closestBone + 1
+			end
+		end
+		self.LatchedBone = closestBone
+		PrintMessage(3, tostring(self.LatchedBone))
 		self:SetMoveType(MOVETYPE_NONE)
 		self:FollowBone(self.AttachedTo, closestBone)
 		self:SetPos(select(1, self.AttachedTo:GetBonePosition(closestBone)))
@@ -390,7 +374,29 @@ function ENT:Latch()
 		self:SetParent(self.AttachedTo)
 		self:SetMoveType(8)
 	end
-	self:GetEnemy():SetSequence(27)
+	if (string.find(tostring(self.AttachedTo), "npc_vj_halo_cov_spv3_grunt_")) then
+		self.AttachedTo:Flee()
+	end
+	table.insert(self.AttachedTo.AttachedInfectForms, self)
+
+	if (#self.AttachedTo.AttachedInfectForms<=1) then
+		if (self.AttachedTo.SoundTbl_Stuck) then
+			self.AttachedTo:EmitSound(VJ_PICKRANDOMTABLE(self.AttachedTo.SoundTbl_Stuck))
+		end
+		if (self.AttachedTo:LookupSequence("Transform")!=-1) then
+			self.AttachedTo:VJ_ACT_PLAYACTIVITY("Transform", true, 4, false)
+		end
+		timer.Create("Terror"..self.AttachedTo:GetCreationID(), 2, 0, function()
+			if (IsValid(self) and IsValid(self.AttachedTo)) then
+				if (self.AttachedTo.SoundTbl_Stuck) then
+					self.AttachedTo:EmitSound(VJ_PICKRANDOMTABLE(self.AttachedTo.SoundTbl_Stuck))
+				end
+			end
+		end)
+	end
+	self:VJ_ACT_PLAYACTIVITY("Melee_1",true,30,false)	
+	self:SetMoveType(MOVETYPE_NONE)
+	self.AttachedTo:SetSequence(27)
 	if (self.AttachedTo:IsPlayer()) then
 		timer.Simple(3, function()
 			if (IsValid(self) and IsValid(self.AttachedTo)) then
@@ -412,9 +418,16 @@ function ENT:Latch()
 			end
 		end
 	end)
+	timer.Simple(3, function() 
+		if (IsValid(self)) then
+			self:Unlatch()
+		end
+	end)
+	return true
 end
 
 function ENT:Unlatch()
+	if (!IsValid(self.AttachedTo)) then return end
 	timer.Destroy("Damage"..self:GetCreationID())
 	table.RemoveByValue(self.AttachedTo.AttachedInfectForms, self)
 	self.AttachedTo = nil
