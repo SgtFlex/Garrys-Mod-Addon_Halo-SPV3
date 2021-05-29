@@ -55,36 +55,24 @@ ENT.needles = 0
 ENT.stopTracking = false
 function ENT:CustomOnCollideWithoutRemove(data,phys) 
 	if (data.HitEntity:IsNPC() or data.HitEntity:IsPlayer()) then
-		if (data.HitEntity:GetBoneCount()>4) then
-			self:SetMoveType(8)
-			self:SetCollisionGroup(0)
-			self:SetNotSolid(true)
-			local closestBone = 0
-			local boneDistance = 1000
-			self.BonePos, self.BoneAng = data.HitEntity:GetBonePosition(1)
-			for i=1, data.HitEntity:GetBoneCount()-1 do
-				if (data.HitEntity:GetBonePosition(i):Distance(self:GetPos()) < boneDistance) then
-					boneDistance = data.HitEntity:GetBonePosition(i):Distance(self:GetPos())
-					self.BoneToFollow = i
-					self.BonePos, self.BoneAng = data.HitEntity:GetBonePosition(self.BoneToFollow)
+		if (data.HitEntity:GetBoneCount() > 0) then
+			local closestBone
+			for i=0, data.HitEntity:GetBoneCount()-1 do
+				if (closestBone == nil or data.HitEntity:GetBonePosition(i):Distance(self:GetPos()) < data.HitEntity:GetBonePosition(closestBone):Distance(self:GetPos())) then
+					closestBone = i
 				end
 			end
+			closestBone = math.Clamp(closestBone + math.random(-1, 1), 0, data.HitEntity:GetBoneCount()-1)
 			self:SetMoveType(MOVETYPE_NONE)
-			self:SetCollisionGroup(0)
-			self:SetNotSolid(true)
-			-- if ((self.BoneToFollow > 2) or (self.BoneToFollow < data.HitEntity:GetBoneCount()-1)) then //Used to randomize needle positions slightly, but causing errors and CTDs
-			-- 	self.BoneToFollow = self.BoneToFollow + math.random(-1,1)
-			-- end
-			-- self.BonePos, self.BoneAng = data.HitEntity:GetBonePosition(self.BoneToFollow)
-			self:FollowBone(data.HitEntity, self.BoneToFollow)
-			self:SetPos(self.BonePos)
-			self:SetAngles(self.BoneAng + Angle(90, 0, 0))
+			self:FollowBone(data.HitEntity, closestBone)
+			self:SetPos(select(1, data.HitEntity:GetBonePosition(closestBone)))
+			self:SetAngles(select(2, data.HitEntity:GetBonePosition(closestBone)) + Angle(90, 0, 0))
 			self:SetVelocity(Vector(0,0,0))
-			
 		else
 			self:SetParent(data.HitEntity)
 			self:SetMoveType(8)
 		end
+		self:SetSolid(0)
 		if (data.HitEntity.needles==nil) then
 			data.HitEntity.needles = {}
 		end
@@ -134,8 +122,13 @@ function ENT:CustomOnCollideWithoutRemove(data,phys)
 	if ((data.HitEntity:IsNPC() or data.HitEntity:IsPlayer()) and #data.HitEntity.needles >= 7) then
 		if (data.HitEntity.Berserked!=nil and data.HitEntity.Berserked!=true and math.random(0, 1)==1) then
 			data.HitEntity:Berserk()
-		elseif (data.HitEntity:LookupSequence("Transform")!=-1) then
-			data.HitEntity:VJ_ACT_PLAYACTIVITY("Transform", true, 4, false)
+		else
+			if (data.HitEntity.SoundTbl_Stuck) then
+				data.HitEntity:EmitSound(VJ_PICKRANDOMTABLE(data.HitEntity.SoundTbl_Stuck))
+			end
+			if (data.HitEntity:LookupSequence("Transform")!=-1) then
+				data.HitEntity:VJ_ACT_PLAYACTIVITY("Transform", true, 4, false)
+			end
 		end
 	end
 	self.stopTracking=true

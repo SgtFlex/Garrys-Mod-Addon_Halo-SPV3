@@ -290,6 +290,7 @@ function ENT:SetInvisibility(bInvis)
 		self:SetMaterial("effects/spv3/cloak")
 		self:AddFlags(FL_NOTARGET)
 		self:DrawShadow(false)
+		self:AddEffects(EF_NOSHADOW)
 		self:RemoveAllDecals()
 		self.IsInvis = true
 	else
@@ -300,6 +301,7 @@ function ENT:SetInvisibility(bInvis)
 			self:GetActiveWeapon():SetMaterial(self.weaponMaterial)
 		end
 		self:DrawShadow(true)
+		self:RemoveEffects(EF_NOSHADOW)
 		self.IsInvis = false
 	end
 end

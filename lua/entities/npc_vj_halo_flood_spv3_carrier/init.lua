@@ -119,13 +119,17 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 	end
 	if (dmginfo:GetDamageType()==DMG_BLAST) then
 		self.KilledBySelf = true
+		self.DeathAnimationTime = 1.3
 		dmginfo:SetDamage(0)
 		self:SetSchedule(73)
 		self:StopMoving()
 		self:SetAngles(Angle(0, dmginfo:GetDamageForce():Angle().y, 0))
 		self:SetVelocity(Vector(dmginfo:GetDamageForce():GetNormalized().x*1000,dmginfo:GetDamageForce():GetNormalized().y*1000,500))
-		timer.Simple(1.5, function() if(IsValid(self)) then self:TakeDamage(999999999999999,self,self) end end)
-		 //end end)
+		timer.Simple(1.5, function() 
+			if(IsValid(self)) then 
+				self:TakeDamage(999999999999999,self,self) 
+			end 
+		end)
 	end
 end
 

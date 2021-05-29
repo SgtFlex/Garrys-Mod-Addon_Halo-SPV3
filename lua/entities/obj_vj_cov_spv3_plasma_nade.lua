@@ -118,35 +118,21 @@ function ENT:CustomOnPhysicsCollide(data,phys)
 		self:EmitSound(VJ_PICKRANDOMTABLE(self.SoundTbl_Settle))
 	end
 	if !(data.HitEntity:IsWorld()) then
-		if (data.HitEntity:GetBoneCount()>4) then
-			self:SetMoveType(8)
-			self:SetCollisionGroup(0)
-			self:SetNotSolid(true)
-			local closestBone = 0
-			local boneDistance = 1000
-			self.BonePos, self.BoneAng = data.HitEntity:GetBonePosition(1)
-			for i=1, data.HitEntity:GetBoneCount()-1 do
-				if (data.HitEntity:GetBonePosition(i):Distance(self:GetPos()) < boneDistance) then
-					boneDistance = data.HitEntity:GetBonePosition(i):Distance(self:GetPos())
+		if (data.HitEntity:GetBoneCount() > 0) then
+			local closestBone
+			for i=0, data.HitEntity:GetBoneCount()-1 do
+				if (closestBone == nil or data.HitEntity:GetBonePosition(i):Distance(self:GetPos()) < data.HitEntity:GetBonePosition(closestBone):Distance(self:GetPos())) then
 					closestBone = i
-					self.BonePos, self.BoneAng = data.HitEntity:GetBonePosition(closestBone)
 				end
 			end
+			closestBone = math.Clamp(closestBone + math.random(-1, 1), 0, data.HitEntity:GetBoneCount()-1)
 			self:SetMoveType(MOVETYPE_NONE)
-			self:SetCollisionGroup(0)
-			self:SetNotSolid(true)
-			if ((closestBone > 1) or (closestBone < data.HitEntity:GetBoneCount()-1)) then
-				self.BoneToFollow = closestBone + math.random(-1,1)
-			else
-				self.BoneToFollow = closestBone
-			end
-			self.BonePos, self.BoneAng = data.HitEntity:GetBonePosition(self.BoneToFollow)
-			self:FollowBone(data.HitEntity, self.BoneToFollow)
-			self:SetPos(self.BonePos)
-			self:SetAngles(self.BoneAng + Angle(90, 0, 0))
+			self:FollowBone(data.HitEntity, closestBone)
+			self:SetPos(select(1, data.HitEntity:GetBonePosition(closestBone)))
+			self:SetAngles(select(2, data.HitEntity:GetBonePosition(closestBone)) + Angle(90, 0, 0))
 			self:SetVelocity(Vector(0,0,0))
 		else
-			self:SetParent(v)
+			self:SetParent(data.HitEntity)
 			self:SetMoveType(8)
 		end
 		self.Settled=true
@@ -158,9 +144,9 @@ function ENT:CustomOnPhysicsCollide(data,phys)
 		else
 			if (data.HitEntity.SoundTbl_Stuck) then
 				data.HitEntity:EmitSound(VJ_PICKRANDOMTABLE(data.HitEntity.SoundTbl_Stuck))
-				if (data.HitEntity:LookupSequence("Transform")!=-1) then
-					data.HitEntity:VJ_ACT_PLAYACTIVITY("Transform", true, 4, false)
-				end
+			end
+			if (data.HitEntity:LookupSequence("Transform")!=-1) then
+				data.HitEntity:VJ_ACT_PLAYACTIVITY("Transform", true, 4, false)
 			end
 		end
 	end

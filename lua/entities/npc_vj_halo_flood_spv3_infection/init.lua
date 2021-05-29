@@ -217,9 +217,6 @@ function ENT:CustomOnLeapAttack_AfterChecks(TheHitEntity)
 			return
 		end
 		if (#self.AttachedTo.AttachedInfectForms<=0) then
-			if (self.AttachedTo.SoundTbl_Stuck) then
-				self.AttachedTo:EmitSound(VJ_PICKRANDOMTABLE(self.AttachedTo.SoundTbl_Stuck))
-			end
 			timer.Create("Terror"..self.AttachedTo:GetCreationID(), 2, 0, function()
 			if (IsValid(self) and IsValid(self.AttachedTo)) then
 				if (self.AttachedTo.SoundTbl_Stuck) then
@@ -366,8 +363,13 @@ function ENT:Latch()
 		self.AttachedTo:Flee()
 	end
 	table.insert(self.AttachedTo.AttachedInfectForms, self)
-	if (self.AttachedTo:LookupSequence("Transform")!=-1 and #self.AttachedTo.AttachedInfectForms<=1) then
-		self.AttachedTo:VJ_ACT_PLAYACTIVITY("Transform",true,1.5,false)
+	if (#self.AttachedTo.AttachedInfectForms<=1) then
+		if (data.HitEntity.SoundTbl_Stuck) then
+			data.HitEntity:EmitSound(VJ_PICKRANDOMTABLE(data.HitEntity.SoundTbl_Stuck))
+		end
+		if (data.HitEntity:LookupSequence("Transform")!=-1) then
+			data.HitEntity:VJ_ACT_PLAYACTIVITY("Transform", true, 4, false)
+		end
 	end
 	self:VJ_ACT_PLAYACTIVITY("Melee_1",true,30,false)	
 	self:SetMoveType(MOVETYPE_NONE)
