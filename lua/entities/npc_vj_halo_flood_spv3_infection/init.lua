@@ -371,11 +371,10 @@ function ENT:Latch(entity)
 			if v.LatchedBone == closestBone then
 				closestBone = closestBone - 1
 			end
-			if (closestBone <= 0 or closestBone >= self.AttachedTo:GetBoneCount()-1) then
+			if (closestBone <= 0 or closestBone > self.AttachedTo:GetBoneCount()-1) then
 				closestBone = self.AttachedTo:GetBoneCount()-1
 			end
 		end
-		PrintMessage(3, tostring(closestBone))
 		self.LatchedBone = closestBone
 		self:SetMoveType(MOVETYPE_NONE)
 		self:FollowBone(self.AttachedTo, self.LatchedBone)
