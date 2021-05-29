@@ -17,7 +17,8 @@ ENT.HasGibOnDeathSounds = false -- Does it have gib sounds? | Mostly used for th
 
 ---------------------------------------------------------------------------------------------------------------------------------------------
 ENT.HasLeapAttack = true -- Should the SNPC have a leap attack?
-ENT.HasMeleeAttack = false-- Should the SNPC have a leap attack?
+ENT.HasMeleeAttack = true-- Should the SNPC have a leap attack?
+ENT.DisableDefaultMeleeAttackDamageCode = true -- Disables the default melee attack damage code
 ENT.AnimTbl_LeapAttack = {ACT_JUMP} -- Melee Attack Animations
 ENT.LeapDistance = 300 -- The distance of the leap, for example if it is set to 500, when the SNPC is 500 Unit away, it will jump
 ENT.LeapToMeleeDistance = 0 -- How close does it have to be until it uses melee?
@@ -176,7 +177,9 @@ function ENT:CustomOnDoKilledEnemy(argent,attacker,inflictor)
 	table.insert(self.AttachedTo.AttachedInfectForms, 1, self) //We put the killing infection form at the front of the table
 	if (self.AttachedTo.AttachedInfectForms) then
 		for k=2, #self.AttachedTo.AttachedInfectForms do
-			self.AttachedTo.AttachedInfectForms[2]:Unlatch()
+			if (IsValid(self) and IsValid(self.AttachedTo.AttachedInfectForms[2])) then
+				self.AttachedTo.AttachedInfectForms[2]:Unlatch()
+			end
 		end
 	end
 	self:TransformHost()
@@ -201,6 +204,15 @@ end
 ENT.AttachedTo = nil
 ENT.HitShield = false
 function ENT:CustomOnLeapAttack_AfterChecks(TheHitEntity) 
+	self:DoStuff(TheHitEntity)
+end
+
+function ENT:CustomOnMeleeAttack_AfterChecks(hitEnt) 
+	self:DoStuff(hitEnt)
+	return false 
+end -- return true to disable the attack and move onto the next entity!
+
+function ENT:DoStuff(TheHitEntity)
 	if ((TheHitEntity.ShieldCurrentHealth && TheHitEntity.ShieldIsArmor==false && TheHitEntity.ShieldCurrentHealth > 0) || (TheHitEntity:IsPlayer() && TheHitEntity:Armor() > 0)) then
 		if (GetConVarNumber("vj_spv3_InfFormsExplode")==0) then
 			TheHitEntity:TakeDamage(self.LeapAttackDamage, self, self)
@@ -356,13 +368,14 @@ function ENT:Latch(entity)
 		end
 		closestBone = math.Clamp(closestBone + math.random(-1, 1), 0, self.AttachedTo:GetBoneCount()-1)
 		for k, v in pairs(self.AttachedTo.AttachedInfectForms) do
-			if (closestBone < 0 or closestBone >= self.AttachedTo:GetBoneCount()-1) then
+			if v.LatchedBone == closestBone then
+				closestBone = closestBone - 1
+			end
+			if (closestBone <= 0 or closestBone >= self.AttachedTo:GetBoneCount()-1) then
 				closestBone = self.AttachedTo:GetBoneCount()-1
 			end
-			if v.LatchedBone == closestBone then
-				closestBone = closestBone + 1
-			end
 		end
+		PrintMessage(3, tostring(closestBone))
 		self.LatchedBone = closestBone
 		self:SetMoveType(MOVETYPE_NONE)
 		self:FollowBone(self.AttachedTo, self.LatchedBone)
