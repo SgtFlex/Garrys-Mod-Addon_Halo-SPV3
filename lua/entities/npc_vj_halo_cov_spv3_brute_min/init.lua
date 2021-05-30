@@ -21,7 +21,7 @@ ENT.Appearance = {
 ENT.HasBloodParticle = true -- Does it spawn a particle when damaged?
 ENT.Faction = "Covenant"
 ENT.RemovableParts = {
-	[500] = {Health = 15, Bodygroup = "Head", Execute = function(entity, dmginfo) 
+	[500] = {Health = GetConVar("vj_spv3_PrecisionThreshold"):GetInt(), Bodygroup = "Head", Execute = function(entity, dmginfo) 
 		entity:EmitSound("brute/fx/brute_armor_destroyed/cov_damage_small.wav")
 		entity:VJ_ACT_PLAYACTIVITY("Hit_Head", true, 1, false)
 		local pos, ang = entity:GetBonePosition(14)
@@ -30,8 +30,8 @@ ENT.RemovableParts = {
 		helmet:SetColor(entity:GetColor())
 		helmet:SetSkin(entity:GetSkin())
 		entity:EmitSound("brute/fx/brute_armor_destroyed/cov_damage_small.wav")
-		if (math.abs(entity.RemovableParts[500]["Health"]) >= GetConVar("vj_spv3_PrecisionThreshold"):GetInt()) then
-			--dmginfo:SetDamage(entity:Health())
+		if ((dmginfo:GetDamage() - entity.PreviousHealth) >= GetConVar("vj_spv3_PrecisionThreshold"):GetInt()) then
+			dmginfo:SetDamage(entity:Health())
 		end
 	end}, --Example of a removable bodygroup. Key must be hitgroup, Health is how much dmg it takes, Bodygroup is which part is removed
 }

@@ -184,11 +184,8 @@ ENT.RemovableParts = {
 		entity:RemoveAllDecals()
 		entity:SetBodygroup(entity:FindBodygroupByName(entity.RemovableParts[502]["Bodygroup"]), 3)
 		entity:DropWeapon()
-		if (entity.actualNade1!=nil) then
-			entity.actualNade1:SetParent(nil)
-		elseif(entity.PlasmaNade1!=nil) then
-			entity.PlasmaNade1:SetParent(nil)
-		end
+		entity.actualNade1 = entity:DropGrenade(entity.actualNade1)
+		entity.PlasmaNade1 = entity:DropGrenade(entity.PlasmaNade1)
 	end},
 	[503] = {Health = 25, Bodygroup = "Left Arm", Execute = function(entity, dmginfo)
 		local pos, ang = entity:GetBonePosition(13)
@@ -198,11 +195,8 @@ ENT.RemovableParts = {
 		entity:RemoveAllDecals()
 		entity:SetBodygroup(entity:FindBodygroupByName(entity.RemovableParts[503]["Bodygroup"]), 3)
 		entity.HasMeleeAttack = false
-		if (entity.actualNade2!=nil) then
-			entity.actualNade2:SetParent(nil)
-		elseif(entity.PlasmaNade2!=nil) then
-			entity.PlasmaNade2:SetParent(nil)
-		end
+		entity.actualNade2 = entity:DropGrenade(entity.actualNade2)
+		entity.PlasmaNade2 = entity:DropGrenade(entity.PlasmaNade2)
 	end},
 	[501] = {Health = 20, Bodygroup = "Body", Execute = function(entity, dmginfo)
 		entity:CreateGibEntity("obj_vj_gib", {"models/hce/spv3/flood/human/floodskin_xl.mdl", "models/hce/spv3/flood/human/floodskin_lg.mdl", "models/hce/spv3/flood/human/floodskin_md.mdl", "models/hce/spv3/flood/human/floodskin_sm.mdl"}, {Pos = pos, Ang = ang, BloodType = "Yellow"})
@@ -261,6 +255,22 @@ end
 
 function ENT:CustomOnInitialKilled(dmginfo,hitgroup) 
 	self:DropWeapon()
+	if (self.IsBomber) then 
+		self.actualNade1 = self:DropGrenade(self.actualNade1)
+		self.actualNade2 = self:DropGrenade(self.actualNade2)
+		self.PlasmaNade1 = self:DropGrenade(self.PlasmaNade1)
+		self.PlasmaNade1 = self:DropGrenade(self.PlasmaNade2)
+	end
+	if (self.Suicided == true) then
+		ParticleEffect("CarrierDeath", self:GetPos() + self:OBBCenter(), self:GetAngles(), nil)
+		self.HasDeathAnimation = false
+		self.HasDeathRagdoll = false
+		for k, v in pairs(self.RemovableParts) do
+			if (v["Health"] > 0) then
+				v["Execute"](self)
+			end
+		end
+	end
 end
 
 ENT.WeaponSpread = 1
@@ -285,31 +295,49 @@ function ENT:CustomRangeAttackCode()
 		return
 	end
 	self.DisableForceDeath = true
-	self.actualNade1 = ents.Create("obj_vj_cov_spv3_plasma_nade")
-	self.actualNade1:SetParent(self, self:LookupAttachment("Cannon"))
-	self.actualNade1:SetPos(self.PlasmaNade1:GetPos())
-	self.actualNade1:Spawn()
-	self.actualNade1:Activate()
-	self.actualNade1:SetOwner(self)
-	self.PlasmaNade1:Remove()
-	self.actualNade1.Manual=true
-	self.actualNade1:SetCollisionGroup(1)
-	self.actualNade1:ManualExplode()
-	self.actualNade2 = ents.Create("obj_vj_cov_spv3_plasma_nade")
-	self.actualNade2:SetParent(self, self:LookupAttachment("anim_attachment_LH"))
-	self.actualNade2:SetPos(self.PlasmaNade2:GetPos())
-	self.actualNade2:Spawn()
-	self.actualNade2:Activate()
-	self.actualNade2:SetOwner(self)
-	self.PlasmaNade2:Remove()
-	self.actualNade2.Manual=true
-	self.actualNade2:SetCollisionGroup(1)
-	self.actualNade2:ManualExplode()
+	if (self.PlasmaNade1) then
+		self.actualNade1 = ents.Create("obj_vj_cov_spv3_plasma_nade")
+		self.actualNade1:SetParent(self, self:LookupAttachment("Cannon"))
+		self.actualNade1:SetPos(self.PlasmaNade1:GetPos())
+		self.actualNade1:Spawn()
+		self.actualNade1:Activate()
+		self.actualNade1:SetOwner(self)
+		self.PlasmaNade1:Remove()
+		self.PlasmaNade1 = nil
+		self.actualNade1.Manual=true
+		self.actualNade1:SetCollisionGroup(1)
+		self.actualNade1:ManualExplode()
+	end
+	if (self.PlasmaNade2) then
+		self.actualNade2 = ents.Create("obj_vj_cov_spv3_plasma_nade")
+		self.actualNade2:SetParent(self, self:LookupAttachment("anim_attachment_LH"))
+		self.actualNade2:SetPos(self.PlasmaNade2:GetPos())
+		self.actualNade2:Spawn()
+		self.actualNade2:Activate()
+		self.actualNade2:SetOwner(self)
+		self.PlasmaNade2:Remove()
+		self.PlasmaNade2 = nil
+		self.actualNade2.Manual=true
+		self.actualNade2:SetCollisionGroup(1)
+		self.actualNade2:ManualExplode()
+	end
 	timer.Simple(2, function() 
 		if (IsValid(self)) then
+			if (self.actualNade1 or self.actualNade2) then
+				self.Suicided = true
+			end
 			self:TakeDamage(self:GetMaxHealth(),self)
 		end
 	end)
+end
+
+function ENT:DropGrenade(entity)
+	if (entity==nil) then return end
+	entity:SetMoveType(MOVETYPE_NONE)
+	entity:SetParent(nil)
+	entity:PhysicsInit(6)
+	entity:GetPhysicsObject():Wake()
+	return nil
 end
 /*-----------------------------------------------
 	*** Copyright (c) 2012-2016 by DrVrej, All rights reserved. ***

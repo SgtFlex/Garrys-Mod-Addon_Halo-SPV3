@@ -34,6 +34,9 @@ ENT.otherInit = function(entity)
 			pos = pos + entity:GetRight()*35
 			helmet = entity:CreateGibEntity("obj_vj_metal_gib", {"models/hce/spv3/cov/grunt/garbage/major_mask.mdl"}, {Pos = pos, Ang = ang})
 			ParticleEffect("GruntMaskGas", pos - entity:GetRight()*35 , ang, entity)
+			if ((dmginfo:GetDamage() - entity.PreviousHealth) >= GetConVar("vj_spv3_PrecisionThreshold"):GetInt()) then
+				dmginfo:SetDamage(entity:Health())
+			end
 		end
 	end
 	entity.StartHealth = math.random(45, 105)

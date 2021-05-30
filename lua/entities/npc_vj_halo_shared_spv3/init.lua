@@ -193,14 +193,12 @@ ENT.HasStuck=false
 ENT.Berserked=false
 function ENT:Berserk()
 	if self.Berserked==true or self.Dead==true then return end
-	timer.Simple(0.1, function()
-		if (!IsValid(self)) then return end
-		self:PlaySoundSystem("GeneralSpeech", self.SoundTbl_Berserk)
-	end)
-	if (self.HasSword == true) then
+	self:StopAllCommonSpeechSounds()
+	self:PlaySoundSystem("GeneralSpeech", self.SoundTbl_Berserk)
+	if (self.HasSword and IsValid(self:GetActiveWeapon()) and self:GetActiveWeapon():GetClass()!="weapon_vj_cov_spv3_energysword") then
+		self:DropWeapon()
 		timer.Simple(0.5, function() 
-			if (IsValid(self) and IsValid(self:GetActiveWeapon()) and self:GetActiveWeapon():GetClass()!="weapon_vj_cov_spv3_energysword") and self.HasSword then
-				self:DropWeapon()
+			if IsValid(self) and self.Dead==false then
 				self:Give("weapon_vj_cov_spv3_energysword")
 			end
 		end)
@@ -365,6 +363,8 @@ function ENT:DoSpecialDeath(typeDeath, dmginfo)
 		return
 	elseif (typeDeath=="BackBreak") then --Do the following when taking damage via DMG_CLUB to the back
 		self.AlertFriendsOnDeath = false
+		self.HasPainSounds = false
+		self.HasDeathSounds = false
 		self:TakeDamage(self:Health(), dmginfo:GetAttacker(), dmginfo:GetInflictor())
 		self:VJ_ACT_PLAYACTIVITY("Die_1", true, 2, false)
 	elseif (typeDeath=="Headshot") then --Do the following when dying via a headshot (above the precisionThreshold)
@@ -400,6 +400,7 @@ end
 
 function ENT:DamageSpecialPart(hitgroup, dmginfo)
 	if (self.RemovableParts[hitgroup]["Health"] > 0) then
+		self.PreviousHealth = math.max(self.RemovableParts[hitgroup]["Health"], 0)
 		self.RemovableParts[hitgroup]["Health"] = math.max(self.RemovableParts[hitgroup]["Health"] - dmginfo:GetDamage(), 0)
 		if (self.RemovableParts[hitgroup]["Health"] <= 0) then
 			self:SetBodygroup(self:FindBodygroupByName(self.RemovableParts[hitgroup]["Bodygroup"]), 0)
@@ -539,21 +540,19 @@ function ENT:CheckForProtector()
 end
 
 function ENT:Flee()
-	if (self.CanFlee!=true) then return end
+	if (self.CanFlee!=true or self.Dead==true) then return end
 	self:SetEnemy(nil)
-	if (self.ScaredSound!=nil) then
+	if (self.SoundTbl_Scared) then
 		self.ScaredSound = CreateSound(self, VJ_PICKRANDOMTABLE(self.SoundTbl_Scared))
 		self.ScaredSound:Play()
 	end
 	self.Behavior = VJ_BEHAVIOR_PASSIVE
 	self:SetupWeaponHoldTypeAnims("passive")
+	self:VJ_TASK_COVER_FROM_ENEMY("TASK_RUN_PATH")
+	if (timer.Exists("Scared"..self:GetCreationID())) then return end
 	timer.Create("Scared"..self:GetCreationID(), math.random(1.5,3), 5, function()
-		if !(IsValid(self)) then return end 
-		if (self.ScaredSound!=nil) then
-			self.ScaredSound = CreateSound(self, VJ_PICKRANDOMTABLE(self.SoundTbl_Scared))
-			self.ScaredSound:Play()
-		end
-		self:VJ_TASK_COVER_FROM_ENEMY("TASK_RUN_PATH")
+		if !(IsValid(self) or self.Dead==true) then return end 
+		self:Flee()
 		if (timer.RepsLeft("Scared"..self:GetCreationID())==0) then
 			self.Behavior = VJ_BEHAVIOR_AGGRESSIVE
 			self:SetupWeaponHoldTypeAnims(self:GetActiveWeapon():GetHoldType())
@@ -630,7 +629,9 @@ function ENT:CustomOnMeleeAttack_BeforeStartTimer(seed)
 	if (self.IsInvis) then
 		self:RemoveFlags(FL_NOTARGET)
 		timer.Simple(0.5, function()
-			self:AddFlags(FL_NOTARGET)
+			if (IsValid(self)) then
+				self:AddFlags(FL_NOTARGET)
+			end
 		end)
 	end
 end

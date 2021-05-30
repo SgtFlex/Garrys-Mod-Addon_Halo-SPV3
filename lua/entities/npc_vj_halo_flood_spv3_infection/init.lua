@@ -213,6 +213,7 @@ function ENT:CustomOnMeleeAttack_AfterChecks(hitEnt)
 end -- return true to disable the attack and move onto the next entity!
 
 function ENT:DoStuff(TheHitEntity)
+	if (!TheHitEntity:IsNPC() and !TheHitEntity:IsPlayer()) then return end
 	if ((TheHitEntity.ShieldCurrentHealth && TheHitEntity.ShieldIsArmor==false && TheHitEntity.ShieldCurrentHealth > 0) || (TheHitEntity:IsPlayer() && TheHitEntity:Armor() > 0)) then
 		if (GetConVarNumber("vj_spv3_InfFormsExplode")==0) then
 			TheHitEntity:TakeDamage(self.LeapAttackDamage, self, self)
@@ -353,29 +354,26 @@ function ENT:SpawnInfected()
 	self.combatForm:VJ_ACT_PLAYACTIVITY(ACT_COVER_PISTOL_LOW,true,1.5,false)
 end
 
+ENT.LatchedBone = nil
 function ENT:Latch(entity)
 	self.AttachedTo = entity
-
 	if (self.AttachedTo.AttachedInfectForms==nil) then
 		self.AttachedTo.AttachedInfectForms = {}
 	end
 	if (self.AttachedTo:GetBoneCount() > 0) then
-		local closestBone
 		for i=0, self.AttachedTo:GetBoneCount()-1 do
-			if (closestBone == nil or self.AttachedTo:GetBonePosition(i):Distance(self:GetPos()) < self.AttachedTo:GetBonePosition(closestBone):Distance(self:GetPos())) then
-				closestBone = i
+			if (self.LatchedBone == nil or self.AttachedTo:GetBonePosition(i):Distance(self:GetPos()) < self.AttachedTo:GetBonePosition(self.LatchedBone):Distance(self:GetPos())) then
+				self.LatchedBone = i
 			end
 		end
-		closestBone = math.Clamp(closestBone + math.random(-1, 1), 0, self.AttachedTo:GetBoneCount()-1)
 		for k, v in pairs(self.AttachedTo.AttachedInfectForms) do
-			if v.LatchedBone == closestBone then
-				closestBone = closestBone - 1
+			if v.LatchedBone == self.LatchedBone then
+				self.LatchedBone = self.LatchedBone - 1
 			end
-			if (closestBone <= 0 or closestBone > self.AttachedTo:GetBoneCount()-1) then
-				closestBone = self.AttachedTo:GetBoneCount()-1
+			if (self.LatchedBone <= 0 or self.LatchedBone > self.AttachedTo:GetBoneCount()-1) then
+				self.LatchedBone = self.AttachedTo:GetBoneCount()-1
 			end
 		end
-		self.LatchedBone = closestBone
 		self:SetMoveType(MOVETYPE_NONE)
 		self:FollowBone(self.AttachedTo, self.LatchedBone)
 		self:SetPos(select(1, self.AttachedTo:GetBonePosition(self.LatchedBone)))
@@ -389,7 +387,6 @@ function ENT:Latch(entity)
 		self.AttachedTo:Flee()
 	end
 	table.insert(self.AttachedTo.AttachedInfectForms, self)
-
 	if (#self.AttachedTo.AttachedInfectForms<=1) then
 		if (self.AttachedTo.SoundTbl_Stuck) then
 			self.AttachedTo:EmitSound(VJ_PICKRANDOMTABLE(self.AttachedTo.SoundTbl_Stuck))

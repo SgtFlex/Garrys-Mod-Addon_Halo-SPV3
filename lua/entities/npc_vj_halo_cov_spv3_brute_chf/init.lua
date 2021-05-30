@@ -13,7 +13,7 @@ ENT.Appearance = {
 }
 ENT.helmet = "models/hce/spv3/cov/brute/garbage/chieftain_helmet.mdl"
 ENT.StartHealth = 250
-ENT.RemovableParts[500]["Health"] = 45
+ENT.RemovableParts[500]["Health"] = GetConVar("vj_spv3_PrecisionThreshold"):GetInt()*3
 ENT.ShieldMaxHealth = 175
 //250 health
 //175 shields
