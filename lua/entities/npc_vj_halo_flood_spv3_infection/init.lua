@@ -204,15 +204,15 @@ end
 ENT.AttachedTo = nil
 ENT.HitShield = false
 function ENT:CustomOnLeapAttack_AfterChecks(TheHitEntity) 
-	self:DoStuff(TheHitEntity)
+	self:PostAttack(TheHitEntity)
 end
 
 function ENT:CustomOnMeleeAttack_AfterChecks(hitEnt) 
-	self:DoStuff(hitEnt)
+	self:PostAttack(hitEnt)
 	return false 
 end -- return true to disable the attack and move onto the next entity!
 
-function ENT:DoStuff(TheHitEntity)
+function ENT:PostAttack(TheHitEntity)
 	if (!TheHitEntity:IsNPC() and !TheHitEntity:IsPlayer()) then return end
 	if ((TheHitEntity.ShieldCurrentHealth && TheHitEntity.ShieldIsArmor==false && TheHitEntity.ShieldCurrentHealth > 0) || (TheHitEntity:IsPlayer() && TheHitEntity:Armor() > 0)) then
 		if (GetConVarNumber("vj_spv3_InfFormsExplode")==0) then
@@ -356,6 +356,7 @@ end
 
 ENT.LatchedBone = nil
 function ENT:Latch(entity)
+	if (entity==nil) then return end
 	self.AttachedTo = entity
 	if (self.AttachedTo.AttachedInfectForms==nil) then
 		self.AttachedTo.AttachedInfectForms = {}
@@ -374,8 +375,10 @@ function ENT:Latch(entity)
 				self.LatchedBone = self.AttachedTo:GetBoneCount()-1
 			end
 		end
+		self:SetPos(select(1, self.AttachedTo:GetBonePosition(self.LatchedBone)))
 		self:SetMoveType(MOVETYPE_NONE)
 		self:FollowBone(self.AttachedTo, self.LatchedBone)
+		self:SetMoveType(MOVETYPE_NONE)
 		self:SetPos(select(1, self.AttachedTo:GetBonePosition(self.LatchedBone)))
 		self:SetAngles(select(2, self.AttachedTo:GetBonePosition(self.LatchedBone)) + Angle(90, 0, 0))
 		self:SetVelocity(Vector(0,0,0))

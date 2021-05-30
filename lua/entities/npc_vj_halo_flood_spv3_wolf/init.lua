@@ -66,6 +66,23 @@ ENT.RangeAttackReps = 10
 ENT.NextAnyAttackTime_Range = 3
 ENT.NextRangeAttackTime = 0
 ENT.NextRangeAttackTime_DoRand = 4 -- False = Don't use random time | Number = Picks a random number between the regular timer and this timer
+ENT.RemovableParts = {
+	[501] = {Health = GetConVar("vj_spv3_precisionThreshold"):GetInt()*3, Bodygroup = "Weapon", Execute = function(entity, dmginfo) 
+		local pos, ang = entity:GetBonePosition(26)
+		entity:CreateGibEntity("obj_vj_gib", "models/hce/spv3/flood/wolf/floodWolf_weapon.mdl", {Pos = pos, Ang = ang, BloodType = "Yellow"})
+		entity:CreateGibEntity("obj_vj_gib", {"models/hce/spv3/flood/human/floodskin_xl.mdl", "models/hce/spv3/flood/human/floodskin_lg.mdl", "models/hce/spv3/flood/human/floodskin_md.mdl", "models/hce/spv3/flood/human/floodskin_sm.mdl"}, {Pos = pos, Ang = ang, BloodType = "Yellow"})
+		entity:CreateGibEntity("obj_vj_gib", {"models/hce/spv3/flood/human/floodinnard_bone.mdl", "models/hce/spv3/flood/human/floodinnard_large.mdl", "models/hce/spv3/flood/human/floodinnard_largest.mdl"}, {Pos = pos, Ang = ang, BloodType = "Yellow"})
+		entity:RemoveAllDecals()
+		entity.HasRangeAttack = false
+		entity.NoChaseAfterCertainRange = false
+		entity:SetHitboxSet("default")
+	end},
+}
+
+
+ENT.otherInit = function(entity)
+	entity:SetHitboxSet("weaponized")
+end
 
 function ENT:RangeAttackCode_OverrideProjectilePos(TheProjectile) -- return other value then 0 to override the projectile's position
 	return self:GetPos() + Vector(0,0,50) + self:GetRight()*math.random(-10,10) + self:GetUp()*math.random(-10,10)
