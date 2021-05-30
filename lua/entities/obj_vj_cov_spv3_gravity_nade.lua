@@ -91,7 +91,9 @@ end
 ENT.DaddyNade = true
 ENT.FirstCollide = false
 function ENT:CustomOnPhysicsCollide(data,phys)
+
 	if (self.FirstCollide==true) then return end
+	ParticleEffectAttach("Gravity_pull", 1, self, 0)
 	self.FirstCollide=true
 	getvelocity = phys:GetVelocity()
 	velocityspeed = getvelocity:Length()
@@ -105,17 +107,24 @@ function ENT:CustomOnPhysicsCollide(data,phys)
 	end
 	self:SetMoveType(0)
 	self:SetAngles(Angle(0,self:GetAngles().y,self:GetAngles().z))
-	self.glow:SetKeyValue("scale","8")
 	timer.Create("Pull"..self:GetCreationID(), 0.3, 0, function()
 		if (IsValid(self)) then
+			util.ScreenShake(self:GetPos(), 100, 100, 1, self.RadiusDamageRadius)
 			for _, v in pairs(ents.FindInSphere(self:GetPos(), self.RadiusDamageRadius)) do
 				if !(v:IsWorld()) then
 					if (IsValid(v:GetPhysicsObject())) then
+						local pullAmount
+						if (v:IsPlayer()) then
+							pullAmount = 10*math.max(v:GetRunSpeed(), v:GetWalkSpeed())*0.6/400 
+						else
+							pullAmount = 10
+						end
+						local force = (self:GetPos()-v:GetPos())*pullAmount
 						if (v:IsNPC() or v:IsPlayer()) and (v.MovementType != VJ_MOVETYPE_STATIONARY) then
-							v:SetVelocity((v:GetPos()-self:GetPos())*-self:GetPos():DistToSqr(v:GetPos())/18000)
+							v:SetVelocity(force)
 							v:TakeDamage(self.RadiusDamage/20, self:GetOwner(), self:GetOwner())
 						else
-							v:GetPhysicsObject():SetVelocity((v:GetPos()-self:GetPos())*-self:GetPos():DistToSqr(v:GetPos())/4500)
+							v:GetPhysicsObject():SetVelocity(force)
 							v:GetPhysicsObject():AddAngleVelocity(Vector(math.random(-500,500),math.random(-500,500),math.random(-500,500)))
 						end
 					end
@@ -158,6 +167,7 @@ function ENT:DeathEffects()
 	end
 	self:EmitSound(VJ_PICKRANDOMTABLE(self.SoundTbl_Death))
 	ParticleEffect("hcea_hunter_ab_explode", self:GetPos(), Angle(0,0,0), nil)
+	self:StopParticles()
 	self.ExplosionLight1 = ents.Create("light_dynamic")
 	self.ExplosionLight1:SetKeyValue("brightness", "4")
 	self.ExplosionLight1:SetKeyValue("distance", "300")

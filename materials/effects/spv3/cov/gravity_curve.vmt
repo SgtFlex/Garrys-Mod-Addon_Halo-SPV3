@@ -1,0 +1,9 @@
+SpriteCard
+{
+	$basetexture "effects/spv3/cov/gravity_curve"
+	$basetexturetransform "center .5 .5 scale 4 4 rotate 0 translate 0 0"
+	$vertexcolor 1
+	$vertexalpha 1
+	$translucent 1
+}
+	

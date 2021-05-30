@@ -313,7 +313,7 @@ end
 
 ENT.PlayerToFollow = ""
 function ENT:CustomOnFollowPlayer(key,activator,caller,data) 
-	self:AAMove_MoveToPos(activator, false, {PosForward=self.vAd_PosForward,PosUp=self.vAd_PosUp,PosRight=self.vAd_PosRight})
+	self:AA_MoveToPos(activator, false, {PosForward=self.vAd_PosForward,PosUp=self.vAd_PosUp,PosRight=self.vAd_PosRight})
 	self.playerToFollow = activator
 end
 
@@ -938,7 +938,7 @@ function ENT:AA_ChaseEnemy(ShouldPlayAnim,UseCalmVariables)
 		end
 		-- Yete chouri e YEV leman marmine chourin mech-e che, ere vor gena yev kharen kal e
 		if self:WaterLevel() <= 2 && self:GetVelocity():Length() > 0 then return end
-		if self:WaterLevel() <= 1 && self:GetVelocity():Length() > 0 then self:AAMove_Wander(true,true) return end
+		if self:WaterLevel() <= 1 && self:GetVelocity():Length() > 0 then self:AA_Wander(true,true) return end
 		if self:GetEnemy():WaterLevel() == 0 then self:DoIdleAnimation(1) return end -- Yete teshnamin chouren tours e, getsour
 		if self:GetEnemy():WaterLevel() <= 1 then -- Yete 0-en ver e, ere vor nayi yete gerna teshanmi-in gerna hasnil
 			local trene = util.TraceLine({
@@ -1037,7 +1037,7 @@ function ENT:AA_ChaseEnemy(ShouldPlayAnim,UseCalmVariables)
 		end
 		if Debug == true then ParticleEffect("vj_impact1_centaurspit", enepos, Angle(0,0,0), self) end
 	else
-		self:AAMove_Stop()
+		self:AA_Stop()
 	end
 	//self.NextChaseTime = CurTime() + 0.1
 end

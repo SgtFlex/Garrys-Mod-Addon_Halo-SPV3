@@ -1,0 +1,8 @@
+SpriteCard
+{
+	$basetexture "effects/spv3/cov/gravity_electric"
+	$vertexcolor 1
+	$vertexalpha 1
+	$translucent 1
+}
+	
