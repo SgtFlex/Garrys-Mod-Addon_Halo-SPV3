@@ -254,7 +254,7 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 		self:DamageShieldProj(dmginfo)
 	end
 	if self.ShieldActivated == true then
-		self:DamageShield(dmginfo)
+		self:DamageShield(dmginfo, hitgroup)
 	else
 		self.CurrentHealth = self.CurrentHealth - dmginfo:GetDamage()
 		if (self.RemovableParts[hitgroup]) then
@@ -304,7 +304,7 @@ function ENT:SetInvisibility(bInvis)
 	end
 end
 
-function ENT:DamageShield(dmginfo)
+function ENT:DamageShield(dmginfo, hitgroup)
 	if (dmginfo:GetDamageType()==DMG_PLASMA or dmginfo:GetDamageType()==DMG_BURN or dmginfo:GetDamageType()==DMG_SLOWBURN) then
 		dmginfo:ScaleDamage(2)
 	end
@@ -314,20 +314,21 @@ function ENT:DamageShield(dmginfo)
 	end
 	self.ShieldCurrentHealth = math.max(self.ShieldCurrentHealth - dmginfo:GetDamage(), 0)
 	if (self.ShieldCurrentHealth <= 0 and self.ShieldActivated==true) then
-		self:DisperseShield()
-		self.CanFlinch = 1
-		self:DoFlinch(dmginfo, hitgroup)
-		self.CanFlinch = 0
+		self:DisperseShield(dmginfo, hitgroup)
 	end
 end
 
-function ENT:DisperseShield(dmginfo)
+function ENT:DisperseShield(dmginfo, hitgroup)
 	if (self.ShieldActivated == false) then return false end
 	self.ShieldActivated = false
 	if (self.ShieldIsArmor == false) then
 		ParticleEffectAttach("hcea_shield_disperse",PATTACH_POINT_FOLLOW,self,self:LookupAttachment("origin"))
 		self:EmitSound("brute/fx/brute_shield_destroyed/brute_shield_destroyed ("..math.random(1, 3)..").ogg")
 		self.Bleeds = true
+		local temp = self.CanFlinch
+		self.CanFlinch = 1
+		self:DoFlinch(dmginfo, hitgroup)
+		self.CanFlinch = temp
 	end
 	return true
 end
