@@ -107,27 +107,26 @@ function ENT:CustomOnPhysicsCollide(data,phys)
 	end
 	self:SetMoveType(0)
 	self:SetAngles(Angle(0,self:GetAngles().y,self:GetAngles().z))
-	timer.Create("Pull"..self:GetCreationID(), 0.3, 0, function()
+	timer.Create("Pull"..self:GetCreationID(), 0.2, 0, function()
 		if (IsValid(self)) then
 			util.ScreenShake(self:GetPos(), 100, 100, 1, self.RadiusDamageRadius)
 			for _, v in pairs(ents.FindInSphere(self:GetPos(), self.RadiusDamageRadius)) do
-				if !(v:IsWorld()) then
-					if (IsValid(v:GetPhysicsObject())) then
-						local pullAmount
-						if (v:IsPlayer()) then
-							pullAmount = 10*math.max(v:GetRunSpeed(), v:GetWalkSpeed())*0.6/400 
-						else
-							pullAmount = 10
-						end
-						local force = (self:GetPos()-v:GetPos())*pullAmount
-						if (v:IsNPC() or v:IsPlayer()) and (v.MovementType != VJ_MOVETYPE_STATIONARY) then
-							v:SetVelocity(force)
-							v:TakeDamage(self.RadiusDamage/20, self:GetOwner(), self:GetOwner())
-						else
-							v:GetPhysicsObject():SetVelocity(force)
-							v:GetPhysicsObject():AddAngleVelocity(Vector(math.random(-500,500),math.random(-500,500),math.random(-500,500)))
-						end
+				if (v!=self and !v:IsWorld() and v.MovementType != VJ_MOVETYPE_STATIONARY and !IsValid(v:GetParent())) then
+					local pullAmount
+					if (v:IsPlayer()) then
+						pullAmount = 10*math.max(v:GetRunSpeed(), v:GetWalkSpeed())*0.4/400 
+					else
+						pullAmount = 10
 					end
+					local force = (self:GetPos()-v:GetPos())*pullAmount
+					if (IsValid(v:GetPhysicsObject())) then
+						v:GetPhysicsObject():SetVelocity(force)
+						v:SetVelocity(force)
+						v:GetPhysicsObject():AddAngleVelocity(Vector(math.random(-500,500),math.random(-500,500),math.random(-500,500)))
+					else
+						v:SetVelocity(force)
+					end
+					v:TakeDamage(self.RadiusDamage/40, self:GetOwner(), self:GetOwner())
 				end
 			end
 		end
