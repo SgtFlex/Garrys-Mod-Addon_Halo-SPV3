@@ -1,0 +1,10 @@
+"LightmappedGeneric"
+{
+	"$translucent" 1
+	"$basetexture" "decals/f_blood4"
+	"$decal" 1
+	"$Size"		"256 256"
+	"$decalscale" 	0.12
+}
+
+

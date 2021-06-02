@@ -13,6 +13,7 @@ ENT.Faction = "Flood"
 ---------------------------------------------------------------------------------------------------------------------------------------------
 	-- ====== Blood-Related Variables ====== --
 ENT.Bleeds = true -- Does the SNPC bleed? (Blood decal, particle, etc.)
+ENT.CustomBlood_Decal = {"VJ_SPV3_Blood_Flood1"}
 ENT.BloodColor = "Yellow" -- The blood type, this will detemine what it should use (decal, particle, etc.)
 ENT.Immune_Dissolve = true -- Immune to Dissolving | Example: Combine Ball
 ENT.HasBloodPool = true -- Does it have a blood pool?
@@ -121,33 +122,33 @@ ENT.ExtraWeapons = {
 ENT.RemovableParts = {
 	[500] = {Health = 15, Bodygroup = "Head", Execute = function(entity, dmginfo) 
 		local pos, ang = entity:GetBonePosition(14)
-		entity:CreateGibEntity("obj_vj_gib", "models/hce/spv3/flood/brute/floodbrute_head.mdl", {Pos = pos, Ang = ang, BloodType = "Yellow"})
-		entity:CreateGibEntity("obj_vj_gib", {"models/hce/spv3/flood/human/floodskin_xl.mdl", "models/hce/spv3/flood/human/floodskin_lg.mdl", "models/hce/spv3/flood/human/floodskin_md.mdl", "models/hce/spv3/flood/human/floodskin_sm.mdl"}, {Pos = pos, Ang = ang, BloodType = "Yellow"})
-		entity:CreateGibEntity("obj_vj_gib", {"models/hce/spv3/flood/human/floodinnard_bone.mdl", "models/hce/spv3/flood/human/floodinnard_large.mdl", "models/hce/spv3/flood/human/floodinnard_largest.mdl"}, {Pos = pos, Ang = ang, BloodType = "Yellow"})
+		entity:CreateGibEntity("obj_vj_gib", "models/hce/spv3/flood/brute/floodbrute_head.mdl", {Pos = pos, Ang = ang, BloodType = "Yellow", BloodDecal="VJ_SPV3_Blood_Flood2"})
+		entity:CreateGibEntity("obj_vj_gib", {"models/hce/spv3/flood/human/floodskin_xl.mdl", "models/hce/spv3/flood/human/floodskin_lg.mdl", "models/hce/spv3/flood/human/floodskin_md.mdl", "models/hce/spv3/flood/human/floodskin_sm.mdl"}, {Pos = pos, Ang = ang, BloodType = "Yellow", BloodDecal="VJ_SPV3_Blood_Flood2"})
+		entity:CreateGibEntity("obj_vj_gib", {"models/hce/spv3/flood/human/floodinnard_bone.mdl", "models/hce/spv3/flood/human/floodinnard_large.mdl", "models/hce/spv3/flood/human/floodinnard_largest.mdl"}, {Pos = pos, Ang = ang, BloodType = "Yellow", BloodDecal="VJ_SPV3_Blood_Flood2"})
 		entity:RemoveAllDecals()
 		entity:SetBodygroup(entity:FindBodygroupByName(entity.RemovableParts[500]["Bodygroup"]), 1)
 	end},
 	[502] = {Health = 25, Bodygroup = "Right Arm", Execute = function(entity, dmginfo)
 		local pos, ang = entity:GetBonePosition(18)
-		entity:CreateGibEntity("obj_vj_gib", "models/hce/spv3/flood/brute/floodbrute_rightArm.mdl", {Pos = pos, Ang = ang, BloodType = "Yellow"})
-		entity:CreateGibEntity("obj_vj_gib", {"models/hce/spv3/flood/human/floodskin_xl.mdl", "models/hce/spv3/flood/human/floodskin_lg.mdl", "models/hce/spv3/flood/human/floodskin_md.mdl", "models/hce/spv3/flood/human/floodskin_sm.mdl"}, {Pos = pos, Ang = ang, BloodType = "Yellow"})
-		entity:CreateGibEntity("obj_vj_gib", {"models/hce/spv3/flood/human/floodinnard_bone.mdl", "models/hce/spv3/flood/human/floodinnard_large.mdl", "models/hce/spv3/flood/human/floodinnard_largest.mdl"}, {Pos = pos, Ang = ang, BloodType = "Yellow"})
+		entity:CreateGibEntity("obj_vj_gib", "models/hce/spv3/flood/brute/floodbrute_rightArm.mdl", {Pos = pos, Ang = ang, BloodType = "Yellow", BloodDecal="VJ_SPV3_Blood_Flood2"})
+		entity:CreateGibEntity("obj_vj_gib", {"models/hce/spv3/flood/human/floodskin_xl.mdl", "models/hce/spv3/flood/human/floodskin_lg.mdl", "models/hce/spv3/flood/human/floodskin_md.mdl", "models/hce/spv3/flood/human/floodskin_sm.mdl"}, {Pos = pos, Ang = ang, BloodType = "Yellow", BloodDecal="VJ_SPV3_Blood_Flood2"})
+		entity:CreateGibEntity("obj_vj_gib", {"models/hce/spv3/flood/human/floodinnard_bone.mdl", "models/hce/spv3/flood/human/floodinnard_large.mdl", "models/hce/spv3/flood/human/floodinnard_largest.mdl"}, {Pos = pos, Ang = ang, BloodType = "Yellow", BloodDecal="VJ_SPV3_Blood_Flood2"})
 		entity:RemoveAllDecals()
 		entity:SetBodygroup(entity:FindBodygroupByName(entity.RemovableParts[502]["Bodygroup"]), 1)
 		entity:DropWeapon()
 	end},
 	[503] = {Health = 25, Bodygroup = "Left Arm", Execute = function(entity, dmginfo)
 		local pos, ang = entity:GetBonePosition(11)
-		entity:CreateGibEntity("obj_vj_gib", "models/hce/spv3/flood/brute/floodbrute_leftArm.mdl", {Pos = pos, Ang = ang, BloodType = "Yellow"})
-		entity:CreateGibEntity("obj_vj_gib", {"models/hce/spv3/flood/human/floodskin_xl.mdl", "models/hce/spv3/flood/human/floodskin_lg.mdl", "models/hce/spv3/flood/human/floodskin_md.mdl", "models/hce/spv3/flood/human/floodskin_sm.mdl"}, {Pos = pos, Ang = ang, BloodType = "Yellow"})
-		entity:CreateGibEntity("obj_vj_gib", {"models/hce/spv3/flood/human/floodinnard_bone.mdl", "models/hce/spv3/flood/human/floodinnard_large.mdl", "models/hce/spv3/flood/human/floodinnard_largest.mdl"}, {Pos = pos, Ang = ang, BloodType = "Yellow"})
+		entity:CreateGibEntity("obj_vj_gib", "models/hce/spv3/flood/brute/floodbrute_leftArm.mdl", {Pos = pos, Ang = ang, BloodType = "Yellow", BloodDecal="VJ_SPV3_Blood_Flood2"})
+		entity:CreateGibEntity("obj_vj_gib", {"models/hce/spv3/flood/human/floodskin_xl.mdl", "models/hce/spv3/flood/human/floodskin_lg.mdl", "models/hce/spv3/flood/human/floodskin_md.mdl", "models/hce/spv3/flood/human/floodskin_sm.mdl"}, {Pos = pos, Ang = ang, BloodType = "Yellow", BloodDecal="VJ_SPV3_Blood_Flood2"})
+		entity:CreateGibEntity("obj_vj_gib", {"models/hce/spv3/flood/human/floodinnard_bone.mdl", "models/hce/spv3/flood/human/floodinnard_large.mdl", "models/hce/spv3/flood/human/floodinnard_largest.mdl"}, {Pos = pos, Ang = ang, BloodType = "Yellow", BloodDecal="VJ_SPV3_Blood_Flood2"})
 		entity:RemoveAllDecals()
 		entity:SetBodygroup(entity:FindBodygroupByName(entity.RemovableParts[503]["Bodygroup"]), 1)
 		entity.HasMeleeAttack = false
 	end},
 	[501] = {Health = 20, Bodygroup = "Torso", Execute = function(entity, dmginfo)
-		entity:CreateGibEntity("obj_vj_gib", {"models/hce/spv3/flood/human/floodskin_xl.mdl", "models/hce/spv3/flood/human/floodskin_lg.mdl", "models/hce/spv3/flood/human/floodskin_md.mdl", "models/hce/spv3/flood/human/floodskin_sm.mdl"}, {Pos = pos, Ang = ang, BloodType = "Yellow"})
-		entity:CreateGibEntity("obj_vj_gib", {"models/hce/spv3/flood/human/floodinnard_bone.mdl", "models/hce/spv3/flood/human/floodinnard_large.mdl", "models/hce/spv3/flood/human/floodinnard_largest.mdl"}, {Pos = pos, Ang = ang, BloodType = "Yellow"})
+		entity:CreateGibEntity("obj_vj_gib", {"models/hce/spv3/flood/human/floodskin_xl.mdl", "models/hce/spv3/flood/human/floodskin_lg.mdl", "models/hce/spv3/flood/human/floodskin_md.mdl", "models/hce/spv3/flood/human/floodskin_sm.mdl"}, {Pos = pos, Ang = ang, BloodType = "Yellow", BloodDecal="VJ_SPV3_Blood_Flood2"})
+		entity:CreateGibEntity("obj_vj_gib", {"models/hce/spv3/flood/human/floodinnard_bone.mdl", "models/hce/spv3/flood/human/floodinnard_large.mdl", "models/hce/spv3/flood/human/floodinnard_largest.mdl"}, {Pos = pos, Ang = ang, BloodType = "Yellow", BloodDecal="VJ_SPV3_Blood_Flood2"})
 		entity:RemoveAllDecals()
 		entity:SetBodygroup(entity:FindBodygroupByName(entity.RemovableParts[501]["Bodygroup"]), 1)
 		entity:EmitSound("infection_form/infection_pop/pop1.ogg")

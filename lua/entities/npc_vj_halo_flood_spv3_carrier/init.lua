@@ -8,6 +8,7 @@ include('entities/npc_vj_halo_shared_spv3/init.lua')
 -----------------------------------------------*/
 ENT.HullType = HULL_MEDIUM
 ENT.Model = {"models/hce/spv3/flood/carrier/carrier.mdl"} -- The game will pick a random model from the table when the SNPC is spawned | Add as many as you want
+ENT.CustomBlood_Decal = {"VJ_SPV3_Blood_Flood1"}
 ENT.StartHealth = 50
 ENT.Appearance = {
 	Color = Color(255,191,0),

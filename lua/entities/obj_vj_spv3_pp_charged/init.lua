@@ -60,6 +60,8 @@ end
 function ENT:CustomOnPhysicsCollide(data, phys) 
 	if data.HitEntity:IsPlayer() and data.HitEntity:Armor() > 0 then
 		self.RadiusDamage = data.HitEntity:Armor()
+	elseif (data.HitEntity.ShieldCurrentHealth and data.HitEntity.ShieldCurrentHealth > 0) then
+		self.RadiusDamage = data.HitEntity.ShieldCurrentHealth
 	end
 end
 /*-----------------------------------------------

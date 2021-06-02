@@ -20,7 +20,8 @@ ENT.DisableBackBreak = true
 ---------------------------------------------------------------------------------------------------------------------------------------------
 	-- ====== Blood-Related Variables ====== --
 ENT.Bleeds = true -- Does the SNPC bleed? (Blood decal, particle, etc.)
-ENT.BloodColor = "Yellow" -- The blood type, this will detemine what it should use (decal, particle, etc.)
+ENT.BloodColor = "Yellow"
+ENT.CustomBlood_Decal = {"VJ_SPV3_Blood_Flood1"}
 ENT.Immune_Dissolve = true -- Immune to Dissolving | Example: Combine Ball
 ENT.HasBloodPool = false -- Does it have a blood pool?
 ENT.HasDeathAnimation = true -- Does it play an animation when it dies?
@@ -69,9 +70,9 @@ ENT.NextRangeAttackTime_DoRand = 4 -- False = Don't use random time | Number = P
 ENT.RemovableParts = {
 	[501] = {Health = GetConVar("vj_spv3_precisionThreshold"):GetInt()*3, Bodygroup = "Weapon", Execute = function(entity, dmginfo) 
 		local pos, ang = entity:GetBonePosition(26)
-		entity:CreateGibEntity("obj_vj_gib", "models/hce/spv3/flood/wolf/floodWolf_weapon.mdl", {Pos = pos, Ang = ang, BloodType = "Yellow"})
-		entity:CreateGibEntity("obj_vj_gib", {"models/hce/spv3/flood/human/floodskin_xl.mdl", "models/hce/spv3/flood/human/floodskin_lg.mdl", "models/hce/spv3/flood/human/floodskin_md.mdl", "models/hce/spv3/flood/human/floodskin_sm.mdl"}, {Pos = pos, Ang = ang, BloodType = "Yellow"})
-		entity:CreateGibEntity("obj_vj_gib", {"models/hce/spv3/flood/human/floodinnard_bone.mdl", "models/hce/spv3/flood/human/floodinnard_large.mdl", "models/hce/spv3/flood/human/floodinnard_largest.mdl"}, {Pos = pos, Ang = ang, BloodType = "Yellow"})
+		entity:CreateGibEntity("obj_vj_gib", "models/hce/spv3/flood/wolf/floodWolf_weapon.mdl", {Pos = pos, Ang = ang, BloodType = "Yellow", BloodDecal="VJ_SPV3_Blood_Flood2"})
+		entity:CreateGibEntity("obj_vj_gib", {"models/hce/spv3/flood/human/floodskin_xl.mdl", "models/hce/spv3/flood/human/floodskin_lg.mdl", "models/hce/spv3/flood/human/floodskin_md.mdl", "models/hce/spv3/flood/human/floodskin_sm.mdl"}, {Pos = pos, Ang = ang, BloodType = "Yellow", BloodDecal="VJ_SPV3_Blood_Flood2"})
+		entity:CreateGibEntity("obj_vj_gib", {"models/hce/spv3/flood/human/floodinnard_bone.mdl", "models/hce/spv3/flood/human/floodinnard_large.mdl", "models/hce/spv3/flood/human/floodinnard_largest.mdl"}, {Pos = pos, Ang = ang, BloodType = "Yellow", BloodDecal="VJ_SPV3_Blood_Flood2"})
 		entity:RemoveAllDecals()
 		entity.HasRangeAttack = false
 		entity.NoChaseAfterCertainRange = false

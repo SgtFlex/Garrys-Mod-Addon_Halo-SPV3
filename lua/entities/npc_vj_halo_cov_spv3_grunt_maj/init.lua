@@ -21,8 +21,17 @@ ENT.RemovableParts[508]["Execute"] = function(entity, dmginfo)
 	entity:EmitSound("grunt/shared/grunt_backpack_destroyed/grunt_backpack_steam"..math.random(1,3)..".ogg", 80, 100, 1)
 	local pos = entity:GetAttachment(entity:LookupAttachment("Backpack"))["Pos"] + entity:GetRight()*35 //Corrective position
 	local ang = entity:GetAttachment(entity:LookupAttachment("Backpack"))["Ang"]
-	local backpack = nil
-	backpack = entity:CreateGibEntity("obj_vj_metal_gib", {"models/hce/spv3/cov/grunt/garbage/tank_two.mdl"}, {Pos = pos, Ang = ang})
-	backpack:SetColor(entity:GetColor())
+	entity:CreateGibEntity("obj_vj_gib", "models/hce/spv3/cov/grunt/garbage/tank_two.mdl", 
+		{
+			Pos = pos, 
+			Ang = ang,
+			BloodDecal="",
+			CollideSound={"phx/epicmetal_hard.wav", "phx/epicmetal_hard1.wav", "phx/epicmetal_hard2.wav", "phx/epicmetal_hard3.wav", "phx/epicmetal_hard4.wav", "phx/epicmetal_hard5.wav", "phx/epicmetal_hard6.wav", "phx/epicmetal_hard7.wav"},
+		},
+		function(gib) 
+			gib:SetColor(entity:GetColor())
+			gib:SetSkin(entity:GetSkin()) 
+		end
+	)
 	ParticleEffectAttach("GruntBackGasTank",PATTACH_POINT_FOLLOW,entity,entity:LookupAttachment("Backpack"))
 end

@@ -26,9 +26,18 @@ ENT.RemovableParts = {
 		entity:VJ_ACT_PLAYACTIVITY("Hit_Head", true, 1, false)
 		local pos, ang = entity:GetBonePosition(14)
 		pos = pos + entity:GetRight() * 75
-		helmet = entity:CreateGibEntity("obj_vj_metal_gib", {entity.helmet}, {Pos = pos, Ang = ang})
-		helmet:SetColor(entity:GetColor())
-		helmet:SetSkin(entity:GetSkin())
+		entity:CreateGibEntity("obj_vj_gib", entity.helmet, 
+			{
+				Pos = pos, 
+				Ang = ang,
+				BloodDecal="",
+				CollideSound={"phx/epicmetal_hard.wav", "phx/epicmetal_hard1.wav", "phx/epicmetal_hard2.wav", "phx/epicmetal_hard3.wav", "phx/epicmetal_hard4.wav", "phx/epicmetal_hard5.wav", "phx/epicmetal_hard6.wav", "phx/epicmetal_hard7.wav"},
+			},
+			function(gib) 
+				gib:SetColor(entity:GetColor())
+				gib:SetSkin(entity:GetSkin()) 
+			end
+		)
 		entity:EmitSound("brute/fx/brute_armor_destroyed/cov_damage_small.wav")
 		if ((dmginfo:GetDamage() - entity.PreviousHealth) >= GetConVar("vj_spv3_PrecisionThreshold"):GetInt()) then
 			dmginfo:SetDamage(entity:Health())

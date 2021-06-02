@@ -11,6 +11,8 @@ ENT.HullType = HULL_TINY
 ---------------------------------------------------------------------------------------------------------------------------------------------
 	-- Relationships ---------------------------------------------------------------------------------------------------------------------------------------------
 ENT.VJ_NPC_Class = {"CLASS_PARASITE"} -- NPCs with the same class with be allied to each other
+ENT.BloodColor = "Yellow"
+ENT.CustomBlood_Decal = {"VJ_SPV3_Blood_Flood2"}
 	-- ====== Gibs ====== --
 ENT.GibOnDeathDamagesTable = {"All"} -- Damages that it gibs from | "UseDefault" = Uses default damage types | "All" = Gib from any damage
 ENT.HasGibOnDeathSounds = false -- Does it have gib sounds? | Mostly used for the settings menu
@@ -284,7 +286,7 @@ function ENT:TransformHost()
 	end
 	self.enemyHasCloak = self.AttachedTo.HasCloak or false
 	self.combatForm = self:GetTransformUnit(self.AttachedTo:GetClass())
-	if (self.combatForm == false) then return end
+	if (self.combatForm == false) then self:Unlatch() return end
 	self:SetHealth(999999)
 	self:SetNoDraw(true)
 	timer.Simple(0.01, function()
@@ -329,6 +331,7 @@ function ENT:CreateImposter(npc)
 	self.imposter:SetAngles(self.enemyAng)
 	self.imposter:SetPos(self.enemyPos)
 	self.imposter:Spawn()
+	ParticleEffectAttach("Flood_transform", 1, self.imposter, 0)
 	local bodygroups = self.AttachedTo:GetBodyGroups()
 	for k, v in pairs(bodygroups) do
 		self.imposter:SetBodygroup(bodygroups[k]["id"], self.AttachedTo:GetBodygroup(bodygroups[k]["id"]))
@@ -351,30 +354,34 @@ function ENT:SpawnInfected()
 	self.combatForm:Spawn()
 	self.combatForm:SetAngles(self.enemyAng)
 	self.combatForm:SetPos(self.enemyPos)
+	ParticleEffect("CarrierDeath", self.combatForm:GetPos() + self.combatForm:OBBCenter(), self.combatForm:GetAngles(), nil)
 	self.combatForm:VJ_ACT_PLAYACTIVITY(ACT_COVER_PISTOL_LOW,true,1.5,false)
 end
 
 ENT.LatchedBone = nil
 function ENT:Latch(entity)
-	if (entity==nil) then return end
 	self.AttachedTo = entity
+	if (!IsValid(self.AttachedTo) or !IsValid(self)) then return end
 	if (self.AttachedTo.AttachedInfectForms==nil) then
 		self.AttachedTo.AttachedInfectForms = {}
 	end
 	if (self.AttachedTo:GetBoneCount() > 0) then
-		for i=0, self.AttachedTo:GetBoneCount()-1 do
-			if (self.LatchedBone == nil or self.AttachedTo:GetBonePosition(i):Distance(self:GetPos()) < self.AttachedTo:GetBonePosition(self.LatchedBone):Distance(self:GetPos())) then
-				self.LatchedBone = i
-			end
-		end
-		for k, v in pairs(self.AttachedTo.AttachedInfectForms) do
-			if v.LatchedBone == self.LatchedBone then
-				self.LatchedBone = self.LatchedBone - 1
-			end
-			if (self.LatchedBone <= 0 or self.LatchedBone > self.AttachedTo:GetBoneCount()-1) then
-				self.LatchedBone = self.AttachedTo:GetBoneCount()-1
-			end
-		end
+		-- for i=0, self.AttachedTo:GetBoneCount()-1 do
+		-- 	if (self.LatchedBone == nil or 
+		-- 		self.AttachedTo:GetBonePosition(i):Distance(self:GetPos()) < 
+		-- 		self.AttachedTo:GetBonePosition(self.LatchedBone):Distance(self:GetPos())) then
+		-- 		self.LatchedBone = i
+		-- 	end
+		-- end
+		-- for k, v in pairs(self.AttachedTo.AttachedInfectForms) do
+		-- 	if v.LatchedBone == self.LatchedBone then
+		-- 		self.LatchedBone = self.LatchedBone - 1
+		-- 	end
+		-- 	if (self.LatchedBone <= 0 or self.LatchedBone > self.AttachedTo:GetBoneCount()-1) then
+		-- 		self.LatchedBone = self.AttachedTo:GetBoneCount()-1
+		-- 	end
+		-- end
+		self.LatchedBone = math.random(0, self.AttachedTo:GetBoneCount()-1)
 		self:SetPos(select(1, self.AttachedTo:GetBonePosition(self.LatchedBone)))
 		self:SetMoveType(MOVETYPE_NONE)
 		self:FollowBone(self.AttachedTo, self.LatchedBone)
