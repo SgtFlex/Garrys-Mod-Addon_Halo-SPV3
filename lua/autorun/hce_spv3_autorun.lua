@@ -219,50 +219,6 @@ game.AddAmmoType({
 	minsplash = 0,
 	maxsplash = 0
 })
-game.AddParticles("particles/main_effects.pcf")
-	local particlename = {
-		"hcea_shield_impact",
-		"hcea_shield_recharged",
-		"hcea_shield_enabled",
-		"hcea_shield_disperse",
-
-		"hcea_hunter_ab_charge",
-		"hcea_hunter_ab_explode",
-		"hcea_hunter_ab_muzzle",
-		"hcea_hunter_ab_proj",
-		
-		"hcea_hunter_frg_charge",
-		"hcea_hunter_frg_explode",
-		"hcea_hunter_frg_muzzle",
-		"hcea_hunter_frg_proj",
-		"hcea_hunter_frg_proj_lightning_trcr_e",
-		
-		"hcea_hunter_shade_cannon_trigger_muzzle",
-		"hcea_hunter_shade_cannon_proj",
-		"hcea_hunter_shade_cannon_explode_ground",
-		"hcea_hunter_shade_cannon_explode_air",
-		
-		"hcea_hunter_canister_green",
-		"hcea_hunter_canister_purple",
-		"hcea_hunter_canister_orange",
-		
-		"hcea_flood_carrier_death",
-		"hcea_flood_infected_death",
-		"hcea_flood_runner_death",
-		
-		"hcea_hunter_particle_carbine",
-		"hcea_hunter_particle_carbine_impact",
-		"hcea_hunter_needler_muzzle",
-		"hcea_hunter_needler_proj",
-		"hcea_hunter_needler_pistol_impact",
-		"hcea_hunter_plasma_rifle_fire",
-		"hcea_hunter_plasma_rifle_proj",
-		"hcea_hunter_plasma_rifle_impact",
-		"hcea_hunter_plasma_pistol_fire",
-		"hcea_hunter_plasma_pistol_proj",
-		"hcea_hunter_plasma_pistol_impact",
-	}
-	for _,v in ipairs(particlename) do PrecacheParticleSystem(v) end
 	
 -- !!!!!! DON'T TOUCH ANYTHING BELOW THIS !!!!!! -------------------------------------------------------------------------------------------------------------------------
 	AddCSLuaFile(AutorunFile)
