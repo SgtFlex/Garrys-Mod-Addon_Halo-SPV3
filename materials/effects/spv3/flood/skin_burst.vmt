@@ -1,8 +1,0 @@
-SpriteCard
-{
-	$basetexture "effects/spv3/flood/skin_burst"
-	$vertexcolor 1
-	$vertexalpha 1
-	$translucent 1
-}
-	
