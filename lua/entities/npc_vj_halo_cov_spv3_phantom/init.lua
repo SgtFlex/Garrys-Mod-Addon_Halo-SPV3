@@ -108,7 +108,7 @@ function ENT:CustomOnInitialize()
 	if (trace.Hit) then
 		self:SetPos(trace.HitPos + Vector(0,0,math.random(300, 1000)))
 	end
-	self:VJ_ACT_PLAYACTIVITY(self.SpawnAnim,true,self:SequenceDuration(self:LookupSequence(self.SpawnAnim)),false)	
+	timer.Simple(0.001, function() 	self:VJ_ACT_PLAYACTIVITY(self.SpawnAnim,true,self:SequenceDuration(self:LookupSequence(self.SpawnAnim)),false)	end) --Since June 17th VJ Update, line will not work without a delay
 	self:SetCollisionBounds(Vector(-500, -300, -50), Vector(500, 300, 400))
 	self.engineSound = CreateSound(self, "phantom/engine_hover.wav")
 	self.movingSound = CreateSound(self, "phantom/engine_moving.wav")
@@ -147,7 +147,6 @@ function ENT:CustomOnInitialize()
 	end)
 	timer.Simple(self:SequenceDuration(self:LookupSequence(self.SpawnAnim)), function()
 		if (IsValid(self)) then
-			self:VJ_ACT_PLAYACTIVITY("Idle",true,3,false)	
 			self:SpawnCovies()
 		end
 	end)

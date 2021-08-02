@@ -167,7 +167,7 @@ function ENT:CustomOnInitialize()
 		self.turret4:SetNoDraw(true)
 	end
 
-	self:VJ_ACT_PLAYACTIVITY(self.SpawnAnim,true,self:SequenceDuration(self:LookupSequence(self.SpawnAnim)),false)	
+	timer.Simple(0.001, function() self:VJ_ACT_PLAYACTIVITY(self.SpawnAnim,true,self:SequenceDuration(self:LookupSequence(self.SpawnAnim)),false) end)
 	self:SetNoDraw(true)
 	timer.Simple(0.3, function()
 		if (IsValid(self)) then
@@ -189,7 +189,6 @@ function ENT:CustomOnInitialize()
 	end)
 	timer.Simple(self:SequenceDuration(self:LookupSequence(self.SpawnAnim)), function()
 		if (IsValid(self)) then
-			self:VJ_ACT_PLAYACTIVITY("Idle",true,3,false)	
 			self:SpawnUNSC()
 		end
 	end)

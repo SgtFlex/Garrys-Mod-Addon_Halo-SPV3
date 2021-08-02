@@ -300,9 +300,9 @@ function ENT:CustomOnSetupWeaponHoldTypeAnims(htype)
     	self.WeaponAnimTranslations[ACT_IDLE_AGITATED]				= ACT_IDLE_PISTOL
     	self.WeaponAnimTranslations[ACT_GESTURE_RANGE_ATTACK1]		= ACT_GESTURE_RANGE_ATTACK_PISTOL
     elseif (htype == "ar2") then
+    	self.WeaponAnimTranslations[ACT_RUN]						= ACT_RUN_RIFLE
     	self.WeaponAnimTranslations[ACT_IDLE_AGITATED]				= ACT_IDLE_RIFLE
     	self.WeaponAnimTranslations[ACT_GESTURE_RANGE_ATTACK1]		= ACT_GESTURE_RANGE_ATTACK_AR2
-    	self.WeaponAnimTranslations[ACT_RUN_PISTOL]					= ACT_RUN_RIFLE
     end
 	return true
 end
