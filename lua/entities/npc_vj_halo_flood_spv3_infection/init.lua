@@ -19,7 +19,7 @@ ENT.HasGibOnDeathSounds = false -- Does it have gib sounds? | Mostly used for th
 
 ---------------------------------------------------------------------------------------------------------------------------------------------
 ENT.HasLeapAttack = true -- Should the SNPC have a leap attack?
-ENT.HasMeleeAttack = true-- Should the SNPC have a leap attack?
+ENT.HasMeleeAttack = false-- Should the SNPC have a leap attack?
 ENT.AnimTbl_LeapAttack = {ACT_JUMP} -- Melee Attack Animations
 ENT.LeapDistance = 300 -- The distance of the leap, for example if it is set to 500, when the SNPC is 500 Unit away, it will jump
 
@@ -27,7 +27,7 @@ ENT.LeapToMeleeDistance = 0 -- How close does it have to be until it uses melee?
 ENT.TimeUntilLeapAttackDamage = 0.4 -- How much time until it runs the leap damage code?
 ENT.NextLeapAttackTime = 2 -- How much time until it can use a leap attack?
 ENT.NextAnyAttackTime_Leap = 2 -- How much time until it can use any attack again? | Counted in Seconds
-ENT.LeapAttackExtraTimers = {0.2,0.6,0.8, 1, 1.2, 1.5, 2} -- Extra leap attack timers | it will run the damage code after the given amount of seconds
+ENT.LeapAttackExtraTimers = {0.2, 0.6, 0.8, 1, 1.2, 1.5, 2} -- Extra leap attack timers | it will run the damage code after the given amount of seconds
 ENT.LeapAttackVelocityForward = -150 -- How much forward force should it apply?
 ENT.LeapAttackVelocityUp = 200 -- How much upward force should it apply?
 ENT.LeapAttackDamage = 10
@@ -37,9 +37,10 @@ ENT.LeapAttackDamageType = DMG_DIRECT -- Type of Damage
 
 ENT.HasDeathRagdoll = false -- If set to false, it will not spawn the regular ragdoll of the SNPC
 ENT.PushProps = false -- Should it push props when trying to move?
-//Prevent blocking of infection forms but also don't block the way of other combat forms
-ENT.EntitiesToNoCollide = //Player no collide does affect how it behaves, even though the wiki states it doesn't
-{
+--Prevent blocking of infection forms but also don't block the way of other combat forms
+--Player no collide does affect how it behaves, even though the wiki states it doesn't
+
+ENT.EntitiesToNoCollide = {
 	"player",
 	"npc_vj_halo_flood_spv3_infection",
 	"npc_vj_halo_flood_spv3_elite", 
@@ -138,9 +139,6 @@ function ENT:CustomOnInitialize()
 			self:SetFriction(0.3)
 		end
 	end)
-	self.StartHealth = self.StartHealth
-	if (self.StartHealth < 1) then self.StartHealth = 1 end
-	self:SetHealth(self.StartHealth)
 	self.LeapAttackDamage = self.LeapAttackDamage * GetConVarNumber("vj_spv3_damageModifier")
 end
 ---------------------------------------------------------------------------------------------------------------------------------------------
@@ -343,7 +341,7 @@ function ENT:CreateImposter(npc)
 end
 
 function ENT:SpawnInfected()
-	self.combatForm = ents.Create(self.combatForm) //Has to be initialized again, otherwise spawned combat form doesn't attack
+	self.combatForm = ents.Create(self.combatForm) --Has to be initialized again, otherwise spawned combat form doesn't attack
 	self.combatForm.Appearance["Color"] = self.enemyCol
 	self.combatForm.Appearance["Skin"] = self.enemySkin
 	self.combatForm.ExtraWeapons = {}
