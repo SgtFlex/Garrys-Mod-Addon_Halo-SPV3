@@ -86,14 +86,13 @@ end
 
 function ENT:CustomOn_PoseParameterLookingCode(pitch,yaw,roll) 
 	if (IsValid(self:GetEnemy())) then
-		self:SetAngles(Angle(self:GetAngles().x, self:GetAimVector():Angle().y, self:GetAngles().z))
+		self:SetAngles(Angle(0, self:GetAimVector():Angle().y +15, 0))
 	end
-
 end
 
 function ENT:CustomRangeAttackCode() 
 	self:FireBullets({
-		Damage = 5 * GetConVar("vj_spv3_DamageModifier"):GetInt(),
+		Damage = 5 * GetConVar("vj_spv3_DamageModifier"):GetFloat(),
 		Dir = self:GetAimVector(),
 		Src = self:GetPos(),
 		Spread = Vector(0.03, 0.03, 0)

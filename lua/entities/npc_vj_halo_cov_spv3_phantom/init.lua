@@ -130,6 +130,8 @@ function ENT:CustomOnInitialize()
 	self.turret = {}
 	for i=1, 1 do
 		self.turret[i] = ents.Create("npc_vj_halo_cov_spv3_phantom_turret")
+		self.turret[i]:SetPos(self:GetAttachment(self:LookupAttachment("Cannon"..i))["Pos"])
+		self.turret[i]:SetAngles(self:GetAttachment(self:LookupAttachment("Cannon"..i))["Ang"])
 		self.turret[i]:SetParent(self, 2)
 		self.turret[i]:SetPos(self:GetAttachment(self:LookupAttachment("Cannon"..i))["Pos"])
 		self.turret[i]:SetAngles(self:GetAttachment(self:LookupAttachment("Cannon"..i))["Ang"])

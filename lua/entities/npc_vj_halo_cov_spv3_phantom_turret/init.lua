@@ -55,7 +55,7 @@ end -- return other value then 0 to override the projectile's position
 
 function ENT:CustomOn_PoseParameterLookingCode(pitch,yaw,roll) 
 	if (IsValid(self:GetEnemy())) then
-		self:SetAngles(Angle(self:GetAngles().x, self:GetAimVector():Angle().y, self:GetAngles().z))
+		self:SetAngles(Angle(0, self:GetAimVector():Angle().y +15, 0))
 	end
 end
 
