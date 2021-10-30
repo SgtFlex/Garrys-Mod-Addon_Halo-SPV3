@@ -25,7 +25,7 @@ ENT.DirectDamage = 35 -- How much damage should it do when it hits something
 ENT.DirectDamageType = DMG_BURN -- Damage type
 ---------------------------------------------------------------------------------------------------------------------------------------------
 function ENT:CustomOnInitialize()
-	self.RadiusDamage = self.RadiusDamage * GetConVarNumber("vj_spv3_damageModifier") -- How much damage should it deal? Remember this is a radius damage, therefore it will do less damage the farther away the entity is from its enemy
+	self.DirectDamage = self.DirectDamage * GetConVarNumber("vj_spv3_damageModifier") -- How much damage should it deal? Remember this is a radius damage, therefore it will do less damage the farther away the entity is from its enemy
 	self:SetNoDraw(true)
 	ParticleEffectAttach("hcea_hunter_plasma_pistol_proj", PATTACH_ABSORIGIN_FOLLOW, self, 0)
 	self.glow = ents.Create("env_sprite")

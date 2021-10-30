@@ -24,38 +24,40 @@ ENT.AnimTbl_LeapAttack = {ACT_JUMP} -- Melee Attack Animations
 ENT.LeapDistance = 300 -- The distance of the leap, for example if it is set to 500, when the SNPC is 500 Unit away, it will jump
 
 ENT.LeapToMeleeDistance = 0 -- How close does it have to be until it uses melee?
-ENT.TimeUntilLeapAttackDamage = 0.4 -- How much time until it runs the leap damage code?
-ENT.NextLeapAttackTime = 2 -- How much time until it can use a leap attack?
-ENT.NextAnyAttackTime_Leap = 2 -- How much time until it can use any attack again? | Counted in Seconds
-ENT.LeapAttackExtraTimers = {0.2, 0.6, 0.8, 1, 1.2, 1.5, 2} -- Extra leap attack timers | it will run the damage code after the given amount of seconds
+ENT.TimeUntilLeapAttackDamage = 0.5 -- How much time until it runs the leap damage code?
+ENT.LeapAttackAngleRadius = 180 -- What is the attack angle radius? | 100 = In front of the SNPC | 180 = All around the SNPC
+ENT.NextLeapAttackTime = 0.5 -- How much time until it can use a leap attack?
+ENT.NextAnyAttackTime_Leap = 0.5 -- How much time until it can use any attack again? | Counted in Seconds
+ENT.LeapAttackReps = 8 -- How many times does it run the leap attack code?
 ENT.LeapAttackVelocityForward = -150 -- How much forward force should it apply?
 ENT.LeapAttackVelocityUp = 200 -- How much upward force should it apply?
 ENT.LeapAttackDamage = 10
-ENT.MeleeAttackDamage = ENT.LeapAttackDamage
-ENT.LeapAttackDamageDistance = 30 -- How far does the damage go?
+ENT.LeapAttackDamageDistance = 125 -- How far does the damage go?
 ENT.LeapAttackDamageType = DMG_DIRECT -- Type of Damage
+ENT.StopLeapAttackAfterFirstHit = true -- Should it stop the leap attack from running rest of timers when it hits an enemy?
 
+ENT.MeleeAttackDamage = ENT.LeapAttackDamage
 ENT.HasDeathRagdoll = false -- If set to false, it will not spawn the regular ragdoll of the SNPC
 ENT.PushProps = false -- Should it push props when trying to move?
 --Prevent blocking of infection forms but also don't block the way of other combat forms
 --Player no collide does affect how it behaves, even though the wiki states it doesn't
 
-ENT.EntitiesToNoCollide = {
-	"player",
-	"npc_vj_halo_flood_spv3_infection",
-	"npc_vj_halo_flood_spv3_elite", 
-	"npc_vj_halo_flood_spv3_elite_ran", 
-	"npc_vj_halo_flood_spv3_elite_runner", 
-	"npc_vj_halo_flood_spv3_elite_hg", 
-	"npc_vj_halo_flood_spv3_elite_suicide",
-	"npc_vj_halo_flood_spv3_elite_oss",
-	"npc_vj_halo_flood_spv3_marine", 
-	"npc_vj_halo_flood_spv3_odst", 
-	"npc_vj_halo_flood_spv3_carrier", 
-	"npc_vj_halo_flood_spv3_wolf", 
-	"npc_vj_halo_flood_spv3_jackal", 
-	"npc_vj_halo_flood_spv3_brute", 
-}
+--Adding no collide to other infection forms causes signifigant FPS drop
+-- ENT.EntitiesToNoCollide = {
+-- 	"player",
+-- 	"npc_vj_halo_flood_spv3_elite", 
+-- 	"npc_vj_halo_flood_spv3_elite_ran", 
+-- 	"npc_vj_halo_flood_spv3_elite_runner", 
+-- 	"npc_vj_halo_flood_spv3_elite_hg", 
+-- 	"npc_vj_halo_flood_spv3_elite_suicide",
+-- 	"npc_vj_halo_flood_spv3_elite_oss",
+-- 	"npc_vj_halo_flood_spv3_marine", 
+-- 	"npc_vj_halo_flood_spv3_odst", 
+-- 	"npc_vj_halo_flood_spv3_carrier", 
+-- 	"npc_vj_halo_flood_spv3_wolf", 
+-- 	"npc_vj_halo_flood_spv3_jackal", 
+-- 	"npc_vj_halo_flood_spv3_brute", 
+-- }
 ENT.FindEnemy_UseSphere = true -- Should the SNPC be able to see all around him? (360) | Objects and walls can still block its sight!
 ENT.OnlyDoKillEnemyWhenClear = false -- If set to true, it will only play the OnKilledEnemy sound when there isn't any other enemies
 ENT.canFlinch = 0
@@ -129,9 +131,32 @@ ENT.SoundTbl_Death = {
 ENT.NextSoundTime_Idle1 = 1
 ENT.NextSoundTime_Idle2 = 2
 ---------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
 function ENT:CustomOnInitialize()
+	self:SetCustomCollisionCheck(true)
+	hook.Add( "ShouldCollide", "CustomCollisions", function( ent1, ent2 )
+		if (ent1:GetClass()=="npc_vj_halo_flood_spv3_infection" and (ent1:GetClass()==ent2:GetClass()) and ent1:GetGroundSpeedVelocity():Length()==0 and ent2:GetGroundSpeedVelocity():Length()==0) then
+			ent1:SetVelocity((ent1:GetPos() - ent2:GetPos()):GetNormalized()*3) --Push each other apart to prevent the AI from getting stuck
+			return false
+		end
+	end )
 	self.NextProcessTime = self.NextProcessTime + 2
-	self:SetCollisionGroup(15)
+	--We need the Inf form to:
+	--No collide with each other
+	--No collide with the player
+	--Collide with projectiles
+
+	--No collides are unfortunately very costly in terms of performance when we talk about hordes of NPCs
+	--	so the only real solution is some sort of hack involving collision groups that gets the desired effects
+	--	of allowing infs to pass through each other while no colliding with the player AND still registering projectiles
+
+	--Every collision group seems to have it's downsides at this point
+	--1 and 2 are good, except that projectiles ignore the NPCs
+	--3, 4, 16, 19 are good, except that if they stop at the same spot they don't know how to move
+	self:SetCollisionGroup(19)
+
 	self.MovingSound = CreateSound(self, "infection_form/infector_sound/infector/move/move"..math.random(1,3)..".wav")
 	timer.Simple(0.1, function() 
 		if (IsValid(self)) then
@@ -145,21 +170,24 @@ end
 ENT.inflictor = nil
 function ENT:CustomDeathAnimationCode(dmginfo,hitgroup) //Perhaps giving errors because inflictor is dead?
 	ParticleEffect("InfDeath", self:GetPos() + self:OBBCenter(), self:GetAngles(), nil)
-	self.inflictor = dmginfo:GetInflictor()
+	self.inflictor = self
 	self.vector = self:GetPos()
 	self:SetNoDraw(true)
+	for k, v in pairs(ents.FindInSphere(self:GetPos(), 500)) do
+		if (v:GetClass()=="npc_vj_halo_flood_spv3_infection") then
+			v:AddFlags(FL_NOTARGET)
+			timer.Simple(0.3, function()
+				if (IsValid(v)) then
+					v:RemoveFlags(FL_NOTARGET)
+				end
+			end)
+		end
+	end
 	timer.Simple(0.2, function()
-		if (IsValid(self) && (GetConVarNumber("vj_spv3_InfFormsExplode")==1 and self.HitShield == false)) then
-			self.BlastInfo = DamageInfo()
-			self.BlastInfo:SetDamageType(DMG_SLASH)
-			self.BlastInfo:SetDamage(self.LeapAttackDamage * GetConVarNumber("vj_spv3_damageModifier"))
-			self.BlastInfo:SetDamagePosition(self.vector)
-			if (IsValid(self.inflictor)) then
-				self.BlastInfo:SetInflictor(self.inflictor)
-				self.BlastInfo:SetAttacker(self.inflictor)
+		for k, v in pairs(ents.FindInSphere(self:GetPos(), 30)) do
+			if (v:GetClass() == "npc_vj_halo_flood_spv3_infection") then
+				v:TakeDamage(v:GetMaxHealth())
 			end
-			self.BlastInfo:SetReportedPosition(self.vector)
-			util.BlastDamageInfo(self.BlastInfo, self.vector, 50)
 		end
 	end)
 end
