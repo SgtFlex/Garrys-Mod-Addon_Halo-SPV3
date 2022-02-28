@@ -1,3 +1,4 @@
+include("client/SettingsMenu.lua")
 /*--------------------------------------------------
 	=============== Autorun File ===============
 	*** Copyright (c) 2012-2016 by DrVrej, All rights reserved. ***
@@ -166,7 +167,7 @@ if VJExists == true then
 	function VJ_ADDTOMENU_SPV3(Panel)
 		spawnmenu.AddToolMenuOption("DrVrej","SNPC Configures","Halo SPV3","Halo SPV3","","", VJ_SPV3_MAIN, {} )
 	end
-		hook.Add("PopulateToolMenu","VJ_ADDTOMENU_SPV3", VJ_ADDTOMENU_SPV3 )
+	hook.Add("PopulateToolMenu","VJ_ADDTOMENU_SPV3", VJ_ADDTOMENU_SPV3 )
 
 
 game.AddAmmoType({

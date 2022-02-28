@@ -1,4 +1,3 @@
-
 function OpenMenu()
 	local allS = vgui.Create( "DFrame" )
 	allS:SetPos(ScrW() * .4, ScrH() * .5) 
@@ -487,10 +486,9 @@ function OpenMenu()
 end
 
 
-if CLIENT then
-	net.Receive("vj_spv3_open_menu", function()
-		OpenMenu()
+net.Receive("vj_spv3_open_menu", function()
+	OpenMenu()
 end)
-end
+
 
 
