@@ -255,43 +255,41 @@ function ENT:PostAttack(TheHitEntity)
 end
 
 function ENT:GetTransformUnit(host)
-	if (GetConVarString("vj_spv3_floodOption") == "infect_nothing") then return false end
-	if ((GetConVarString("vj_spv3_floodOption") == "infect_onlyHalo") or (GetConVarString("vj_spv3_floodOption") == "infect_anything")) then
-		if (string.find(tostring(self.AttachedTo), "marine") or string.find(tostring(self.AttachedTo), "crewman")) then
-			return ("npc_vj_halo_flood_spv3_marine")
-		elseif (string.find(tostring(self.AttachedTo), "odst")) then
-			return ("npc_vj_halo_flood_spv3_odst")
-		end
-		if (string.find(tostring(self.AttachedTo), "elite")) and (string.find(tostring(self.AttachedTo), "hg")) then
-			return ("npc_vj_halo_flood_spv3_elite_hg")
-		elseif (string.find(tostring(self.AttachedTo), "elite")) and (string.find(tostring(self.AttachedTo), "oss")) then
-			return ("npc_vj_halo_flood_spv3_elite_oss")
-		elseif (string.find(tostring(self.AttachedTo), "elite")) then
-			local random = math.random(0,100)
-			if (random > 90) then
-				return ("npc_vj_halo_flood_spv3_elite_runner")
-			elseif (random <=90 and random >= 75) then
-				return ("npc_vj_halo_flood_spv3_elite_suicide")
-			else
-				return ("npc_vj_halo_flood_spv3_elite")
-			end
-		elseif (string.find(tostring(self.AttachedTo), "grunt")) then
-			return ("npc_vj_halo_flood_spv3_carrier")
-		elseif (string.find(tostring(self.AttachedTo), "jackal") or string.find(tostring(self.AttachedTo), "skirm")) then
-			return ("npc_vj_halo_flood_spv3_jackal")
-		elseif (string.find(tostring(self.AttachedTo), "brute")) then
-			return ("npc_vj_halo_flood_spv3_brute")
-		end
-		if (string.find(tostring(self.AttachedTo), "nat")) then
-			if (string.find(tostring(self.AttachedTo), "wolf")) then
-				return ("npc_vj_halo_flood_spv3_wolf")
-			end
-		end
-		if (GetConVarString("vj_spv3_floodOption") == "infect_anything") then
-			return ("npc_vj_halo_flood_spv3_marine")
-		end
-		return false
+	if (GetConVarString("vj_spv3_floodOption") == "nothing") then return false end
+	if (string.find(tostring(self.AttachedTo), "marine") or string.find(tostring(self.AttachedTo), "crewman")) then
+		return ("npc_vj_halo_flood_spv3_marine")
+	elseif (string.find(tostring(self.AttachedTo), "odst")) then
+		return ("npc_vj_halo_flood_spv3_odst")
 	end
+	if (string.find(tostring(self.AttachedTo), "elite")) and (string.find(tostring(self.AttachedTo), "hg")) then
+		return ("npc_vj_halo_flood_spv3_elite_hg")
+	elseif (string.find(tostring(self.AttachedTo), "elite")) and (string.find(tostring(self.AttachedTo), "oss")) then
+		return ("npc_vj_halo_flood_spv3_elite_oss")
+	elseif (string.find(tostring(self.AttachedTo), "elite")) then
+		local random = math.random(0,100)
+		if (random > 90) then
+			return ("npc_vj_halo_flood_spv3_elite_runner")
+		elseif (random <=90 and random >= 75) then
+			return ("npc_vj_halo_flood_spv3_elite_suicide")
+		else
+			return ("npc_vj_halo_flood_spv3_elite")
+		end
+	elseif (string.find(tostring(self.AttachedTo), "grunt")) then
+		return ("npc_vj_halo_flood_spv3_carrier")
+	elseif (string.find(tostring(self.AttachedTo), "jackal") or string.find(tostring(self.AttachedTo), "skirm")) then
+		return ("npc_vj_halo_flood_spv3_jackal")
+	elseif (string.find(tostring(self.AttachedTo), "brute")) then
+		return ("npc_vj_halo_flood_spv3_brute")
+	end
+	if (string.find(tostring(self.AttachedTo), "nat")) then
+		if (string.find(tostring(self.AttachedTo), "wolf")) then
+			return ("npc_vj_halo_flood_spv3_wolf")
+		end
+	end
+	if (GetConVarString("vj_spv3_floodOption") == "infect_anything") then
+		return ("npc_vj_halo_flood_spv3_marine")
+	end
+	return false
 end
 
 function ENT:TransformHost()

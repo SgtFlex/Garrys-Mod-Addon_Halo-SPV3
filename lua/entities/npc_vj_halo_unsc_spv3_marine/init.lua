@@ -88,6 +88,8 @@ ENT.GrenadeTypes = {
 ENT.GrenadeWeps = {
 	"weapon_vj_unsc_spv3_frag_nade"
 }
+
+ENT.Faction = "UNSC"
 ENT.ExtraWeapons = {
 	"weapon_vj_cov_spv3_plasmarifle",
 	"weapon_vj_cov_spv3_plasmarifleBrute",

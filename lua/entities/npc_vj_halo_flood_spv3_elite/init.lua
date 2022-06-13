@@ -239,6 +239,19 @@ ENT.otherInit = function(entity)
 	end
 end
 
+ENT.oldConVars = ENT.UseConVars
+function ENT:UseConVars()
+	self:oldConVars(self)
+	if (math.random(0,100) < GetConVar("vj_spv3_floodEliteShield"):GetInt()) then
+		self.ShieldMaxHealth = self.ShieldMaxHealth * GetConVarNumber("vj_spv3_ShieldModifier")
+		self.ShieldCurrentHealth = self.ShieldMaxHealth
+	else
+		self.ShieldMaxHealth = 0
+		self.ShieldCurrentHealth = self.ShieldMaxHealth
+	end
+	self.ShieldActivated = (self.ShieldCurrentHealth > 0)
+end
+
 ENT.SpawnedFromInf=false
 function ENT:CustomOnAcceptInput(key,activator,caller,data)
 	if key == "Step" then
