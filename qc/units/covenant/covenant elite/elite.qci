@@ -1,6 +1,6 @@
 // Created by Crowbar 0.68
 
-$modelname "hce\spv3\cov\elite\Elite2.mdl"
+$modelname "hce\spv3\cov\elite\Elite.mdl"
 
 $bodygroup "mybody"
 {
@@ -454,10 +454,10 @@ $sequence "Sword_melee02" {
 	fadeout 0.2
 }
 
-$sequence "Reload" {
+$sequence "Reload_Pistol01" {
 	"reld"
 	cmdlist lockfeet
-	activity "ACT_ARM" 1
+	activity "ACT_RELOAD" 1
 	blend "move_yaw" -180 180
 	fadein 0.2
 	fadeout 0.2

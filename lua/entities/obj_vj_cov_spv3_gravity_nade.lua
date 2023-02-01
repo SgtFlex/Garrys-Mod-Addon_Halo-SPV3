@@ -7,8 +7,8 @@ AddCSLuaFile()
 if (!file.Exists("autorun/vj_base_autorun.lua","LUA")) then return end
 
 ENT.Type 			= "anim"
-ENT.Base 			= "obj_vj_projectile_base"
-ENT.PrintName		= "Grenade"
+ENT.Base 			= "obj_vj_grenade"
+ENT.PrintName		= "Gravity Grenade"
 ENT.Author 			= "DrVrej"
 ENT.Contact 		= "http://steamcommunity.com/groups/vrejgaming"
 ENT.Information		= "Projectiles for my addons"

@@ -1,14 +1,13 @@
 AddCSLuaFile("shared.lua")
 include('shared.lua')
-include('entities/npc_vj_halo_shared_spv3/init.lua')
-/*-----------------------------------------------
+include('bases/spv3_snpc_base/init.lua')/*-----------------------------------------------
 	*** Copyright (c) 2012-2016 by DrVrej, All rights reserved. ***
 	No parts of this code or any of its contents may be reproduced, copied, modified or adapted,
 	without the prior written consent of the author, unless otherwise indicated for stand-alone materials.
 -----------------------------------------------*/
 ENT.HullType = HULL_MEDIUM
 	-- ====Variant Variables==== --
-ENT.Model = {"models/hce/spv3/cov/elite/elite.mdl"} -- The game will pick a random model from the table when the SNPC is spawned | Add as many as you want
+ENT.Model = {"models/hce/spv3/cov/elite/elite_cov.mdl"} -- The game will pick a random model from the table when the SNPC is spawned | Add as many as you want
 ENT.StartHealth = 100
 ENT.ShieldMaxHealth = 100
 ENT.ShieldDelay = 6
@@ -39,7 +38,7 @@ ENT.AnimTbl_WeaponAttack = {ACT_IDLE_AGITATED} -- Animation played when the SNPC
 ENT.AnimTbl_MoveToCover = {ACT_RUN} -- The animation it plays when moving to a covered position
 ENT.AnimTbl_ShootWhileMovingRun = {ACT_RUN} -- Animations it will play when shooting while running | NOTE: Weapon may translate the animation that they see fit!
 ENT.AnimTbl_ShootWhileMovingWalk = {ACT_RUN} -- Animations it will play when shooting while walking | NOTE: Weapon may translate the animation that they see fit!
-ENT.AnimTbl_WeaponReload = {ACT_ARM} -- Animations that play when the SNPC reloads
+ENT.AnimTbl_WeaponReload = {ACT_RELOAD} -- Animations that play when the SNPC reloads
 -- ENT.AnimTbl_CallForHelp = {} -- Call For Help Animations
 ENT.HasGrenadeAttack = true -- Should the SNPC have a grenade attack?
 ENT.AnimTbl_GrenadeAttack = {"Throw"} -- Grenade Attack Animations

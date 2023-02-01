@@ -1,0 +1,3 @@
+-Fixed/Reenabled missing grenade dodge animations
+-Changed: Carrier-type flood are registered as VJ Dangers
+-Fixed/Changed: All grenades are properly tagged as VJ Dangers
