@@ -52,14 +52,20 @@ local spreadRadius = 50
  function ENT:PhysicsCollide( data, phys )
  	if (self.FirstCollision == false) then return end
  	self.FirstCollision = false
+	
  	self.ragdoll = ents.Create("prop_ragdoll")
+	function self.ragdoll:Initialize(self)
+		print("hi")
+ 	end
 	self.ragdoll:SetModel(self:GetModel())
 	self.ragdoll:SetPos(self:GetPos())
 	self.ragdoll:SetAngles(self:GetAngles())
+	
 	self.ragdoll:Spawn()
 	self.ragdoll:SetSkin(self:GetSkin())
-	self.ragdoll:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
-	hook.Call("VJ_CreateSNPCCorpse", nil, self.ragdoll, self.ragdoll)
+	
+	--self.ragdoll:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
+	--hook.Call("VJ_CreateSNPCCorpse", nil, self.ragdoll, self.ragdoll)
 	self.ragdoll.IsVJBaseCorpse = true
 	local bodygroups = self:GetBodyGroups()
 	for k, v in pairs(bodygroups) do

@@ -34,6 +34,7 @@ ENT.LeapAttackVelocityUp = 200 -- How much upward force should it apply?
 ENT.LeapAttackDamage = 10
 ENT.LeapAttackDamageDistance = 125 -- How far does the damage go?
 ENT.LeapAttackDamageType = DMG_DIRECT -- Type of Damage
+ENT.DisableDefaultLeapAttackDamageCode = true -- Disables the default leap attack damage code
 ENT.StopLeapAttackAfterFirstHit = true -- Should it stop the leap attack from running rest of timers when it hits an enemy?
 
 ENT.MeleeAttackDamage = ENT.LeapAttackDamage
@@ -135,6 +136,7 @@ ENT.NextSoundTime_Idle2 = 2
 
 
 function ENT:CustomOnInitialize()
+	print("phantom spawned")
 	self:SetCustomCollisionCheck(true)
 	hook.Add( "ShouldCollide", "CustomCollisions", function( ent1, ent2 )
 		if (ent1:GetClass()=="npc_vj_halo_flood_spv3_infection" and (ent1:GetClass()==ent2:GetClass()) and ent1:GetGroundSpeedVelocity():Length()==0 and ent2:GetGroundSpeedVelocity():Length()==0) then
@@ -200,18 +202,22 @@ ENT.enemyPos = ""
 ENT.enemyHealth = 150
 ENT.imposter = ""
 function ENT:CustomOnDoKilledEnemy(argent,attacker,inflictor)
-	self.AttachedTo = argent
-	self.AttachedTo.HasDeathSounds = false
-	table.RemoveByValue(self.AttachedTo.AttachedInfectForms, self)
-	table.insert(self.AttachedTo.AttachedInfectForms, 1, self) //We put the killing infection form at the front of the table
-	if (self.AttachedTo.AttachedInfectForms) then
-		for k=2, #self.AttachedTo.AttachedInfectForms do
-			if (IsValid(self) and IsValid(self.AttachedTo.AttachedInfectForms[2])) then
-				self.AttachedTo.AttachedInfectForms[2]:Unlatch()
-			end
+	if (self.Host) then
+		-- self.Host.HasDeathSounds = false
+		-- table.RemoveByValue(self.Host.Pods, self)
+		-- table.insert(self.Host.Pods, 1, self) //We put the killing infection form at the front of the table
+		-- self:UnlatchOthers(self.Host)
+		-- SPV3.TransformNPC(self, self.Host)
+	end
+end
+
+function ENT:UnlatchOthers(targetEnt)
+	if (!self.Host) then return end
+	if (self.Host.Pods) then
+		for k=2, #self.Host.Pods do
+			self.Host.Pods[2]:Unlatch()
 		end
 	end
-	self:TransformHost()
 end
 
 //Possibly unnecessary, but I found carrier forms blowing up large amounts of infection forms too frequently without this
@@ -219,7 +225,7 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 	if ((IsValid(dmginfo:GetInflictor())) and (dmginfo:GetInflictor():GetClass()=="npc_vj_halo_flood_spv3_carrier" or dmginfo:GetInflictor():GetClass()=="npc_vj_halo_flood_spv3_elite_runner" or dmginfo:GetInflictor():GetClass()=="npc_vj_halo_flood_spv3_odst" or dmginfo:GetInflictor():GetClass()=="npc_vj_halo_flood_spv3_jackal" or dmginfo:GetInflictor():GetClass()=="npc_vj_halo_flood_spv3_wolf" or dmginfo:GetInflictor():GetClass()=="sent_vj_flood_spv3_biomass")) then
 		dmginfo:SetDamage(0)
 	end
-	if (dmginfo:GetInflictor()==self.AttachedTo) then
+	if (dmginfo:GetInflictor()==self.Host) then
 		dmginfo:SetDamage(0)
 	end
 	if (dmginfo:GetDamageType()==DMG_BLAST) then
@@ -230,18 +236,29 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 	end
 end
 
-ENT.AttachedTo = nil
+ENT.Host = nil
 ENT.HitShield = false
-function ENT:CustomOnLeapAttack_AfterChecks(TheHitEntity) 
+function ENT:CustomOnLeapAttack_AfterChecks(TheHitEntity)
+	
 	self:PostAttack(TheHitEntity)
+	return true
 end
 
 function ENT:CustomOnMeleeAttack_AfterChecks(hitEnt) 
 	self:PostAttack(hitEnt)
-	return false 
+	return true 
 end -- return true to disable the attack and move onto the next entity!
 
+-- function ENT:OnTakeDamage(dmginfo)
+-- 	print("took damage")
+-- end
+
+ENT.HitEnemy = nil
 function ENT:PostAttack(TheHitEntity)
+	if (self.Host) then return end
+	if (self.HitEnemy) then return end
+	print("Running")
+	self.HitEnemy = TheHitEntity
 	if (!TheHitEntity:IsNPC() and !TheHitEntity:IsPlayer()) then return end
 	if ((TheHitEntity.ShieldCurrentHealth && TheHitEntity.ShieldIsArmor==false && TheHitEntity.ShieldCurrentHealth > 0) || (TheHitEntity:IsPlayer() && TheHitEntity:Armor() > 0)) then
 		if (GetConVarNumber("vj_spv3_InfFormsExplode")==0) then
@@ -254,208 +271,111 @@ function ENT:PostAttack(TheHitEntity)
 	self:Latch(TheHitEntity)
 end
 
-function ENT:GetTransformUnit(host)
-	if (GetConVarString("vj_spv3_floodOption") == "nothing") then return false end
-	if (string.find(tostring(self.AttachedTo), "marine") or string.find(tostring(self.AttachedTo), "crewman")) then
-		return ("npc_vj_halo_flood_spv3_marine")
-	elseif (string.find(tostring(self.AttachedTo), "odst")) then
-		return ("npc_vj_halo_flood_spv3_odst")
-	end
-	if (string.find(tostring(self.AttachedTo), "elite")) and (string.find(tostring(self.AttachedTo), "hg")) then
-		return ("npc_vj_halo_flood_spv3_elite_hg")
-	elseif (string.find(tostring(self.AttachedTo), "elite")) and (string.find(tostring(self.AttachedTo), "oss")) then
-		return ("npc_vj_halo_flood_spv3_elite_oss")
-	elseif (string.find(tostring(self.AttachedTo), "elite")) then
-		local random = math.random(0,100)
-		if (random > 90) then
-			return ("npc_vj_halo_flood_spv3_elite_runner")
-		elseif (random <=90 and random >= 75) then
-			return ("npc_vj_halo_flood_spv3_elite_suicide")
-		else
-			return ("npc_vj_halo_flood_spv3_elite")
-		end
-	elseif (string.find(tostring(self.AttachedTo), "grunt")) then
-		return ("npc_vj_halo_flood_spv3_carrier")
-	elseif (string.find(tostring(self.AttachedTo), "jackal") or string.find(tostring(self.AttachedTo), "skirm")) then
-		return ("npc_vj_halo_flood_spv3_jackal")
-	elseif (string.find(tostring(self.AttachedTo), "brute")) then
-		return ("npc_vj_halo_flood_spv3_brute")
-	end
-	if (string.find(tostring(self.AttachedTo), "nat")) then
-		if (string.find(tostring(self.AttachedTo), "wolf")) then
-			return ("npc_vj_halo_flood_spv3_wolf")
-		end
-	end
-	if (GetConVarString("vj_spv3_floodOption") == "infect_anything") then
-		return ("npc_vj_halo_flood_spv3_marine")
-	end
-	return false
-end
-
-function ENT:TransformHost()
-	if (self.AttachedTo:IsPlayer()==true) then self:Remove() return end
-	self.enemyModel = self.AttachedTo:GetModel()
-	self.enemyPos = self.AttachedTo:GetPos()
-	self.enemyAng = self.AttachedTo:GetAngles()
-	self.enemyCol = self.AttachedTo:GetColor()
-	self.enemySkin = self.AttachedTo:GetSkin()
-	if (IsValid(self.AttachedTo:GetActiveWeapon())) then self.enemyWep = self.AttachedTo:GetActiveWeapon():GetClass() end
-	self.enemyHealth = self.AttachedTo.StartHealth or self.AttachedTo:GetMaxHealth()
-	if (self.AttachedTo.ShieldIsArmor == false) then
-		self.enemyShields = self.AttachedTo.ShieldMaxHealth
-	elseif (self.AttachedTo.ShieldIsArmor == true) then
-		self.enemyHealth = self.enemyHealth + self.AttachedTo.ShieldMaxHealth
-		self.enemyShields = 0
-	else
-		self.enemyShields = 0
-	end
-	self.enemyHasCloak = self.AttachedTo.HasCloak or false
-	self.combatForm = self:GetTransformUnit(self.AttachedTo:GetClass())
-	if (self.combatForm == false) then self:Unlatch() return end
-	self:SetHealth(999999)
-	self:SetNoDraw(true)
-	timer.Simple(0.01, function()
-		if (IsValid(self)) then
-			for _,v in pairs(ents.FindInSphere(self:GetPos(),150)) do
-				if (v:GetClass()=="prop_ragdoll" and v:GetModel()==self.enemyModel) then
-					v:Remove()
-				end
-			end
-		end
-    end)
-    if (self.AttachedTo.HasDeathRagdoll) then
-		self.AttachedTo.HasDeathRagdoll=false
-		self.AttachedTo.HasDeathAnimation=false
-	end
-	if (self.AttachedTo:LookupSequence("Transform")!=-1) then
+ENT.LatchedBone = nil
+function ENT:Latch(Host)	
+	self.Host = Host
+	if (!Host.AttachedForm) then
+		Host.AttachedForm = self
+		Host.PrevOnTakeDamage = Host.OnTakeDamage
+		Host.PrevOnRemove = Host.OnRemove
+		Host.HasDeathAnimation = false
 		
-		self:CreateImposter()
-		if (self.AttachedTo.SoundTbl_Transform) then
-			self.AttachedTo:EmitSound(VJ_PICKRANDOMTABLE(self.AttachedTo.SoundTbl_Transform))
-		end
-		self:SetParent(self.imposter)
-		timer.Create("Transform"..self:GetCreationID(), self.AttachedTo:SequenceDuration(self.AttachedTo:LookupSequence("Transform")), 1, function()
-			if (IsValid(self.imposter)) then 
-				self.imposter:Remove() 
-			end
-			if (IsValid(self)) then
-				self:SpawnInfected()
+		function Host:OnRemove()
+			if (!self.Transformed) then
+				self.Transformed = true
+				self.AttachedForm:UnlatchOthers(self)
+				SPV3.TransformNPC(self.AttachedForm, self)
 				self:Remove()
 			end
-		end)
-	else
-		self:SpawnInfected()
-		self:Remove()
-	end
-end
+			self.AttachedForm:UnlatchOthers()
+			self.AttachedForm:Unlatch()
+			self:PrevOnRemove()
+			--oldRemoved(self)
+		end
 
-function ENT:CreateImposter(npc)
-	self.imposter = ents.Create("prop_dynamic")
-	self.imposter:SetModel(self.enemyModel)
-	self.imposter:SetSkin(self.enemySkin)
-	self.imposter:SetAngles(self.enemyAng)
-	self.imposter:SetPos(self.enemyPos)
-	self.imposter:Spawn()
-	ParticleEffectAttach("Flood_transform", 1, self.imposter, 0)
-	local bodygroups = self.AttachedTo:GetBodyGroups()
-	for k, v in pairs(bodygroups) do
-		self.imposter:SetBodygroup(bodygroups[k]["id"], self.AttachedTo:GetBodygroup(bodygroups[k]["id"]))
-	end
-	self.imposter:SetColor(self.enemyCol)
-	self.imposter:ResetSequenceInfo()
-	self.imposter:SetSequence("Transform")
-end
+		function Host:OnTakeDamage(damage)
+			print("Health: "..self:Health())
+			print("Damage: "..damage:GetDamage())
 
-function ENT:SpawnInfected()
-	self.combatForm = ents.Create(self.combatForm) --Has to be initialized again, otherwise spawned combat form doesn't attack
-	self.combatForm.Appearance["Color"] = self.enemyCol
-	self.combatForm.Appearance["Skin"] = self.enemySkin
-	self.combatForm.ExtraWeapons = {}
-	table.insert(self.combatForm.ExtraWeapons, self.enemyWep)
-	self.combatForm.SpawnedFromInf = true
-	self.combatForm.StartHealth = self.enemyHealth * 0.75
-	self.combatForm.ShieldMaxHealth = self.enemyShields
-	self.combatForm.IsInvis = self.enemyHasCloak
-	self.combatForm:Spawn()
-	self.combatForm:SetAngles(self.enemyAng)
-	self.combatForm:SetPos(self.enemyPos)
-	ParticleEffect("CarrierDeath", self.combatForm:GetPos() + self.combatForm:OBBCenter(), self.combatForm:GetAngles(), nil)
-	self.combatForm:VJ_ACT_PLAYACTIVITY(ACT_COVER_PISTOL_LOW,true,1.5,false)
-end
+			if (damage:GetDamage() > self:Health()) then
+				if (!self.Transformed) then
+					self.Transformed = true
+					self.AttachedForm:UnlatchOthers(self)
+					SPV3.TransformNPC(self.AttachedForm, self)
+					self:Remove()
+				end
+				self.AttachedForm:UnlatchOthers()
+				self.AttachedForm:Unlatch()
+				self:Remove()
+			else 
+				self:PrevOnTakeDamage(damage)
+			end
+			--oldRemoved(self)
+			
+			
 
-ENT.LatchedBone = nil
-function ENT:Latch(entity)
-	self.AttachedTo = entity
-	if (!IsValid(self.AttachedTo) or !IsValid(self)) then return end
-	if (self.AttachedTo.AttachedInfectForms==nil) then
-		self.AttachedTo.AttachedInfectForms = {}
+		end
 	end
-	if (self.AttachedTo:GetBoneCount() > 0) then
-		-- for i=0, self.AttachedTo:GetBoneCount()-1 do
+
+	
+	if (!IsValid(self.Host) or !IsValid(self)) then return end
+	if (self.Host.Pods==nil) then
+		self.Host.Pods = {}
+	end
+	if (self.Host:GetBoneCount() > 0) then
+		-- for i=0, self.Host:GetBoneCount()-1 do
 		-- 	if (self.LatchedBone == nil or 
-		-- 		self.AttachedTo:GetBonePosition(i):Distance(self:GetPos()) < 
-		-- 		self.AttachedTo:GetBonePosition(self.LatchedBone):Distance(self:GetPos())) then
+		-- 		self.Host:GetBonePosition(i):Distance(self:GetPos()) < 
+		-- 		self.Host:GetBonePosition(self.LatchedBone):Distance(self:GetPos())) then
 		-- 		self.LatchedBone = i
 		-- 	end
 		-- end
-		-- for k, v in pairs(self.AttachedTo.AttachedInfectForms) do
+		-- for k, v in pairs(self.Host.Pods) do
 		-- 	if v.LatchedBone == self.LatchedBone then
 		-- 		self.LatchedBone = self.LatchedBone - 1
 		-- 	end
-		-- 	if (self.LatchedBone <= 0 or self.LatchedBone > self.AttachedTo:GetBoneCount()-1) then
-		-- 		self.LatchedBone = self.AttachedTo:GetBoneCount()-1
+		-- 	if (self.LatchedBone <= 0 or self.LatchedBone > self.Host:GetBoneCount()-1) then
+		-- 		self.LatchedBone = self.Host:GetBoneCount()-1
 		-- 	end
 		-- end
-		self.LatchedBone = math.random(0, self.AttachedTo:GetBoneCount()-1)
-		self:SetPos(select(1, self.AttachedTo:GetBonePosition(self.LatchedBone)))
+		self.LatchedBone = math.random(0, self.Host:GetBoneCount()-1)
+		self:SetPos(select(1, self.Host:GetBonePosition(self.LatchedBone)))
 		self:SetMoveType(MOVETYPE_NONE)
-		self:FollowBone(self.AttachedTo, self.LatchedBone)
+		self:FollowBone(self.Host, self.LatchedBone)
 		self:SetMoveType(MOVETYPE_NONE)
-		self:SetPos(select(1, self.AttachedTo:GetBonePosition(self.LatchedBone)))
-		self:SetAngles(select(2, self.AttachedTo:GetBonePosition(self.LatchedBone)) + Angle(90, 0, 0))
+		self:SetPos(select(1, self.Host:GetBonePosition(self.LatchedBone)))
+		self:SetAngles(select(2, self.Host:GetBonePosition(self.LatchedBone)) + Angle(90, 0, 0))
 		self:SetVelocity(Vector(0,0,0))
 	else
-		self:SetParent(self.AttachedTo)
+		self:SetParent(self.Host)
 		self:SetMoveType(8)
 	end
-	if (string.find(tostring(self.AttachedTo), "npc_vj_halo_cov_spv3_grunt_")) then
-		self.AttachedTo:Flee()
+	if (string.find(tostring(self.Host), "npc_vj_halo_cov_spv3_grunt_")) then
+		self.Host:Flee()
 	end
-	table.insert(self.AttachedTo.AttachedInfectForms, self)
-	if (#self.AttachedTo.AttachedInfectForms<=1) then
-		if (self.AttachedTo.SoundTbl_Stuck) then
-			self.AttachedTo:EmitSound(VJ_PICKRANDOMTABLE(self.AttachedTo.SoundTbl_Stuck))
-		end
-		if (self.AttachedTo:LookupSequence("Transform")!=-1) then
-			self.AttachedTo:VJ_ACT_PLAYACTIVITY("Transform", true, 4, false)
-		end
-		timer.Create("Terror"..self.AttachedTo:GetCreationID(), 2, 0, function()
-			if (IsValid(self) and IsValid(self.AttachedTo)) then
-				if (self.AttachedTo.SoundTbl_Stuck) then
-					self.AttachedTo:EmitSound(VJ_PICKRANDOMTABLE(self.AttachedTo.SoundTbl_Stuck))
-				end
-			end
-		end)
+	table.insert(self.Host.Pods, self)
+	if (#self.Host.Pods<=1 and self.Host.OnStuckByHost) then
+		self.Host:OnStuckByHost()
 	end
 	self:VJ_ACT_PLAYACTIVITY("Melee_1",true,30,false)	
 	self:SetMoveType(MOVETYPE_NONE)
-	self.AttachedTo:SetSequence(27)
-	if (self.AttachedTo:IsPlayer()) then
+	self.Host:SetSequence(27)
+	if (self.Host:IsPlayer()) then
 		timer.Simple(3, function()
-			if (IsValid(self) and IsValid(self.AttachedTo)) then
+			if (IsValid(self) and IsValid(self.Host)) then
 				self:Unlatch()
 			end
 		end)
 	end
 	timer.Create("Damage"..self:GetCreationID(), 0.5, 0, function()
 		if (IsValid(self)) then
-			if (IsValid(self.AttachedTo) and self.Dead==false) then
+			if (IsValid(self.Host) and self.Dead==false) then
 				local d = DamageInfo()
 				d:SetDamage((self.LeapAttackDamage * GetConVarNumber("vj_spv3_DamageModifier"))/5)
 				d:SetAttacker(self)
 				d:SetInflictor(self)
 				d:SetDamageType(DMG_DIRECT)
-				self.AttachedTo:TakeDamageInfo(d)
+				self.Host:TakeDamageInfo(d)
 			else
 				timer.Destroy("Damage"..self:GetCreationID())
 			end
@@ -470,10 +390,16 @@ function ENT:Latch(entity)
 end
 
 function ENT:Unlatch()
-	if (!IsValid(self.AttachedTo)) then return end
+	if (!IsValid(self.Host)) then return end
+	self.HitEnemy = nil
 	timer.Destroy("Damage"..self:GetCreationID())
-	table.RemoveByValue(self.AttachedTo.AttachedInfectForms, self)
-	self.AttachedTo = nil
+	table.RemoveByValue(self.Host.Pods, self)
+	if (table.IsEmpty(self.Host.Pods)) then
+		self.Host.OnTakeDamage = self.Host.PrevOnTakeDamage
+		self.Host.OnRemove = self.Host.PrevOnRemove
+		self.Host.AttachedForm = nil
+	end
+	self.Host = nil
 	self:FollowBone(NULL, 0)
 	self:SetAngles(Angle(0,0,0))
 	self:SetMoveType(3)
@@ -486,7 +412,7 @@ function ENT:Unlatch()
 end
 
 function ENT:CustomOnInitialKilled(dmginfo, hitgroup) 
-	if (self.AttachedTo!=nil) then
+	if (self.Host!=nil) then
 		self:Unlatch()
 	end
 end -- Ran the moment the NPC dies!

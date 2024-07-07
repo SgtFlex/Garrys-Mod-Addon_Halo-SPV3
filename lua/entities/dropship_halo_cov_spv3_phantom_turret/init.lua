@@ -39,11 +39,11 @@ ENT.RangeAttackAngleRadius = 180 -- What is the attack angle radius? | 100 = In 
 ENT.ConstantlyFaceEnemy = true
 ENT.ConstantlyFaceEnemy_IfAttacking = true -- Should it face the enemy when attacking?
 ENT.RangeAttackAnimationFaceEnemy = false
-function ENT:CustomRangeAttackCode_BeforeProjectileSpawn(TheProjectile) 
-	self:EmitSound("weapons/shadeturret/turret_shade.ogg", 105)
-	TheProjectile:SetOwner(self)
-	ParticleEffectAttach("hcea_hunter_plasma_rifle_fire", PATTACH_POINT_FOLLOW, self, 1)
-end -- This is ran before Spawn() is called
+-- function ENT:CustomRangeAttackCode_BeforeProjectileSpawn(TheProjectile) 
+-- 	self:EmitSound("weapons/shadeturret/turret_shade.ogg", 105)
+-- 	TheProjectile:SetOwner(self)
+-- 	ParticleEffectAttach("hcea_hunter_plasma_rifle_fire", PATTACH_POINT_FOLLOW, self, 1)
+-- end -- This is ran before Spawn() is called
 
 function ENT:CustomOnInitialize()
 	self:SetCollisionBounds(self:GetModelBounds())
@@ -53,11 +53,11 @@ function ENT:RangeAttackCode_OverrideProjectilePos(TheProjectile)
 	return self:GetPos() + self:GetAimVector()*100 + self:GetUp()*-10
 end -- return other value then 0 to override the projectile's position
 
-function ENT:CustomOn_PoseParameterLookingCode(pitch,yaw,roll) 
-	if (IsValid(self:GetEnemy())) then
-		self:SetAngles(Angle(0, self:GetAimVector():Angle().y +15, 0))
-	end
-end
+-- function ENT:CustomOn_PoseParameterLookingCode(pitch,yaw,roll) 
+-- 	if (IsValid(self:GetEnemy())) then
+-- 		self:SetAngles(Angle(0, self:GetAimVector():Angle().y +15, 0))
+-- 	end
+-- end
 
 function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 	if (dmginfo:GetDamageType()==DMG_BLAST) then

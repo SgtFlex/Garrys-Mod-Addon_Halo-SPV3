@@ -18,6 +18,7 @@ ENT.Appearance = {
 	Skin = 1,
 }
 ENT.HasSword = false
+ENT.BerserkChance = 20
 ENT.HeadHitgroup = 507
 ENT.ExtraShotCount = 2
 ENT.WeaponProfficiency = 50

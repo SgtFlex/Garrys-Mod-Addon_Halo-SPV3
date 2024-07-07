@@ -9,6 +9,7 @@ $collisionmodel "Phantom.smd" {
 
 }
 
+$attachment "Latch" "frame phantom" -0.00 0.00 80.00 rotate -0 0 0
 $attachment "Spawn" "frame phantom" -200 0 150 rotate 0 0 0
 $attachment "Cannon1" "frame phantom" 370 0 20 rotate 0 0 0
 $attachment "Cannon2" "frame phantom" 0 120 130 rotate 0 90 0

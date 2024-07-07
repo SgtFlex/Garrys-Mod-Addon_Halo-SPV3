@@ -13,6 +13,7 @@ ENT.helmet = "models/hce/spv3/cov/brute/garbage/minor_helmet.mdl"
 ENT.StartHealth = 200
 ENT.HeadHitgroup = 500
 --25 shields
+ENT.BerserkChance = 20
 ENT.Appearance = {
 	Color = Color(100,120,180),
 	Bodygroups = {1, 1, 0, 0, 0, 0, 0, 0, 0},

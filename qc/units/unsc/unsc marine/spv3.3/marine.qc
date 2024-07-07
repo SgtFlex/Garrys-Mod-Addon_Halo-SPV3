@@ -287,6 +287,17 @@ $animation "EvadeR" "marine_anims\EvadeR.smd" {
 	walkframe 38 LX LY
 }
 
+$sequence "Idle_1" {
+	"marine_anims\Idle_1.smd"
+	cmdlist lockfeet
+	activity "ACT_IDLE_AGITATED" 1
+	fadein 0.2
+	fadeout 0.2
+	fps 30
+	loop
+}
+
+
 $sequence "Talk" {
 	"marine_anims/mouth_closed.smd"
 	"marine_anims/mouth_open.smd"
@@ -299,16 +310,30 @@ $sequence "Talk" {
 	hidden
 }
 
-
-$sequence "Idle_1" {
-	"marine_anims\Idle_1.smd"
-	cmdlist lockfeet
-	activity "ACT_IDLE_AGITATED" 1
-	fadein 0.2
-	fadeout 0.2
+$sequence "Rifle_Airborne" {
+	"marine_anims/stand rifle airborne.smd"
 	fps 30
 	loop
+	fadein 0.2
+	fadeout 0.2
+	rotate -90
+	blend "move_yaw" -180 180
+	activity "ACT_JUMP" 1
 }
+
+$sequence "Rifle_Land" {
+	"marine_anims/stand rifle land-hard.smd"
+	fps 30
+	loop
+	fadein 0.2
+	fadeout 0.2
+	rotate -90
+	blend "move_yaw" -180 180
+	activity "ACT_LAND" 1
+}
+
+
+
 
 $sequence "Idle_2" {
 	"marine_anims\Idle_2.smd"

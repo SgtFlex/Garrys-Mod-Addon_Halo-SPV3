@@ -1,6 +1,6 @@
-ENT.Base 			= "npc_vj_human_base"
+ENT.Base 			= "base_ai"
 ENT.Type 			= "ai"
-ENT.PrintName 		= "Elite Minor"
+ENT.PrintName 		= "Phantom (Turreted)"
 ENT.Author 			= "Mayhem"
 ENT.Contact 		= "http://vrejgaming.webs.com/"
 ENT.Purpose 		= "Let it eat you."

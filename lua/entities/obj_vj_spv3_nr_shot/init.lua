@@ -17,6 +17,12 @@ ENT.SoundTbl_Idle = {""}
 ENT.SoundTbl_OnCollide = {"weapons/needler/impact/whistle1.ogg","weapons/needler/impact/whistle2.ogg","weapons/needler/impact/whistle3.ogg","weapons/needler/impact/whistle4.ogg","weapons/needler/impact/whistle5.ogg","weapons/needler/impact/whistle6.ogg",}
 ENT.RemoveOnHit = false -- Should it remove itself when it touches something? | It will run the hit sound, place a decal, etc.
 ENT.CollideCodeWithoutRemoving = true -- If RemoveOnHit is set to false, you can still make the projectile deal damage, place a decal, etc.
+
+-----------------------INTERNAL USE ONLY
+ENT.DetonateT = 0
+ENT.Collided = false
+ENT.HitCharacter = nil
+------------------------------------------
 ---------------------------------------------------------------------------------------------------------------------------------------------
 function ENT:CustomOnInitialize()
 	self.RadiusDamage = self.RadiusDamage * GetConVarNumber("vj_spv3_damageModifier") -- How much damage should it deal? Remember this is a radius damage, therefore it will do less damage the farther away the entity is from its enemy
@@ -51,102 +57,84 @@ function ENT:DeathEffects(data,phys)
 	self:DeleteOnRemove(self.ExplosionLight1)
 end
 
-ENT.needles = 0
-ENT.stopTracking = false
-function ENT:CustomOnCollideWithoutRemove(data,phys) 
-	if (data.HitEntity:IsNPC() or data.HitEntity:IsPlayer()) then
-		if (data.HitEntity:GetBoneCount() > 0) then
-			local closestBone
-			for i=0, data.HitEntity:GetBoneCount()-1 do
-				if (closestBone == nil or data.HitEntity:GetBonePosition(i):Distance(self:GetPos()) < data.HitEntity:GetBonePosition(closestBone):Distance(self:GetPos())) then
-					closestBone = i
-				end
-			end
-			closestBone = math.Clamp(closestBone + math.random(-1, 1), 0, data.HitEntity:GetBoneCount()-1)
+
+-- Will throw red collision errors in console, but don't seem to cause crashing. Couldn't figure out a way to keep errors from appearing with needler behavior.
+function ENT:CustomOnCollideWithoutRemove(data, phys)
+	self.Collided = true
+	self.TargetedEnemy = nil
+	self.DetonateT = CurTime() + 1.5
+	if (!data.HitEntity:IsWorld()) then
+		self:OnHitEntity(data.HitEntity, data, phys)
+	else
+		if (data.OurOldVelocity:Dot(data.HitNormal) >= 900) then 
+			self:SetSolid(SOLID_NONE)
 			self:SetMoveType(MOVETYPE_NONE)
-			self:FollowBone(data.HitEntity, closestBone)
-			self:SetPos(select(1, data.HitEntity:GetBonePosition(closestBone)))
-			self:SetAngles(select(2, data.HitEntity:GetBonePosition(closestBone)) + Angle(90, 0, 0))
-			self:SetVelocity(Vector(0,0,0))
 		else
-			self:SetParent(data.HitEntity)
-			self:SetMoveType(8)
-		end
-		self:SetSolid(0)
-		if (data.HitEntity.needles==nil) then
-			data.HitEntity.needles = {}
-		end
-		table.insert(data.HitEntity.needles, self)
-	end
-	if ((data.HitEntity:IsNPC() or data.HitEntity:IsPlayer()) and #data.HitEntity.needles <= 7) then
-		for i,j in pairs(ents.FindInSphere(self:GetPos(), 100)) do
-			if (j:GetClass()=="obj_vj_spv3_nr_shot" and j:GetParent()==self:GetParent()) then
-				timer.Adjust("Needles"..j:GetCreationID(), 1.5, nil, nil)
-			end
+			local vector = data.OurOldVelocity - 2 * (data.OurOldVelocity * data.HitNormal) * data.HitNormal --Reflection vector formula
+			self:GetPhysicsObject():SetVelocity(vector * 1)
+			self:SetAngles(self:GetPhysicsObject():GetVelocity():Angle())
 		end
 	end
-	if (!(timer.Exists("Needles"..self:GetCreationID()))) then
-		timer.Create("Needles"..self:GetCreationID(), 1.5, 1, function()
-			if IsValid(self) then
-				if ((data.HitEntity:IsNPC() or data.HitEntity:IsPlayer()) and #data.HitEntity.needles >= 7) then
-					self:EmitSound("weapons/needler/super/superneedleboom.ogg")
-					local BlastInfo = DamageInfo()
-					BlastInfo:SetDamageType(DMG_BLAST)
-					BlastInfo:SetDamage(40 * GetConVarNumber("vj_spv3_damageModifier"))
-					BlastInfo:SetDamagePosition(self:GetPos())
-					if (IsValid(self:GetOwner())) then
-						BlastInfo:SetAttacker(self:GetOwner())
-					end
-					BlastInfo:SetReportedPosition(self:GetPos())
-					util.BlastDamageInfo(BlastInfo, self:GetPos(), 50)
-					util.ScreenShake(self:GetPos(),16,100,1,800)
-					ParticleEffect("hcea_hunter_shade_cannon_explode_ground", self:LocalToWorld(Vector(0,0,20)), self:GetAngles(), nil)
-					for i,j in pairs(data.HitEntity.needles) do
-						if IsValid(j) then
-							j:Remove()
-						end
-					end
-					table.Empty(data.HitEntity.needles)
-				elseif (data.HitEntity.needles == nil or #data.HitEntity.needles < 7) then
-					if (data.HitEntity:IsNPC() or data.HitEntity:IsPlayer()) then
-						data.HitEntity:TakeDamage(10 * GetConVarNumber("vj_spv3_damageModifier"), self:GetOwner(), self:GetOwner())
-						table.remove(data.HitEntity.needles)
-					end
-					self:Remove()
-					self:EmitSound("weapons/needler/expire/1.ogg") 
-					ParticleEffect("hcea_hunter_needler_pistol_impact", self:LocalToWorld(Vector(0,0,0)), self:GetAngles(), nil)
-				end
-			end
-		end)
-	end
-	if ((data.HitEntity:IsNPC() or data.HitEntity:IsPlayer()) and #data.HitEntity.needles >= 7) then
-		if (data.HitEntity.Berserked!=nil and data.HitEntity.Berserked!=true and math.random(0, 1)==1) then
-			data.HitEntity:Berserk()
-		else
-			if (data.HitEntity.SoundTbl_Stuck) then
-				data.HitEntity:EmitSound(VJ_PICKRANDOMTABLE(data.HitEntity.SoundTbl_Stuck))
-			end
-			if (data.HitEntity:LookupSequence("Transform")!=-1) then
-				data.HitEntity:VJ_ACT_PLAYACTIVITY("Transform", true, 4, false)
-			end
+end
+
+function ENT:OnHitEntity(ent)
+	self.HitCharacter = ent
+	self:ParentToEntity(ent)
+	if (ent.Needles==nil) then ent.Needles = {} end
+	table.insert(ent.Needles, self)
+	if (#ent.Needles <= 7) then
+		for i,j in pairs(ent.Needles) do
+			j.DetonateT = CurTime() + 1.5
 		end
 	end
-	self.stopTracking=true
-	if (data.OurOldVelocity:Dot(data.HitNormal) >= 900) then self:SetMoveType(0) end
+end
+
+function ENT:ParentToEntity(ent)
+	self:SetSolid(SOLID_NONE)
+	self:SetMoveType(MOVETYPE_NONE)
+	if (ent:GetBoneCount() > 1) then
+		local closestBone = nil
+		for i=0, ent:GetBoneCount()-1 do
+			if (closestBone == nil or ent:GetBonePosition(i):Distance(self:GetPos()) < ent:GetBonePosition(closestBone):Distance(self:GetPos())) then
+				closestBone = i
+			end
+		end
+		closestBone = math.Clamp(closestBone + math.random(-1, 1), 0, ent:GetBoneCount()-1)
+		self:FollowBone(ent, closestBone)
+		self:SetPos(select(1, ent:GetBonePosition(closestBone)))
+		self:SetAngles(select(2, ent:GetBonePosition(closestBone)) + Angle(90, 0, 0))
+		self:SetVelocity(Vector(0,0,0))
+	else
+		self:SetParent(ent)
+	end
 end
 
 
 function ENT:CustomOnThink()
-	self:GetPhysicsObject():SetVelocity(self:GetVelocity():GetNormalized()*1000)	
-	if (!IsValid(self:GetParent()) and self:GetMoveType()!=0) then self:SetAngles(self:GetVelocity():Angle()) end
-	if (!IsValid(self.targetedEnemy)) then return end
-	if (IsValid(self) and self.stopTracking==false and self.targetedEnemy) then
-		if (self.targetedEnemy:IsPlayer()) then
-			self:GetPhysicsObject():AddVelocity(self.targetedEnemy:GetVelocity()/(self:GetPos():Distance(self.targetedEnemy:GetPos()) * 0.005)) //There's probably a better way to do this that's less taxing
-		elseif (self.targetedEnemy:IsNPC()) then
-			self:GetPhysicsObject():AddVelocity(self.targetedEnemy:GetGroundSpeedVelocity()/(self:GetPos():Distance(self.targetedEnemy:GetPos()) * 0.006)) //There's probably a better way to do this that's less taxing
-		end	
+	--self:SetAngles(self:GetAngles() + Angle(0,10,0))
+	self:SetVelocity(self:GetForward():GetNormalized()*1000)
+	
+	--if (self.TargetedEnemy) then self:GetPhysicsObject():AddVelocity((self.TargetedEnemy:GetPos() - self:GetPos()):GetNormalized()*1000) end
+	if (self.Collided and CurTime() >= self.DetonateT) then
+		self:Detonate()
 	end
+	--self:SetAngles(self:GetPhysicsObject():GetVelocity():GetNormalized():Angle())
+	--self:GetPhysicsObject():SetVelocity(self:GetForward():GetNormalized()*1000)
+end
+
+function ENT:Detonate()
+	if (IsValid(self.HitCharacter)) then
+		if (#self.HitCharacter.Needles >= 7) then
+			SPV3.Supercombine(self.HitCharacter, self)
+			return
+		end
+		self.HitCharacter:TakeDamage(10 * GetConVarNumber("vj_spv3_damageModifier"), self:GetOwner(), self:GetOwner())
+		table.RemoveByValue(self.HitCharacter.Needles, self)
+	else
+	end
+	self:EmitSound("weapons/needler/expire/1.ogg") 
+	ParticleEffect("hcea_hunter_needler_pistol_impact", self:LocalToWorld(Vector(0,0,0)), self:GetAngles(), nil)
+	self:Remove()
 end
 /*-----------------------------------------------
 	*** Copyright (c) 2012-2016 by DrVrej, All rights reserved. ***

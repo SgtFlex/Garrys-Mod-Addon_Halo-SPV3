@@ -58,32 +58,29 @@ SWEP.DeploySound =  SWEP.PickupSound -- Sound played when the weapon is deployed
 
 
 function SWEP:PrimaryAttack()
-	if SERVER then
-		self:EmitSound(self.Primary.Sound[1])
-		timer.Simple(0.3, function() local nade = ents.Create(self.EntToThrow)
-		nade:SetPos(self:GetOwner():GetPos() + self:GetOwner():OBBCenter() + Vector(0, 0, 20) + self:GetOwner():GetForward()*15)
-		nade:Spawn()
-		if (self:GetOwner():IsNPC()) then
-			local NPC = self:GetOwner()
-			nade:GetPhysicsObject():SetVelocity(self:RangeAttackCode_GetShootPos()*0.6 + self:GetUp()*400)
-		else
-			nade:GetPhysicsObject():SetVelocity(self:GetOwner():GetAimVector()*1500)
-		end
-		nade:SetOwner(self:GetOwner())
+	self:GetOwner():EmitSound(self.Primary.Sound[1])
+	timer.Simple(0.15, function()
+		local Grenade = ents.Create(self.EntToThrow)
+		Grenade:SetPos(self:GetOwner():EyePos())
+		Grenade:Spawn()
+		Grenade:GetPhysicsObject():SetVelocity((self:GetOwner():GetAimVector() + Vector(0, 0, 0.15)):GetNormalized()*1000)
+		Grenade:GetPhysicsObject():AddAngleVelocity(VectorRand(-500, 500))
+		Grenade:SetOwner(self:GetOwner())
 		self:TakePrimaryAmmo( 1 )
 		if self:Ammo1() <= 0 then
 			self.Owner:StripWeapon(self:GetClass()) 
 		end
-		end)
-		self:SetNextPrimaryFire( CurTime() + self.Primary.Delay)
-	end
+		
+	end)
+	self:SetNextPrimaryFire( CurTime() + self.Primary.Delay)
+	
 end
 
 
 
-function SWEP:OwnerChanged()
-	self:EmitSound(VJ_PICKRANDOMTABLE(self.PickupSound))
-end
+-- function SWEP:OwnerChanged()
+-- 	self:EmitSound(VJ_PICKRANDOMTABLE(self.PickupSound))
+-- end
 
 function SWEP:EquipAmmo(Player)
 	self:EmitSound(VJ_PICKRANDOMTABLE(self.PickupSound))

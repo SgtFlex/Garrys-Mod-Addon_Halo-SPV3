@@ -22,23 +22,22 @@ function SWEP:CustomOnPrimaryAttack_BeforeShoot()
 	if (self:GetOwner():IsNPC()) then
 		self.Primary.Damage	= self.Primary.Damage * GetConVarNumber("vj_spv3_damageModifier") -- Damage
 	end
-	self.targetedEnemy = self:GetOwner():GetEnemy()
-if (CLIENT) then return end
+	self.TargetedEnemy = self:GetOwner():GetEnemy()
 if (self.Primary.DisableBulletCode==false) then return end
 	local SpawnBlaserRod = ents.Create(self.Primary.Projectile)
 	local OwnerPos = self.Owner:GetShootPos()
 	local OwnerAng = self.Owner:GetAimVector():Angle()
-	if self.Owner:IsPlayer() then SpawnBlaserRod:SetPos(OwnerPos) else SpawnBlaserRod:SetPos(self:GetAttachment(self:LookupAttachment("muzzle")).Pos) end
-	if self.Owner:IsPlayer() then SpawnBlaserRod:SetAngles(OwnerAng) else SpawnBlaserRod:SetAngles(self.Owner:GetAngles()) end
+	if (self.Owner:IsPlayer()) then SpawnBlaserRod:SetPos(OwnerPos) else SpawnBlaserRod:SetPos(self:GetAttachment(self:LookupAttachment("muzzle")).Pos) end
+	if (self.Owner:IsPlayer() or self.Owner:IsNPC()) then SpawnBlaserRod:SetAngles(OwnerAng) else SpawnBlaserRod:SetAngles(self:GetAngles()) end
 	
 	SpawnBlaserRod:Activate()
 	SpawnBlaserRod:Spawn()
-	SpawnBlaserRod.targetedEnemy = self:GetOwner():GetEnemy()
+	SpawnBlaserRod.TargetedEnemy = self:GetOwner():GetEnemy()
 	local phy = SpawnBlaserRod:GetPhysicsObject()
 	if phy:IsValid() then
 		if self.Owner:IsPlayer() then
-		phy:ApplyForceCenter(self.Owner:GetAimVector() * self.Primary.ProjectileSpeed) else //200000
-		phy:ApplyForceCenter(((self.Owner:GetEnemy():GetPos() + self.Owner:GetEnemy():OBBCenter() - self:GetAttachment(self:LookupAttachment("muzzle"))["Pos"]):GetNormalized()*self.Primary.ProjectileSpeed))
+			phy:ApplyForceCenter(self.Owner:GetAimVector() * self.Primary.ProjectileSpeed) else //200000
+			phy:ApplyForceCenter(((self.Owner:GetEnemy():GetPos() + self.Owner:GetEnemy():OBBCenter() - self:GetAttachment(self:LookupAttachment("muzzle"))["Pos"]):GetNormalized()*self.Primary.ProjectileSpeed))
 		end
 	end
 	SpawnBlaserRod:SetOwner(self:GetOwner())

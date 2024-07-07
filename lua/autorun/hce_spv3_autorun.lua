@@ -1,4 +1,7 @@
 include("client/SettingsMenu.lua")
+AddCSLuaFile("spv3_funcs.lua")
+include("spv3_funcs.lua")
+
 /*--------------------------------------------------
 	=============== Autorun File ===============
 	*** Copyright (c) 2012-2016 by DrVrej, All rights reserved. ***
@@ -12,14 +15,24 @@ local AddonType = "SNPC"
 local AutorunFile = "autorun/hce_spv3_autorun.lua"
 -------------------------------------------------------
 local VJExists = file.Exists("lua/autorun/vj_base_autorun.lua","GAME")
+
+-- if CLIENT then
+-- 	hook.Add("PostDrawSkyBox", "DrawDropShips", function()
+-- 		for k, v in ipairs(ents.FindByClass("dropship_*")) do
+-- 			v:Draw()
+-- 		end
+-- 	end)
+-- end
+
 if VJExists == true then
 	include('autorun/vj_controls.lua')
 	local vCat = "Halo CE SPV3"
 	VJ.AddNPC("[Spawn] Map Spawner","obj_vj_halo_spv3_map_spawner",vCat)
 	VJ.AddNPC("[Nat] Blind Wolf","npc_vj_halo_nat_spv3_blindwolf",vCat)
-	VJ.AddNPC("[Spawn Cov] Phantom","npc_vj_halo_cov_spv3_phantom",vCat)
-	VJ.AddNPC("[Spawn Cov] Phantom Tri-turret","npc_vj_halo_cov_spv3_phantom_tri",vCat)
-	VJ.AddNPC("[Spawn UNSC] Pelican","npc_vj_halo_unsc_spv3_pelican",vCat)
+	VJ.AddNPC("[Spawn Cov] Phantom (Unarmed)","dropship_halo_cov_spv3_phantom",vCat)
+	VJ.AddNPC("[Spawn Cov] Phantom (Armed)","dropship_halo_cov_spv3_phantom_tri",vCat)
+	VJ.AddNPC("[Spawn UNSC] Pelican (Unarmed)","dropship_halo_unsc_spv3_pelican",vCat)
+	VJ.AddNPC("[Spawn UNSC] Pelican (Armed)","dropship_halo_unsc_spv3_pelican_armed",vCat)
 	VJ.AddNPC("[Cov] Turret","npc_vj_halo_cov_spv3_phantom_turret",vCat)
 	VJ.AddNPC("[UNSC] Hanging Turret","npc_vj_halo_unsc_spv3_pelican_turret",vCat)
 	VJ.AddNPC("[UNSC] Rocket Turret","npc_vj_halo_unsc_spv3_rocket_pod",vCat)

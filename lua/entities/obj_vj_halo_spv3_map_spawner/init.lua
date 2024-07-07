@@ -53,6 +53,13 @@ end
 ---------------------------------------------------------------------------------------------------------------------------------------------
 ENT.CanFunction = true
 function ENT:CustomOnInitialize_BeforeNPCSpawn() 
+	util.PrecacheModel("models/hce/spv3/cov/phantom/phantom.mdl")
+	util.PrecacheModel("models/hce/spv3/cov/phantom/phantomturret.mdl")
+	util.PrecacheModel("models/hce/spv3/unsc/pelican/pelican.mdl")
+	util.PrecacheModel("models/hce/spv3/unsc/pelican/pelican_rocket_pod.mdl")
+	util.PrecacheModel("models/hce/spv3/unsc/pelican/pelicanturret.mdl")
+	util.PrecacheModel("models/hce/spv3/flood/biomass1/biomass1.mdl")
+
 	self.TableNavAreas = navmesh.GetAllNavAreas()
 	if (self.TableNavAreas[1] == nil) then
 		PrintMessage(3, "Map spawner requires Navmesh to function. Map has no navmesh!")

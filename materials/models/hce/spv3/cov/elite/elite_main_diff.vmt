@@ -23,8 +23,21 @@
 	$detailscale 1
 	$detailblendmode 5
 	$detailblendfactor 1
-
 	"$blendtintbybasealpha" "1"
 	"$blendtintcoloroverbase" "0"
+
+	"$cloakpassenabled"			"1"
+	"$cloakfactor"				"0"
+	"$bluramount" 				"0"
+	"$refractamount"			"1"
+	
+
+	"Proxies"
+	{
+		"AVP_Cloak"
+		{
+			resultVar	"$cloakfactor"
+		}
+	}
 }
 

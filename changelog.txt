@@ -1,3 +1,21 @@
 -Fixed/Reenabled missing grenade dodge animations
 -Changed: Carrier-type flood are registered as VJ Dangers
 -Fixed/Changed: All grenades are properly tagged as VJ Dangers
+-Redesigned Dropships
+-Spawners utilize precaching to remove lag when spawning
+-Entites utilize precaching to remove lag when gibbing
+--------------------------------------------------------------
+July 2023
+-Redid SPV3 Grenade Code
+-Simplified & greatly improved grenade physics
+-Grenades now bounce much more predictably & retain some velocity between bounces (based on bounciness)
+-Changed: Frag & Plasma Grenades now settle & arm when below a certain speed rather than # of bounces
+-Fixed a lot of potential game-crashing bugs relating to grenades
+-Fixed some potential game-crashing bugs with Needle Projectiles
+-Fixed sound & animation spamming when SNPCs panic (such as needle projectiles or lots of infection forms latching on)
+-Changed Berserking enemies no longer panic
+-Improved reliability of flood transforms
+-Fixed some NPCs getting stuck in transform animations when too close to each other
+-Fixed Latched infection forms will now unlatch instead of dissapearing if latched NPC suddenly removed. 
+-NPCs that die with infection forms attached will now transform and unlatch remaining forms
+-Fixed several grenade sounds

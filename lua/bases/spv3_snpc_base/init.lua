@@ -16,6 +16,7 @@ ENT.DisableBackBreak = false
 ENT.DisableForceDeath = false
 ENT.HeadHitgroup = nil
 ENT.IsCarrier = false
+ENT.BerserkChance = 0 --Chance to berserk on hit
 ENT.ItemDropsOnDeathChance = 3 -- If set to 1, it will always drop it
 
 ENT.MeleeAttackAnimationFaceEnemy = false -- Should it face the enemy while playing the melee attack animation?ENT.MeleeAttackDamage = 70
@@ -28,10 +29,10 @@ ENT.MeleeAttackDamageType = DMG_CLUB
 ENT.ExtraWeapons = {}
 ENT.GrenadeWeps = {
 	"weapon_vj_unsc_spv3_frag_nade",
-	"weapon_vj_unsc_spv3_plasma_nade",
-	"weapon_vj_unsc_spv3_gravity_nade",
-	"weapon_vj_unsc_spv3_cluster_nade",
-	"weapon_vj_unsc_spv3_needler_nade",
+	"weapon_vj_cov_spv3_plasma_nade",
+	"weapon_vj_cov_spv3_gravity_nade",
+	"weapon_vj_cov_spv3_cluster_nade",
+	"weapon_vj_cov_spv3_needler_nade",
 }
 ENT.Faction = "Covenant"
 ENT.RemovableParts = {
@@ -45,16 +46,10 @@ ENT.Appearance = {
 ENT.otherInit = function(entity) end
 ENT.CustomCollision = {Min = Vector(-18,-18,0), Max = Vector(18,18,85)}
 ENT.EntitiesToRunFrom = {obj_spore=true,obj_vj_grenade=true,obj_grenade=true,obj_handgrenade=true,npc_grenade_frag=true,doom3_grenade=true,fas2_thrown_m67=true,cw_grenade_thrown=true,obj_cpt_grenade=true,cw_flash_thrown=true,ent_hl1_grenade=true, obj_vj_unsc_spv3_frag_nade=true,obj_vj_cov_spv3_plasma_nade=true,obj_vj_cov_spv3_gravity_nade=true,obj_vj_cov_spv3_cluster_nade=true,obj_vj_cov_spv3_needler_nade=true}
-function ENT:CustomOnInitialize()
-	self.otherInit(self)
-	self:SetCollisionBounds(self.CustomCollision["Min"], self.CustomCollision["Max"])
-	self:RandomizeTraits()
-	self:SetPhysicalAppearance()
-	self:UseConVars()
-	timer.Simple(0.01, function()
-		self:SetInvisibility(self.IsInvis)
-	end)
-end
+
+ENT.NextStuckTime = 0
+
+ENT.AnimTbl_WeaponAim = {ACT_IDLE_AGITATED}
 
 function ENT:UseConVars()
 	self.MeleeAttackDamage = self.MeleeAttackDamage * GetConVarNumber("vj_spv3_damageModifier")
@@ -130,36 +125,6 @@ function ENT:RandomizeTraits()
 	self.NextMoveOrHideOnDamageByEnemy2 = self.NextMoveOrHideOnDamageByEnemy1 + math.random(0.5, 3) -- How much time until it moves or hides on damage by enemy? | The second # in math.random
 end
 
-function ENT:CustomOnGrenadeAttack_BeforeThrowTime() 
-	self.GrenadeAttackEntity = VJ_PICKRANDOMTABLE(self.GrenadeTypes)
-end
-
-ENT.ThingsToDrop = {}
-function ENT:RunItemDropsOnDeathCode(dmginfo,hitgroup)
-	if self.HasItemDropsOnDeath == false || GetConVarNumber("vj_spv3_dropGrenades")==0 then return end
-	for i=1, math.random(2,4) do
-		table.insert(self.ThingsToDrop, self.GrenadeWeps[math.random(1,#self.GrenadeWeps)])
-	end
-	if math.random(1,self.ItemDropsOnDeathChance) == 1 then
-		self:CustomRareDropsOnDeathCode(dmginfo,hitgroup)
-		for k,v in pairs(self.ThingsToDrop) do
-			local randdrop = ents.Create(self.ThingsToDrop[k])
-			randdrop:SetPos(self:GetPos() + self:OBBCenter())
-			randdrop:SetAngles(self:GetAngles())
-			randdrop:Spawn()
-			randdrop:Activate()
-			local phys = randdrop:GetPhysicsObject()
-			if IsValid(phys) then
-				phys:SetMass(60)
-				phys:ApplyForceCenter(dmginfo:GetDamageForce()*.01)
-			end
-		end
-	end
-end
-
-function ENT:CustomOnGrenadeAttack_ThrowVelocity(grEnt, grTargetPos) 
-	return (grTargetPos - grEnt:GetPos()) + (self:GetUp()*(grEnt:GetPos():Distance(grTargetPos)/3) + self:GetForward()*300 + self:GetRight()*math.random(-20, 20))
-end
 
 ENT.HasStuck=false
 ENT.Berserked=false
@@ -191,60 +156,7 @@ function ENT:DropWeapon()
 	self:GetActiveWeapon():Remove()
 end
 
-ENT.EvadeCooldown = 0
-function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
-	if (dmginfo:GetDamageType()==DMG_BLAST) then
-		dmginfo:ScaleDamage(3.5)
-	end
-	if (dmginfo:GetAttacker():IsNPC()) then
-		dmginfo:ScaleDamage(GetConVarNumber("vj_spv3_NPCTakeDamageModifier"))
-	end
-	if (math.random(0,2) == 2) then
-		if (self.EvadeCooldown <= CurTime()) then
-			if (math.random(0,1)==1) then
-				self:VJ_ACT_PLAYACTIVITY(ACT_SIGNAL1,true,1,false)
-			else
-				self:VJ_ACT_PLAYACTIVITY(ACT_SIGNAL2,true,1,false)
-			end
-			self.EvadeCooldown = CurTime() + 4
-		end
-	end
-	if (self.HasCloak) then
-		if (self.IsInvis==true) then
-			self:SetInvisibility(false)
-		end
-		timer.Create("Recloak"..self:GetCreationID(), 1, 1, function() 
-			if (!IsValid(self) or self.Dead==true) then return end
-			self:SetInvisibility(true)
-		end)
-	end
-	self.DeathType = self:CheckForSpecialDeaths(dmginfo, hitgroup)
-	if (self.DeathType != nil) then
-		self:DoSpecialDeath(self.DeathType, dmginfo)
-	end
-	if self.ShieldProjActivated == true and hitgroup == 509 then
-		self:DamageShieldProj(dmginfo)
-	end
-	if self.ShieldActivated == true then
-		self:DamageShield(dmginfo, hitgroup)
-	else
-		self.CurrentHealth = self.CurrentHealth - dmginfo:GetDamage()
-		if (self.RemovableParts[hitgroup]) then
-			self:DamageSpecialPart(hitgroup, dmginfo)
-		end
-		if (math.random(1,20) == 1) then
-			self:Berserk()
-		end
-	end
-	if (self.ShieldRecharge > 0) then
-		timer.Destroy("RegenShield"..self:GetCreationID())
-		timer.Create("ShieldDelay"..self:GetCreationID(), self.ShieldDelay, 1, function() --Timers will reset everytime damage is applied, no need to adjust
-			if (IsValid(self) and self.ShieldCurrentHealth < self.ShieldMaxHealth) then
-				self:RegenerateShield()
-			end
-		end)
-	end
-end
+
 
 function ENT:SetInvisibility(bInvis)
 	if (self.IsInvis!=true) then
@@ -423,44 +335,43 @@ function ENT:RegenerateShieldProj()
 	ParticleEffectAttach("hcea_shield_disperse",PATTACH_POINT_FOLLOW,self,self:LookupAttachment("origin"))
 end
 
-ENT.NextTalkTime = 0
-ENT.MouthOpenness = 0
-function ENT:CustomOnThink() //Is pretty much HL:Resurgence talk system. Maybe more complexity in the future?
-	if CurTime() < self.NextTalkTime then
-		if self.MouthOpenness == 0 then
-			self.MouthOpenness = math.random(10,70)
+
+
+
+ENT.NextStuckTime = 0
+function ENT:OnStuckByEntity(StickyEntity)
+	self.CanDetectDangers = false -- Should the NPC detect dangers? | This includes grenades!
+	if (self.NextStuckTime != 0 and CurTime() > self.NextStuckTime) then 
+		return  
+	end
+	self.NextStuckTime = CurTime() + 3
+	if (!self.Berserked) then
+		if (self.BerserkChance > 0 and math.random(0, 1) == 0) then
+			self:Berserk()
 		else
-			self.MouthOpenness = 0
-		end
-		self:SetPoseParameter("move_mouth", self.MouthOpenness)
-	else
-		self:SetPoseParameter("move_mouth",0)
-	end
-end
-
-function ENT:OnPlayCreateSound(sdData, sdFile)
-	self.NextTalkTime = CurTime() + SoundDuration(sdFile)*3.5 --For some reason the soundduration is wrong. perhaps a bug with .ogg format?
-end
-
-function ENT:CustomOnInitialKilled(dmginfo, hitgroup)
-	if (self.ShieldProjActivated==true) then
-		self:DisperseShieldProj()
-	end
-end
-
-function ENT:CustomOnDeath_BeforeCorpseSpawned(dmginfo, hitgroup)
-	if (!self.IsCarrier or self.DeathType=="LargeForce") then return end
-	if (GetConVarNumber("vj_spv3_bonusInfForms")==0) then
-		self.HasDeathRagdoll = true
-		return
-	end
-	self:DropInfForms()
-	for k, v in pairs(self.RemovableParts) do
-		if (v["Health"] > 0) then
-			v["Execute"](self)
+			self:Panic()
 		end
 	end
 end
+
+ENT.NextPanicTime = nil
+function ENT:Panic()
+	if (self.NextPanicTime != nil and CurTime() < self.NextPanicTime) then return end
+	self.NextPanicTime = CurTime() + 5
+	if (self.SoundTbl_Stuck) then
+		self:StopAllCommonSpeechSounds()
+		self:PlaySoundSystem("GeneralSpeech", self.SoundTbl_Stuck)
+	end
+	if (self:LookupSequence("Transform")!=-1) then
+		self:VJ_ACT_PLAYACTIVITY("Transform", true, 4, false)
+	end
+end
+
+function ENT:BeforeTransform()
+
+end
+
+
 
 ENT.infFormCount = 5
 ENT.spreadRadius = 75
@@ -493,15 +404,6 @@ function ENT:DropInfForms()
 	end
 end
 
-function ENT:CustomOnAllyDeath(argent) 
-	if (self.CanFlee!=true) then return end
-	self.HasProtector = self:CheckForProtector()
-	if (self.HasProtector == false) then
-		if (math.random(1, 4)==1) then
-			self:Flee()
-		end
-	end
-end
 
 function ENT:CheckForProtector()
 	for k, v in pairs(ents.FindInSphere(self:GetPos(), 1000)) do
@@ -533,7 +435,62 @@ function ENT:Flee()
 	end)
 end
 
---------------------------------------------------------------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------
+---Custom VJ Functions, attempted to order by life cycle
+--------------------------------------------------------------
+
+function ENT:CustomOnInitialize()
+	self.otherInit(self)
+	self:SetCollisionBounds(self.CustomCollision["Min"], self.CustomCollision["Max"])
+	self:RandomizeTraits()
+	self:SetPhysicalAppearance()
+	self:UseConVars()
+	timer.Simple(0.01, function()
+		self:SetInvisibility(false)
+	end)
+end
+
+
+ENT.NextTalkTime = 0
+ENT.MouthOpenness = 0
+ENT.bIsAirborne = false
+function ENT:CustomOnThink() //Is pretty much HL:Resurgence talk system. Maybe more complexity in the future?
+	if CurTime() < self.NextTalkTime then
+		if self.MouthOpenness == 0 then
+			self.MouthOpenness = math.random(10,70)
+		else
+			self.MouthOpenness = 0
+		end
+		self:SetPoseParameter("move_mouth", self.MouthOpenness)
+	else
+		self:SetPoseParameter("move_mouth",0)
+	end
+	if (self.bIsAirborne and self:IsOnGround()) then --We just landed
+		self:VJ_ACT_PLAYACTIVITY(ACT_LAND, true, 1.5, false)
+		self.bIsAirborne = false
+	elseif (!self:IsOnGround()) then
+		self.bIsAirborne = true
+		self:SetSequence( self:SelectWeightedSequence(ACT_JUMP) )
+	end
+end
+
+
+function ENT:OnPlayCreateSound(sdData, sdFile)
+	self.NextTalkTime = CurTime() + SoundDuration(sdFile)*3.5 --For some reason the soundduration is wrong. perhaps a bug with .ogg format?
+end
+
+function ENT:CustomOnAllyDeath(argent) 
+	if (self.CanFlee!=true) then return end
+	self.HasProtector = self:CheckForProtector()
+	if (self.HasProtector == false) then
+		if (math.random(1, 4)==1) then
+			self:Flee()
+		end
+	end
+end
+
+
 function ENT:CustomOnMeleeAttack_BeforeStartTimer(seed) 
 	if (self.IsInvis) then
 		self:RemoveFlags(FL_NOTARGET)
@@ -545,47 +502,115 @@ function ENT:CustomOnMeleeAttack_BeforeStartTimer(seed)
 	end
 end
 
-function ENT:CustomOnCheckForDangers(danger)
-    self:SetAngles(Angle(self:GetAngles().x, (self:GetPos()-danger:GetPos()):Angle().y,self:GetAngles().z))
+function ENT:OnDangerDetected(dangerType, data) 
+	self:SetAngles(Angle(self:GetAngles().x, (self:GetPos()-danger:GetPos()):Angle().y,self:GetAngles().z))
     self:VJ_ACT_PLAYACTIVITY(ACT_SIGNAL3, true, 1.5, false)
 end
 
-function ENT:CheckForDangers()
-	if !self.CanDetectDangers or self.AttackType == VJ_ATTACK_GRENADE or self.NextDangerDetectionT > CurTime() or self.VJ_IsBeingControlled then return end
-	local regDangerDetected = false -- A regular non-grenade danger has been found (This is done to make sure grenades take priority over other dangers!)
-	for _, v in ipairs(ents.FindInSphere(self:GetPos(), self.DangerDetectionDistance)) do
-		if (v.VJ_IsDetectableDanger or v.VJ_IsDetectableGrenade) && self:Visible(v) then
-			local vOwner = v:GetOwner()
-			if !(IsValid(vOwner) && vOwner.IsVJBaseSNPC && ((self:GetClass() == vOwner:GetClass()) or (self:Disposition(vOwner) == D_LI))) then
-				if v.VJ_IsDetectableDanger then regDangerDetected = true continue end -- If it's a regular danger then just skip it for now
-				self:PlaySoundSystem("OnGrenadeSight")
-				self.NextDangerDetectionT = CurTime() + 4
-				self.TakingCoverT = CurTime() + 4
-				-- If has the ability to throw it back, then throw the grenade!
-				if self.CanThrowBackDetectedGrenades && self.HasGrenadeAttack && v.VJ_IsPickupableDanger && !v.VJ_IsPickedUpDanger && v:GetVelocity():Length() < 400 && self:VJ_GetNearestPointToEntityDistance(v) < 100 then
-					self.NextGrenadeAttackSoundT = CurTime() + 3
-					self:ThrowGrenadeCode(v, true)
-					v.VJ_IsPickedUpDanger = true
-					//v:Remove()
-					return
-				end
-				self:VJ_TASK_COVER_FROM_ORIGIN("TASK_RUN_PATH", function(x)
-					x.CanShootWhenMoving = true
-					x.ConstantlyFaceEnemy = true
-				end)
-                self:CustomOnCheckForDangers(v)
-				return
+
+function ENT:CustomOnGrenadeAttack_BeforeThrowTime() 
+	self.GrenadeAttackEntity = VJ_PICKRANDOMTABLE(self.GrenadeTypes)
+end
+
+
+function ENT:CustomOnGrenadeAttack_ThrowVelocity(grEnt, grTargetPos) 
+	return (grTargetPos - grEnt:GetPos()) + (self:GetUp()*(grEnt:GetPos():Distance(grTargetPos)/3) + self:GetForward()*300 + self:GetRight()*math.random(-20, 20))
+end
+
+
+ENT.EvadeCooldown = 0
+function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
+	if (dmginfo:GetDamageType()==DMG_BLAST) then
+		dmginfo:ScaleDamage(3.5)
+	end
+	if (dmginfo:GetAttacker():IsNPC()) then
+		dmginfo:ScaleDamage(GetConVarNumber("vj_spv3_NPCTakeDamageModifier"))
+	end
+	if (math.random(0,2) == 2) then
+		if (self.EvadeCooldown <= CurTime()) then
+			if (math.random(0,1)==1) then
+				self:VJ_ACT_PLAYACTIVITY(ACT_SIGNAL1,true,1,false)
+			else
+				self:VJ_ACT_PLAYACTIVITY(ACT_SIGNAL2,true,1,false)
+			end
+			self.EvadeCooldown = CurTime() + 4
+		end
+	end
+	if (self.HasCloak) then
+		if (self.IsInvis==true) then
+			self:SetInvisibility(false)
+		end
+		timer.Create("Recloak"..self:GetCreationID(), 1, 1, function() 
+			if (!IsValid(self) or self.Dead==true) then return end
+			self:SetInvisibility(true)
+		end)
+	end
+	self.DeathType = self:CheckForSpecialDeaths(dmginfo, hitgroup)
+	if (self.DeathType != nil) then
+		self:DoSpecialDeath(self.DeathType, dmginfo)
+	end
+	if self.ShieldProjActivated == true and hitgroup == 509 then
+		self:DamageShieldProj(dmginfo)
+	end
+	if self.ShieldActivated == true then
+		self:DamageShield(dmginfo, hitgroup)
+	else
+		self.CurrentHealth = self.CurrentHealth - dmginfo:GetDamage()
+		if (self.RemovableParts[hitgroup]) then
+			self:DamageSpecialPart(hitgroup, dmginfo)
+		end
+		if (math.random(1,100) <= self.BerserkChance) then
+			self:Berserk()
+		end
+	end
+	if (self.ShieldRecharge > 0) then
+		timer.Destroy("RegenShield"..self:GetCreationID())
+		timer.Create("ShieldDelay"..self:GetCreationID(), self.ShieldDelay, 1, function() --Timers will reset everytime damage is applied, no need to adjust
+			if (IsValid(self) and self.ShieldCurrentHealth < self.ShieldMaxHealth) then
+				self:RegenerateShield()
+			end
+		end)
+	end
+end
+
+
+function ENT:CustomRareDropsOnDeathCode(dmginfo, hitgroup) 
+	if self.HasItemDropsOnDeath == false || GetConVarNumber("vj_spv3_dropGrenades")==0 then return end
+	for i=1, math.random(2,4) do
+		table.insert(self.ThingsToDrop, self.GrenadeWeps[math.random(1,#self.GrenadeWeps)])
+	end
+	if math.random(1,self.ItemDropsOnDeathChance) == 1 then
+		for k,v in pairs(self.ThingsToDrop) do
+			local randdrop = ents.Create(self.ThingsToDrop[k])
+			randdrop:SetPos(self:GetPos() + self:OBBCenter())
+			randdrop:SetAngles(self:GetAngles())
+			randdrop:Spawn()
+			randdrop:Activate()
+			local phys = randdrop:GetPhysicsObject()
+			if IsValid(phys) then
+				phys:SetMass(60)
+				--phys:ApplyForceCenter(dmginfo:GetDamageForce()*.01)
 			end
 		end
 	end
-	if regDangerDetected or self:HasCondition(COND_HEAR_DANGER) or self:HasCondition(COND_HEAR_PHYSICS_DANGER) or self:HasCondition(COND_HEAR_MOVE_AWAY) then
-		self:PlaySoundSystem("OnDangerSight")
-		self.NextDangerDetectionT = CurTime() + 4
-		self.TakingCoverT = CurTime() + 4
-		self:VJ_TASK_COVER_FROM_ORIGIN("TASK_RUN_PATH", function(x)
-			x.CanShootWhenMoving = true
-			x.ConstantlyFaceEnemy = true
-		end)
+end
+
+function ENT:CustomOnInitialKilled(dmginfo, hitgroup)
+	if (self.ShieldProjActivated==true) then
+		self:DisperseShieldProj()
+	end
+end
+
+function ENT:CustomOnDeath_BeforeCorpseSpawned(dmginfo, hitgroup)
+	if (!self.IsCarrier or self.DeathType=="LargeForce") then return end
+	if (GetConVarNumber("vj_spv3_bonusInfForms")==0) then
+		self.HasDeathRagdoll = true
 		return
+	end
+	self:DropInfForms()
+	for k, v in pairs(self.RemovableParts) do
+		if (v["Health"] > 0) then
+			v["Execute"](self)
+		end
 	end
 end

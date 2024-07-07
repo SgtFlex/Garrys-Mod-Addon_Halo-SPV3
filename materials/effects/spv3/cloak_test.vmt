@@ -1,0 +1,12 @@
+"VertexlitGeneric"
+{
+	"Proxies"
+	{
+		"AVP_Cloak"
+		{
+			resultVar	"$cloakfactor"
+            diffuse $basetexture
+            color $color2
+		}
+	}
+}
