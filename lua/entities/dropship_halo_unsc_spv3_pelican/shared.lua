@@ -1,6 +1,6 @@
-ENT.Base 			= "base_ai"
+ENT.Base 			= "dropship_base"
 ENT.Type 			= "ai"
-ENT.PrintName 		= "Pelican"
+ENT.PrintName 		= "Pelican (unarmed)"
 ENT.Author 			= "SgtFlex"
 ENT.Contact 		= "http://vrejgaming.webs.com/"
 ENT.Purpose 		= "Let it eat you."

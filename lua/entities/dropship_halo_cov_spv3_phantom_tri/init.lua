@@ -1,7 +1,8 @@
 AddCSLuaFile("shared.lua")
 include('shared.lua')
-include('entities/dropship_halo_cov_spv3_phantom/init.lua')
 
 function ENT:SpawnTurrets()
-	
+	self:SpawnTurret("npc_vj_halo_cov_spv3_phantom_turret", "Cannon1")
+    self:SpawnTurret("npc_vj_halo_cov_spv3_phantom_turret", "Cannon2")
+    self:SpawnTurret("npc_vj_halo_cov_spv3_phantom_turret", "Cannon3")
 end

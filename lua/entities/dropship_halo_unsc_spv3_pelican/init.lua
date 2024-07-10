@@ -1,6 +1,5 @@
 AddCSLuaFile("shared.lua")
 include('shared.lua')
-include('bases/dropship_base/init.lua')
 
 ENT.Model = "models/hce/spv3/unsc/pelican/pelican.mdl"
 ENT.EngineIdleSFX = "pelican/wind_loop.wav"
@@ -13,7 +12,7 @@ ENT.UnitCost = {
 	{Name = "npc_vj_halo_unsc_spv3_chief", Cost = 15},
 }
 ENT.VJ_NPC_Class = {"CLASS_UNSC"} -- NPCs with the same class with be allied to each other
-ENT.EntClassToCarry = "drc_ammocrate_unsc_heavy"
+ENT.EntClassToCarry = nil
 ENT.GibModels = {}
 
 ENT.ChildUnitModels = {

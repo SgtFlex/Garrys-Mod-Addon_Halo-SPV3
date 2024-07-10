@@ -106,3 +106,7 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 		dmginfo:ScaleDamage(3.5)
 	end
 end
+
+function ENT:UpdateTransmitState()	
+	return TRANSMIT_ALWAYS 
+end

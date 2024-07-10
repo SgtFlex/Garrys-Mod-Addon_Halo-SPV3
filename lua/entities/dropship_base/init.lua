@@ -1,8 +1,6 @@
+AddCSLuaFile("shared.lua")
+include("shared.lua")
 
-
-
-
-ENT.HullType = HULL_MEDIUM
 	-- ====Variant Variables==== --
 ENT.Model = "models/hce/spv3/cov/phantom/phantom.mdl" -- The game will pick a random model from the table when the SNPC is spawned | Add as many as you want
 ENT.EngineIdleSFX = "phantom/engine_hover.wav"
@@ -17,8 +15,8 @@ ENT.MaxTurnRate = 0.01
 ENT.TableSpawns = {}
 ENT.StartHealth = 5000
 ENT.DropHeight = 500
-ENT.GibModels = {}
-ENT.ChildUnitModels = {}
+ENT.GibModels = nil
+ENT.ChildUnitModels = nil
 ENT.UseCustomSchedule = false
 ENT.gibTable = {
 	"models/gibs/metal_gib5.mdl",
@@ -56,7 +54,7 @@ ENT.MoveLocation = Vector(0,0,0)
 ENT.DesiredSpeed = 1500
 ENT.IsDead = false
 ENT.FlySchedule = ai_schedule.New("Dropship")
-ENT.turret = {}
+ENT.Turrets = {}
 ENT.CurAirNodeI = nil
 ENT.SpawnedUnits = {}
 ENT.leaving = false
@@ -70,7 +68,6 @@ ENT.LatchConstraint = nil
 
 function ENT:TaskStart_FlyToPos(data)
 	self.MoveLocation = data.pos
-	print("Flying to pos")
 end
 
 function ENT:Task_FlyToPos(data)
@@ -83,8 +80,6 @@ function ENT:Task_FlyToPos(data)
 		self.DesiredSpeed = self.MaxSpeed
 		self.DesiredControlRotation = rot
 	end
-	print(self.DesiredSpeed)
-	print(self:GetSpeed())
 	if (self:GetPos():Distance(data.pos) < data.AcceptanceRadius and (self:GetPhysicsObject():GetVelocity():Length() )) then
 		self:TaskComplete()
 	end
@@ -93,7 +88,7 @@ end
 function ENT:TaskStart_SpawnVehicle(data)
 	if (self.EntClassToCarry) then
 		local ent = ents.Create(self.EntClassToCarry)
-		if (ent) then
+		if (IsValid(ent)) then
 			ent:Spawn()
 			self:PickupEntity(ent)
 		end
@@ -199,35 +194,43 @@ function ENT:ConstructFlySchedule()
 	table.remove(TravelPath, 1)
 	table.remove(TravelPath, #TravelPath)
 	--Entering
-	--self.FlySchedule:AddTask("FlyToPos", {pos = self.Nodes[#self.Nodes], AcceptanceRadius = 500, Stop = false})
-	self.FlySchedule:AddTask("SpawnVehicle", 0)
-	self.FlySchedule:AddTask("SetSolid", SOLID_VPHYSICS)
-	if (#TravelPath >= 1) then
+	if (#self.Nodes > 1) then
+		self.FlySchedule:AddTask("FlyToPos", {pos = self.Nodes[#self.Nodes], AcceptanceRadius = 500, Stop = false})
+		self.FlySchedule:AddTask("SpawnVehicle", 0)
+		self.FlySchedule:AddTask("SetSolid", SOLID_VPHYSICS)
 		self.FlySchedule:AddTask("NavigatePath", {Path = TravelPath, AcceptanceRadius = 1500})
-	end
-	self.FlySchedule:AddTask("FlyToPos", {pos = self.Nodes[1], AcceptanceRadius = 500, Stop = true})
-	self.FlySchedule:AddTask("Touchdown", 0)
-	self.FlySchedule:AddTask("DropEntity", 0)
-	self.FlySchedule:AddTask("SpawnUnits", 0)
-	
-	
-	--Leaving
-	if (#TravelPath >= 1) then
-		self.FlySchedule:AddTask("NavigatePath", {Path = self.Nodes, AcceptanceRadius = 1500})
-	end
-	self.FlySchedule:AddTask("SetSolid", SOLID_NONE)
 
-	self.FlySchedule:AddTask("FlyToPos", {pos = self.SpawnPos, AcceptanceRadius = 1500, Stop = false})
-	self.FlySchedule:AddTask("Despawn", 0)
+		self.FlySchedule:AddTask("FlyToPos", {pos = self.Nodes[1], AcceptanceRadius = 500, Stop = true})
+		self.FlySchedule:AddTask("Touchdown", 0)
+		self.FlySchedule:AddTask("DropEntity", 0)
+		self.FlySchedule:AddTask("SpawnUnits", 0)
+		--Leaving
+		self.FlySchedule:AddTask("NavigatePath", {Path = self.Nodes, AcceptanceRadius = 1500})
+		self.FlySchedule:AddTask("SetSolid", SOLID_NONE)
+		self.FlySchedule:AddTask("FlyToPos", {pos = self.SpawnPos, AcceptanceRadius = 1500, Stop = false})
+		self.FlySchedule:AddTask("Despawn", 0)
+	else
+		self.FlySchedule:AddTask("FlyToPos", {pos = self.Nodes[1], AcceptanceRadius = 500, Stop = true})
+		self.FlySchedule:AddTask("SpawnVehicle", 0)
+		self.FlySchedule:AddTask("SetSolid", SOLID_VPHYSICS)
+		self.FlySchedule:AddTask("Touchdown", 0)
+		self.FlySchedule:AddTask("DropEntity", 0)
+		self.FlySchedule:AddTask("SpawnUnits", 0)
+		--Leaving
+		self.FlySchedule:AddTask("SetSolid", SOLID_NONE)
+		self.FlySchedule:AddTask("FlyToPos", {pos = self.SpawnPos, AcceptanceRadius = 1500, Stop = false})
+		self.FlySchedule:AddTask("Despawn", 0)
+	end
+	
 end
 
-function ENT:GenerateAirNodes(StartPos)
+function ENT:GeneratePathFromPos(StartPos)
 	self:TraceForSkyboxRecursively(StartPos, StartPos + Vector(0,0,self.DropHeight), 0)
 	--Did we hit the skybox?
-	PrintTable(self.Nodes)
 	return self.Nodes
 end
 
+ENT.HitSkyPos = nil
 function ENT:TraceForSkyboxRecursively(PosStart, PosEnd, depth)
 	local trace = {start = PosStart, endpos = PosEnd, filter = self, ignoreworld = false}
 	
@@ -239,8 +242,9 @@ function ENT:TraceForSkyboxRecursively(PosStart, PosEnd, depth)
 		for i = 1, self.AirNodeDirections do
 			local ParentYaw = (PosEnd - PosStart):Angle().Y
 			tr = self:TraceForSkyboxRecursively(PosEnd, PosEnd + (Angle(-30, ((360/self.AirNodeDirections) * (i - 1)) + ParentYaw, 0):Forward()*self.LengthBetweenNodes), depth + 1)
-			if ((tr.HitPos - tr.StartPos):Length() > 750 and tr.HitSky and #self.Nodes > 1) then
-				self.SpawnPos = self.Nodes[#self.Nodes]
+			if (tr.HitSky) then
+				--self.SpawnPos = self.Nodes[#self.Nodes]
+				self.HitSkyPos = tr.HitPos
 				debugoverlay.Cross(tr.HitPos, 1000,3, Color(0,255,255))
 				break
 			end
@@ -250,36 +254,32 @@ function ENT:TraceForSkyboxRecursively(PosStart, PosEnd, depth)
 end
 
 function ENT:Initialize()
-	self:GenerateAirNodes(self:GetPos())
+	self:GeneratePathFromPos(self:GetPos())
 	self:RemoveEFlags( EFL_FORCE_CHECK_TRANSMIT )
-	if (#self.Nodes > 1) then
-		-- self.SpawnPos = self.Nodes[#self.Nodes] + (self.Nodes[#self.Nodes] - self.Nodes[#self.Nodes-1]):GetNormalized()*3000
-		self:SetPos(self.SpawnPos)
-		self:SetAngles((self.Nodes[#self.Nodes-1] - self:GetPos()):Angle())
-		self:SetModel(self.Model)
-		self:AddFlags(FL_OBJECT)
-		self:AddFlags(FL_AIMTARGET)
-		self:SetMaxHealth(self.StartHealth)
-		self:SetHealth(self.StartHealth)
-		self:AddCallback("PhysicsCollide", function(ent, data) self:PhysicsCollide(data, ent) end)
-		
-		self.EngineSound = CreateSound(self, self.EngineMoveSFX)
-		self.EngineSound:SetSoundLevel(140)
-		self.EngineIdleSound = CreateSound(self, self.EngineIdleSFX)
-		self.EngineIdleSound:SetSoundLevel(105)
-		self:InitializePhysics()
-		self:SpawnTurrets()
-		self:SetupSpawnTable()
-		self:PrecacheGibModels()
-		self:PrecacheChildUnitModels()
-		self:GetPhysicsObject():SetVelocity((self.Nodes[#self.Nodes-1] - self:GetPos()):GetNormalized() * self.DesiredSpeed)
-		self:ConstructFlySchedule()
-		self:SetSolid(SOLID_NONE)
-		self:AddEFlags(EFL_IN_SKYBOX)
-	else
-		print("Table too short")
-		self:Remove()
-	end
+	--18K is the max map limit for physics-simulated entities. Spawn within those bounds
+	self.SpawnPos = self.Nodes[#self.Nodes] + (self.HitSkyPos - self.Nodes[1]):GetNormalized()*(17000 - self.Nodes[#self.Nodes]:Length())
+	self:SetPos(self.SpawnPos)
+	self:SetAngles((self.Nodes[#self.Nodes] - self:GetPos()):Angle())
+	self:SetModel(self.Model)
+	self:AddFlags(FL_OBJECT)
+	self:AddFlags(FL_AIMTARGET)
+	self:SetMaxHealth(self.StartHealth)
+	self:SetHealth(self.StartHealth)
+	self:AddCallback("PhysicsCollide", function(ent, data) self:PhysicsCollide(data, ent) end)
+	
+	self.EngineSound = CreateSound(self, self.EngineMoveSFX)
+	self.EngineSound:SetSoundLevel(140)
+	self.EngineIdleSound = CreateSound(self, self.EngineIdleSFX)
+	self.EngineIdleSound:SetSoundLevel(105)
+	self:InitializePhysics()
+	self:SpawnTurrets()
+	self:SetupSpawnTable()
+	self:PrecacheGibModels()
+	self:PrecacheChildUnitModels()
+	self:GetPhysicsObject():SetVelocity((self.Nodes[#self.Nodes] - self:GetPos()):GetNormalized() * self.DesiredSpeed)
+	self:ConstructFlySchedule()
+	self:SetSolid(SOLID_NONE)
+	self:AddEFlags(EFL_IN_SKYBOX)
 end
 
 function ENT:UpdateTransmitState()	
@@ -316,12 +316,15 @@ end
 
 
 function ENT:PrecacheGibModels()
+	PrintTable(self.GibModels)
 	for k, v in pairs(self.GibModels) do
+		print(v)
 		util.PrecacheModel(v)
 	end
 end
 
 function ENT:PrecacheChildUnitModels()
+	PrintTable(self.ChildUnitModels)
 	for k, v in pairs(self.ChildUnitModels) do
 		util.PrecacheModel(v)
 	end
@@ -363,7 +366,7 @@ function ENT:SpawnTurret(class, socket)
 	turret:SetOwner(self)
 	turret:Spawn()
 	constraint.NoCollide(self, turret, 0, 0)
-	table.insert(self.turret, turret)
+	table.insert(self.Turrets, turret)
 	return turret
 end
 

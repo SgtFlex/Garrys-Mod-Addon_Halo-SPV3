@@ -99,3 +99,7 @@ function ENT:CustomRangeAttackCode()
 	self:EmitSound(VJ_PICKRANDOMTABLE(self.RangeAttackSound), 90)
 	ParticleEffectAttach("hcea_hunter_plasma_rifle_fire", PATTACH_POINT_FOLLOW, self, self:LookupAttachment("muzzle"))
 end
+
+function ENT:UpdateTransmitState()	
+	return TRANSMIT_ALWAYS 
+end

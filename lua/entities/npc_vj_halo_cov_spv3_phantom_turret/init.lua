@@ -39,11 +39,13 @@ ENT.RangeAttackAngleRadius = 180 -- What is the attack angle radius? | 100 = In 
 ENT.ConstantlyFaceEnemy = true
 ENT.ConstantlyFaceEnemy_IfAttacking = true -- Should it face the enemy when attacking?
 ENT.RangeAttackAnimationFaceEnemy = false
--- function ENT:CustomRangeAttackCode_BeforeProjectileSpawn(TheProjectile) 
--- 	self:EmitSound("weapons/shadeturret/turret_shade.ogg", 105)
--- 	TheProjectile:SetOwner(self)
--- 	ParticleEffectAttach("hcea_hunter_plasma_rifle_fire", PATTACH_POINT_FOLLOW, self, 1)
--- end -- This is ran before Spawn() is called
+
+
+function ENT:CustomRangeAttackCode_BeforeProjectileSpawn(TheProjectile) 
+	self:EmitSound("weapons/shadeturret/turret_shade.ogg", 105)
+	TheProjectile:SetOwner(self)
+	ParticleEffectAttach("hcea_hunter_plasma_rifle_fire", PATTACH_POINT_FOLLOW, self, 1)
+end -- This is ran before Spawn() is called
 
 function ENT:CustomOnInitialize()
 	self:SetCollisionBounds(self:GetModelBounds())

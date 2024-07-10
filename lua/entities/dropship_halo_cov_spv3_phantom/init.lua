@@ -1,6 +1,5 @@
 AddCSLuaFile("shared.lua")
 include('shared.lua')
-include('bases/dropship_base/init.lua')
 
 ENT.Model = "models/hce/spv3/cov/phantom/phantom.mdl" -- The game will pick a random model from the table when the SNPC is spawned | Add as many as you want
 ENT.EngineIdleSFX = "phantom/engine_hover.wav"

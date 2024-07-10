@@ -1,17 +1,8 @@
-ENT.Base 			= "base_ai"
+ENT.Base 			= "dropship_halo_cov_spv3_phantom"
 ENT.Type 			= "ai"
 ENT.PrintName 		= "Phantom (Turreted)"
-ENT.Author 			= "Mayhem"
+ENT.Author 			= "SgtFlex"
 ENT.Contact 		= "http://vrejgaming.webs.com/"
 ENT.Purpose 		= "Let it eat you."
 ENT.Instructions	= "Click on it to spawn it."
 ENT.Category		= "Halo CE SPV3"
-
-if (CLIENT) then
-local Name = "Elite Minor"
-local LangName = "npc_vj_halo_cov_spv3_elite_min"
-language.Add(LangName, Name)
-killicon.Add(LangName,"HUD/killicons/default",Color ( 255, 80, 0, 255 ) )
-language.Add("#"..LangName, Name)
-killicon.Add("#"..LangName,"HUD/killicons/default",Color ( 255, 80, 0, 255 ) )
-end
