@@ -1,27 +1,20 @@
 if (!file.Exists("autorun/vj_base_autorun.lua","LUA")) then return end
-AddCSLuaFile("shared.lua")
-include("shared.lua")
-/*--------------------------------------------------
-	=============== Spawner Base ===============
-	*** Copyright (c) 2012-2020 by DrVrej, All rights reserved. ***
-	No parts of this code or any of its contents may be reproduced, copied, modified or adapted,
-	without the prior written consent of the author, unless otherwise indicated for stand-alone materials.
-INFO: Used to make spawners.
---------------------------------------------------*/
-/*
-	Spawner is not that different from the default, uses only moderately adjusted code.
-*/
-ENT.VJBaseSpawnerDisabled = false -- If set to true, it will stop spawning the entities
-ENT.OverrideDisableOnSpawn = false -- If set to true, the spawner will create entities on initialize even if it's disabled!
-ENT.SingleSpawner = false -- If set to true, it will spawn the entities once then remove itself
-ENT.Model = {"models/props_c17/furnitureStove001a.mdl"} -- The models it should spawn with | Picks a random one from the table
+
+ENT.Base 			= "spv3_map_spawner"
+ENT.Type 			= "point"
+ENT.PrintName 		= "SPV3 Map Spawner"
+ENT.Author 			= "SgtFlex"
+ENT.Contact 		= "http://vrejgaming.webs.com/"
+ENT.Purpose 		= "To spawn SPV3 units"
+ENT.Instructions	= "Click on it to spawn it."
+ENT.Category		= "Halo CE SPV3"
+
+
 ENT.EntitiesToSpawn = {
-	{EntityName = "Phantom", SpawnPosition = {vForward=0, vRight=0, vUp=0}, Entities = {"npc_vj_halo_cov_spv3_phantom"}, Weight = GetConVar("vj_spv3_mapCov"):GetFloat()},
-	{EntityName = "Pelican", SpawnPosition = {vForward=0, vRight=0, vUp=0}, Entities = {"npc_vj_halo_unsc_spv3_pelican"}, Weight = GetConVar("vj_spv3_mapUNSC"):GetFloat()},
+	{EntityName = "Phantom", SpawnPosition = {vForward=0, vRight=0, vUp=0}, Entities = {"dropship_halo_cov_spv3_phantom"}, Weight = GetConVar("vj_spv3_mapCov"):GetFloat()},
+	{EntityName = "Pelican", SpawnPosition = {vForward=0, vRight=0, vUp=0}, Entities = {"dropship_halo_unsc_spv3_pelican"}, Weight = GetConVar("vj_spv3_mapUNSC"):GetFloat()},
 	{EntityName = "Biomass", SpawnPosition = {vForward=0, vRight=0, vUp=0}, Entities = {"sent_vj_flood_spv3_biomass"}, Weight = GetConVar("vj_spv3_mapFlood"):GetFloat()},
-	/* Extras:
-		- WeaponsList = {} (Use "default" to make it spawn the NPC with its default weapons)
-	*/
+
 }
 ENT.TimedSpawn_Time = 30 -- How much time until it spawns another SNPC?
 ENT.TimedSpawn_OnlyOne = false -- If it's true then it will only have one SNPC spawned at a time
@@ -50,7 +43,6 @@ ENT.TableNavAreas = nil
 function ENT:CustomOnEntitySpawn(EntityName, SpawnPosition, Entities, TheEntity) 
 	
 end
----------------------------------------------------------------------------------------------------------------------------------------------
 ENT.CanFunction = true
 function ENT:CustomOnInitialize_BeforeNPCSpawn() 
 	util.PrecacheModel("models/hce/spv3/cov/phantom/phantom.mdl")
@@ -171,8 +163,8 @@ ENT.spv3Npcs = {}
 ENT.spv3NpcCount = 0
 function ENT:Initialize()
 	self.EntitiesToSpawn = {
-	{EntityName = "Phantom", SpawnPosition = {vForward=0, vRight=0, vUp=0}, Entities = {"npc_vj_halo_cov_spv3_phantom"}, Weight = GetConVar("vj_spv3_mapCov"):GetFloat()},
-	{EntityName = "Pelican", SpawnPosition = {vForward=0, vRight=0, vUp=0}, Entities = {"npc_vj_halo_unsc_spv3_pelican"}, Weight = GetConVar("vj_spv3_mapUNSC"):GetFloat()},
+	{EntityName = "Phantom", SpawnPosition = {vForward=0, vRight=0, vUp=0}, Entities = {"dropship_halo_cov_spv3_phantom"}, Weight = GetConVar("vj_spv3_mapCov"):GetFloat()},
+	{EntityName = "Pelican", SpawnPosition = {vForward=0, vRight=0, vUp=0}, Entities = {"dropship_halo_unsc_spv3_pelican"}, Weight = GetConVar("vj_spv3_mapUNSC"):GetFloat()},
 	{EntityName = "Biomass", SpawnPosition = {vForward=0, vRight=0, vUp=0}, Entities = {"sent_vj_flood_spv3_biomass"}, Weight = GetConVar("vj_spv3_mapFlood"):GetFloat()},
 	}
 	self:SetPos(Vector(0,0,0))

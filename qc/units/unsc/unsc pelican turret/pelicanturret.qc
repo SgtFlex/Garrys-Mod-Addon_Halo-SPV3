@@ -1,4 +1,4 @@
-$origin 0 0 -55 -90
+$origin 0 0 10 -90
 $scale 1
 $modelname	"hce/spv3/unsc/Pelican/PelicanTurret.mdl"
 $body PelicanTurret "Pelican_Turret.smd"

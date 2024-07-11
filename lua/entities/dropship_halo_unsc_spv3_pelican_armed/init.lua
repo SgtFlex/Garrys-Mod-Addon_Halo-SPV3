@@ -1,6 +1,5 @@
 AddCSLuaFile("shared.lua")
 include('shared.lua')
-include('entities/dropship_halo_unsc_spv3_pelican/init.lua')
 
 
 function ENT:SpawnTurrets()

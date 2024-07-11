@@ -190,17 +190,18 @@ end
 
 
 function ENT:ConstructFlySchedule()
-	local TravelPath = table.Reverse(self.Nodes)
-	table.remove(TravelPath, 1)
-	table.remove(TravelPath, #TravelPath)
+	
 	--Entering
-	if (#self.Nodes > 1) then
+	if (#self.Nodes >= 3) then
+		local TravelPath = table.Reverse(self.Nodes)
+		table.remove(TravelPath, 1)
+		table.remove(TravelPath, #TravelPath)
 		self.FlySchedule:AddTask("FlyToPos", {pos = self.Nodes[#self.Nodes], AcceptanceRadius = 500, Stop = false})
 		self.FlySchedule:AddTask("SpawnVehicle", 0)
 		self.FlySchedule:AddTask("SetSolid", SOLID_VPHYSICS)
 		self.FlySchedule:AddTask("NavigatePath", {Path = TravelPath, AcceptanceRadius = 1500})
 
-		self.FlySchedule:AddTask("FlyToPos", {pos = self.Nodes[1], AcceptanceRadius = 500, Stop = true})
+		self.FlySchedule:AddTask("FlyToPos", {pos = self.Nodes[1], AcceptanceRadius = 100, Stop = true})
 		self.FlySchedule:AddTask("Touchdown", 0)
 		self.FlySchedule:AddTask("DropEntity", 0)
 		self.FlySchedule:AddTask("SpawnUnits", 0)
@@ -210,7 +211,7 @@ function ENT:ConstructFlySchedule()
 		self.FlySchedule:AddTask("FlyToPos", {pos = self.SpawnPos, AcceptanceRadius = 1500, Stop = false})
 		self.FlySchedule:AddTask("Despawn", 0)
 	else
-		self.FlySchedule:AddTask("FlyToPos", {pos = self.Nodes[1], AcceptanceRadius = 500, Stop = true})
+		self.FlySchedule:AddTask("FlyToPos", {pos = self.Nodes[1], AcceptanceRadius = 100, Stop = true})
 		self.FlySchedule:AddTask("SpawnVehicle", 0)
 		self.FlySchedule:AddTask("SetSolid", SOLID_VPHYSICS)
 		self.FlySchedule:AddTask("Touchdown", 0)
@@ -360,9 +361,7 @@ function ENT:SpawnTurret(class, socket)
 	local turret = ents.Create(class)
 	turret:SetPos(self:GetAttachment(self:LookupAttachment(socket))["Pos"])
 	turret:SetAngles(self:GetAttachment(self:LookupAttachment(socket))["Ang"])
-	turret:SetParent(self, 2)
-	turret:SetPos(self:GetAttachment(self:LookupAttachment(socket))["Pos"])
-	turret:SetAngles(self:GetAttachment(self:LookupAttachment(socket))["Ang"])
+	turret:SetParent(self, self:LookupAttachment(socket))
 	turret:SetOwner(self)
 	turret:Spawn()
 	constraint.NoCollide(self, turret, 0, 0)
@@ -387,7 +386,6 @@ function ENT:PhysicsCollide(colData, collider)
 	self.CurSpeed = 0
 end
 
-
 function ENT:Think()
 	if (self.IsDead) then return end
 	self.CurrentControlRotation = self:GetPhysicsObject():GetAngles()
@@ -402,7 +400,6 @@ function ENT:Think()
 	self:NextThink( CurTime() )
 	return true
 end
-
 
 function ENT:SetMoveLocation(location)
 	self.MoveLocation = location
@@ -444,7 +441,13 @@ end
 
 function ENT:Accelerate()
 	if (self:GetSpeed() >= self.MaxSpeed) then return end
-	self:GetPhysicsObject():AddVelocity(self.CurrentControlRotation:Forward() * self.AccelerationSpeed)
+	--Might need to move this logic eventually? Should maybe have a seperate Strafe method
+	if (self:GetSpeed() > 100) then
+		self:GetPhysicsObject():AddVelocity(self.CurrentControlRotation:Forward() * self.AccelerationSpeed)
+	else
+		self:GetPhysicsObject():AddVelocity((self.MoveLocation - self:GetPos()):GetNormalized() * self.AccelerationSpeed)
+	end
+	
 end
 
 function ENT:Decelerate()
@@ -462,8 +465,8 @@ function ENT:TurnToControlRotation()
 	AngDifference:Normalize()
 	
 	local ForwardVelocity = self:GetPhysicsObject():WorldToLocalVector(self:GetPhysicsObject():GetVelocity())
-	local TurnAmountYaw = AngDifference.Y - self:GetPhysicsObject():GetAngleVelocity().Z
-	local TurnAmountPitch =  AngDifference.X - self:GetPhysicsObject():GetAngleVelocity().Y
+	local TurnAmountYaw = AngDifference.Y - self:GetPhysicsObject():GetAngleVelocity().Z + -ForwardVelocity.Y*.05
+	local TurnAmountPitch =  AngDifference.X - self:GetPhysicsObject():GetAngleVelocity().Y + ForwardVelocity.Z*.05
 	local TurnVelocity = (Vector((AngDifference.Z - self:GetPhysicsObject():GetAngleVelocity().X + -TurnAmountYaw*0.5), TurnAmountPitch, TurnAmountYaw)) * self.MaxTurnRate
 	self:SetPoseParameter("rotate_yaw", TurnAmountYaw*3)
 	self:SetPoseParameter("rotate_pitch", TurnAmountPitch*3)
