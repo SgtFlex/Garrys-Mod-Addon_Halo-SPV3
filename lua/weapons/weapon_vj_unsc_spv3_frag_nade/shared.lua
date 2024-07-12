@@ -1,6 +1,11 @@
-include('weapons/weapon_vj_spv3_gbase/shared.lua')
+SWEP.Base = "weapon_vj_spv3_gbase"
+SWEP.Author = "SgtFlex"
+SWEP.Contact = "http://steamcommunity.com/groups/vrejgaming"
+SWEP.Purpose = "This weapon is made for Players and NPCs"
+SWEP.Instructions = "Controls are like a regular weapon."
+SWEP.Category = "VJ Base"
+SWEP.PrintName					= "SPV3 Frag Grenade"
 
-SWEP.PrintName					= "[SPV3] Frag Grenade"
 SWEP.EntToThrow = "obj_vj_unsc_spv3_frag_nade"
 SWEP.WorldModel					= "models/hce/spv3/weapons/unsc/fraggrenade.mdl" -- The world model (Third person, when a NPC is holding it, on ground, etc.)
 SWEP.Spawnable					= true

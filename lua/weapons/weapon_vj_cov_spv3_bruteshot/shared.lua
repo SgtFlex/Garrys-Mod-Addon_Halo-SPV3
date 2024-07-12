@@ -1,5 +1,17 @@
-if (!file.Exists("autorun/vj_base_autorun.lua","LUA")) then return end
-include('weapons/weapon_vj_spv3_wbase/shared.lua')
+SWEP.Base = "weapon_vj_spv3_wbase"
+SWEP.PrintName = "SPV3 Bruteshot"
+SWEP.Author = "SgtFlex"
+SWEP.Contact = "http://steamcommunity.com/groups/vrejgaming"
+SWEP.Purpose = "This weapon is made for Players and NPCs"
+SWEP.Instructions = "Controls are like a regular weapon."
+SWEP.Category = "VJ Base"
+
+	-- Client Settings ---------------------------------------------------------------------------------------------------------------------------------------------
+if CLIENT then
+SWEP.Slot = 2 -- Which weapon slot you want your SWEP to be in? (1 2 3 4 5 6) 
+SWEP.SlotPos = 4 -- Which part of that slot do you want the SWEP to be in? (1 2 3 4 5 6)
+SWEP.UseHands = true
+end
 
 SWEP.WorldModel					= "models/hce/spv3/weapons/cov/bruteshot.mdl"
 SWEP.Primary.Sound				= {"weapons/brute shot/fire/fire_1.ogg","weapons/brute shot/fire/fire_2.ogg","weapons/brute shot/fire/fire_3.ogg","weapons/brute shot/fire/fire_4.ogg",}
@@ -15,4 +27,3 @@ SWEP.NPC_TimeUntilFire 			= 0.5 -- How much time until the bullet/projectile is 
 SWEP.Primary.DisableBulletCode	= true -- The bullet won't spawn, this can be used when creating a projectile-based weapon
 SWEP.Primary.Projectile = "obj_vj_spv3_bruteshot_shot"
 SWEP.Primary.ProjectileSpeed = 2200
-SWEP.PrintName					= "Bruteshot"

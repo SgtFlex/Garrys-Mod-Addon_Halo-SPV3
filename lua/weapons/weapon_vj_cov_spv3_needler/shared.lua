@@ -1,5 +1,10 @@
-if (!file.Exists("autorun/vj_base_autorun.lua","LUA")) then return end
-include('weapons/weapon_vj_spv3_wbase/shared.lua')
+SWEP.Base = "weapon_vj_spv3_wbase"
+SWEP.PrintName					= "SPV3 Needler"
+SWEP.Author = "SgtFlex"
+SWEP.Contact = "http://steamcommunity.com/groups/vrejgaming"
+SWEP.Purpose = "This weapon is made for Players and NPCs"
+SWEP.Instructions = "Controls are like a regular weapon."
+SWEP.Category = "VJ Base"
 
 SWEP.WorldModel					= "models/hce/spv3/weapons/cov/needler/needler.mdl"
 SWEP.Primary.Sound				= {"weapons/needler/fire/Needler_Shot_1.ogg","weapons/needler/fire/Needler_Shot_2.ogg","weapons/needler/fire/Needler_Shot_3.ogg",}
@@ -21,24 +26,32 @@ SWEP.PrimaryEffects_DynamicLightColor = Color(220, 0, 255, 255)
 function SWEP:CustomOnPrimaryAttack_BeforeShoot()
 	if (self:GetOwner():IsNPC()) then
 		self.Primary.Damage	= self.Primary.Damage * GetConVarNumber("vj_spv3_damageModifier") -- Damage
+		self.TargetedEnemy = self:GetOwner():GetEnemy()
+	elseif (self:GetOwner():IsPlayer()) then
+		local trace = {
+			start = self:GetOwner():EyePos(),
+			endpos = self:GetOwner():EyePos() + self:GetOwner():EyeAngles():Forward() * 5000,
+			filter = self,
+		}
+		local tr = util.TraceLine(trace)
+		self.TargetedEnemy = tr.HitEntity
 	end
-	self.TargetedEnemy = self:GetOwner():GetEnemy()
-if (self.Primary.DisableBulletCode==false) then return end
-	local SpawnBlaserRod = ents.Create(self.Primary.Projectile)
+	
+	local Needle = ents.Create(self.Primary.Projectile)
 	local OwnerPos = self.Owner:GetShootPos()
 	local OwnerAng = self.Owner:GetAimVector():Angle()
-	if (self.Owner:IsPlayer()) then SpawnBlaserRod:SetPos(OwnerPos) else SpawnBlaserRod:SetPos(self:GetAttachment(self:LookupAttachment("muzzle")).Pos) end
-	if (self.Owner:IsPlayer() or self.Owner:IsNPC()) then SpawnBlaserRod:SetAngles(OwnerAng) else SpawnBlaserRod:SetAngles(self:GetAngles()) end
+	if (self.Owner:IsPlayer()) then Needle:SetPos(OwnerPos) else Needle:SetPos(self:GetAttachment(self:LookupAttachment("muzzle")).Pos) end
+	if (self.Owner:IsPlayer() or self.Owner:IsNPC()) then Needle:SetAngles(OwnerAng) else Needle:SetAngles(self:GetAngles()) end
 	
-	SpawnBlaserRod:Activate()
-	SpawnBlaserRod:Spawn()
-	SpawnBlaserRod.TargetedEnemy = self:GetOwner():GetEnemy()
-	local phy = SpawnBlaserRod:GetPhysicsObject()
+	Needle:Activate()
+	Needle:Spawn()
+	--Needle.TargetedEnemy = self:GetOwner():GetEnemy()
+	local phy = Needle:GetPhysicsObject()
 	if phy:IsValid() then
 		if self.Owner:IsPlayer() then
 			phy:ApplyForceCenter(self.Owner:GetAimVector() * self.Primary.ProjectileSpeed) else //200000
 			phy:ApplyForceCenter(((self.Owner:GetEnemy():GetPos() + self.Owner:GetEnemy():OBBCenter() - self:GetAttachment(self:LookupAttachment("muzzle"))["Pos"]):GetNormalized()*self.Primary.ProjectileSpeed))
 		end
 	end
-	SpawnBlaserRod:SetOwner(self:GetOwner())
+	Needle:SetOwner(self:GetOwner())
 end

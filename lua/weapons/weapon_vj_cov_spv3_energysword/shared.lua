@@ -1,7 +1,11 @@
-if (!file.Exists("autorun/vj_base_autorun.lua","LUA")) then return end
-include('weapons/weapon_vj_spv3_wbase/shared.lua')
+SWEP.Base = "weapon_vj_spv3_wbase"
+SWEP.PrintName = "SPV3 Energy Sword"
+SWEP.Author = "SgtFlex"
+SWEP.Contact = "http://steamcommunity.com/groups/vrejgaming"
+SWEP.Purpose = "This weapon is made for Players and NPCs"
+SWEP.Instructions = "Controls are like a regular weapon."
+SWEP.Category = "VJ Base"
 
-SWEP.PrintName					= "SMG"
 SWEP.WorldModel					= "models/hce/spv3/weapons/cov/energysword/energysword.mdl"
 SWEP.HoldType = "melee"
 SWEP.Primary.Damage = 300 -- Damage

@@ -1,8 +1,8 @@
 ENT.Type = "point" -- Sets the entity type to 'anim', indicating it's an animated entity.
 ENT.Base = "base_ai" -- Specifies that this entity is based on the 'base_gmodentity', inheriting its functionality.
-ENT.PrintName = "SPV3 Map Spawner" -- The name that will appear in the spawn menu.
+ENT.PrintName = "(WIP) SPV3 Map Spawner" -- The name that will appear in the spawn menu.
 ENT.Author = "SgtFlex" -- The author's name for this entity.
-ENT.Category = "New Category" -- The category for this entity in the spawn menu.
+ENT.Category = "VJ Base" -- The category for this entity in the spawn menu.
 ENT.Contact = "SgtFlex" -- The contact details for the author of this entity.
 ENT.Purpose = "To test the creation of entities." -- The purpose of this entity.
 ENT.Spawnable = true -- Specifies whether this entity can be spawned by players in the spawn menu.

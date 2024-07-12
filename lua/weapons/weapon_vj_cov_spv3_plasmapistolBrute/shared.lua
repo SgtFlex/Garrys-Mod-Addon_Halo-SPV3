@@ -1,5 +1,10 @@
-if (!file.Exists("autorun/vj_base_autorun.lua","LUA")) then return end
-include('weapons/weapon_vj_spv3_wbase/shared.lua')
+SWEP.Base = "weapon_vj_spv3_wbase"
+SWEP.PrintName					= "SPV3 Brute Plasma Pistol"
+SWEP.Author = "SgtFlex"
+SWEP.Contact = "http://steamcommunity.com/groups/vrejgaming"
+SWEP.Purpose = "This weapon is made for Players and NPCs"
+SWEP.Instructions = "Controls are like a regular weapon."
+SWEP.Category = "VJ Base"
 
 SWEP.WorldModel					= "models/hce/spv3/weapons/cov/plasma_pistol/plasmapistol.mdl"
 SWEP.Primary.Sound				= {"weapons/plasma pistol/fire/plasmapistol1.ogg", "weapons/plasma pistol/fire/plasmapistol2.ogg", "weapons/plasma pistol/fire/plasmapistol3.ogg", "weapons/plasma pistol/fire/plasmapistol4.ogg", "weapons/plasma pistol/fire/plasmapistol5.ogg"}
@@ -17,7 +22,6 @@ SWEP.Primary.DisableBulletCode	= true -- The bullet won't spawn, this can be use
 SWEP.Primary.Projectile = "obj_vj_spv3_bpp_shot"
 SWEP.Primary.ProjectileSpeed = 4000
 SWEP.Color = Color(255, 30, 30, 0)
-SWEP.PrintName					= "Brute Plasma Pistol"
 SWEP.HoldType 					= "pistol"
 SWEP.NPC_HasSecondaryFire = true -- Can the weapon have a secondary fire?
 SWEP.NPC_SecondaryFireEnt = "obj_vj_spv3_bpp_charged" -- The entity to fire, this only applies if self:NPC_SecondaryFire() has NOT been overridden!
@@ -28,3 +32,4 @@ SWEP.NPC_HasSecondaryFireSound = true -- Can the secondary fire sound be played?
 SWEP.NPC_SecondaryFireSound = {"weapons/plasma pistol/charged fire/charged fire.ogg"} -- The sound it plays when the secondary fire is used
 SWEP.NPC_SecondaryFireSoundLevel = 90 -- The sound level to use for the secondary firing sound
 SWEP.PrimaryEffects_DynamicLightColor = Color(255, 0, 0, 255)
+SWEP.ViewModel 					= "models/weapons/c_pistol.mdl"

@@ -1,5 +1,10 @@
-if (!file.Exists("autorun/vj_base_autorun.lua","LUA")) then return end
-include('weapons/weapon_vj_spv3_wbase/shared.lua')
+SWEP.Base = "weapon_vj_spv3_wbase"
+SWEP.PrintName					= "SPV3 Shredder"
+SWEP.Author = "SgtFlex"
+SWEP.Contact = "http://steamcommunity.com/groups/vrejgaming"
+SWEP.Purpose = "This weapon is made for Players and NPCs"
+SWEP.Instructions = "Controls are like a regular weapon."
+SWEP.Category = "VJ Base"
 
 SWEP.WorldModel					= "models/hce/spv3/weapons/cov/shredder.mdl"
 SWEP.Primary.Sound				= {"weapons/shredder/fire/Shredder_shot_1.ogg","weapons/shredder/fire/Shredder_shot_2.ogg","weapons/shredder/fire/Shredder_shot_3.ogg"}
@@ -15,6 +20,6 @@ SWEP.NPC_TimeUntilFire 			= 0.2 -- How much time until the bullet/projectile is 
 SWEP.Primary.DisableBulletCode	= true -- The bullet won't spawn, this can be used when creating a projectile-based weapon
 SWEP.Primary.Projectile = "obj_vj_spv3_shredder_shot"
 SWEP.Primary.ProjectileSpeed = 3000
-SWEP.PrintName					= "Shredder"
 SWEP.HoldType 					= "pistol"
 SWEP.PrimaryEffects_DynamicLightColor = Color(255, 93, 0, 255)
+SWEP.ViewModel 					= "models/weapons/c_smg1.mdl"

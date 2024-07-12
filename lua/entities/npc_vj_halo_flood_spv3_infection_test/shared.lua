@@ -1,8 +1,7 @@
 ENT.Base = "base_ai"
 ENT.Type = "ai"
-
-ENT.PrintName = "Infection Form test"
-ENT.Category = "New category"
+ENT.PrintName = "(WIP) Infection Form"
+ENT.Category = "VJ Base"
 ENT.Author = "Sgt Flexxx"
 ENT.Contact = "https://steamcommunity.com/id/sgtflexxx/"
 ENT.Purpose = "To test code."

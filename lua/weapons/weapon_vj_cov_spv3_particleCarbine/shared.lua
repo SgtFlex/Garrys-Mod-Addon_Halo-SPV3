@@ -1,5 +1,10 @@
-if (!file.Exists("autorun/vj_base_autorun.lua","LUA")) then return end
-include('weapons/weapon_vj_spv3_wbase/shared.lua')
+SWEP.Base = "weapon_vj_spv3_wbase"
+SWEP.PrintName					= "SPV3 Particle Carbine"
+SWEP.Author = "SgtFlex"
+SWEP.Contact = "http://steamcommunity.com/groups/vrejgaming"
+SWEP.Purpose = "This weapon is made for Players and NPCs"
+SWEP.Instructions = "Controls are like a regular weapon."
+SWEP.Category = "VJ Base"
 
 SWEP.WorldModel					= "models/hce/spv3/weapons/cov/carbine/carbine.mdl"
 SWEP.Primary.Sound				= {"weapons/particle carbine/fire/particle_carbine_1.ogg", "weapons/particle carbine/fire/particle_carbine_2.ogg", "weapons/particle carbine/fire/particle_carbine_3.ogg"}
@@ -12,7 +17,8 @@ SWEP.NPC_NextPrimaryFire 		= 1.5 -- Next time it can use primary fire
 SWEP.NPC_ExtraShotsPerFire		= 2
 SWEP.NPC_CustomSpread 			= 0.75 -- This is added on top of the custom spread that's set inside the SNPC! | Starting from 1: Closer to 0 = better accuracy, Farther than 1 = worse accuracy
 SWEP.NPC_TimeUntilFire 			= 0.3 -- How much time until the bullet/projectile is fired?
-SWEP.NPC_HasReload = false
+SWEP.NPC_HasReload              = false
 SWEP.Primary.Burst				= true -- Is it a burst weapon?
-SWEP.PrintName					= "Particle Carbine"
+SWEP.Delay                      = 1
+SWEP.Automatic                  = false
 SWEP.PrimaryEffects_DynamicLightColor = Color(220, 0, 191, 255)

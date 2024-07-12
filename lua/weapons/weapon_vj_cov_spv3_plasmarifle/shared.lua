@@ -1,5 +1,10 @@
-if (!file.Exists("autorun/vj_base_autorun.lua","LUA")) then return end
-include('weapons/weapon_vj_spv3_wbase/shared.lua')
+SWEP.Base = "weapon_vj_spv3_wbase"
+SWEP.PrintName					= "SPV3 Plasma Rifle"
+SWEP.Author = "SgtFlex"
+SWEP.Contact = "http://steamcommunity.com/groups/vrejgaming"
+SWEP.Purpose = "This weapon is made for Players and NPCs"
+SWEP.Instructions = "Controls are like a regular weapon."
+SWEP.Category = "VJ Base"
 
 SWEP.WorldModel					= "models/hce/spv3/weapons/cov/plasma_rifle/plasmarifle.mdl"
 SWEP.Primary.Sound				= {"weapons/plasmarifle/fire/plasmarifle1.ogg", "weapons/plasmarifle/fire/plasmarifle2.ogg", "weapons/plasmarifle/fire/plasmarifle3.ogg", "weapons/plasmarifle/fire/plasmarifle4.ogg", "weapons/plasmarifle/fire/plasmarifle5.ogg"}
@@ -17,6 +22,6 @@ SWEP.Primary.Projectile = "obj_vj_spv3_pr_shot"
 SWEP.Primary.ProjectileSpeed = 4000
 SWEP.PrimaryEffects_MuzzleParticles = {"hcea_hunter_plasma_rifle_fire"}
 SWEP.PrimaryEffects_SpawnShells = false
-SWEP.PrintName					= "Plasma Rifle"
 SWEP.HoldType 					= "pistol"
 SWEP.PrimaryEffects_DynamicLightColor = Color(220, 0, 255, 255)
+SWEP.ViewModel 					= "models/weapons/c_smg1.mdl"

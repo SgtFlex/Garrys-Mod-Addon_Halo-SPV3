@@ -1,5 +1,10 @@
-if (!file.Exists("autorun/vj_base_autorun.lua","LUA")) then return end
-include('weapons/weapon_vj_spv3_wbase/shared.lua')
+SWEP.Base = "weapon_vj_spv3_wbase"
+SWEP.PrintName = "SPV3 Focus Rifle"
+SWEP.Author = "SgtFlex"
+SWEP.Contact = "http://steamcommunity.com/groups/vrejgaming"
+SWEP.Purpose = "This weapon is made for Players and NPCs"
+SWEP.Instructions = "Controls are like a regular weapon."
+SWEP.Category = "VJ Base"
 
 SWEP.WorldModel					= "models/hce/spv3/weapons/cov/focusrifle.mdl"
 SWEP.Primary.Sound				= {}
@@ -13,7 +18,6 @@ SWEP.NPC_ExtraShotsPerFire		= 30
 SWEP.NPC_CustomSpread 			= 0.3 -- This is added on top of the custom spread that's set inside the SNPC! | Starting from 1: Closer to 0 = better accuracy, Farther than 1 = worse accuracy
 SWEP.NPC_TimeUntilFire 			= 0.04 -- How much time until the bullet/projectile is fired?
 SWEP.NPC_HasReload = false
-SWEP.PrintName					= "Focus Rifle"
 SWEP.PrimaryEffects_DynamicLightColor = Color(255, 93, 0, 255)
 function SWEP:CustomOnPrimaryAttack_BeforeShoot()
 	self.firingSound = CreateSound(self, "weapons/focus rifle/fire/OMG_LAZOR_2.ogg")

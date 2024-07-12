@@ -1,5 +1,10 @@
-if (!file.Exists("autorun/vj_base_autorun.lua","LUA")) then return end
-include('weapons/weapon_vj_spv3_wbase/shared.lua')
+SWEP.Base = "weapon_vj_spv3_wbase"
+SWEP.PrintName					= "SPV3 Rocket Launcher"
+SWEP.Author = "SgtFlex"
+SWEP.Contact = "http://steamcommunity.com/groups/vrejgaming"
+SWEP.Purpose = "This weapon is made for Players and NPCs"
+SWEP.Instructions = "Controls are like a regular weapon."
+SWEP.Category = "VJ Base"
 
 SWEP.WorldModel					= "models/hce/spv3/weapons/unsc/rocketlauncher.mdl"
 SWEP.Primary.Sound				= {"weapons/rocket launcher/fire/fire_1.ogg","weapons/rocket launcher/fire/fire_2.ogg","weapons/rocket launcher/fire/fire_3.ogg"}
@@ -15,5 +20,5 @@ SWEP.NPC_TimeUntilFire 			= 0.3 -- How much time until the bullet/projectile is 
 SWEP.Primary.DisableBulletCode	= true -- The bullet won't spawn, this can be used when creating a projectile-based weapon
 SWEP.Primary.Projectile = "obj_vj_spv3_rl_shot"
 SWEP.Primary.ProjectileSpeed = 2500
-SWEP.PrintName					= "Rocket Launcher"
 SWEP.Primary.Burst				= true -- Is it a burst weapon?
+SWEP.ViewModel 					= "models/weapons/c_rpg.mdl"

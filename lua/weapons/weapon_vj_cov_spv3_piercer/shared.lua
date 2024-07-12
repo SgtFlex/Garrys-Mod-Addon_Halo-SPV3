@@ -1,5 +1,10 @@
-if (!file.Exists("autorun/vj_base_autorun.lua","LUA")) then return end
-include('weapons/weapon_vj_spv3_wbase/shared.lua')
+SWEP.Base = "weapon_vj_spv3_wbase"
+SWEP.PrintName					= "SPV3 Piercer"
+SWEP.Author = "SgtFlex"
+SWEP.Contact = "http://steamcommunity.com/groups/vrejgaming"
+SWEP.Purpose = "This weapon is made for Players and NPCs"
+SWEP.Instructions = "Controls are like a regular weapon."
+SWEP.Category = "VJ Base"
 
 SWEP.WorldModel					= "models/hce/spv3/weapons/cov/piercer.mdl"
 SWEP.Primary.Sound				= {"weapons/piercer/fire/1.ogg", "weapons/piercer/fire/2.ogg", "weapons/piercer/fire/3.ogg"}
@@ -17,6 +22,9 @@ SWEP.Primary.Projectile = "obj_vj_spv3_piercer_shot"
 SWEP.Primary.Burst				= true -- Is it a burst weapon?
 SWEP.PrintName					= "Piercer"
 SWEP.HoldType 					= "pistol"
+SWEP.ViewModel 					= "models/weapons/c_pistol.mdl"
+
+
 function SWEP:CustomOnPrimaryAttack_BeforeShoot()
 	self.targetedEnemy = self:GetOwner():GetEnemy()
 if (CLIENT) then return end
