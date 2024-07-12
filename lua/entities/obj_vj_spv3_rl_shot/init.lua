@@ -22,7 +22,7 @@ ENT.SoundTbl_OnCollide = {"weapons/rocket launcher/impact/1.ogg", "weapons/rocke
 function ENT:CustomOnInitialize()
 	self.RadiusDamage = self.RadiusDamage * GetConVarNumber("vj_spv3_damageModifier") -- How much damage should it deal? Remember this is a radius damage, therefore it will do less damage the farther away the entity is from its enemy
 	self:SetNoDraw(true)
-	ParticleEffectAttach("vj_rpg2_fulltail", PATTACH_ABSORIGIN_FOLLOW, self, 0)
+	ParticleEffectAttach("hcea_hunter_ab_proj", PATTACH_ABSORIGIN_FOLLOW, self, 0)
 	self.soundTrail = CreateSound(self, "weapons/rocket launcher/trail/rocket_loop.wav")
 	self.soundTrail:Play()
 end

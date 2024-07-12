@@ -256,7 +256,6 @@ end
 
 function ENT:Initialize()
 	self:GeneratePathFromPos(self:GetPos())
-	
 	self.SpawnPos = self.Nodes[#self.Nodes] + (self.HitSkyPos - self.Nodes[1]):GetNormalized()*(17000 - self.Nodes[#self.Nodes]:Length()) --18K is the max map limit for physics-simulated entities. Spawn within those bounds
 	self:SetPos(self.SpawnPos)
 	self:SetAngles((self.Nodes[#self.Nodes] - self:GetPos()):Angle())

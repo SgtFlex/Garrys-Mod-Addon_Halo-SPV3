@@ -6,8 +6,12 @@ SWEP.Purpose = "This weapon is made for Players and NPCs"
 SWEP.Instructions = "Controls are like a regular weapon."
 SWEP.Category = "VJ Base"
 
+SWEP.ViewModel 					= "models/weapons/c_stunstick.mdl"
 SWEP.WorldModel					= "models/hce/spv3/weapons/cov/energysword/energysword.mdl"
 SWEP.HoldType = "melee"
+SWEP.Primary.Delay				= 1-- Time until it can shoot again
+SWEP.Primary.Burst						= false -- Is it a burst weapon?
+SWEP.Primary.Automatic					= false -- Is it automatic?
 SWEP.Primary.Damage = 300 -- Damage
 SWEP.IsMeleeWeapon = true -- Should this weapon be a melee weapon?
 

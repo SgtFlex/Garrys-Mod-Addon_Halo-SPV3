@@ -22,8 +22,7 @@ ENT.SoundTbl_OnCollide = {"weapons/brute shot/impact/brute_round_expl_emp1.ogg",
 function ENT:CustomOnInitialize()
 	self.RadiusDamage = self.RadiusDamage * GetConVarNumber("vj_spv3_damageModifier") -- How much damage should it deal? Remember this is a radius damage, therefore it will do less damage the farther away the entity is from its enemy
 	self:SetNoDraw(true)
-	ParticleEffectAttach("grenade_hornet_trail", PATTACH_ABSORIGIN_FOLLOW, self, 0)
-	ParticleEffectAttach("grenade_hornet_trail_glow", PATTACH_ABSORIGIN_FOLLOW, self, 0)
+	ParticleEffectAttach("hcea_hunter_ab_proj", PATTACH_ABSORIGIN_FOLLOW, self, 0)
 	self.soundTrail = CreateSound(self, "weapons/brute shot/trail/loop_3.wav")
 	self.soundTrail:Play()
 end

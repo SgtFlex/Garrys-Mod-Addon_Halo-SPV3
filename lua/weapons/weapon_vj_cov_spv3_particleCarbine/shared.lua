@@ -18,7 +18,7 @@ SWEP.NPC_ExtraShotsPerFire		= 2
 SWEP.NPC_CustomSpread 			= 0.75 -- This is added on top of the custom spread that's set inside the SNPC! | Starting from 1: Closer to 0 = better accuracy, Farther than 1 = worse accuracy
 SWEP.NPC_TimeUntilFire 			= 0.3 -- How much time until the bullet/projectile is fired?
 SWEP.NPC_HasReload              = false
-SWEP.Primary.Burst				= true -- Is it a burst weapon?
-SWEP.Delay                      = 1
-SWEP.Automatic                  = false
+SWEP.Primary.Delay				= 0.2-- Time until it can shoot again
+SWEP.Primary.Burst						= false -- Is it a burst weapon?
+SWEP.Primary.Automatic					= false -- Is it automatic?
 SWEP.PrimaryEffects_DynamicLightColor = Color(220, 0, 191, 255)
