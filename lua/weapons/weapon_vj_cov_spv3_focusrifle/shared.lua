@@ -1,13 +1,21 @@
-SWEP.Base = "weapon_vj_spv3_wbase"
+SWEP.Base = "weapon_vj_spv3_base"
 SWEP.PrintName = "SPV3 Focus Rifle"
 SWEP.Author = "SgtFlex"
 SWEP.Contact = "http://steamcommunity.com/groups/vrejgaming"
 SWEP.Purpose = "This weapon is made for Players and NPCs"
 SWEP.Instructions = "Controls are like a regular weapon."
-SWEP.Category = "VJ Base"
+SWEP.Category = "Halo CE SPV3"
+SWEP.Spawnable = true
+
+	-- Client Settings ---------------------------------------------------------------------------------------------------------------------------------------------
+if CLIENT then
+SWEP.Slot = 3 -- Which weapon slot you want your SWEP to be in? (1 2 3 4 5 6) 
+SWEP.SlotPos = 4 -- Which part of that slot do you want the SWEP to be in? (1 2 3 4 5 6)
+end
 
 SWEP.WorldModel					= "models/hce/spv3/weapons/cov/focusrifle.mdl"
 SWEP.Primary.Sound				= {}
+SWEP.HasReloadSound 					= false
 SWEP.ReloadSound = {"weapons/brute shot/reload/reload_full_1.ogg", "weapons/brute shot/reload/reload_full_2.ogg"}
 SWEP.NPC_ReloadSound = SWEP.ReloadSound -- Sounds it plays when the base detects the SNPC playing a reload animation
 SWEP.Primary.Delay				= 0.05-- Time until it can shoot again

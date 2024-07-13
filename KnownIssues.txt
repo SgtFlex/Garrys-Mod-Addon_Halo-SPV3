@@ -1,0 +1,6 @@
+-Sentinels don't work/throw errors (requires complete rewrite at this point)
+-Ragdolls created from explosions aren't clientside
+-Map spawner throws errors when spawn spot isnt found
+-Error being thrown from dropships blowing up
+-Infection forms occasionally throw errors
+-NPCs occasionally get stuck on top of each other when dropships drop them

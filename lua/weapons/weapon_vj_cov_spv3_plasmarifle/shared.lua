@@ -1,10 +1,17 @@
-SWEP.Base = "weapon_vj_spv3_wbase"
+SWEP.Base = "weapon_vj_spv3_base"
 SWEP.PrintName					= "SPV3 Plasma Rifle"
 SWEP.Author = "SgtFlex"
 SWEP.Contact = "http://steamcommunity.com/groups/vrejgaming"
 SWEP.Purpose = "This weapon is made for Players and NPCs"
 SWEP.Instructions = "Controls are like a regular weapon."
-SWEP.Category = "VJ Base"
+SWEP.Category = "Halo CE SPV3"
+SWEP.Spawnable = true
+
+	-- Client Settings ---------------------------------------------------------------------------------------------------------------------------------------------
+if CLIENT then
+SWEP.Slot = 2 -- Which weapon slot you want your SWEP to be in? (1 2 3 4 5 6) 
+SWEP.SlotPos = 4 -- Which part of that slot do you want the SWEP to be in? (1 2 3 4 5 6)
+end
 
 SWEP.WorldModel					= "models/hce/spv3/weapons/cov/plasma_rifle/plasmarifle.mdl"
 SWEP.Primary.Sound				= {"weapons/plasmarifle/fire/plasmarifle1.ogg", "weapons/plasmarifle/fire/plasmarifle2.ogg", "weapons/plasmarifle/fire/plasmarifle3.ogg", "weapons/plasmarifle/fire/plasmarifle4.ogg", "weapons/plasmarifle/fire/plasmarifle5.ogg"}
@@ -16,6 +23,8 @@ SWEP.Primary.Burst				= false -- Is it a burst weapon?
 SWEP.Primary.Automatic			= true -- Is it automatic?
 SWEP.Primary.Damage				= 5
 SWEP.Primary.ClipSize			= 6000 -- Max amount of bullets per clip
+SWEP.Primary.Cone 				= 10
+
 SWEP.NPC_NextPrimaryFire 		= 2 -- Next time it can use primary fire
 SWEP.NPC_ExtraShotsPerFire		= 3
 SWEP.NPC_CustomSpread 			= 1 -- This is added on top of the custom spread that's set inside the SNPC! | Starting from 1: Closer to 0 = better accuracy, Farther than 1 = worse accuracy

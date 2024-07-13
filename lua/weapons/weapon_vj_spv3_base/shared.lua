@@ -2,7 +2,7 @@ if (!file.Exists("autorun/vj_base_autorun.lua","LUA")) then return end
 ---------------------------------------------------------------------------------------------------------------------------------------------
 SWEP.Base 						= "weapon_vj_base"
 SWEP.PrintName					= "Weapon Base"
-SWEP.Author 					= "Mayhem"
+SWEP.Author 					= "Mayhem, SgtFlex"
 SWEP.Contact					= "http://steamcommunity.com/groups/vrejgaming"
 SWEP.Purpose					= "This weapon is made for NPCs"
 SWEP.Instructions				= "Controls are like a regular weapon."
@@ -12,13 +12,17 @@ SWEP.MadeForNPCsOnly 			= false -- Is tihs weapon meant to be for NPCs only?
 SWEP.WorldModel					= "models/hce/spv3/weapons/unsc/smg.mdl"
 SWEP.ViewModel 					= "models/weapons/c_irifle.mdl"
 SWEP.HoldType 					= "ar2"
+SWEP.Spawnable = false
 	-- Primary Fire ---------------------------------------------------------------------------------------------------------------------------------------------
+SWEP.Primary.Tracer 					= 1 -- Show tracer for every x bullets
+SWEP.Primary.TracerType 				= "Tracer" -- Tracer type (Examples: AR2)
 SWEP.Primary.Damage						= 3  -- Damage
 SWEP.Primary.NumberOfShots				= 1	 -- How many shots per attack?
 SWEP.Primary.Force						= 5 -- Force applied on the object the bullet hits
 SWEP.Primary.ClipSize					= 60 -- Max amount of bullets per clip
 SWEP.Primary.TakeAmmo 					= 1	 -- How much ammo should it take on each shot?
 SWEP.Primary.Recoil						= 0 -- How much recoil does the player get?
+SWEP.Primary.Cone 						= 0
 SWEP.Primary.Burst						= false -- Is it a burst weapon?
 SWEP.Primary.Automatic					= true -- Is it automatic?
 SWEP.Primary.Ammo						= "AR2" -- Ammo type
@@ -33,8 +37,8 @@ SWEP.PrimaryEffects_DynamicLightColor 	= Color(255, 150, 60)
 SWEP.Primary.Projectile 				= "obj_vj_spv3_pr_shot"
 SWEP.Primary.ProjectileSpeed 			= 4000
 SWEP.Secondary.ProjectileSpeed 			= 1000
-SWEP.HasReloadSound 					= true
-SWEP.ReloadSound 						= {"weapons/smg/reload/reload_full_1.ogg", "weapons/smg/reload/reload_full_2.ogg"}
+SWEP.HasReloadSound 					= false
+SWEP.ReloadSound 						= nil
 SWEP.NPC_ReloadSound 					= SWEP.ReloadSound -- Sounds it plays when the base detects the SNPC playing a reload animation
 SWEP.UseHands = true -- Should this weapon use Garry's Mod hands? (The model must support it!)
 
@@ -72,24 +76,30 @@ function SWEP:CustomOnInitialize()
 	end
 end
 
+
 function SWEP:CustomOnPrimaryAttack_BeforeShoot()
-if (CLIENT) then return end
 if (self.Primary.DisableBulletCode==false) then return end
 	for i=1, self.Primary.NumberOfShots do
 		local SpawnBlaserRod = ents.Create(self.Primary.Projectile)
 		local OwnerPos = self.Owner:GetShootPos()
 		local OwnerAng = self.Owner:GetAimVector():Angle()
-		if self.Owner:IsPlayer() then SpawnBlaserRod:SetPos(OwnerPos) else SpawnBlaserRod:SetPos(self:GetAttachment(self:LookupAttachment("muzzle")).Pos) end
-		if self.Owner:IsPlayer() then SpawnBlaserRod:SetAngles(OwnerAng) else SpawnBlaserRod:SetAngles(self.Owner:GetAngles()) end
+		if self.Owner:IsPlayer() then 
+			SpawnBlaserRod:SetPos(OwnerPos) 
+			SpawnBlaserRod:SetAngles(OwnerAng)
+		else 
+			SpawnBlaserRod:SetPos(self:GetAttachment(self:LookupAttachment("muzzle")).Pos) 
+			SpawnBlaserRod:SetAngles(self.Owner:GetAngles())
+		end
 		SpawnBlaserRod:SetOwner(self.Owner)
 		SpawnBlaserRod:Activate()
 		SpawnBlaserRod:Spawn()
 		local phy = SpawnBlaserRod:GetPhysicsObject()
 		if phy:IsValid() then
 			if self.Owner:IsPlayer() then
-			phy:ApplyForceCenter(self.Owner:GetAimVector() * self.Primary.ProjectileSpeed) else //200000
+			phy:ApplyForceCenter((self.Owner:GetAimVector()) * self.Primary.ProjectileSpeed) 
+		else 
 			phy:ApplyForceCenter(((self.Owner:GetEnemy():GetPos() + self.Owner:GetEnemy():OBBCenter() - self:GetAttachment(self:LookupAttachment("muzzle"))["Pos"]):GetNormalized()*self.Primary.ProjectileSpeed  + self:PredictPos(self.Owner:GetEnemy(), 1) + Vector(math.random(-self.NPC_CustomSpread,self.NPC_CustomSpread),math.random(-self.NPC_CustomSpread,self.NPC_CustomSpread),math.random(-self.NPC_CustomSpread,self.NPC_CustomSpread))*50))
-			end
+		end
 		end
 	end
 end

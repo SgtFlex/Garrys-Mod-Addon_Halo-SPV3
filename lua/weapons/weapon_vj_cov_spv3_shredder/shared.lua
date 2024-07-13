@@ -1,13 +1,21 @@
-SWEP.Base = "weapon_vj_spv3_wbase"
+SWEP.Base = "weapon_vj_spv3_base"
 SWEP.PrintName					= "SPV3 Shredder"
 SWEP.Author = "SgtFlex"
 SWEP.Contact = "http://steamcommunity.com/groups/vrejgaming"
 SWEP.Purpose = "This weapon is made for Players and NPCs"
 SWEP.Instructions = "Controls are like a regular weapon."
-SWEP.Category = "VJ Base"
+SWEP.Category = "Halo CE SPV3"
+SWEP.Spawnable = true
+
+	-- Client Settings ---------------------------------------------------------------------------------------------------------------------------------------------
+if CLIENT then
+SWEP.Slot = 2 -- Which weapon slot you want your SWEP to be in? (1 2 3 4 5 6) 
+SWEP.SlotPos = 4 -- Which part of that slot do you want the SWEP to be in? (1 2 3 4 5 6)
+end
 
 SWEP.WorldModel					= "models/hce/spv3/weapons/cov/shredder.mdl"
 SWEP.Primary.Sound				= {"weapons/shredder/fire/Shredder_shot_1.ogg","weapons/shredder/fire/Shredder_shot_2.ogg","weapons/shredder/fire/Shredder_shot_3.ogg"}
+SWEP.HasReloadSound 					= true
 SWEP.ReloadSound = {"weapons/shredder/reload/fp_needlerifle_ready01.ogg"}
 SWEP.NPC_ReloadSound = SWEP.ReloadSound -- Sounds it plays when the base detects the SNPC playing a reload animation
 SWEP.Primary.TracerType 		= "AirboatGunHeavyTracer" -- Tracer type (Examples: AR2)

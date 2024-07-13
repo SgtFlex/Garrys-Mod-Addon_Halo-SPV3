@@ -1,13 +1,21 @@
-SWEP.Base = "weapon_vj_spv3_wbase"
+SWEP.Base = "weapon_vj_spv3_base"
 SWEP.PrintName					= "SPV3 Piercer"
 SWEP.Author = "SgtFlex"
 SWEP.Contact = "http://steamcommunity.com/groups/vrejgaming"
 SWEP.Purpose = "This weapon is made for Players and NPCs"
 SWEP.Instructions = "Controls are like a regular weapon."
-SWEP.Category = "VJ Base"
+SWEP.Category = "Halo CE SPV3"
+SWEP.Spawnable = true
+
+	-- Client Settings ---------------------------------------------------------------------------------------------------------------------------------------------
+if CLIENT then
+SWEP.Slot = 1 -- Which weapon slot you want your SWEP to be in? (1 2 3 4 5 6) 
+SWEP.SlotPos = 4 -- Which part of that slot do you want the SWEP to be in? (1 2 3 4 5 6)
+end
 
 SWEP.WorldModel					= "models/hce/spv3/weapons/cov/piercer.mdl"
 SWEP.Primary.Sound				= {"weapons/piercer/fire/1.ogg", "weapons/piercer/fire/2.ogg", "weapons/piercer/fire/3.ogg"}
+SWEP.HasReloadSound 					= true
 SWEP.ReloadSound = {"weapons/piercer/reload/SPV3_wpn_BruteSpike_rld_1.ogg"}
 SWEP.NPC_ReloadSound = SWEP.ReloadSound -- Sounds it plays when the base detects the SNPC playing a reload animation
 SWEP.Primary.TracerType 		= "AirboatGunHeavyTracer" -- Tracer type (Examples: AR2)
@@ -29,22 +37,35 @@ SWEP.ViewModel 					= "models/weapons/c_pistol.mdl"
 
 
 function SWEP:CustomOnPrimaryAttack_BeforeShoot()
-	self.targetedEnemy = self:GetOwner():GetEnemy()
-if (CLIENT) then return end
+	self.TargetedEnemy = nil
 if (self.Primary.DisableBulletCode==false) then return end
 	local SpawnBlaserRod = ents.Create(self.Primary.Projectile)
 	local OwnerPos = self.Owner:GetShootPos()
 	local OwnerAng = self.Owner:GetAimVector():Angle()
-	if self.Owner:IsPlayer() then SpawnBlaserRod:SetPos(OwnerPos) else SpawnBlaserRod:SetPos(self:GetAttachment(self:LookupAttachment("muzzle")).Pos) end
-	if self.Owner:IsPlayer() then SpawnBlaserRod:SetAngles(OwnerAng) else SpawnBlaserRod:SetAngles(self.Owner:GetAngles()) end
+	if self.Owner:IsPlayer() then 
+		SpawnBlaserRod:SetPos(OwnerPos) 
+		SpawnBlaserRod:SetAngles(OwnerAng)
+		local trace = {
+			start = self:GetOwner():EyePos(),
+			endpos = self:GetOwner():EyePos() + self:GetOwner():EyeAngles():Forward() * 5000,
+			filter = self,
+		}
+		local tr = util.TraceLine(trace)
+		self.TargetedEnemy = tr.HitEntity
+	else 
+		SpawnBlaserRod:SetPos(self:GetAttachment(self:LookupAttachment("muzzle")).Pos) 
+		SpawnBlaserRod:SetAngles(self.Owner:GetAngles())
+		self.TargetedEnemy = self:GetOwner():GetEnemy()
+	end
 	SpawnBlaserRod:SetOwner(self)
 	SpawnBlaserRod:Activate()
 	SpawnBlaserRod:Spawn()
 	local phy = SpawnBlaserRod:GetPhysicsObject()
 	if phy:IsValid() then
 		if self.Owner:IsPlayer() then
-		phy:ApplyForceCenter(self.Owner:GetAimVector() * self.Primary.ProjectileSpeed) else //200000
-		phy:ApplyForceCenter(((self.Owner:GetEnemy():GetPos() + self.Owner:GetEnemy():OBBCenter() - self:GetAttachment(self:LookupAttachment("muzzle"))["Pos"] + Vector(math.random(-self.NPC_CustomSpread,self.NPC_CustomSpread),math.random(-self.NPC_CustomSpread,self.NPC_CustomSpread),math.random(-self.NPC_CustomSpread,self.NPC_CustomSpread))*25):GetNormalized()*self.Primary.ProjectileSpeed))
+			phy:ApplyForceCenter(self.Owner:GetAimVector() * self.Primary.ProjectileSpeed) 
+		else
+			phy:ApplyForceCenter(((self.Owner:GetEnemy():GetPos() + self.Owner:GetEnemy():OBBCenter() - self:GetAttachment(self:LookupAttachment("muzzle"))["Pos"] + Vector(math.random(-self.NPC_CustomSpread,self.NPC_CustomSpread),math.random(-self.NPC_CustomSpread,self.NPC_CustomSpread),math.random(-self.NPC_CustomSpread,self.NPC_CustomSpread))*25):GetNormalized()*self.Primary.ProjectileSpeed))
 		end
 	end
 end

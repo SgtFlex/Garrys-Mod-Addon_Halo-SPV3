@@ -1,13 +1,23 @@
-SWEP.Base = "weapon_vj_spv3_wbase"
+SWEP.Base = "weapon_vj_spv3_base"
 SWEP.PrintName					= "SPV3 Needler"
 SWEP.Author = "SgtFlex"
 SWEP.Contact = "http://steamcommunity.com/groups/vrejgaming"
 SWEP.Purpose = "This weapon is made for Players and NPCs"
 SWEP.Instructions = "Controls are like a regular weapon."
-SWEP.Category = "VJ Base"
+SWEP.Category = "Halo CE SPV3"
+SWEP.Spawnable = true
+
+	-- Client Settings ---------------------------------------------------------------------------------------------------------------------------------------------
+if CLIENT then
+SWEP.Slot = 2 -- Which weapon slot you want your SWEP to be in? (1 2 3 4 5 6) 
+SWEP.SlotPos = 4 -- Which part of that slot do you want the SWEP to be in? (1 2 3 4 5 6)
+end
+
+SWEP.ViewModel 					= "models/weapons/c_smg1.mdl"
 
 SWEP.WorldModel					= "models/hce/spv3/weapons/cov/needler/needler.mdl"
 SWEP.Primary.Sound				= {"weapons/needler/fire/Needler_Shot_1.ogg","weapons/needler/fire/Needler_Shot_2.ogg","weapons/needler/fire/Needler_Shot_3.ogg",}
+SWEP.HasReloadSound 					= true
 SWEP.ReloadSound = {"weapons/needler/reload/base.ogg"}
 SWEP.NPC_ReloadSound = SWEP.ReloadSound -- Sounds it plays when the base detects the SNPC playing a reload animation
 SWEP.Primary.TracerType 		= "AirboatGunHeavyTracer" -- Tracer type (Examples: AR2)
@@ -23,7 +33,6 @@ SWEP.NPC_TimeUntilFire 			= 0.12 -- How much time until the bullet/projectile is
 SWEP.Primary.DisableBulletCode	= true -- The bullet won't spawn, this can be used when creating a projectile-based weapon
 SWEP.Primary.Projectile = "obj_vj_spv3_nr_shot"
 SWEP.Primary.ProjectileSpeed = 1000
-SWEP.PrintName					= "Needler"
 SWEP.HoldType 					= "pistol"
 SWEP.PrimaryEffects_DynamicLightColor = Color(220, 0, 255, 255)
 function SWEP:CustomOnPrimaryAttack_BeforeShoot()

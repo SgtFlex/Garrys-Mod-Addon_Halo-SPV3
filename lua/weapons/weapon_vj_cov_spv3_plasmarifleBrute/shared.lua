@@ -1,10 +1,17 @@
-SWEP.Base = "weapon_vj_spv3_wbase"
+SWEP.Base = "weapon_vj_spv3_base"
 SWEP.PrintName					= "SPV3 Brute Plasma Rifle"
 SWEP.Author = "SgtFlex"
 SWEP.Contact = "http://steamcommunity.com/groups/vrejgaming"
 SWEP.Purpose = "This weapon is made for Players and NPCs"
 SWEP.Instructions = "Controls are like a regular weapon."
-SWEP.Category = "VJ Base"
+SWEP.Category = "Halo CE SPV3"
+SWEP.Spawnable = true
+
+	-- Client Settings ---------------------------------------------------------------------------------------------------------------------------------------------
+if CLIENT then
+SWEP.Slot = 2 -- Which weapon slot you want your SWEP to be in? (1 2 3 4 5 6) 
+SWEP.SlotPos = 4 -- Which part of that slot do you want the SWEP to be in? (1 2 3 4 5 6)
+end
 
 SWEP.WorldModel					= "models/hce/spv3/weapons/cov/plasma_rifle/plasmarifle.mdl"
 SWEP.Primary.Sound				= {"weapons/plasmarifle/fire/plasmarifle1.ogg", "weapons/plasmarifle/fire/plasmarifle2.ogg", "weapons/plasmarifle/fire/plasmarifle3.ogg", "weapons/plasmarifle/fire/plasmarifle4.ogg", "weapons/plasmarifle/fire/plasmarifle5.ogg"}
