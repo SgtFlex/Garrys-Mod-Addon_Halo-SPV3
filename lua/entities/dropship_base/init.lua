@@ -2,7 +2,7 @@ AddCSLuaFile("shared.lua")
 include("shared.lua")
 
 	-- ====Variant Variables==== --
-ENT.Model = "models/hce/spv3/cov/phantom/phantom.mdl" -- The game will pick a random model from the table when the SNPC is spawned | Add as many as you want
+ENT.Model = "models/hce/spv3/cov/phantom/phantom.mdl"
 ENT.EngineIdleSFX = "phantom/engine_hover.wav"
 ENT.EngineMoveSFX = "phantom/engine_moving.wav"
 ENT.StartHealth = 5000 * GetConVarNumber("vj_spv3_HealthModifier")
@@ -63,6 +63,8 @@ ENT.Nodes = {}
 ENT.EngineSound = nil
 ENT.EngineIdleSound = nil
 ENT.LatchConstraint = nil
+ENT.BlowupTime = nil
+ENT.CarriedEntityMass = 0
 ------------------------------------------------
 
 
@@ -176,13 +178,25 @@ function ENT:Task_DropEntity(data)
 
 end
 
-function ENT:TaskStart_Despawn()
-	self:Remove()
+function ENT:TaskStart_StartDespawn(data)
+	self.MoveLocation = data.pos
+	self:SetModelScale(self:GetModelScale())
+	self:SetModelScale(0, data.DespawnTime)
+	for k, v in pairs(self.Turrets) do
+		v:SetModelScale(v:GetModelScale())
+		v:SetModelScale(1, data.DespawnTime)
+	end
+	self.StartDespawnTime = CurTime()
 end
 
-function ENT:Task_Despawn()
-
+function ENT:Task_StartDespawn(data)
+	if (CurTime() > self.StartDespawnTime + data.DespawnTime) then
+		self:Remove()
+	end
+	self.DesiredControlRotation = (self.MoveLocation - self:GetPos()):GetNormalized():Angle()
+	debugoverlay.Cross(data.pos, 500, .25)
 end
+
 
 function ENT:SelectSchedule()
 	self:StartSchedule(self.FlySchedule)
@@ -190,7 +204,6 @@ end
 
 
 function ENT:ConstructFlySchedule()
-	
 	--Entering
 	if (#self.Nodes >= 3) then
 		local TravelPath = table.Reverse(self.Nodes)
@@ -209,7 +222,7 @@ function ENT:ConstructFlySchedule()
 		self.FlySchedule:AddTask("NavigatePath", {Path = self.Nodes, AcceptanceRadius = 1500})
 		self.FlySchedule:AddTask("SetSolid", SOLID_NONE)
 		self.FlySchedule:AddTask("FlyToPos", {pos = self.SpawnPos, AcceptanceRadius = 1500, Stop = false})
-		self.FlySchedule:AddTask("Despawn", 0)
+		self.FlySchedule:AddTask("StartDespawn", 0)
 	else
 		self.FlySchedule:AddTask("FlyToPos", {pos = self.Nodes[1], AcceptanceRadius = 100, Stop = true})
 		self.FlySchedule:AddTask("SpawnVehicle", 0)
@@ -219,8 +232,8 @@ function ENT:ConstructFlySchedule()
 		self.FlySchedule:AddTask("SpawnUnits", 0)
 		--Leaving
 		self.FlySchedule:AddTask("SetSolid", SOLID_NONE)
-		self.FlySchedule:AddTask("FlyToPos", {pos = self.SpawnPos, AcceptanceRadius = 1500, Stop = false})
-		self.FlySchedule:AddTask("Despawn", 0)
+		self.FlySchedule:AddTask("FlyToPos", {pos = self.HitSkyPos, AcceptanceRadius = 1500, Stop = false})
+		self.FlySchedule:AddTask("StartDespawn", {pos = self.SpawnPos, DespawnTime = 15})		
 	end
 	
 end
@@ -255,6 +268,7 @@ function ENT:TraceForSkyboxRecursively(PosStart, PosEnd, depth)
 end
 
 function ENT:Initialize()
+	
 	self:GeneratePathFromPos(self:GetPos())
 	self.SpawnPos = self.Nodes[#self.Nodes] + (self.HitSkyPos - self.Nodes[1]):GetNormalized()*(17000 - self.Nodes[#self.Nodes]:Length()) --18K is the max map limit for physics-simulated entities. Spawn within those bounds
 	self:SetPos(self.SpawnPos)
@@ -272,6 +286,12 @@ function ENT:Initialize()
 	self.EngineIdleSound:SetSoundLevel(105)
 	self:InitializePhysics()
 	self:SpawnTurrets()
+	self:SetModelScale(0)
+	self:SetModelScale(1, 5)
+	for k, v in pairs(self.Turrets) do
+		v:SetModelScale(0)
+		v:SetModelScale(1, 5)
+	end
 	self:SetupSpawnTable()
 	self:PrecacheGibModels()
 	self:PrecacheChildUnitModels()
@@ -288,7 +308,10 @@ end
 function ENT:PickupEntity(ent)
 	if (self.CarriedEntity) then self:DropCarriedEntity() end
 	self.CarriedEntity = ent	
+	self.CarriedEntityMass = ent:GetPhysicsObject():GetMass()
+	self.CarriedEntity:GetPhysicsObject():SetMass(100)
 	self.CarriedEntity:GetPhysicsObject():Wake()
+	self.CarriedEntity:PhysWake()
 	self.CarriedEntity:GetPhysicsObject():SetVelocity(self:GetPhysicsObject():GetVelocity())
 	for k, v in pairs(ent:GetChildren()) do
 		constraint.NoCollide(self, v, 0, 0)
@@ -307,6 +330,7 @@ end
 
 function ENT:DropCarriedEntity()
 	if (!self.CarriedEntity) then return end
+	self.CarriedEntity:GetPhysicsObject():SetMass(self.CarriedEntityMass)
 	self:DontDeleteOnRemove(self.CarriedEntity)
 	self.LatchConstraint:Remove()
 	self.CarriedEntity = nil
@@ -315,15 +339,12 @@ end
 
 
 function ENT:PrecacheGibModels()
-	PrintTable(self.GibModels)
 	for k, v in pairs(self.GibModels) do
-		print(v)
 		util.PrecacheModel(v)
 	end
 end
 
 function ENT:PrecacheChildUnitModels()
-	PrintTable(self.ChildUnitModels)
 	for k, v in pairs(self.ChildUnitModels) do
 		util.PrecacheModel(v)
 	end
@@ -380,11 +401,10 @@ function ENT:OnRemove()
 	if (self.EngineIdleSound) then self.EngineIdleSound:Stop() end
 end
 
-function ENT:PhysicsCollide(colData, collider)
-	self.CurSpeed = 0
-end
-
 function ENT:Think()
+	if (self.BlowupTime and CurTime() > self.BlowupTime) then
+		self:Blowup()
+	end
 	if (self.IsDead) then return end
 	self.CurrentControlRotation = self:GetPhysicsObject():GetAngles()
 	self:Drive()
@@ -465,6 +485,8 @@ function ENT:TurnToControlRotation()
 	local ForwardVelocity = self:GetPhysicsObject():WorldToLocalVector(self:GetPhysicsObject():GetVelocity())
 	local TurnAmountYaw = AngDifference.Y - self:GetPhysicsObject():GetAngleVelocity().Z + -ForwardVelocity.Y*.05
 	local TurnAmountPitch =  AngDifference.X - self:GetPhysicsObject():GetAngleVelocity().Y + ForwardVelocity.Z*.05
+	-- local TurnAmountYaw = AngDifference.Y - self:GetPhysicsObject():GetAngleVelocity().Z
+	-- local TurnAmountPitch =  AngDifference.X - self:GetPhysicsObject():GetAngleVelocity().Y
 	local TurnVelocity = (Vector((AngDifference.Z - self:GetPhysicsObject():GetAngleVelocity().X + -TurnAmountYaw*0.5), TurnAmountPitch, TurnAmountYaw)) * self.MaxTurnRate
 	self:SetPoseParameter("rotate_yaw", TurnAmountYaw*3)
 	self:SetPoseParameter("rotate_pitch", TurnAmountPitch*3)
@@ -484,6 +506,7 @@ function ENT:Death()
 end
 
 function ENT:StartDestruction()
+	self.BlowupTime = CurTime() + 1.5
 	self:EmitSound("phantom/phantom_windup.ogg", 130)
 	self:GetPhysicsObject():EnableGravity(true)
 	local effect = EffectData()
@@ -524,7 +547,6 @@ function ENT:StartDestruction()
 
 		self:GetPhysicsObject():Wake()
 	end
-	timer.Create("Blowup"..self:GetCreationID(), 3, 0, function() self:Blowup() end)
 end
 
 function ENT:Blowup()
@@ -577,7 +599,6 @@ function ENT:PhysicsCollide(ColData, Collider)
 	local damage = (ColData.OurOldVelocity:Length() - ColData.OurNewVelocity:Length())
 	self:TakeDamage(damage, Collider, Collider)
 end
-
 
 function ENT:SpawnUnits()
 	self.SpawnedUnitCount = 1

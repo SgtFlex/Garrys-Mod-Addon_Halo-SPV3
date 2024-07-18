@@ -1,6 +1,6 @@
 AddCSLuaFile("shared.lua")
 include('shared.lua')
-include('bases/spv3_snpc_base/init.lua')/*-----------------------------------------------
+/*-----------------------------------------------
 	*** Copyright (c) 2012-2016 by DrVrej, All rights reserved. ***
 	No parts of this code or any of its contents may be reproduced, copied, modified or adapted,
 	without the prior written consent of the author, unless otherwise indicated for stand-alone materials.
@@ -12,11 +12,9 @@ ENT.StartHealth = 100
 ENT.ShieldMaxHealth = 100
 ENT.ShieldDelay = 6
 ENT.ShieldRecharge = 1
-ENT.Appearance = {
-	Color = Color(40,60,200),
-	Bodygroups = {0, 1, 2, 4},
-	Skin = 1,
-}
+ENT.Color = Color(40,60,200)
+ENT.BodyGroups = "00124"
+ENT.Skin = 1
 ENT.HasSword = false
 ENT.BerserkChance = 20
 ENT.HeadHitgroup = 507

@@ -35,9 +35,8 @@ ENT.GrenadeWeps = {
 	"weapon_vj_cov_spv3_needler_nade",
 }
 ENT.Faction = "Covenant"
-ENT.RemovableParts = {
+ENT.RemovableParts = nil
 	--[500] = {Health = 15, Bodygroup = "Head", Execute = function(entity, dmginfo) end}, Example of a removable bodygroup. Key must be hitgroup, Health is how much dmg it takes, Bodygroup is which part is removed
-}
 ENT.Appearance = {
 	Color = Color(255, 255, 255),
 	Bodygroups = {},
@@ -556,7 +555,7 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 		self:DamageShield(dmginfo, hitgroup)
 	else
 		self.CurrentHealth = self.CurrentHealth - dmginfo:GetDamage()
-		if (self.RemovableParts[hitgroup]) then
+		if (self.RemovableParts and self.RemovableParts[hitgroup]) then
 			self:DamageSpecialPart(hitgroup, dmginfo)
 		end
 		if (math.random(1,100) <= self.BerserkChance) then

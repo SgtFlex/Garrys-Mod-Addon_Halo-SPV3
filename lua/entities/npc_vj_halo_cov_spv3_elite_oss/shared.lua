@@ -1,4 +1,4 @@
-ENT.Base 			= "npc_vj_human_base"
+ENT.Base 			= "spv3_snpc_base"
 ENT.Type 			= "ai"
 ENT.PrintName 		= "Elite Minor"
 ENT.Author 			= "Mayhem"
@@ -7,13 +7,6 @@ ENT.Purpose 		= "Let it eat you."
 ENT.Instructions	= "Click on it to spawn it."
 ENT.Category		= "Halo CE SPV3"
 
-if (CLIENT) then
-local Name = "Elite Minor"
-local LangName = "npc_vj_halo_cov_spv3_elite_min"
-language.Add(LangName, Name)
-killicon.Add(LangName,"HUD/killicons/default",Color ( 255, 80, 0, 255 ) )
-language.Add("#"..LangName, Name)
-killicon.Add("#"..LangName,"HUD/killicons/default",Color ( 255, 80, 0, 255 ) )
 if CLIENT then
 	local string_lower = string.lower
 	local string_find = string.find
@@ -72,5 +65,4 @@ if CLIENT then
             -- print(ent,ent.Mat_cloakfactor,self.CloakColorTint)
         end
     })
-end
 end

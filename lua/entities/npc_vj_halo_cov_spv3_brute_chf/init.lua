@@ -6,14 +6,12 @@ include('entities/npc_vj_halo_cov_spv3_brute_min/init.lua')
 	No parts of this code or any of its contents may be reproduced, copied, modified or adapted,
 	without the prior written consent of the author, unless otherwise indicated for stand-alone materials.
 -----------------------------------------------*/
-ENT.Appearance = {
-	Color = Color(82,0,0),
-	Bodygroups = {4, 2, 2, 0, 3, 3, 2, 1, 1},
-	Skin = 2,
-}
+ENT.Color = Color(82,0,0)
+ENT.BodyGroups = "0422033211"
+ENT.Skin = 2
 ENT.helmet = "models/hce/spv3/cov/brute/garbage/chieftain_helmet.mdl"
 ENT.StartHealth = 250
-ENT.RemovableParts[500]["Health"] = GetConVar("vj_spv3_PrecisionThreshold"):GetInt()*3
+ENT.RemovableParts[500]["Health"] = 100
 ENT.ShieldMaxHealth = 175
 //250 health
 //175 shields

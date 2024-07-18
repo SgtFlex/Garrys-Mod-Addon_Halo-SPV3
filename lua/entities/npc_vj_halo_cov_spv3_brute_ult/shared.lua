@@ -1,6 +1,6 @@
-ENT.Base 			= "npc_vj_human_base"
+ENT.Base 			= "spv3_snpc_base"
 ENT.Type 			= "ai"
-ENT.PrintName 		= "Elite Major"
+ENT.PrintName 		= "Brute Ultra"
 ENT.Author 			= "Mayhem"
 ENT.Contact 		= "http://vrejgaming.webs.com/"
 ENT.Purpose 		= "Let it eat you."

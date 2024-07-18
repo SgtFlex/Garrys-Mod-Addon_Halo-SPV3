@@ -14,12 +14,12 @@ ENT.ExtraWeapons = {
 	"weapon_vj_unsc_spv3_br",
 	"weapon_vj_unsc_spv3_dmr",
 }
-ENT.Appearance = {
-	Color = Color(80,80,80),
-	Bodygroups = {0, 2},
-	Skin = 0,
-}
-ENT.otherInit = function(self)
+ENT.Color = Color(80,80,80)
+ENT.BodyGroups = "002"
+ENT.Skin = 0
+
+function ENT:CustomOnInitialize()
+	self.BaseClass.CustomOnInitialize(self)
 	self.eyeLight = ents.Create("env_sprite")
 	self.eyeLight:SetParent(self,self:LookupAttachment("EyeLight"))
 	self.eyeLight:SetPos(self:GetAttachment(self:LookupAttachment("EyeLight"))["Pos"])

@@ -1,6 +1,5 @@
 AddCSLuaFile("shared.lua")
 include('shared.lua')
-include('bases/spv3_snpc_base/init.lua')
 /*-----------------------------------------------
 	*** Copyright (c) 2012-2016 by DrVrej, All rights reserved. ***
 	No parts of this code or any of its contents may be reproduced, copied, modified or adapted,
@@ -14,11 +13,11 @@ ENT.StartHealth = 200
 ENT.HeadHitgroup = 500
 --25 shields
 ENT.BerserkChance = 20
-ENT.Appearance = {
-	Color = Color(100,120,180),
-	Bodygroups = {1, 1, 0, 0, 0, 0, 0, 0, 0},
-	Skin = 1,
-}
+ 
+ENT.Color = Color(100,120,180)
+ENT.BodyGroups = "110000000"
+ENT.Skin = 1
+
 ENT.HasBloodParticle = true -- Does it spawn a particle when damaged?
 ENT.Faction = "Covenant"
 ENT.RemovableParts = {

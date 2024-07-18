@@ -1,6 +1,6 @@
 AddCSLuaFile("shared.lua")
 include('shared.lua')
-include('bases/spv3_snpc_base/init.lua')/*-----------------------------------------------
+/*-----------------------------------------------
 	*** Copyright (c) 2012-2016 by DrVrej, All rights reserved. ***
 	No parts of this code or any of its contents may be reproduced, copied, modified or adapted,
 	without the prior written consent of the author, unless otherwise indicated for stand-alone materials.
@@ -8,11 +8,10 @@ include('bases/spv3_snpc_base/init.lua')/*--------------------------------------
 ENT.HullType = HULL_MEDIUM
 	-- ====Variant Variables==== --
 ENT.Model = {"models/hce/spv3/cov/grunt/grunt.mdl"} -- The game will pick a random model from the table when the SNPC is spawned | Add as many as you want
-ENT.Appearance = {
-	Color = Color(127,111,63),
-	Bodygroups = {2, 1},
-	Skin = 0,
-}
+ENT.Color = Color(127,111,63)
+ENT.BodyGroups ="021"
+ENT.Skin = 0
+
 ENT.StartHealth = 45
 ENT.HeadHitgroup = 505
 ENT.CanFlee = true

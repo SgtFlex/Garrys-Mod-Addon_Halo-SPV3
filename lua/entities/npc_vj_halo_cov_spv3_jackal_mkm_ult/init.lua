@@ -9,10 +9,8 @@ include('entities/npc_vj_halo_cov_spv3_jackal_mkm_min/init.lua')
 ENT.ExtraShotCount = 2
 ENT.StartHealth = 200
 ENT.LightColor = Color(255, 0, 0)
-
 ENT.UNSCWeps = {
 	"weapon_vj_unsc_spv3_sr"
 }
-
 ENT.WeaponProfficiency = 80
 ENT.ExtraShotCount = 2

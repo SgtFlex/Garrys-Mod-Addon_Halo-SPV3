@@ -6,11 +6,9 @@ include('entities/npc_vj_halo_cov_spv3_elite_min/init.lua')
 	No parts of this code or any of its contents may be reproduced, copied, modified or adapted,
 	without the prior written consent of the author, unless otherwise indicated for stand-alone materials.
 -----------------------------------------------*/
-ENT.Appearance = {
-	Color = Color(182,182,182),
-	Bodygroups = {0, 2, 2, 6},
-	Skin = 0,
-}
+ENT.Color = Color(182,182,182)
+ENT.BodyGroups = "00226"
+ENT.Skin = 0
 ENT.HasSword = true
 ENT.StartHealth = 100
 ENT.ShieldMaxHealth = 175

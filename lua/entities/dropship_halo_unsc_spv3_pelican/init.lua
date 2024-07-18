@@ -26,6 +26,7 @@ function ENT:SpawnTurrets()
 end
 
 function ENT:StartDestruction()
+	self.BlowupTime = CurTime() + 1.5
 	self:GetPhysicsObject():EnableGravity(true)
 	local effect = EffectData()
 	effect:SetEntity(self)
@@ -33,5 +34,4 @@ function ENT:StartDestruction()
 	util.Effect("burning_engine_01", effect)
 	self:EmitSound("phx/explode00.wav", 90)
 	ParticleEffectAttach("burning_engine_01", PATTACH_ABSORIGIN_FOLLOW, self, 0)
-	timer.Create("Blowup"..self:GetCreationID(), 3, 0, function() self:Blowup() end)
 end

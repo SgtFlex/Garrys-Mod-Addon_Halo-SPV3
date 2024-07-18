@@ -8,10 +8,8 @@ include('entities/npc_vj_halo_cov_spv3_jackal_min/init.lua')
 -----------------------------------------------*/
 ENT.StartHealth = 75
 ENT.ShieldProjMaxHealth = 450
-ENT.Appearance = {
-	Color = Color(80,80,80),
-	Bodygroups = {1, 2},
-	Skin = 0,
-}
+ENT.Color = Color(80,80,80)
+ENT.BodyGroups = "012"
+ENT.Skin = 0
 ENT.WeaponProfficiency = 80
 ENT.ExtraShotCount = 4

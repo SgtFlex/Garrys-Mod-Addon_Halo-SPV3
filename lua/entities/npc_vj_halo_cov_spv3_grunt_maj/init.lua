@@ -6,11 +6,10 @@ include('entities/npc_vj_halo_cov_spv3_grunt_min/init.lua')
 	No parts of this code or any of its contents may be reproduced, copied, modified or adapted,
 	without the prior written consent of the author, unless otherwise indicated for stand-alone materials.
 -----------------------------------------------*/
-ENT.Appearance = {
-	Color = Color(127,63,63),
-	Bodygroups = {1, 1},
-	Skin = 0,
-}
+ENT.Color = Color(127,63,63)
+ENT.BodyGroups = "011"
+ENT.Skin = 0
+
 ENT.StartHealth = 75
 -- ENT.ShieldHealth = 0
 ENT.ExtraShotCount = 1
