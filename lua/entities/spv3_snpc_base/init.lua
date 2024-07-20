@@ -213,7 +213,7 @@ function ENT:DisperseShield(dmginfo, hitgroup)
 	self.ShieldActivated = false
 	if (self.ShieldIsArmor == false) then
 		ParticleEffectAttach("hcea_shield_disperse",PATTACH_POINT_FOLLOW,self,self:LookupAttachment("origin"))
-		self:EmitSound("brute/fx/brute_shield_destroyed/brute_shield_destroyed ("..math.random(1, 3)..").ogg")
+		self:EmitSound("brute/fx/brute_shield_destroyed/brute_shield_destroyed ("..math.random(1, 3)..").ogg", 75, 100, 0.5)
 		self.Bleeds = true
 		local temp = self.CanFlinch
 		self.CanFlinch = 1
@@ -238,7 +238,7 @@ function ENT:RegenerateShield()
 end
 
 function ENT:CheckForSpecialDeaths(dmginfo, hitgroup)
-	if (hitgroup == self.HeadHitgroup and dmginfo:GetDamage() >= GetConVarNumber("vj_spv3_PrecisionThreshold") and (self.ShieldActivated==false or self.ShieldIsArmor==true) and (self.RemovableParts[self.HeadHitgroup] == nil or self.RemovableParts[self.HeadHitgroup]["Health"] <= 0)) then
+	if (hitgroup == self.HeadHitgroup and dmginfo:GetDamage() >= GetConVarNumber("vj_spv3_PrecisionThreshold") and (self.ShieldActivated==false or self.ShieldIsArmor==true) and self.RemovableParts and (self.RemovableParts[self.HeadHitgroup] == nil or self.RemovableParts[self.HeadHitgroup]["Health"] <= 0)) then
 		return "Headshot"
 	elseif (self.DisableBackBreak == false && dmginfo:GetAttacker():IsPlayer() && dmginfo:GetDamageType()==DMG_CLUB && Vector((dmginfo:GetDamagePosition() - self:GetPos()).x, (dmginfo:GetDamagePosition() - self:GetPos()).y, 0):Dot(Vector(self:GetForward().x, self:GetForward().y, 0)) < 0) then
 		return "BackBreak"
@@ -562,7 +562,7 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo,hitgroup)
 		self:DamageShield(dmginfo, hitgroup)
 	else
 		self.CurrentHealth = self.CurrentHealth - dmginfo:GetDamage()
-		if (self.RemovableParts[hitgroup]) then
+		if (self.RemovableParts and self.RemovableParts[hitgroup]) then
 			self:DamageSpecialPart(hitgroup, dmginfo)
 		end
 		if (math.random(1,100) <= self.BerserkChance) then

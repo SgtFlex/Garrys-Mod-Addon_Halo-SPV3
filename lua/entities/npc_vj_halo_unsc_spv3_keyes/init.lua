@@ -7,12 +7,9 @@ include('entities/npc_vj_halo_unsc_spv3_marine/init.lua')
 	without the prior written consent of the author, unless otherwise indicated for stand-alone materials.
 -----------------------------------------------*/
 ENT.StartHealth = 160
-ENT.Appearance = {
-	Color = Color(255,255,255),
-	Bodygroups = {24, 4, 8, 3},
-	Skin = 9,
-}
-ENT.otherInit = function(entity) end
+ENT.Color = Color(255,255,255)
+ENT.BodyGroups = "0O483"
+ENT.Skin = 9
 ENT.ExtraWeapons = {
 	"weapon_vj_cov_spv3_plasmarifle",
 	"weapon_vj_cov_spv3_plasmarifleBrute",
@@ -66,6 +63,11 @@ function ENT:CustomOnInitialKilled(dmginfo, hitgroup)
 			v.KeyesBuff = false
 		end
 	end
+end
+
+
+function ENT:SetPhysicalAppearance()
+	self.BaseClass.SetPhysicalAppearance(self)
 end
 
 function ENT:CustomOnPreInitialize()

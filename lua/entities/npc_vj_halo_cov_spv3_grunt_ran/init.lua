@@ -9,10 +9,6 @@ include('entities/npc_vj_halo_cov_spv3_grunt_min/init.lua')
 
 
 function ENT:CustomOnInitialize()
-	self.Color = Color(math.random(0, 255),math.random(0, 255),math.random(0, 255))
-	self.BodyGroups = "0"..table.concat({math.random(1, 2), math.random(1, 2)})
-	self.Skin = 0
-
 	self.StartHealth = math.random(45, 105)
 	if (math.random(0, 4)==0) then
 		self.ShieldMaxHealth = math.random(0, 100)
@@ -27,4 +23,10 @@ function ENT:CustomOnInitialize()
 		self.IsInvis = false
 	end
 	self.BaseClass.CustomOnInitialize(self)
+end
+
+function ENT:SetPhysicalAppearance()
+	self:SetColor(Color(math.random(0, 255),math.random(0, 255),math.random(0, 255)))
+	self:SetBodyGroups("0"..table.concat({math.random(1, 2), math.random(1, 2)}))
+	self:SetSkin(0)
 end
