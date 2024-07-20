@@ -1,6 +1,6 @@
 AddCSLuaFile("shared.lua")
 include('shared.lua')
-include('bases/spv3_snpc_base/init.lua')/*-----------------------------------------------
+/*-----------------------------------------------
 	*** Copyright (c) 2012-2016 by DrVrej, All rights reserved. ***
 	No parts of this code or any of its contents may be reproduced, copied, modified or adapted,
 	without the prior written consent of the author, unless otherwise indicated for stand-alone materials.
@@ -18,11 +18,9 @@ ENT.Skins = {
 	5,
 	6,
 }
-ENT.Appearance = {
-	Color = Color(255,255,255),
-	Bodygroups = {math.random(0,23), math.random(0,2), math.random(0,6), math.random(0,1)},
-	Skin = ENT.Skins[math.random(1, 5)],
-}
+ENT.Color = Color(255,255,255)
+ENT.BodyGroups = "0"..table.concat({math.random(0,23), math.random(0,2), math.random(0,6), math.random(0,1)})
+ENT.Skin = ENT.Skins[math.random(1, 5)]
 
 //55 Shield
 	-- ====== Blood-Related Variables ====== --
@@ -105,12 +103,10 @@ ENT.SoundTbl_Step = {
 	"marine/shared/step/step (5).ogg",
 	"marine/shared/step/step (6).ogg",
 }
-ENT.otherInit = function(entity)
-	entity.Appearance = {
-		Color = Color(255,255,255),
-		Bodygroups = {math.random(0,23), math.random(0,2), math.random(0,6), math.random(0,1)},
-		Skin = entity.Skins[math.random(1, 5)],
-	}
+function ENT:SetPhysicalAppearance()
+	self:SetColor(Color(255,255,255))
+	self:SetBodyGroups("0"..table.concat({math.random(0,23), math.random(0,2), math.random(0,6), math.random(0,1)}))
+	self:SetSkin(self.Skins[math.random(1, 5)])
 end
 ---------------------------------------------------------------------------------------------------------------------------------------------
 function ENT:CustomOnSetupWeaponHoldTypeAnims(htype)

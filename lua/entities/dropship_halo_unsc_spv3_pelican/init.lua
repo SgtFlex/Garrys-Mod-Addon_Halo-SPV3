@@ -20,7 +20,7 @@ ENT.ChildUnitModels = {
 	"models/hce/spv3/unsc/marine/Marine.mdl",
 }
 
-ENT.DropHeight = 100
+ENT.DropHeight = 300
 
 function ENT:SpawnTurrets()
 end

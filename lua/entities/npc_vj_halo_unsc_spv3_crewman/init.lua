@@ -8,14 +8,8 @@ include('entities/npc_vj_halo_unsc_spv3_marine/init.lua')
 -----------------------------------------------*/
 ENT.StartHealth = 70
 ENT.ShieldMaxHealth = 25
-local headsOnly = {1, 12, 17}
-ENT.otherInit = function(entity)
-	entity.Appearance = {
-		Color = Color(math.random(0, 255),math.random(0, 255),math.random(0, 255)),
-		Bodygroups = {headsOnly[math.random(1, 3)], 3, 7, 2},
-		Skin = entity.Skins[math.random(1, 5)],
-	}
-end
+local headsOnly = {1, "C", "H"}
+ENT.BodyGroups = "0"..table.concat({headsOnly[math.random(1, 3)], 3, 7, 2})
 
 ENT.ExtraWeapons = {
 	"weapon_vj_cov_spv3_plasmapistol",
@@ -131,4 +125,10 @@ function ENT:CustomOnPreInitialize()
 		"crewman/cower/cower (3).ogg",
 		"crewman/cower/cower (4).ogg",
 	}
+end
+
+function ENT:SetPhysicalAppearance()
+	self:SetColor(Color(math.random(0, 255),math.random(0, 255),math.random(0, 255)))
+	self:SetBodyGroups("0"..table.concat({headsOnly[math.random(1, 3)], 3, 7, 2}))
+	self:SetSkin(self.Skins[math.random(1, 5)])
 end

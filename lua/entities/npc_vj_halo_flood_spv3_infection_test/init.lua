@@ -32,7 +32,20 @@ function ENT:SelectSchedule()
 	self:StartSchedule(mySCH)
 end
 
+
+local function DrawAxes(pos, forwardAngle)
+
+end
+
 function ENT:Initialize()
+
+	self.corpse = ents.Create("prop_ragdoll")
+	local corpse = self.corpse
+	corpse:SetModel("models/Kleiner.mdl")
+	corpse:SetPos(self:GetPos())
+	corpse:Spawn()
+	
+	
 	self:SetModel(self.Model)
 	self:SetHullType(HULL_TINY)
 	self:SetSolid(SOLID_BBOX)
@@ -94,6 +107,15 @@ function ENT:OnBeginAirborne()
 end
 
 function ENT:Think()
+	local corpse = self.corpse
+
+	--Representation of GetAngles() on a corpse
+	debugoverlay.Line(corpse:GetPos(), corpse:GetPos() + corpse:GetAngles():Forward() * 500, 1, Color(255, 0, 0))
+	local pos, ang = corpse:GetBonePosition(0) --Pelvis bone
+	--Representation of Using Angles returned by GetBonePosition
+	debugoverlay.Line(pos, pos + ang:Up() * 500, 1, Color(0, 255, 0))
+
+
 	self:TraceForCollisions()
 	local ang = self:GetAngles()
 	ang.Y = (self.MoveLocation - self:GetPos()):Angle().Y

@@ -136,7 +136,6 @@ ENT.NextSoundTime_Idle2 = 2
 
 
 function ENT:CustomOnInitialize()
-	print("phantom spawned")
 	self:SetCustomCollisionCheck(true)
 	hook.Add( "ShouldCollide", "CustomCollisions", function( ent1, ent2 )
 		if (ent1:GetClass()=="npc_vj_halo_flood_spv3_infection" and (ent1:GetClass()==ent2:GetClass()) and ent1:GetGroundSpeedVelocity():Length()==0 and ent2:GetGroundSpeedVelocity():Length()==0) then

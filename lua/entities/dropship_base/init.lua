@@ -7,10 +7,11 @@ ENT.EngineIdleSFX = "phantom/engine_hover.wav"
 ENT.EngineMoveSFX = "phantom/engine_moving.wav"
 ENT.StartHealth = 5000 * GetConVarNumber("vj_spv3_HealthModifier")
 -----------------Movement----------------
-ENT.AccelerationSpeed = 2
-ENT.DecelerateSpeed = 3.5
-ENT.MaxSpeed = 1500
-ENT.MaxTurnRate = 0.01
+ENT.AccelerationSpeed = 3
+ENT.DecelerateSpeed = 3
+ENT.MaxSpeed = 2000
+ENT.TurningFactor = 0.01
+ENT.DecelerationDistance = 3500 --Distance at which we begin decelerating to stop at the target
 -----------------------------------------
 ENT.TableSpawns = {}
 ENT.StartHealth = 5000
@@ -38,7 +39,7 @@ ENT.gibTable = {
 	"models/combine_helicopter/bomb_debris_3.mdl",
 	"models/combine_helicopter/bomb_debris_3.mdl",
 }
-ENT.EntClassToCarry = nil
+ENT.EntClassToCarry = {}
 ----AirNode generation----
 ENT.AirNodeDirections = 8 --Determines how many directions we generate air nodes. Default is 4
 ENT.LengthBetweenNodes = 5000 --Determines how far between nodes we generate. Shorter number is going to mean sharper turns. Default is 5000
@@ -51,7 +52,7 @@ ENT.MaxDepth = 30 --How many nodes we're allowed to generate in each direction
 ENT.DesiredControlRotation = nil
 ENT.CurrentControlRotation = nil
 ENT.MoveLocation = Vector(0,0,0)
-ENT.DesiredSpeed = 1500
+ENT.DesiredSpeed = ENT.MaxSpeed
 ENT.IsDead = false
 ENT.FlySchedule = ai_schedule.New("Dropship")
 ENT.Turrets = {}
@@ -64,7 +65,13 @@ ENT.EngineSound = nil
 ENT.EngineIdleSound = nil
 ENT.LatchConstraint = nil
 ENT.BlowupTime = nil
-ENT.CarriedEntityMass = 0
+ENT.CarriedEntsMass = 0
+ENT.bAIEnabled = true
+ENT.bEngineOn = true
+ENT.CarriedEnts = {}
+ENT.bIsUnloading = false
+ENT.NextUnloadT = 0
+ENT.DownT = 0
 ------------------------------------------------
 
 
@@ -76,7 +83,7 @@ function ENT:Task_FlyToPos(data)
 	debugoverlay.Cross(self.MoveLocation, data.AcceptanceRadius, 0.25, Color(255, 0, 0))
 	local rot = (self.MoveLocation - self:GetPos()):GetNormalized():Angle()
 	if (data.Stop) then
-		self.DesiredSpeed = Lerp(math.min(self:GetPos():Distance(self.MoveLocation)/5000, self.MaxSpeed), 0, self.MaxSpeed)
+		self.DesiredSpeed = Lerp(math.min(self:GetPos():Distance(self.MoveLocation)/self.DecelerationDistance, self.MaxSpeed), 0, self.MaxSpeed)
 		self.DesiredControlRotation = LerpAngle(math.min(1, (self:GetPos() + self:GetPhysicsObject():GetVelocity()):Distance(self.MoveLocation)/1500), Angle(0, rot.Y, 0), rot)
 	else
 		self.DesiredSpeed = self.MaxSpeed
@@ -88,14 +95,7 @@ function ENT:Task_FlyToPos(data)
 end
 	
 function ENT:TaskStart_SpawnVehicle(data)
-	if (self.EntClassToCarry) then
-		local ent = ents.Create(self.EntClassToCarry)
-		if (IsValid(ent)) then
-			ent:Spawn()
-			self:PickupEntity(ent)
-		end
-	end
-	
+	self:SpawnEntities()
 	self:TaskComplete()
 end
 
@@ -170,12 +170,14 @@ end
 
 function ENT:TaskStart_DropEntity(data)
 
-	self:DropCarriedEntity()
-	self:TaskComplete()
+	self:DropAll()
+	
 end
 
 function ENT:Task_DropEntity(data)
-
+	if (#self.CarriedEnts == 0) then
+		self:TaskComplete()
+	end
 end
 
 function ENT:TaskStart_StartDespawn(data)
@@ -199,7 +201,9 @@ end
 
 
 function ENT:SelectSchedule()
-	self:StartSchedule(self.FlySchedule)
+	if (self.bAIEnabled) then
+		self:StartSchedule(self.FlySchedule)
+	end
 end
 
 
@@ -222,7 +226,7 @@ function ENT:ConstructFlySchedule()
 		self.FlySchedule:AddTask("NavigatePath", {Path = self.Nodes, AcceptanceRadius = 1500})
 		self.FlySchedule:AddTask("SetSolid", SOLID_NONE)
 		self.FlySchedule:AddTask("FlyToPos", {pos = self.SpawnPos, AcceptanceRadius = 1500, Stop = false})
-		self.FlySchedule:AddTask("StartDespawn", 0)
+		self.FlySchedule:AddTask("StartDespawn",  {pos = self.SpawnPos, DespawnTime = 5})
 	else
 		self.FlySchedule:AddTask("FlyToPos", {pos = self.Nodes[1], AcceptanceRadius = 100, Stop = true})
 		self.FlySchedule:AddTask("SpawnVehicle", 0)
@@ -267,12 +271,20 @@ function ENT:TraceForSkyboxRecursively(PosStart, PosEnd, depth)
 	return tr
 end
 
+function ENT:SpawnEntities()
+	if (self.EntClassToCarry) then
+		for k, v in pairs(self.EntClassToCarry) do
+			local ent = ents.Create(v)
+			if (IsValid(ent)) then
+				ent:SetPos(self:GetAttachment(self:LookupAttachment("Latch"))["Pos"] + -(self:GetUp() * (ent:OBBMaxs().Z)))
+				ent:Spawn()
+				self:PickupEntity(ent)
+			end
+		end
+	end
+end
+
 function ENT:Initialize()
-	
-	self:GeneratePathFromPos(self:GetPos())
-	self.SpawnPos = self.Nodes[#self.Nodes] + (self.HitSkyPos - self.Nodes[1]):GetNormalized()*(17000 - self.Nodes[#self.Nodes]:Length()) --18K is the max map limit for physics-simulated entities. Spawn within those bounds
-	self:SetPos(self.SpawnPos)
-	self:SetAngles((self.Nodes[#self.Nodes] - self:GetPos()):Angle())
 	self:SetModel(self.Model)
 	self:AddFlags(FL_OBJECT)
 	self:AddFlags(FL_AIMTARGET)
@@ -286,19 +298,39 @@ function ENT:Initialize()
 	self.EngineIdleSound:SetSoundLevel(105)
 	self:InitializePhysics()
 	self:SpawnTurrets()
-	self:SetModelScale(0)
-	self:SetModelScale(1, 5)
-	for k, v in pairs(self.Turrets) do
-		v:SetModelScale(0)
-		v:SetModelScale(1, 5)
+	self:SetAIEnabled(true)
+	self:SetEngineOn(true)
+	if (self.bAIEnabled and self.bEngineOn) then
+		self:GeneratePathFromPos(self:GetPos())
+		self.SpawnPos = self.Nodes[#self.Nodes] + (self.HitSkyPos - self.Nodes[1]):GetNormalized()*(16000 - self.Nodes[#self.Nodes]:Length()) --18K is the max map limit for physics-simulated entities. Spawn within those bounds
+		self:SetPos(self.SpawnPos)
+		self:SetAngles((self.Nodes[#self.Nodes] - self:GetPos()):Angle())
+		self:GetPhysicsObject():SetVelocity((self.Nodes[#self.Nodes] - self:GetPos()):GetNormalized() * self.MaxSpeed)
+		self:ConstructFlySchedule()
+		self:SetSolid(SOLID_NONE)
+		self:AddEFlags(EFL_IN_SKYBOX)
+		self:SetModelScale(0)
+		self:SetModelScale(1, 5)
+		for k, v in pairs(self.Turrets) do
+			v:SetModelScale(0)
+			v:SetModelScale(1, 5)
+		end
+	else
+		self:SpawnEntities()
 	end
 	self:SetupSpawnTable()
 	self:PrecacheGibModels()
 	self:PrecacheChildUnitModels()
-	self:GetPhysicsObject():SetVelocity((self.Nodes[#self.Nodes] - self:GetPos()):GetNormalized() * self.DesiredSpeed)
-	self:ConstructFlySchedule()
-	self:SetSolid(SOLID_NONE)
-	self:AddEFlags(EFL_IN_SKYBOX)
+
+
+	
+end
+
+function ENT:Use(activator, caller, useType, value)
+	if (useType == USE_ON) then
+		self:SetAIEnabled(false)
+		drive.PlayerStartDriving(activator, self, "drive_example")
+	end
 end
 
 function ENT:UpdateTransmitState()	
@@ -306,34 +338,68 @@ function ENT:UpdateTransmitState()
 end
 
 function ENT:PickupEntity(ent)
-	if (self.CarriedEntity) then self:DropCarriedEntity() end
-	self.CarriedEntity = ent	
-	self.CarriedEntityMass = ent:GetPhysicsObject():GetMass()
-	self.CarriedEntity:GetPhysicsObject():SetMass(100)
-	self.CarriedEntity:GetPhysicsObject():Wake()
-	self.CarriedEntity:PhysWake()
-	self.CarriedEntity:GetPhysicsObject():SetVelocity(self:GetPhysicsObject():GetVelocity())
-	for k, v in pairs(ent:GetChildren()) do
-		constraint.NoCollide(self, v, 0, 0)
-		ent:GetPhysicsObject():Wake()
+	if (table.HasValue(constraint.GetAllConstrainedEntities(ent), self) or self.bIsUnloading or ent==self or ent:IsWorld() or !IsValid(ent:GetPhysicsObject()) or ent:GetParent()==self or ent:GetMoveType()!=MOVETYPE_VPHYSICS) then
+		return 
 	end
-	-- self.CarriedEntity:GetPhysicsObject():EnableGravity(false)
-	-- self.CarriedEntity:GetPhysicsObject():SetMass(0)
-	self.CarriedEntity:SetPos(self:GetAttachment(self:LookupAttachment("Latch"))["Pos"] + -(self:GetUp() * (ent:OBBMaxs().Z)))
-	self.CarriedEntity:SetAngles(self:GetAttachment(self:LookupAttachment("Latch"))["Ang"])
-	--self.LatchConstraint = constraint.Weld(ent, self, 0, 0, 0, true)
-	--self.LatchConstraint = constraint.Ballsocket(self, ent, 0, 0, Vector(0, 0, 0), 0, 0, 1)
-	self.LatchConstraint = constraint.AdvBallsocket(ent, self, 0, 0, Vector(0, 0, ent:OBBMaxs().Z), nil, -100, -100, -100, 100, 100, 100, 0, 0, 0, 0, 0, 0, 1)
-	self:DeleteOnRemove(self.CarriedEntity)
-	
+	local mass = ent:GetPhysicsObject():GetMass()
+	local ColGroup = ent:GetCollisionGroup()
+	local function DisablePhysics(self, ent)
+		if (!IsValid(ent:GetPhysicsObject())) then return end
+		ent:GetPhysicsObject():Wake()
+		ent:GetPhysicsObject():SetVelocity(self:GetPhysicsObject():GetVelocity())
+		ent:GetPhysicsObject():SetMass(100)
+		ent:PhysWake()
+	end
+	DisablePhysics(self, ent)
+	for k, v in pairs(constraint.GetAllConstrainedEntities(ent)) do
+		constraint.NoCollide(self, v, 0, 0)
+		--DisablePhysics(self, v)
+	end
+
+	ent:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
+	local GridSize = 100
+	local Rows = 4
+	local Columns = 3
+	local spacing = GridSize/#self.CarriedEnts
+	local latch = self:GetAttachment(self:LookupAttachment("Latch"))
+	local Carried = self.CarriedEnts
+	self.CarriedEnts = {} --Reset our table
+	table.insert(Carried, {ent, nil})
+	for k, v in pairs(Carried) do
+		local entity = v[1]
+		if (v[2]) then
+			v[2]:Remove()
+		end
+		local t = Vector(math.random(-100, 100),-50 + (50 * (k%Columns)), 0)
+		t:Rotate(latch.Ang)
+		entity:SetPos(latch.Pos + t - (latch.Ang:Up() * entity:OBBMaxs().Z))
+		ent:SetAngles(latch.Ang)
+		local LatchConstraint = constraint.AdvBallsocket(entity, self, 0, 0, Vector(0, 0, ent:OBBMaxs().Z), nil, -100, -100, -100, 100, 100, 100, 0, 0, 0, 0, 0, 0, 1)
+		table.insert(self.CarriedEnts, {entity, LatchConstraint, mass, ColGroup})
+	end
+
+	self:DeleteOnRemove(ent)
 end
 
-function ENT:DropCarriedEntity()
-	if (!self.CarriedEntity) then return end
-	self.CarriedEntity:GetPhysicsObject():SetMass(self.CarriedEntityMass)
-	self:DontDeleteOnRemove(self.CarriedEntity)
-	self.LatchConstraint:Remove()
-	self.CarriedEntity = nil
+function ENT:DropAll()
+	if (self.bIsUnloading == false) then
+		self.bIsUnloading = true
+	end
+end
+
+function ENT:PopCarriedEntity()
+	if (!self.CarriedEnts) then return end
+	local ent = self.CarriedEnts[1][1]
+	--self.CarriedEnts:GetPhysicsObject():SetMass(self.CarriedEntsMass)
+	self:DontDeleteOnRemove(ent)
+	self.CarriedEnts[1][2]:Remove()
+	ent:GetPhysicsObject():SetMass(self.CarriedEnts[1][3])
+	ent:SetCollisionGroup(self.CarriedEnts[1][4])
+	constraint.ForgetConstraints(ent)
+	table.remove(self.CarriedEnts, 1)
+	if (#self.CarriedEnts == 0) then
+		self.bIsUnloading = false
+	end
 end
 
 
@@ -393,7 +459,6 @@ function ENT:InitializePhysics()
 	self:SetMoveType(MOVETYPE_VPHYSICS)
 	self:SetCollisionGroup(COLLISION_GROUP_NONE)
 	self:GetPhysicsObject():EnableGravity(false)
-	self:GetPhysicsObject():SetDragCoefficient(0)
 end
 
 function ENT:OnRemove()
@@ -401,27 +466,56 @@ function ENT:OnRemove()
 	if (self.EngineIdleSound) then self.EngineIdleSound:Stop() end
 end
 
+function ENT:SetAIEnabled(HasDriver)
+	self.bAIEnabled = HasDriver
+end
+
+function ENT:SetEngineOn(state)
+	if (state) then
+		self:GetPhysicsObject():EnableGravity(false)
+		self:GetPhysicsObject():SetDragCoefficient(3)
+		self.EngineSound:Play()
+		self.EngineIdleSound:Play()
+	else
+		self:GetPhysicsObject():EnableGravity(true)
+		self:GetPhysicsObject():SetDragCoefficient(0)
+		if (self.EngineSound) then 
+			self.EngineSound:ChangePitch(0, 1)
+			self.EngineSound:FadeOut(1)
+		end
+		if (self.EngineIdleSound) then 
+			self.EngineIdleSound:ChangePitch(0, 1)
+			self.EngineIdleSound:FadeOut(1)
+		end
+	end
+	self.bEngineOn = state
+end
+
 function ENT:Think()
+	if (self.bIsUnloading and CurTime() >= self.NextUnloadT and #self.CarriedEnts > 0) then
+		self:PopCarriedEntity()
+		self.NextUnloadT = CurTime() + 0.5
+	end
 	if (self.BlowupTime and CurTime() > self.BlowupTime) then
 		self:Blowup()
 	end
 	if (self.IsDead) then return end
-	self.CurrentControlRotation = self:GetPhysicsObject():GetAngles()
-	self:Drive()
-	self:TurnToControlRotation()
-	self.EngineSound:Play()
-	self.EngineSound:ChangePitch(math.Clamp(80 + (30 * (self:GetSpeed()/self.MaxSpeed)), 80, 100))
-	self.EngineIdleSound:Play()
+	if (self.bEngineOn) then
+		self.CurrentControlRotation = self:GetPhysicsObject():GetAngles()
+		self:Drive()
+		self:TurnToControlRotation()
+	end
 	
-	
-	
+	if (self.bEngineOn) then
+		self.EngineSound:ChangePitch(math.Clamp(80 + (30 * (self:GetSpeed()/self.MaxSpeed)), 80, 100))
+	end
+
 	self:NextThink( CurTime() )
 	return true
 end
 
 function ENT:SetMoveLocation(location)
 	self.MoveLocation = location
-	
 end
 
 function ENT:GetSpeed()
@@ -450,6 +544,7 @@ d = (0.5 * m * v^2)/(F)
 
 function ENT:Drive()
 	if (!self.MoveLocation) then self:Decelerate() return end
+	--print("Dot: "..math.deg(self.DesiredControlRotation:Forward():Dot(self:GetPhysicsObject():GetVelocity():GetNormalized())))
 	if (self:GetSpeed() < self.DesiredSpeed) then
 		self:Accelerate()
 	else
@@ -465,15 +560,14 @@ function ENT:Accelerate()
 	else
 		self:GetPhysicsObject():AddVelocity((self.MoveLocation - self:GetPos()):GetNormalized() * self.AccelerationSpeed)
 	end
-	
 end
 
 function ENT:Decelerate()
-	if (self:GetSpeed() > 5) then
-		self:GetPhysicsObject():AddVelocity(-self:GetVelocity():GetNormalized() * self.DecelerateSpeed)
-	else
-		self:GetPhysicsObject():SetVelocity(Vector(0,0,0))
-	end
+	self:GetPhysicsObject():AddVelocity(-self:GetVelocity():GetNormalized() * self.DecelerateSpeed)
+end
+
+function ENT:Strafe(Velocity)
+	self:GetPhysicsObject():AddVelocity(Velocity * self.AccelerationSpeed)
 end
 
 function ENT:TurnToControlRotation()
@@ -483,13 +577,15 @@ function ENT:TurnToControlRotation()
 	AngDifference:Normalize()
 	
 	local ForwardVelocity = self:GetPhysicsObject():WorldToLocalVector(self:GetPhysicsObject():GetVelocity())
-	local TurnAmountYaw = AngDifference.Y - self:GetPhysicsObject():GetAngleVelocity().Z + -ForwardVelocity.Y*.05
-	local TurnAmountPitch =  AngDifference.X - self:GetPhysicsObject():GetAngleVelocity().Y + ForwardVelocity.Z*.05
-	-- local TurnAmountYaw = AngDifference.Y - self:GetPhysicsObject():GetAngleVelocity().Z
-	-- local TurnAmountPitch =  AngDifference.X - self:GetPhysicsObject():GetAngleVelocity().Y
-	local TurnVelocity = (Vector((AngDifference.Z - self:GetPhysicsObject():GetAngleVelocity().X + -TurnAmountYaw*0.5), TurnAmountPitch, TurnAmountYaw)) * self.MaxTurnRate
+	
+	local TurnAmountYaw = AngDifference.Y - (self:GetPhysicsObject():GetAngleVelocity().Z)
+	local TurnAmountPitch =  AngDifference.X - self:GetPhysicsObject():GetAngleVelocity().Y
+	local TurnAmountRoll = (AngDifference.Z - self:GetPhysicsObject():GetAngleVelocity().X + -TurnAmountYaw*0.5)
+	-- TurnAmountYaw = TurnAmountYaw + -ForwardVelocity.Y*.05
+	-- TurnAmountPitch =  TurnAmountPitch + ForwardVelocity.Z*.05
+	local TurnVelocity = (Vector(TurnAmountRoll, TurnAmountPitch, TurnAmountYaw)) * self.TurningFactor
 	self:SetPoseParameter("rotate_yaw", TurnAmountYaw*3)
-	self:SetPoseParameter("rotate_pitch", TurnAmountPitch*3)
+	self:SetPoseParameter("rotate_pitch", TurnAmountPitch*10)
 	self:GetPhysicsObject():AddAngleVelocity(TurnVelocity)
 
 	debugoverlay.Line(self:GetPos(), self:GetPos() + (self.CurrentControlRotation:Forward()*1000), 0.03, Color(0, 0, 255))
@@ -509,76 +605,15 @@ function ENT:StartDestruction()
 	self.BlowupTime = CurTime() + 1.5
 	self:EmitSound("phantom/phantom_windup.ogg", 130)
 	self:GetPhysicsObject():EnableGravity(true)
-	local effect = EffectData()
-	effect:SetEntity(self)
-	effect:SetOrigin(self:GetPos() + (self:GetForward()*math.random(-350, 350)) + (self:GetRight()*math.random(-200, 200)) + Vector(0,0,math.random(250, 300)))
-	util.Effect("phantomFXBurst", effect) 
-
-	timer.Create("miniexplosions"..self:GetCreationID(), 0.25, 2, function()
-		if (IsValid(self)) then
-			local effect = EffectData()
-			local explosionLoc = self:GetPos() + (self:GetForward()*math.random(-350, 350)) + (self:GetRight()*math.random(-200, 200)) + Vector(0,0,math.random(250, 300))
-			effect:SetEntity(self)
-			effect:SetOrigin(explosionLoc)
-			util.Effect("phantomFXBurst", effect) 
-			for k=1, 5 do
-				local ent = {}
-				ent[k] = ents.Create("prop_physics")
-				ent[k]:SetModel(self.gibTable[k])
-				ent[k]:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
-				ent[k]:PhysicsInit(SOLID_VPHYSICS)
-				
-				ent[k]:SetPos(explosionLoc)
-				ent[k]:GetPhysicsObject():AddAngleVelocity(Vector(math.random(-100, 100),math.random(-100, 100), math.random(75, 250)))
-				ent[k]:GetPhysicsObject():AddVelocity(Vector(math.random(-1000, 1000),math.random(-1000, 1000), math.random(-100, 300)))
-				local effect=EffectData()
-				if (GetConVarNumber("vj_sent_useParticles")==1) then timer.Create("FireFallFXSmall"..self:GetCreationID()..math.random(0,100)..k, 0.03, math.random(75, 150), function() 
-					if (IsValid(ent[k])) then 
-						effect:SetOrigin(ent[k]:GetPos()) 
-						util.Effect("fireFallFXSmall", effect)
-						end 
-					end) 
-				end
-			end
-		end
-	end)
 	if (math.random(0,1)==1) then
-		--self:PhysicsInit(SOLID_VPHYSICS)
-
-		self:GetPhysicsObject():Wake()
+		self:SetEngineOn(false)
 	end
 end
 
 function ENT:Blowup()
-	self:DropCarriedEntity()
+	self:PopCarriedEntity()
 	self:EmitSound("phantom/phantom_destroyed.ogg", 130)
-	
 	util.BlastDamage(self,self,self:GetPos()+ Vector(0,0,self:BoundingRadius()/2 + 10),1000,500) 
-	ParticleEffect("", self:LocalToWorld(Vector(0,0,20)), self:GetAngles(), nil)
-	for i=1, 10 do
-		local effect = EffectData()
-		local explosion = self:GetPos() + (self:GetForward()*math.random(-550, 550)) + (self:GetRight()*math.random(-300, 300)) + Vector(0,0,math.random(50, 300))
-		effect:SetOrigin(explosion)
-		util.Effect("phantomFX", effect) 
-	end
-	
-	local ent = {}
-	for k,v in pairs(self.gibTable) do
-		ent[k] = ents.Create("prop_physics")
-		ent[k]:SetModel(self.gibTable[k])
-		ent[k]:PhysicsInit(SOLID_VPHYSICS)
-		ent[k]:SetPos(self:GetPos() + (self:GetForward()*math.random(-350, 350)) + (self:GetRight()*math.random(-200, 200)) + Vector(0,0,math.random(-150, 250)))
-		ent[k]:GetPhysicsObject():AddAngleVelocity(Vector(math.random(-100, 100),math.random(-100, 100), math.random(75, 250)))
-		ent[k]:GetPhysicsObject():AddVelocity(Vector(math.random(-1000, 1000),math.random(-1000, 1000), math.random(1000, -400)))
-		local effect=EffectData()
-		if (GetConVarNumber("vj_sent_useParticles")==1) then timer.Create("FireFallFXSmall"..self:GetCreationID()..k, 0.03, math.random(75, 150), function() 
-			if (IsValid(ent[k])) then 
-				effect:SetOrigin(ent[k]:GetPos()) 
-				util.Effect("fireFallFXSmall", effect)
-				end 
-			end) 
-		end
-	end
 	self:SpawnCorpse()
 	self:Remove()
 end

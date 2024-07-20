@@ -61,7 +61,6 @@ end
 
 
 function SPV3.SpawnInfected(FloodClass, NPCInfo)
-	
 	local FloodNPC = ents.Create(FloodClass) --Has to be initialized again, otherwise spawned combat form doesn't attack
 	FloodNPC.Appearance["Color"] = NPCInfo.Color
 	FloodNPC.Appearance["Skin"] = NPCInfo.Skin

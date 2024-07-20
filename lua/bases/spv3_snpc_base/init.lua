@@ -445,6 +445,9 @@ function ENT:CustomOnInitialize()
 	self:RandomizeTraits()
 	self:SetPhysicalAppearance()
 	self:UseConVars()
+	for k, v in pairs(self.PrecacheGibs) do
+		util.PrecacheModel(v)
+	end
 	timer.Simple(0.01, function()
 		self:SetInvisibility(false)
 	end)

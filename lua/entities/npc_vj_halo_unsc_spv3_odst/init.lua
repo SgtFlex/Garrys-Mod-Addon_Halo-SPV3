@@ -8,16 +8,15 @@ include('entities/npc_vj_halo_unsc_spv3_marine/init.lua')
 -----------------------------------------------*/
 ENT.StartHealth = 100
 ENT.ShieldMaxHealth = 65
-//65 shields
-ENT.otherInit = function(entity) 
-	entity.Appearance = {
-		Color = Color(math.random(0, 255), math.random(0, 255), math.random(0, 255)),
-		Bodygroups = {25, 5, 9, 4},
-		Skin = entity.Skins[math.random(1, 5)],
-	}
-end
+ENT.Color = Color(math.random(0, 255), math.random(0, 255), math.random(0, 255))
+ENT.BodyGroups = "0P594"
+ENT.Skin = 0
 ENT.ExtraWeapons = {
 	"weapon_vj_cov_spv3_bruteshot",
 	"weapon_vj_cov_spv3_focusrifle",
 	"weapon_vj_cov_spv3_particleCarbine",
 }
+
+function ENT:SetPhysicalAppearance()
+	self.BaseClass.SetPhysicalAppearance(self)
+end

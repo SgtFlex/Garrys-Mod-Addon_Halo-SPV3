@@ -55,67 +55,23 @@ ENT.ChildUnitModels = {
 }
 
 
+
+
 function ENT:SpawnCorpse()
-    local front = ents.Create("prop_physics")
-	front:SetModel("models/hce/spv3/cov/phantom/garbage/front.mdl")
-	front:SetPos(self:GetPos() + self:GetForward() * 250)
-	front:SetAngles(self:GetAngles())
-	front:Spawn()
-	front:GetPhysicsObject():SetVelocity(self:GetForward() * math.random(100, 200))
-	front:GetPhysicsObject():AddVelocity(self:GetVelocity())
-	front:GetPhysicsObject():AddAngleVelocity(Vector(math.random(-100, 100),math.random(-100, 100), math.random(-50, 50)))
-	timer.Create("FireFallFXSmall".."front"..self:GetCreationID(), 0.2, 300, function() 
-		if (IsValid(front)) then 
-			local effect = EffectData()
-			effect:SetOrigin(front:GetPos())
-			util.Effect("PhantomFXDead", effect)
-			end 
-		end)
-	local left = ents.Create("prop_physics")
-	left:SetModel("models/hce/spv3/cov/phantom/garbage/left.mdl")
-	left:SetPos(self:GetPos() + self:GetRight() * -240)
-	left:SetAngles(self:GetAngles())
-	left:Spawn()
-	left:GetPhysicsObject():SetVelocity(self:GetRight() * math.random(-100, -200))
-	left:GetPhysicsObject():AddVelocity(self:GetVelocity())
-	left:GetPhysicsObject():AddAngleVelocity(Vector(math.random(-100, 100),math.random(-100, 100), math.random(-50, 50)))
-	timer.Create("FireFallFXSmall".."left"..self:GetCreationID(), 0.2, 300, function() 
-		if (IsValid(left)) then 
-			local effect = EffectData()
-			effect:SetOrigin(left:GetPos())
-			util.Effect("PhantomFXDead", effect)
-			end 
-		end)
-	local right = ents.Create("prop_physics")
-	right:SetModel("models/hce/spv3/cov/phantom/garbage/right.mdl")
-	right:SetPos(self:GetPos() + self:GetRight() * 240)
-	right:SetAngles(self:GetAngles())
-	right:Spawn()
-	right:GetPhysicsObject():SetVelocity(self:GetRight() * math.random(100, 200))
-	right:GetPhysicsObject():AddVelocity(self:GetVelocity())
-	right:GetPhysicsObject():AddAngleVelocity(Vector(math.random(-100, 100),math.random(-100, 100), math.random(-50, 50)))
-	timer.Create("FireFallFXSmall".."right"..self:GetCreationID(), 0.2, 300, function() 
-		if (IsValid(right)) then 
-			local effect = EffectData()
-			effect:SetOrigin(right:GetPos())
-			util.Effect("PhantomFXDead", effect)
-			end 
-		end)
-	local back = ents.Create("prop_physics")
-	back:SetModel("models/hce/spv3/cov/phantom/garbage/back.mdl")
-	back:SetPos(self:GetPos() + self:GetForward() * -250)
-	back:SetAngles(self:GetAngles())
-	back:Spawn()
-	back:GetPhysicsObject():SetVelocity(self:GetForward() * math.random(-100, -200))
-	back:GetPhysicsObject():AddVelocity(self:GetVelocity())
-	back:GetPhysicsObject():AddAngleVelocity(Vector(math.random(-100, 100),math.random(-100, 100), math.random(-50, 50)))
-	timer.Create("FireFallFXSmall".."back"..self:GetCreationID(), 0.2, 300, function() 
-		if (IsValid(back)) then 
-			local effect = EffectData()
-			effect:SetOrigin(back:GetPos())
-			util.Effect("PhantomFXDead", effect)
-			end 
-		end)
+	local function SpawnPhantomGib(self, model, pos)
+		local gib = ents.Create("prop_physics")
+		gib:SetModel(model)
+		gib:SetPos(pos)
+		gib:SetAngles(self:GetAngles())
+		gib:Spawn()
+		gib:GetPhysicsObject():SetVelocity(self:GetForward() * math.random(100, 200))
+		gib:GetPhysicsObject():AddVelocity(self:GetVelocity())
+		gib:GetPhysicsObject():AddAngleVelocity(Vector(math.random(-100, 100),math.random(-100, 100), math.random(-50, 50)))
+	end
+	SpawnPhantomGib(self, "models/hce/spv3/cov/phantom/garbage/front.mdl", self:GetPos() + self:GetForward() * 250)
+	SpawnPhantomGib(self, "models/hce/spv3/cov/phantom/garbage/left.mdl", self:GetPos() + self:GetRight() * -240)
+	SpawnPhantomGib(self, "models/hce/spv3/cov/phantom/garbage/right.mdl", self:GetPos() + self:GetRight() * 240)
+	SpawnPhantomGib(self, "models/hce/spv3/cov/phantom/garbage/back.mdl", self:GetPos() + self:GetRight() * -250)
 end
 
 function ENT:SpawnTurrets() end
