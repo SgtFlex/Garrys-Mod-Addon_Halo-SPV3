@@ -22,9 +22,6 @@ ENT.ChildUnitModels = {
 
 ENT.DropHeight = 300
 
-function ENT:SpawnTurrets()
-end
-
 function ENT:StartDestruction()
 	self.BlowupTime = CurTime() + 1.5
 	self:GetPhysicsObject():EnableGravity(true)

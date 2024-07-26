@@ -3,8 +3,7 @@ include("shared.lua")
 
 	-- ====Variant Variables==== --
 ENT.Model = "models/hce/spv3/cov/phantom/phantom.mdl"
-ENT.EngineIdleSFX = "phantom/engine_hover.wav"
-ENT.EngineMoveSFX = "phantom/engine_moving.wav"
+
 ENT.StartHealth = 5000 * GetConVarNumber("vj_spv3_HealthModifier")
 -----------------Movement----------------
 ENT.AccelerationSpeed = 3.5
@@ -15,6 +14,10 @@ ENT.DecelerationDistance = 3500 --Distance at which we begin decelerating to sto
 ENT.StartAIEnabled = true
 ENT.StartEngineOn = true
 ENT.CustomSpawns = false
+----Sounds----
+ENT.LatchSFX = "pelican/latch.wav"
+ENT.EngineIdleSFX = "phantom/engine_hover.wav"
+ENT.EngineMoveSFX = "phantom/engine_moving.wav"
 -----------------------------------------
 ENT.TableSpawns = {}
 ENT.StartHealth = 5000
@@ -47,7 +50,10 @@ ENT.EntClassToCarry = {"imp_halo_util_supplypod","imp_halo_util_supplypod","imp_
 ENT.AirNodeDirections = 8 --Determines how many directions we generate air nodes. Default is 4
 ENT.LengthBetweenNodes = 5000 --Determines how far between nodes we generate. Shorter number is going to mean sharper turns. Default is 5000
 ENT.MaxDepth = 30 --How many nodes we're allowed to generate in each direction
+
+
 ---------------------------
+
 
 
 
@@ -98,6 +104,7 @@ function ENT:Task_FlyToPos(data)
 end
 	
 function ENT:TaskStart_SpawnVehicle(data)
+	self:SetModelScale(1)
 	self:SpawnEntities()
 	self:TaskComplete()
 end
@@ -330,7 +337,7 @@ function ENT:Initialize()
 end
 
 function ENT:Use(activator, caller, useType, value)
-	if (useType == USE_ON) then
+	if (useType == USE_ON and !self.bAIEnabled) then
 		self:SetAIEnabled(false)
 		drive.PlayerStartDriving(activator, self, "drive_example")
 	end
@@ -344,6 +351,7 @@ function ENT:PickupEntity(ent)
 	if (table.HasValue(constraint.GetAllConstrainedEntities(ent), self) or self.bIsUnloading or ent==self or ent:IsWorld() or !IsValid(ent:GetPhysicsObject()) or ent:GetParent()==self or ent:GetMoveType()!=MOVETYPE_VPHYSICS) then
 		return 
 	end
+	self:EmitSound(self.LatchSFX, 75, 120, 1)
 	local mass = ent:GetPhysicsObject():GetMass()
 	local ColGroup = ent:GetCollisionGroup()
 	local function DisablePhysics(self, ent)
@@ -414,6 +422,7 @@ function ENT:PopCarriedEntity()
 	if (#self.CarriedEnts == 0) then
 		self.bIsUnloading = false
 	end
+	self:EmitSound(self.LatchSFX, 80, math.random(90, 110), 1)
 end
 
 

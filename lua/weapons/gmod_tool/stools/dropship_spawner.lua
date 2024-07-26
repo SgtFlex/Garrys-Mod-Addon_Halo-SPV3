@@ -9,6 +9,12 @@ TOOL.ClientConVar[ "AIDriven" ] = "true"
 TOOL.ClientConVar[ "EngineOn" ] = "true"
 TOOL.ClientConVar[ "Class" ] = "dropship_halo_spv3_unsc_pelican"
 
+if (CLIENT) then
+	language.Add("tool.dropship_spawner.name", "Dropship Spawner")
+	language.Add("tool.dropship_spawner.desc", "Spawn dropships. Configure them in DrVrej->Dropship Spawner")
+	language.Add("tool.dropship_spawner.0", "Left-click to spawn a dropship with the current parameters")
+end
+
 function TOOL:LeftClick( trace )
 	local ent = ents.Create(self:GetClientInfo("Class"))
 	ent:SetPos(trace.HitPos)
@@ -37,9 +43,33 @@ function TOOL:LeftClick( trace )
 	undo.AddEntity( ent )
 	undo.SetPlayer(self:GetOwner() )
 	undo.Finish()
+
+	return true
 end
  
 function TOOL:RightClick( trace )
+end
+
+
+local function UpdateToolGun(Panel)
+	local CarryTable = {}
+	for k, v in pairs(Panel.CarryPanel.items) do
+		if (v.TextEntry:GetValue() != nil and v.TextEntry:GetValue() != "") then
+			CarryTable[v.TextEntry:GetValue()] = v.NWang:GetValue()
+		end
+	end
+
+	local NPCTable = {}
+	for k, v in pairs(Panel.NPCPanel.items) do
+		if (v.TextEntry:GetValue() != nil and v.TextEntry:GetValue() != "") then
+			NPCTable[v.TextEntry:GetValue()] = v.NWang:GetValue()
+		end
+	end
+
+	local DropshipConfig = {}
+	DropshipConfig["NPCSpawns"] = NPCTable
+	DropshipConfig["CarrySpawns"] = CarryTable
+	file.Write("dropship_config.json", util.TableToJSON(DropshipConfig, true))
 end
 
 local function BuildNPCPanel(Panel)
@@ -50,28 +80,40 @@ local function BuildNPCPanel(Panel)
 	frame:ShowCloseButton(false)
 	frame:SetTitle("NPC Spawn List")
 	frame.items = {}
-	local function AddItem()
+	frame.AddItem = function(frame)
 		local item = vgui.Create("DPanel", frame)
 		item:Dock(TOP)
-		item.CharacterSelect = vgui.Create("DTextEntry", item)
-		item.CharacterSelect:Dock(FILL)
+		item.TextEntry = vgui.Create("DTextEntry", item)
+		item.TextEntry:Dock(FILL)
+		item.TextEntry.Parent = item
+		item.TextEntry.OnLoseFocus = function(self)
+			if (self:GetText()=="" and #frame.items > 1) then
+				table.RemoveByValue(frame.items, item)
+				item:Remove()
+				frame:InvalidateLayout(true)
+				frame:SizeToChildren(false, true)
+			elseif (self:GetText()!="" and frame.items[#frame.items] == self.Parent) then
+				frame:AddItem()
+			end
+			UpdateToolGun(Panel)
+			hook.Call( "OnTextEntryLoseFocus", nil, self ) --Hook needs to be here or user input will get stuck
+		end
 		item.NWang = vgui.Create("DNumberWang", item)
 		item.NWang:SetMin(1)
 		item.NWang:SetDecimals(0)
 		item.NWang:Dock(RIGHT)
+		item.NWang.OnValueChanged = function(value)
+			UpdateToolGun(Panel)
+		end
 		frame:InvalidateLayout()
 
 		table.insert(frame.items, item)
+		frame:InvalidateLayout(true)
+		frame:SizeToChildren(false, true)
 		return item
 	end
-	local addButton = vgui.Create("DButton", frame)
-	addButton:Dock(TOP)	
-	addButton:SetZPos(9999)
-	addButton.DoClick = function()
-		AddItem()
-		addButton:Dock(TOP)	
-	end
-	AddItem()
+	frame:AddItem()
+	
 	return frame
 end
 
@@ -83,32 +125,47 @@ local function BuildCarryPanel(Panel)
 	frame:ShowCloseButton(false)
 	frame:SetTitle("Carried Entities Spawn List")
 	frame.items = {}
-	local function AddItem()
+	frame.AddItem = function()
 		local item = vgui.Create("DPanel", frame)
 		item:Dock(TOP)
-		item.CharacterSelect = vgui.Create("DTextEntry", item)
-		item.CharacterSelect:Dock(FILL)
+
+		item.TextEntry = vgui.Create("DTextEntry", item)
+		item.TextEntry:Dock(FILL)
+		item.TextEntry.Parent = item
+		item.TextEntry.OnLoseFocus = function(self)
+			if (self:GetText()=="" and #frame.items > 1) then
+				table.RemoveByValue(frame.items, item)
+				item:Remove()
+			elseif (self:GetText()!="" and frame.items[#frame.items] == self.Parent) then
+				frame:AddItem()
+				frame:InvalidateLayout(true)
+				frame:SizeToChildren(false, true)
+			end
+			UpdateToolGun(Panel)
+			
+			hook.Call( "OnTextEntryLoseFocus", nil, self ) --Hook needs to be here or user input will get stuck
+		end
+
 		item.NWang = vgui.Create("DNumberWang", item)
 		item.NWang:SetMin(1)
 		item.NWang:SetDecimals(0)
 		item.NWang:Dock(RIGHT)
+		item.NWang.OnValueChanged = function(value)
+			UpdateToolGun(Panel)
+		end
 		frame:InvalidateLayout()
-
 		table.insert(frame.items, item)
+		frame:InvalidateLayout(true)
+		frame:SizeToChildren(false, true)
 		return item
 	end
-	local addButton = vgui.Create("DButton", frame)
-	addButton:Dock(TOP)	
-	addButton:SetZPos(9999)
-	addButton.DoClick = function()
-		AddItem()
-		addButton:Dock(TOP)	
-	end
-	AddItem()
+	frame:AddItem()
+	
 	
 
 	return frame
 end
+
 
 
 function TOOL.BuildCPanel(Panel)
@@ -118,37 +175,24 @@ function TOOL.BuildCPanel(Panel)
 	Panel:AddControl("Checkbox", {Label = "AI Driven", Command = "Dropship_Spawner_AIDriven"})
 	Panel:AddControl("Checkbox", {Label = "Engine On", Command = "Dropship_Spawner_EngineOn"})
 
-	local NPCPanel = BuildNPCPanel(Panel)
-	Panel:AddItem(NPCPanel)
+	Panel.NPCPanel = BuildNPCPanel(Panel)
+	Panel:AddItem(Panel.NPCPanel)
 
-	local CarryPanel = BuildCarryPanel(Panel)
-	Panel:AddItem(CarryPanel)
+	Panel.CarryPanel = BuildCarryPanel(Panel)
+	Panel:AddItem(Panel.CarryPanel)
 
-	local UpdateButton = vgui.Create("DButton", Panel)
-	UpdateButton:Dock(TOP)	
-	UpdateButton:SetZPos(9999)
-	UpdateButton.DoClick = function()
-		print("Updating items")
-		local CarryTable = {}
-		for k, v in pairs(CarryPanel.items) do
-			if (v.CharacterSelect:GetValue() != nil) then
-				CarryTable[v.CharacterSelect:GetValue()] = v.NWang:GetValue()
-			end
-		end
-
-		local NPCTable = {}
-		for k, v in pairs(NPCPanel.items) do
-			if (v.CharacterSelect:GetValue() != nil) then
-				NPCTable[v.CharacterSelect:GetValue()] = v.NWang:GetValue()
-			end
-		end
-
-		local DropshipConfig = {}
-		DropshipConfig["NPCSpawns"] = NPCTable
-		DropshipConfig["CarrySpawns"] = CarryTable
-		PrintTable(DropshipConfig)
-		file.Write("dropship_config.json", util.TableToJSON(DropshipConfig))
+	local DropshipConfig = util.JSONToTable(file.Read("dropship_config.json", "DATA"))
+	PrintTable(DropshipConfig["CarrySpawns"])
+	for oldItem, amount in pairs(DropshipConfig["CarrySpawns"]) do
+		local item = Panel.CarryPanel:AddItem()
+		item.TextEntry:SetValue(oldItem)
+		item.NWang:SetValue(amount)
 	end
-	Panel:AddItem(UpdateButton)
+
+	for oldItem, amount in pairs(DropshipConfig["NPCSpawns"]) do
+		local item = Panel.NPCPanel:AddItem()
+		item.TextEntry:SetValue(oldItem)
+		item.NWang:SetValue(amount)
+	end
 end
 
