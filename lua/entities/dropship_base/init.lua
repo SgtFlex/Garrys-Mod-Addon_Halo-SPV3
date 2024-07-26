@@ -7,11 +7,14 @@ ENT.EngineIdleSFX = "phantom/engine_hover.wav"
 ENT.EngineMoveSFX = "phantom/engine_moving.wav"
 ENT.StartHealth = 5000 * GetConVarNumber("vj_spv3_HealthModifier")
 -----------------Movement----------------
-ENT.AccelerationSpeed = 3
+ENT.AccelerationSpeed = 3.5
 ENT.DecelerateSpeed = 3
-ENT.MaxSpeed = 2000
+ENT.MaxSpeed = 1600
 ENT.TurningFactor = 0.01
 ENT.DecelerationDistance = 3500 --Distance at which we begin decelerating to stop at the target
+ENT.StartAIEnabled = true
+ENT.StartEngineOn = true
+ENT.CustomSpawns = false
 -----------------------------------------
 ENT.TableSpawns = {}
 ENT.StartHealth = 5000
@@ -39,7 +42,7 @@ ENT.gibTable = {
 	"models/combine_helicopter/bomb_debris_3.mdl",
 	"models/combine_helicopter/bomb_debris_3.mdl",
 }
-ENT.EntClassToCarry = {}
+ENT.EntClassToCarry = {"imp_halo_util_supplypod","imp_halo_util_supplypod","imp_halo_util_supplypod","imp_halo_util_supplypod","imp_halo_util_supplypod","imp_halo_util_supplypod",}
 ----AirNode generation----
 ENT.AirNodeDirections = 8 --Determines how many directions we generate air nodes. Default is 4
 ENT.LengthBetweenNodes = 5000 --Determines how far between nodes we generate. Shorter number is going to mean sharper turns. Default is 5000
@@ -51,7 +54,7 @@ ENT.MaxDepth = 30 --How many nodes we're allowed to generate in each direction
 -------------Internal, Do not modify--------
 ENT.DesiredControlRotation = nil
 ENT.CurrentControlRotation = nil
-ENT.MoveLocation = Vector(0,0,0)
+ENT.MoveLocation = nil
 ENT.DesiredSpeed = ENT.MaxSpeed
 ENT.IsDead = false
 ENT.FlySchedule = ai_schedule.New("Dropship")
@@ -112,11 +115,10 @@ function ENT:Task_NavigatePath(data)
 	self.DesiredControlRotation = ((self.MoveLocation - self:GetPos()):GetNormalized()):Angle()
 	local SpeedFactor = 1
 	if (self.CurAirNodeI < #data.Path) then
-		SpeedFactor = math.abs((self:GetPhysicsObject():GetVelocity()):GetNormalized():Dot((data.Path[self.CurAirNodeI+1] - self:GetPos()):GetNormalized()))
+		SpeedFactor = math.max(0, self.CurrentControlRotation:Forward():Dot((data.Path[self.CurAirNodeI+1] - self:GetPos()):GetNormalized()))
 	else
-		SpeedFactor = (math.abs((self:GetPhysicsObject():GetVelocity()):GetNormalized():Dot((data.Path[self.CurAirNodeI] - self:GetPos()):GetNormalized())))
+		SpeedFactor = math.max(0, self.CurrentControlRotation:Forward():Dot((data.Path[self.CurAirNodeI] - self:GetPos()):GetNormalized()))
 	end
-	SpeedFactor = math.max(.3, SpeedFactor)
 	self.DesiredSpeed = self.MaxSpeed*SpeedFactor
 	if ((self:GetPos() + (self:GetPhysicsObject():GetVelocity())):Distance(data.Path[self.CurAirNodeI]) < data.AcceptanceRadius) then
 		self:Decelerate()
@@ -170,7 +172,7 @@ end
 
 function ENT:TaskStart_DropEntity(data)
 
-	self:DropAll()
+	self:StartDropping()
 	
 end
 
@@ -298,8 +300,8 @@ function ENT:Initialize()
 	self.EngineIdleSound:SetSoundLevel(105)
 	self:InitializePhysics()
 	self:SpawnTurrets()
-	self:SetAIEnabled(true)
-	self:SetEngineOn(true)
+	self:SetAIEnabled(self.StartAIEnabled and self.StartEngineOn)
+	self:SetEngineOn(self.StartEngineOn)
 	if (self.bAIEnabled and self.bEngineOn) then
 		self:GeneratePathFromPos(self:GetPos())
 		self.SpawnPos = self.Nodes[#self.Nodes] + (self.HitSkyPos - self.Nodes[1]):GetNormalized()*(16000 - self.Nodes[#self.Nodes]:Length()) --18K is the max map limit for physics-simulated entities. Spawn within those bounds
@@ -318,7 +320,8 @@ function ENT:Initialize()
 	else
 		self:SpawnEntities()
 	end
-	self:SetupSpawnTable()
+	self.DesiredControlRotation = self:GetAngles()
+	if (!self.CustomSpawns) then self:SetupSpawnTable() end
 	self:PrecacheGibModels()
 	self:PrecacheChildUnitModels()
 
@@ -364,37 +367,48 @@ function ENT:PickupEntity(ent)
 	local latch = self:GetAttachment(self:LookupAttachment("Latch"))
 	local Carried = self.CarriedEnts
 	self.CarriedEnts = {} --Reset our table
-	table.insert(Carried, {ent, nil})
+	table.insert(Carried, {
+		["Entity"] = ent,
+	})
 	for k, v in pairs(Carried) do
-		local entity = v[1]
-		if (v[2]) then
-			v[2]:Remove()
-		end
+		local entity = v["Entity"]
+		if (v["Latch"]) then v["Latch"]:Remove() end
 		local t = Vector(math.random(-100, 100),-50 + (50 * (k%Columns)), 0)
 		t:Rotate(latch.Ang)
 		entity:SetPos(latch.Pos + t - (latch.Ang:Up() * entity:OBBMaxs().Z))
 		ent:SetAngles(latch.Ang)
 		local LatchConstraint = constraint.AdvBallsocket(entity, self, 0, 0, Vector(0, 0, ent:OBBMaxs().Z), nil, -100, -100, -100, 100, 100, 100, 0, 0, 0, 0, 0, 0, 1)
-		table.insert(self.CarriedEnts, {entity, LatchConstraint, mass, ColGroup})
+		table.insert(self.CarriedEnts, {
+			["Entity"] = entity,
+			["Latch"] = LatchConstraint,
+			["Mass"] = mass,
+			["ColGroup"] = ColGroup,
+		})
 	end
-
 	self:DeleteOnRemove(ent)
 end
 
 function ENT:DropAll()
+	for i = 1, #self.CarriedEnts do
+		self:PopCarriedEntity()
+	end
+end
+
+function ENT:StartDropping()
+	PrintTable(self.CarriedEnts)
 	if (self.bIsUnloading == false) then
 		self.bIsUnloading = true
 	end
 end
 
 function ENT:PopCarriedEntity()
-	if (!self.CarriedEnts) then return end
-	local ent = self.CarriedEnts[1][1]
+	if (!self.CarriedEnts or table.IsEmpty(self.CarriedEnts) ) then return end
+	local ent = self.CarriedEnts[1]["Entity"]
 	--self.CarriedEnts:GetPhysicsObject():SetMass(self.CarriedEntsMass)
 	self:DontDeleteOnRemove(ent)
-	self.CarriedEnts[1][2]:Remove()
-	ent:GetPhysicsObject():SetMass(self.CarriedEnts[1][3])
-	ent:SetCollisionGroup(self.CarriedEnts[1][4])
+	self.CarriedEnts[1]["Latch"]:Remove()
+	ent:GetPhysicsObject():SetMass(self.CarriedEnts[1]["Mass"])
+	ent:SetCollisionGroup(self.CarriedEnts[1]["ColGroup"])
 	constraint.ForgetConstraints(ent)
 	table.remove(self.CarriedEnts, 1)
 	if (#self.CarriedEnts == 0) then
@@ -432,11 +446,12 @@ function ENT:SetupSpawnTable()
 			unit = VJ_PICK(self.UnitCost)
 			if (unit["Cost"] <= self.Resource and unit["Cost"] <= GetConVar("vj_spv3_phantomMaxUnitStr"):GetInt() and unit["Cost"] >= GetConVar("vj_spv3_phantomMinUnitStr"):GetInt()) then
 				self.Resource = self.Resource - unit["Cost"]
-				self.TableSpawns[k] = unit
+				self.TableSpawns[k] = unit["Name"]
 				k = k + 1
 			end
 		end
 	end
+	PrintTable(self.TableSpawns)
 end
 
 function ENT:SpawnTurrets()
@@ -449,7 +464,6 @@ function ENT:SpawnTurret(class, socket)
 	turret:SetParent(self, self:LookupAttachment(socket))
 	turret:SetOwner(self)
 	turret:Spawn()
-	constraint.NoCollide(self, turret, 0, 0)
 	table.insert(self.Turrets, turret)
 	return turret
 end
@@ -611,7 +625,7 @@ function ENT:StartDestruction()
 end
 
 function ENT:Blowup()
-	self:PopCarriedEntity()
+	self:DropAll()
 	self:EmitSound("phantom/phantom_destroyed.ogg", 130)
 	util.BlastDamage(self,self,self:GetPos()+ Vector(0,0,self:BoundingRadius()/2 + 10),1000,500) 
 	self:SpawnCorpse()
@@ -637,31 +651,45 @@ end
 
 function ENT:SpawnUnits()
 	self.SpawnedUnitCount = 1
-	local nc = nil
 	timer.Create("Spawn"..self:GetCreationID(), 2, #self.TableSpawns, function()
 		if (IsValid(self)) then
-			local SpawnedUnit = ents.Create(self.TableSpawns[self.SpawnedUnitCount]["Name"])
-			SpawnedUnit:SetPos(self:GetAttachment(self:LookupAttachment("Spawn"))["Pos"] + Vector(0,0,50))
-			SpawnedUnit:SetAngles(Angle(0,self:GetAngles().Y,0))
-			SpawnedUnit:Spawn()
-			nc = constraint.NoCollide(self, SpawnedUnit, 0, 0)
-			timer.Simple(1, function()
-				if (IsValid(self) and IsValid(SpawnedUnit)) then
-					SpawnedUnit:SetVelocity(Vector(math.random(-150, 150),math.random(-150, 150), 0))
-					nc:Remove()
-				end
-			end)	
-			
-			timer.Simple(2, function() if (IsValid(self) and IsValid(SpawnedUnit)) then SpawnedUnit:VJ_TASK_COVER_FROM_ENEMY()  end end)
-			
-			if (list.Get("NPC")[SpawnedUnit:GetClass()].Weapons != nil) then
-				SpawnedUnit:Give(VJ_PICK(list.Get("NPC")[SpawnedUnit:GetClass()].Weapons))
-			end
-			self.SpawnedUnitCount = self.SpawnedUnitCount + 1
-			if (self.SpawnedUnitCount==(#self.TableSpawns + 1)) then
-				self:TaskComplete()
-				self.stickAround = 3
-			end
+			local SpawnedUnit = self:SpawnUnit(self.TableSpawns[self.SpawnedUnitCount])
 		end
 	end)
+end
+
+function ENT:SpawnUnit(class)
+	local SpawnedUnit = ents.Create(class)
+	if (IsValid(SpawnedUnit)) then
+		SpawnedUnit:SetPos(self:GetAttachment(self:LookupAttachment("Spawn"))["Pos"] + Vector(0,0,50))
+		SpawnedUnit:SetAngles(Angle(0,self:GetAngles().Y,0))
+		SpawnedUnit:AddRelationship(self:GetClass().."D_LI 99")
+		SpawnedUnit:Spawn()
+		nc = constraint.NoCollide(self, SpawnedUnit, 0, 0)
+
+		if (list.Get("NPC")[SpawnedUnit:GetClass()].Weapons != nil) then
+			SpawnedUnit:Give(VJ_PICK(list.Get("NPC")[SpawnedUnit:GetClass()].Weapons))
+		end
+
+		
+	
+	end
+	
+	timer.Simple(1, function()
+		if (IsValid(self) and IsValid(SpawnedUnit)) then
+			SpawnedUnit:SetVelocity(Vector(math.random(-150, 150),math.random(-150, 150), 0))
+			nc:Remove()
+		end
+	end)	
+	
+	timer.Simple(2, function() if (IsValid(self) and IsValid(SpawnedUnit)) then SpawnedUnit:VJ_TASK_COVER_FROM_ENEMY()  end end)
+
+
+	self.SpawnedUnitCount = self.SpawnedUnitCount + 1
+	if (self.SpawnedUnitCount==(#self.TableSpawns + 1)) then
+		self:TaskComplete()
+		self.stickAround = 3
+	end
+
+	return ent
 end

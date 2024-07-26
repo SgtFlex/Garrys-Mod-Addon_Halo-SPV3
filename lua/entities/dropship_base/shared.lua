@@ -49,7 +49,7 @@ drive.Register( "drive_example",
 			end
 		elseif (mv:KeyDown(IN_WALK)) then
 			if ((CurTime() > self.Entity.DownT + 0.5) and self.Entity.bIsUnloading == false and #self.Entity.CarriedEnts > 0) then
-				self.Entity.DropAll(self.Entity)
+				self.Entity.StartDropping(self.Entity)
 			end
 		else
 			self.Entity.DownT = 0
@@ -61,7 +61,7 @@ drive.Register( "drive_example",
 		end
 
 		if (mv:KeyPressed(IN_JUMP)) then
-			self.Entity:SetupSpawnTable()
+			--self.Entity:SetupSpawnTable()
 			self.Entity:SpawnUnits()
 		end
 
