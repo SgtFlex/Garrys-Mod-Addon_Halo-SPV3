@@ -4,7 +4,7 @@ include("shared.lua")
 	-- ====Variant Variables==== --
 ENT.Model = "models/hce/spv3/cov/phantom/phantom.mdl"
 
-ENT.StartHealth = 5000 * GetConVarNumber("vj_spv3_HealthModifier")
+ENT.StartHealth = 5000
 -----------------Movement----------------
 ENT.AccelerationSpeed = 3.5
 ENT.DecelerateSpeed = 3
@@ -45,7 +45,7 @@ ENT.gibTable = {
 	"models/combine_helicopter/bomb_debris_3.mdl",
 	"models/combine_helicopter/bomb_debris_3.mdl",
 }
-ENT.EntClassToCarry = {"imp_halo_util_supplypod","imp_halo_util_supplypod","imp_halo_util_supplypod","imp_halo_util_supplypod","imp_halo_util_supplypod","imp_halo_util_supplypod",}
+ENT.EntClassToCarry = {}
 ----AirNode generation----
 ENT.AirNodeDirections = 8 --Determines how many directions we generate air nodes. Default is 4
 ENT.LengthBetweenNodes = 5000 --Determines how far between nodes we generate. Shorter number is going to mean sharper turns. Default is 5000
@@ -294,6 +294,7 @@ function ENT:SpawnEntities()
 end
 
 function ENT:Initialize()
+	self.StartHealth = self.StartHealth * GetConVarNumber("vj_spv3_HealthModifier")
 	self:SetModel(self.Model)
 	self:AddFlags(FL_OBJECT)
 	self:AddFlags(FL_AIMTARGET)
@@ -412,17 +413,19 @@ end
 function ENT:PopCarriedEntity()
 	if (!self.CarriedEnts or table.IsEmpty(self.CarriedEnts) ) then return end
 	local ent = self.CarriedEnts[1]["Entity"]
-	--self.CarriedEnts:GetPhysicsObject():SetMass(self.CarriedEntsMass)
-	self:DontDeleteOnRemove(ent)
-	self.CarriedEnts[1]["Latch"]:Remove()
-	ent:GetPhysicsObject():SetMass(self.CarriedEnts[1]["Mass"])
-	ent:SetCollisionGroup(self.CarriedEnts[1]["ColGroup"])
-	constraint.ForgetConstraints(ent)
+	if (IsValid(ent)) then 
+		self:DontDeleteOnRemove(ent)
+		self.CarriedEnts[1]["Latch"]:Remove()
+		ent:GetPhysicsObject():SetMass(self.CarriedEnts[1]["Mass"])
+		ent:SetCollisionGroup(self.CarriedEnts[1]["ColGroup"])
+		constraint.ForgetConstraints(ent)
+		self:EmitSound(self.LatchSFX, 80, math.random(90, 110), 1)
+	end	
 	table.remove(self.CarriedEnts, 1)
 	if (#self.CarriedEnts == 0) then
 		self.bIsUnloading = false
 	end
-	self:EmitSound(self.LatchSFX, 80, math.random(90, 110), 1)
+	
 end
 
 

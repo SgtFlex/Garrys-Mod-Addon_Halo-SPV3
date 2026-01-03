@@ -1,6 +1,6 @@
 AddCSLuaFile("shared.lua")
 include('shared.lua')
-include('bases/spv3_snpc_base/init.lua')/*-----------------------------------------------
+include('bases/spv3_snpc_core/init.lua')/*-----------------------------------------------
 	*** Copyright (c) 2012-2016 by DrVrej, All rights reserved. ***
 	No parts of this code or any of its contents may be reproduced, copied, modified or adapted,
 	without the prior written consent of the author, unless otherwise indicated for stand-alone materials.
@@ -9,11 +9,9 @@ ENT.HullType = HULL_MEDIUM
 	-- ====Variant Variables==== --
 ENT.Model = {"models/hce/spv3/flood/elite/floodelite.mdl"} -- The game will pick a random model from the table when the SNPC is spawned | Add as many as you want
 ENT.CustomBlood_Decal = {"VJ_SPV3_Blood_Flood1"}
-ENT.Appearance = {
-	Color = Color(40,60,200),
-	Bodygroups = {0, 1, 1, 1, 1, 0},
-	Skin = 1,
-}
+ENT.Color = Color(40,60,200)
+ENT.BodyGroups = "0011110"
+ENT.Skin = 1
 ENT.Faction = "Flood"
 ENT.StartHealth = 100
 ENT.ShieldMaxHealth = 75
@@ -211,36 +209,35 @@ ENT.RemovableParts = {
 	end},
 }
 ENT.CustomCollision = {Min = Vector(-16,-16,0), Max = Vector(16,16,80)}
-ENT.extraInit = function(entity) end
-ENT.otherInit = function(entity) 
-	entity.extraInit(entity)
-	if (entity.IsBomber) then
-		entity.DisableRangeAttackAnimation = true -- if true, it will disable the animation code
-		entity.DisableDefaultRangeAttackCode = true -- When true, it won't spawn the range attack entity, allowing you to make your own
-		entity.RangeToMeleeDistance = 0 -- How close does it have to be until it uses melee?
-		entity.HasRangeAttack = true
-		entity.RangeDistance = 500
-		entity.PlasmaNade1 = ents.Create("weapon_vj_cov_spv3_plasma_nade")
-		entity.PlasmaNade1:SetParent(entity, entity:LookupAttachment("Cannon"))
-		entity.PlasmaNade1:SetPos(entity:GetAttachment(entity:LookupAttachment("Cannon"))["Pos"])
-		entity.PlasmaNade1:SetLocalPos(Vector(5,0,0))
-		entity.PlasmaNade1:Spawn()
-		entity.PlasmaNade1:Activate()
-		entity.PlasmaNade2 = ents.Create("weapon_vj_cov_spv3_plasma_nade")
-		entity.PlasmaNade2:SetParent(entity, entity:LookupAttachment("anim_attachment_LH"))
-		entity.PlasmaNade2:SetPos(entity:GetAttachment(entity:LookupAttachment("anim_attachment_LH"))["Pos"])
-		entity.PlasmaNade2:SetLocalPos(Vector(8,2,0))
-		entity.PlasmaNade2:Spawn()
-		entity.PlasmaNade2:Activate()
+
+function ENT:CustomOnInitialize()
+	self.BaseClass.CustomOnInitialize(self)
+	if (self.IsBomber) then
+		self.DisableRangeAttackAnimation = true -- if true, it will disable the animation code
+		self.DisableDefaultRangeAttackCode = true -- When true, it won't spawn the range attack self, allowing you to make your own
+		self.RangeToMeleeDistance = 0 -- How close does it have to be until it uses melee?
+		self.HasRangeAttack = true
+		self.RangeDistance = 500
+		self.PlasmaNade1 = ents.Create("weapon_vj_cov_spv3_plasma_nade")
+		self.PlasmaNade1:SetParent(self, self:LookupAttachment("Cannon"))
+		self.PlasmaNade1:SetPos(self:GetAttachment(self:LookupAttachment("Cannon"))["Pos"])
+		self.PlasmaNade1:SetLocalPos(Vector(5,0,0))
+		self.PlasmaNade1:Spawn()
+		self.PlasmaNade1:Activate()
+		self.PlasmaNade2 = ents.Create("weapon_vj_cov_spv3_plasma_nade")
+		self.PlasmaNade2:SetParent(self, self:LookupAttachment("anim_attachment_LH"))
+		self.PlasmaNade2:SetPos(self:GetAttachment(self:LookupAttachment("anim_attachment_LH"))["Pos"])
+		self.PlasmaNade2:SetLocalPos(Vector(8,2,0))
+		self.PlasmaNade2:Spawn()
+		self.PlasmaNade2:Activate()
 	end
-	if (entity.IsCarrier) then
-		entity.Appearance["Bodygroups"][2] = 2
-	end
+	-- if (self.IsCarrier) then
+	-- 	self.Appearance["Bodygroups"][2] = 2
+	-- end
 end
 
-ENT.oldConVars = ENT.UseConVars
 function ENT:UseConVars()
-	self:oldConVars(self)
+	self.BaseClass.UseConVars(self)
 	if (math.random(0,100) < GetConVar("vj_spv3_floodEliteShield"):GetInt()) then
 		self.ShieldMaxHealth = self.ShieldMaxHealth * GetConVarNumber("vj_spv3_ShieldModifier")
 		self.ShieldCurrentHealth = self.ShieldMaxHealth
@@ -290,9 +287,8 @@ ENT.WeaponSpread = 1
 function ENT:WeaponAimPoseParameters(ResetPoses)
 end
 
-local SuperThink = ENT.CustomOnThink
 function ENT:CustomOnThink() 
-	SuperThink(self)
+	self.BaseClass.CustomOnThink(self)
 	if (IsValid(self:GetEnemy()) and self:IsLineOfSightClear(self:GetEnemy():GetPos()) and IsValid(self:GetActiveWeapon()) and self:GetActiveWeapon():Clip1()>0 and self:GetPos():DistToSqr(self:GetEnemy():GetPos())> 100) then
 		self.AnimTbl_Run = {ACT_WALK_PISTOL}
 		self.HasLeapAttack = false

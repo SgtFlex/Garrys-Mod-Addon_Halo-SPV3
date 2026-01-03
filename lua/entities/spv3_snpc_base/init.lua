@@ -58,6 +58,9 @@ ENT.EntitiesToRunFrom = {obj_spore=true,obj_vj_grenade=true,obj_grenade=true,obj
 ENT.NextStuckTime = 0
 
 ENT.AnimTbl_WeaponAim = {ACT_IDLE_AGITATED}
+ENT.AnimTbl_WeaponAttack = ACT_RANGE_ATTACK1 -- Animation(s) to play while firing a weapon
+ENT.DisableWeaponFiringGesture = true -- If set to true, it will disable the weapon firing gestures
+
 
 function ENT:UseConVars()
 	self.MeleeAttackDamage = self.MeleeAttackDamage * GetConVarNumber("vj_spv3_damageModifier")
@@ -432,7 +435,7 @@ function ENT:Flee()
 	self:VJ_TASK_COVER_FROM_ENEMY("TASK_RUN_PATH")
 	if (timer.Exists("Scared"..self:GetCreationID())) then return end
 	timer.Create("Scared"..self:GetCreationID(), math.random(1.5,3), 5, function()
-		if !(IsValid(self) or self.Dead==true) then return end 
+		if (!IsValid(self) or self.Dead) then return end 
 		self:Flee()
 		if (timer.RepsLeft("Scared"..self:GetCreationID())==0) then
 			self.Behavior = VJ_BEHAVIOR_AGGRESSIVE
@@ -447,7 +450,7 @@ end
 --------------------------------------------------------------
 
 function ENT:CustomOnInitialize()
-	self.otherInit(self)
+	--self.BaseClass.CustomOnInitialize(self)
 	self:SetCollisionBounds(self.CustomCollision["Min"], self.CustomCollision["Max"])
 	self:RandomizeTraits()
 	self:SetPhysicalAppearance()

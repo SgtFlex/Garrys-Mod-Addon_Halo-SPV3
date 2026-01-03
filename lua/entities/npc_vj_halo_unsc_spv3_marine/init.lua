@@ -105,7 +105,9 @@ ENT.SoundTbl_Step = {
 }
 function ENT:SetPhysicalAppearance()
 	self:SetColor(Color(255,255,255))
-	self:SetBodyGroups("0"..table.concat({math.random(0,23), math.random(0,2), math.random(0,6), math.random(0,1)}))
+	local body = "0"..tostring(table.concat({0, math.random(0,2), math.random(0,6), math.random(0,1)}))
+	self:SetBodyGroups(body)
+	self:SetBodygroup(0, math.random(0, 23))
 	self:SetSkin(self.Skins[math.random(1, 5)])
 end
 ---------------------------------------------------------------------------------------------------------------------------------------------
